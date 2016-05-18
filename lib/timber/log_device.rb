@@ -1,5 +1,5 @@
-require "log_device/collector"
-require "log_device/installer"
+require "timber/log_device/collector"
+require "timber/log_device/installer"
 
 require "logger"
 

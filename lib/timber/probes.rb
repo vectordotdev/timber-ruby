@@ -1,7 +1,3 @@
-# Base
-require "timber/probes/probe"
-
-# Probes
 require "timber/probes/action_controller"
 require "timber/probes/heroku"
 
@@ -12,10 +8,11 @@ module Timber
       Heroku
     ]
 
-    def insert!
-      probe.each(&:insert!)
+    def self.insert!
+      PROBES.each(&:insert!)
     end
   end
 end
 
+# Insert'em
 Timber::Probes.insert!

@@ -4,14 +4,16 @@ module Timber
       module InstanceMethods
         def process_action(*args)
           context = Contexts::ActionController.new(self)
-          CurrentContext.wrap(context) { super }
+          CurrentContext.add(context) do
+            super
+          end
         end
       end
 
       def initialize
-        require "actioncontroller"
+        require "action_controller"
       rescue LoadError => e
-        raise RequirementUnsatisfiedError.new(e.message)
+        raise RequirementNotMetError.new(e.message)
       end
 
       def insert!

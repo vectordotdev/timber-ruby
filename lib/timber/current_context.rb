@@ -1,11 +1,22 @@
+require "singleton"
+
 module Timber
   class CurrentContext
     THREAD_NAMESPACE = :_timber_context_stack
 
-    extend self
+    include Singleton
+
+    class << self
+      def add(*args, &block)
+        instance.add(*args, &block)
+      end
+    end
 
     def add(context, &block)
       stack << context
+      yield if block_given?
+    ensure
+      remove(context) if block_given?
     end
 
     def remove(context)
@@ -14,13 +25,6 @@ module Timber
 
     def to_json
 
-    end
-
-    def wrap(context, &block)
-      add(context)
-      yield
-    ensure
-      remove(context)
     end
 
     private

@@ -3,12 +3,14 @@ module Timber
     class Heroku < Probe
       def initialize
         if ENV['DYNO'].nil?
-          raise RequirementUnsatisfiedError.new("The DYNO environment variable is not set")
+          raise RequirementNotMetError.new("The DYNO environment variable is not set")
         end
       end
 
       def insert!
         context = Contexts::Heroku.new
+        # Note we don't use a block here, this is because
+        # the context is persistent.
         CurrentContext.add(context)
       end
     end
