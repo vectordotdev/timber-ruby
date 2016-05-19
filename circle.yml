@@ -1,8 +1,21 @@
 dependencies:
   override:
-    - bundle install
-    - appraisal install
+    - rvm-exec 1.9.3 bundle install
+    - rvm-exec 1.9.3 appraisal rails-3.0.X install
+    - rvm-exec 1.9.3 appraisal rails-3.1.X install
+    - rvm-exec 1.9.3 appraisal rails-3.2.X install
+    - rvm-exec 1.9.3 appraisal rails-4.0.X install
+    - rvm-exec 1.9.3 appraisal rails-4.1.X install
+    - rvm-exec 1.9.3 appraisal rails-4.2.X install
+    - rvm-exec 2.3.1 bundle install
+    - rvm-exec 2.3.1 appraisal rails-edge install
 
 test:
   override:
-    - appraisal rake spec
+    - rvm-exec 1.9.3 appraisal rails-3.0.X rake spec
+    - rvm-exec 1.9.3 appraisal rails-3.1.X rake spec
+    - rvm-exec 1.9.3 appraisal rails-3.2.X rake spec
+    - rvm-exec 1.9.3 appraisal rails-4.0.X rake spec
+    - rvm-exec 1.9.3 appraisal rails-4.1.X rake spec
+    - rvm-exec 1.9.3 appraisal rails-4.2.X rake spec
+    - rvm-exec 2.3.1 appraisal rails-edge rake spec
