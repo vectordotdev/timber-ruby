@@ -12,7 +12,7 @@ describe Timber::Probes::ActionController::InstanceMethods do
       layout nil
 
       def index
-        render text: "hello there"
+        render json: {}
       end
 
       def method_for_action(action_name)
