@@ -15,15 +15,25 @@ module Timber
     include Singleton
 
     class << self
-      def drop(*args, &block)
-        instance.drop(*args, &block)
+      def method_missing(name, *args, &block)
+        instance.send(name, *args, &block)
       end
     end
 
-    def drop(message)
-      open(timber_temp_file.path, 'a') do |f|
-        f.puts message
+    def drop(log_line)
+      open(temp_file.path, "a") do |f|
+        f.puts log_line.to_json
       end
+    end
+
+    def contents(&block)
+      contents = []
+      File.open(temp_file.path, "r") do |f|
+        f.each_line do |line|
+          contents << JSON.parse!(line)
+        end
+      end
+      contents
     end
 
     private

@@ -1,4 +1,5 @@
 # Base (priority and order matters)
+require "timber/config"
 require "timber/context"
 require "timber/probe"
 

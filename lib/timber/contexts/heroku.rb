@@ -2,12 +2,12 @@ module Timber
   module Contexts
     class Heroku < Context
       VERSION = "1"
-      
+
       attr_reader :dyno
 
-      def initialize
+      def initialize(dyno)
         super
-        @dyno = ENV['DYNO']
+        @dyno = dyno
       end
 
       def to_hash

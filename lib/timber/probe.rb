@@ -5,9 +5,11 @@ module Timber
     class << self
       def insert!
         new.insert!
+        Config.logger.debug("Inserted probe #{name}")
         true
       # RequirementUnsatisfiedError is the only silent failure we support
-      rescue RequirementNotMetError
+      rescue RequirementNotMetError => e
+        Config.logger.debug("Failed inserting probe #{name}: #{e.message}")
         false
       end
     end

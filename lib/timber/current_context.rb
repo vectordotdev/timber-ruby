@@ -20,7 +20,7 @@ module Timber
     end
 
     def remove(context)
-      stack.remove(context)
+      stack.delete(context)
     end
 
     def to_json

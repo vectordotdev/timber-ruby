@@ -26,7 +26,7 @@ module Timber
     end
 
     private
-      def secure_random
+      def generate_secure_random
         SecureRandom.urlsafe_base64(SECURE_RANDOM_LENGTH)
       end
   end

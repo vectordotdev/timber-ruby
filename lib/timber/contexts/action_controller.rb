@@ -12,7 +12,7 @@ module Timber
         :request_id
 
       def initialize(controller)
-        super
+        super()
         request = controller.request
         @controller = controller.class.name
         @action = controller.action_name
