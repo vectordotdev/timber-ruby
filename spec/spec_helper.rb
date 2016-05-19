@@ -4,7 +4,7 @@ require 'rspec'
 require 'timber'
 
 logger = Logger.new(STDOUT)
-logger.level = :debug
+logger.level = Logger::DEBUG
 Timber::Config.logger = logger
 
 RSpec.configure do |config|
