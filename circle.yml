@@ -1,0 +1,8 @@
+dependencies:
+  override:
+    - bundle install
+    - appraisal install
+
+test:
+  override:
+    - appraisal rake spec
