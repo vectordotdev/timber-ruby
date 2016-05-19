@@ -2,10 +2,13 @@
 
 source "https://rubygems.org"
 
-gem "actioncontroller", "~> 4"
+gem "rack", :github => "rack/rack", :branch => "master"
+gem "arel", :github => "rails/arel", :branch => "master"
+gem "rails", :github => "rails/rails", :branch => "master"
 
 group :test do
   gem "appraisal"
+  gem "rake"
   gem "rspec", "~> 3.4"
   gem "simplecov", :require => false
 end
