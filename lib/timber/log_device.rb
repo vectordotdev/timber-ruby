@@ -5,7 +5,8 @@ require "logger"
 
 module Timber
   module LogDevice
-
-    ::Logger::LogDevice.send(:include, Installer)
+    def install!
+      ::Logger::LogDevice.send(:include, Installer)
+    end
   end
 end
