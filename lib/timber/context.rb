@@ -2,7 +2,7 @@ require "securerandom"
 
 module Timber
   class Context
-    SECURE_RANDOM_LENGTH = 32
+    SECURE_RANDOM_LENGTH = 32.freeze
 
     attr_reader :id
 

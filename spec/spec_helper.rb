@@ -3,8 +3,7 @@ require 'bundler/setup'
 require 'rspec'
 require 'timber'
 
-logger = Logger.new(STDOUT)
-logger.level = Logger::DEBUG
+logger = Logger.new(STDOUT, Logger::DEBUG)
 Timber::Config.logger = logger
 
 RSpec.configure do |config|

@@ -14,8 +14,12 @@ module Timber
         end
     end
 
+    def logger?
+      !@logger.nil?
+    end
+
     def logger
-      @logger ||= Logger.new(STDOUT)
+      @logger ||= Logger.new(nil)
     end
   end
 end

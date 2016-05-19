@@ -1,8 +1,8 @@
 module Timber
   module Bootstrap
-    def bootstrap!
+    def bootstrap!(logger)
       Probes.insert!
-      LogDevice.install!
+      LogDeviceInstaller.install!(logger)
     end
   end
 end
