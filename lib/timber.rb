@@ -1,4 +1,4 @@
-# Base (priority and order matters)
+# Base (must come first, order matters)
 require "timber/config"
 require "timber/context"
 require "timber/probe"
@@ -9,3 +9,6 @@ require "timber/current_context"
 require "timber/log_device"
 require "timber/log_yard"
 require "timber/probes"
+
+# Load frameworks last
+require "timber/frameworks"

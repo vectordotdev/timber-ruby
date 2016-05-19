@@ -8,11 +8,9 @@ module Timber
       Heroku
     ]
 
+    # Should be called to activate timber and insert probes
     def self.insert!
       PROBES.each(&:insert!)
     end
   end
 end
-
-# Insert'em
-Timber::Probes.insert!
