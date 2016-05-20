@@ -15,15 +15,25 @@ module Timber
 
       def bytes
         @bytes = nil if expire_bytes?
-        @bytes ||= sample_strategy.bytes
+        @bytes ||= sample_strategy.bytes.tap do
+          @bytes_memoized_at = Time.now
+        end
       end
 
       private
+        def cache_length_ms
+          @cache_length_ms
+        end
+
+        def bytes_memoized_at
+          @bytes_memoized_at
+        end
+
         def expire_bytes?
           @bytes.nil? ||
-            @cache_length_ms.nil? ||
-            @bytes_memoized_at.nil? ||
-            ((Time.now - @bytes_memoized_at) * 1000) >= @cache_length_ms
+            cache_length_ms.nil? ||
+            bytes_memoized_at.nil? ||
+            ((Time.now - bytes_memoized_at) * 1000) >= cache_length_ms
         end
 
         def sample_strategy

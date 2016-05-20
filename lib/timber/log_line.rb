@@ -1,6 +1,7 @@
 module Timber
   class LogLine
-    MEMORY_SAMPLER_CACHE_LENGTH_MS = 500
+    MEMORY_SAMPLER_CACHE_LENGTH_MS = 500.freeze
+    DATE_TIME_FORMAT = "%FT%T.%6N%:z".freeze
 
     attr_reader :level, :memory_usage, :message, :time
 
@@ -15,14 +16,13 @@ module Timber
     def initialize(message)
       @time = Time.now.utc
       @message = message
-      @memory_usage = memory_sampler.bytes
+      @memory_usage = memory_sampler.bytes rescue nil
     end
 
     def to_hash
       {
-        :dt => "fdsfds",
+        :dt => formatted_time,
         :message => message,
-        :level => level,
         :context => CurrentContext.to_hash
       }
     end
@@ -32,6 +32,10 @@ module Timber
     end
 
     private
+      def formatted_time
+        @formatted_time ||= time.strftime(DATE_TIME_FORMAT)
+      end
+
       def memory_sampler
         self.class.memory_sampler
       end

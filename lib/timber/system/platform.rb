@@ -1,15 +1,7 @@
-require "singleton"
-
 module Timber
   module System
     class Platform
-      include Singleton
-
-      class << self
-        def method_missing(name, *args, &block)
-          instance.send(name, *args, &block)
-        end
-      end
+      include Patterns::DelegatedSingleton
 
       def darwin?
         return @darwin if defined?(@darwin)

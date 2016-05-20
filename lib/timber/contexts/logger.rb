@@ -6,13 +6,18 @@ module Timber
 
       attr_reader :level
 
-      def initialize(level)
+      def initialize(level, progname)
         super
         @level = level
+        @progname = progname
       end
 
       def to_hash
-        super.merge(:level => level)
+        super.merge(:level => level).tap do |hash|
+          if progname
+            hash[:progname] = progname
+          end
+        end
       end
     end
   end

@@ -1,17 +1,8 @@
-require "singleton"
-
 module Timber
   class CurrentContext
     THREAD_NAMESPACE = :_timber_context_stack.freeze
 
-    include Singleton
-
-    class << self
-      private
-        def method_missing(name, *args, &block)
-          instance.send(name, *args, &block)
-        end
-    end
+    include Patterns::DelegatedSingleton
 
     def add(context, &block)
       stack << context

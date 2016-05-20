@@ -2,7 +2,7 @@ module Timber
   module System
     class MemorySampler
       class SampleStrategy
-        def sample
+        def bytes
           raise NotImplementedError.new
         end
       end

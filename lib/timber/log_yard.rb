@@ -1,5 +1,3 @@
-require "singleton"
-
 module Timber
   # A simple class that drops our JSON blobs to a file
   # where our agent can pick them up and transfer them
@@ -12,13 +10,7 @@ module Timber
   class LogYard
     TEMPFILE_NAME = "timber_log_yard".freeze
 
-    include Singleton
-
-    class << self
-      def method_missing(name, *args, &block)
-        instance.send(name, *args, &block)
-      end
-    end
+    include Patterns::DelegatedSingleton
 
     def drop(log_line)
       open(temp_file.path, "a") do |f|

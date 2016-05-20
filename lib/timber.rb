@@ -2,6 +2,7 @@
 require "json" # brings to_json to the Hash class
 
 # Base (must come first, order matters)
+require "timber/patterns"
 require "timber/config"
 require "timber/context"
 require "timber/probe"
