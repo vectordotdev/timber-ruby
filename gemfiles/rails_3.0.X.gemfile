@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 3.0"
+gem "rails", "~> 3.0.20"
 
 group :test do
   gem "appraisal"
