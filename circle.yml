@@ -8,6 +8,7 @@ dependencies:
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.0.X bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.1.X bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.2.X bundle install
+    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-5.0.X bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-edge bundle install
 
 test:
@@ -18,4 +19,5 @@ test:
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.0.X rake spec
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.1.X rake spec
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-4.2.X rake spec
+    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-5.0.X rake spec
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.0/bin:$PATH rvm-exec 2.3.0 appraisal rails-edge rake spec

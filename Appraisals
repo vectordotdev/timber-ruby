@@ -25,6 +25,11 @@ appraise "rails-4.2.X" do
   gem "rails", "~> 4.2.6"
 end
 
+appraise "rails-5.0.X" do
+  gem "minitest"
+  gem "rails", "~> 5.0.0.beta4"
+end
+
 appraise "rails-edge" do
   gem 'rack', github: 'rack/rack', branch: 'master'
   gem 'arel', github: 'rails/arel', branch: 'master'
