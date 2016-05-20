@@ -8,7 +8,7 @@ module Timber
           CurrentContext.add(context) do
             message = args.first
             log_line = LogLine.new(message)
-            LogYard.drop(log_line)
+            LogPile.drop(log_line)
           end
         end
       end

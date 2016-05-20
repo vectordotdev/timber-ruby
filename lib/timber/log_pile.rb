@@ -7,8 +7,8 @@ module Timber
   # on boot.
   # TODO: Avoid opening and closing the file multiple times.
   # Perhaps we can open the file and close on sigterm?
-  class LogYard
-    TEMPFILE_NAME = "timber_log_yard".freeze
+  class LogPile
+    TEMPFILE_NAME = "timber_log_pile".freeze
 
     include Patterns::DelegatedSingleton
 

@@ -15,7 +15,7 @@ describe Timber::LogDeviceInstaller do
       end
 
       it "drops a log in the log yard" do
-        expect(Timber::LogYard).to receive(:drop).with(kind_of(Timber::LogLine)).once
+        expect(Timber::LogPile).to receive(:drop).with(kind_of(Timber::LogLine)).once
         logger << message
       end
     end
