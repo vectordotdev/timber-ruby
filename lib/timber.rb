@@ -1,3 +1,6 @@
+# core classes
+require "json" # brings to_json to the Hash class
+
 # Base (must come first, order matters)
 require "timber/config"
 require "timber/context"

@@ -2,7 +2,7 @@ require "singleton"
 
 module Timber
   class CurrentContext
-    THREAD_NAMESPACE = :_timber_context_stack
+    THREAD_NAMESPACE = :_timber_context_stack.freeze
 
     include Singleton
 
