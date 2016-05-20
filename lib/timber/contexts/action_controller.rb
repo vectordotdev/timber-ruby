@@ -2,6 +2,7 @@ module Timber
   module Contexts
     class ActionController < Context
       VERSION = "1".freeze
+      NAME = "action_controller".freeze
 
       attr_reader :controller,
         :action,

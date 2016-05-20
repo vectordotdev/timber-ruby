@@ -7,9 +7,10 @@ module Timber
     include Singleton
 
     class << self
-      def add(*args, &block)
-        instance.add(*args, &block)
-      end
+      private
+        def method_missing(name, *args, &block)
+          instance.send(name, *args, &block)
+        end
     end
 
     def add(context, &block)
@@ -23,8 +24,16 @@ module Timber
       stack.delete(context)
     end
 
-    def to_json
+    def to_hash
+      {}.tap do |hash|
+        stack.each do |context|
+          hash[context.name] = context.to_hash
+        end
+      end
+    end
 
+    def to_json
+      to_hash.to_json
     end
 
     private

@@ -36,8 +36,8 @@ module Timber
         @linux = !(platform =~ /linux/).nil?
       end
 
-      def name
-        @name ||= if RUBY_PLATFORM =~ /java/
+      def platform
+        @platform ||= if RUBY_PLATFORM =~ /java/
           %x[uname -s].downcase
         else
           RUBY_PLATFORM.downcase

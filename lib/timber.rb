@@ -10,6 +10,7 @@ require "timber/log_device_installer"
 require "timber/log_line"
 require "timber/log_yard"
 require "timber/probes"
+require "timber/system"
 
 # Load frameworks last
 require "timber/frameworks"

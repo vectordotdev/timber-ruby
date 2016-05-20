@@ -10,6 +10,10 @@ module Timber
       @id = generate_secure_random
     end
 
+    def name
+      self.class.const_get(:NAME)
+    end
+
     def to_hash
       {
         :id => id,

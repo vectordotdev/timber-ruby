@@ -1,11 +1,13 @@
 require "timber/probes/action_controller"
 require "timber/probes/heroku"
+require "timber/probes/logger"
 
 module Timber
   module Probes
     PROBES = [
       ActionController,
-      Heroku
+      Heroku,
+      Logger
     ]
 
     # Should be called to activate timber and insert probes
