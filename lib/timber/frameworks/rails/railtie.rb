@@ -7,7 +7,9 @@ module Timber
         initializer 'timber.bootstrap', after: :load_config_initializers do |app|
           logger = app.logger
 
-          # TODO: this overrides any custom loggers set in config
+          # TODO: this overrides any custom loggers set in config. We
+          # want to honor any custom logger they set, but default to the
+          # rails logger if they dont.
           app.config.timber.logger = logger
 
           # Boot the boots!
