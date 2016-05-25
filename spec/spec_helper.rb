@@ -5,17 +5,19 @@ require 'bundler/setup'
 # Testing
 require 'rspec'
 require 'rspec/its'
-require 'webmock/rspec'
+
+# Support files
+Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))].each {|f| require f}
 
 # Must require last in order to be mocked via webmock
 require 'timber'
 
 # Config
-WebMock.disable_net_connect!
-
 logger = Logger.new(STDOUT, Logger::DEBUG)
 Timber::Config.logger = logger
 
 RSpec.configure do |config|
   config.color = true
+  config.order = :random
+  config.warnings = false
 end

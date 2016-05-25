@@ -27,8 +27,6 @@ describe Timber::LogTruck do
         Timber::LogPile.drop(log_line)
       end
 
-      after(:each) { Timber::LogPile.empty }
-
       it "delivers once and empties the log pile" do
         expect(Timber::LogPile.size).to eq(1)
         expect_any_instance_of(described_class).to receive(:deliver!).once
