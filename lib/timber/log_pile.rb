@@ -23,12 +23,18 @@ module Timber
       end
     end
 
+    def size
+      log_line_hashes.size
+    end
+
     private
       def remove(log_line_hashes_copy)
-        # Delete items by object_id since we are working
-        # with the same object. Do not use equality here.
-        log_line_hashes_copy.each do |l1|
-          log_line_hashes.delete_if { |l2| l2.object_id == l1.object_id }
+        SEMAPHORE.synchronize do
+          # Delete items by object_id since we are working
+          # with the same object. Do not use equality here.
+          log_line_hashes_copy.each do |l1|
+            log_line_hashes.delete_if { |l2| l2.object_id == l1.object_id }
+          end
         end
       end
 

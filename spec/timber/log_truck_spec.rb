@@ -9,9 +9,18 @@ describe Timber::LogTruck do
       described_class.start
     end
 
+    it "delivers" do
+      expect(described_class).to receive(:deliver!).once
+      described_class.start do |thread|
+        thread.kill
+      end.join
+    end
+  end
+
+  describe ".deliver!" do
     it "doesn't deliver because there is nothing to deliver" do
       expect_any_instance_of(described_class).to_not receive(:deliver!)
-      described_class.start
+      described_class.deliver!
     end
 
     context "with a log pile" do
@@ -21,10 +30,10 @@ describe Timber::LogTruck do
       end
 
       it "delivers once" do
+        expect(Timber::LogPile.size).to eq(1)
         expect_any_instance_of(described_class).to receive(:deliver!).once
-        described_class.start do |thread|
-          thread.kill
-        end.join
+        described_class.deliver!
+        expect(Timber::LogPile.size).to eq(0)
       end
     end
   end
