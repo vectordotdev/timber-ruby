@@ -2,8 +2,6 @@ require "spec_helper"
 
 describe Timber::LogTruck do
   describe ".start" do
-    let(:pid) { described_class.start! }
-
     it "spawns a new thread" do
       expect(Thread).to receive(:new).once
       described_class.start
@@ -28,6 +26,8 @@ describe Timber::LogTruck do
         log_line = Timber::LogLine.new("this is a log line")
         Timber::LogPile.drop(log_line)
       end
+
+      after(:each) { Timber::LogPile.empty }
 
       it "delivers once and empties the log pile" do
         expect(Timber::LogPile.size).to eq(1)

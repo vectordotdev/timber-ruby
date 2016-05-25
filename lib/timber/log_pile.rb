@@ -17,7 +17,7 @@ module Timber
     def empty(&block)
       if log_line_hashes.any?
         copy = log_line_hashes_copy
-        yield(copy)
+        yield(copy) if block_given?
         remove(copy)
         self
       end
