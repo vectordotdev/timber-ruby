@@ -3,13 +3,9 @@ module Timber
     module Collector
       def write(*args)
         super.tap do
-          # Wrap collection in a process context
-          context = Contexts::Process.new()
-          CurrentContext.add(context) do
-            message = args.first
-            log_line = LogLine.new(message)
-            LogPile.drop(log_line)
-          end
+          message = args.first
+          log_line = LogLine.new(message)
+          LogPile.drop(log_line)
         end
       end
     end

@@ -13,6 +13,7 @@ require "timber/current_context"
 require "timber/log_device_installer"
 require "timber/log_line"
 require "timber/log_pile"
+require "timber/log_truck"
 require "timber/probes"
 require "timber/system"
 
