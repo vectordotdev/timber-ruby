@@ -8,15 +8,17 @@ module Timber
   # will pick them up.
   class LogTruck
     THROTTLE_SECONDS = 3.freeze
+    READ_TIMEOUT = 15.freeze
     TARGET = URI.parse("https://timber-odin.herokuapp.com/")
     HTTPS = Net::HTTP.new(TARGET.host, TARGET.port).tap do |https|
       https.use_ssl = true
-      https.read_timeout = 15 # seconds
+      https.read_timeout = READ_TIMEOUT # seconds
     end
+    CONTENT_TYPE = 'application/json'.freeze
 
     # Error classes
     class NoPayloadError < ArgumentError; end
-    class BadResponseError < StandardError; end
+    class DeliveryError < StandardError; end
 
     class << self
       def start(options = {}, &block)
@@ -29,7 +31,7 @@ module Timber
           loop do
             begin
               deliver!
-            rescue BadResponseError => e
+            rescue DeliveryError => e
               # Note: if this fails it will try again
               # TODO: handle subsequent failures by increasing the backoff rate
               Config.logger.error(e)
@@ -66,14 +68,24 @@ module Timber
     end
 
     def deliver!
-      req = Net::HTTP::Post.new(TARGET)
-      req['Content-Type'] = 'application/json'
-      req.body = log_line_hashes.to_json
-      HTTPS.request(req).tap do |res|
+      HTTPS.request(new_request).tap do |res|
         if res.code.to_s != "200"
-          raise BadResponseError.new("Bad response from Timber API - #{res.code}: #{res.body}")
+          raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
         end
       end
+    rescue Exception => e
+      # Ensure that we are always returning a consistent error.
+      # This ensures we handle it appropriately and don't kill the
+      # thread above.
+      raise DeliveryError.new(e.to_s)
     end
+
+    private
+      def new_request
+        Net::HTTP::Post.new(TARGET).tap do |req|
+          req['Content-Type'] = CONTENT_TYPE
+          req.body = log_line_hashes.to_json
+        end
+      end
   end
 end

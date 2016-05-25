@@ -47,14 +47,56 @@ describe Timber::LogTruck do
   describe "#deliver!" do
     let(:log_line_hashes) { [{:message => "hello"}] }
     let(:log_truck) { described_class.new(log_line_hashes) }
-    subject { log_truck.deliver! }
+    let(:stub) {
+      stub_request(:post, "https://timber-odin.herokuapp.com/").
+        with(:body => "[{\"message\":\"hello\"}]",
+             :headers => {'Content-Type'=>'application/json'})
+    }
 
-    it "makes a POST call to the timber API" do
-      stub = stub_request(:post, "https://timber-odin.herokuapp.com/").
-         with(:body => "[{\"message\":\"hello\"}]",
-              :headers => {'Content-Type'=>'application/json'})
-      subject
+    before(:each) { stub }
+
+    it "should delivery successfully" do
+      log_truck.deliver!
       expect(stub).to have_been_requested
+    end
+
+    context "timeout error" do
+      let(:stub) {
+        stub_request(:post, "https://timber-odin.herokuapp.com/").
+          with(:body => "[{\"message\":\"hello\"}]",
+               :headers => {'Content-Type'=>'application/json'}).
+          to_timeout
+      }
+
+      it "should raise an error" do
+        expect { log_truck.deliver! }.to raise_error(Timber::LogTruck::DeliveryError)
+      end
+    end
+
+    context "random error" do
+      let(:stub) {
+        stub_request(:post, "https://timber-odin.herokuapp.com/").
+          with(:body => "[{\"message\":\"hello\"}]",
+               :headers => {'Content-Type'=>'application/json'}).
+          to_raise(StandardError.new("some error"))
+      }
+
+      it "should raise an error" do
+        expect { log_truck.deliver! }.to raise_error(Timber::LogTruck::DeliveryError)
+      end
+    end
+
+    context "internal server error" do
+      let(:stub) {
+        stub_request(:post, "https://timber-odin.herokuapp.com/").
+          with(:body => "[{\"message\":\"hello\"}]",
+               :headers => {'Content-Type'=>'application/json'}).
+          to_return(status: [500, "Internal Server Error"])
+      }
+
+      it "should raise an error" do
+        expect { log_truck.deliver! }.to raise_error(Timber::LogTruck::DeliveryError)
+      end
     end
   end
 end
