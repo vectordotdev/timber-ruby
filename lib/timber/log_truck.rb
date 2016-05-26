@@ -1,6 +1,7 @@
 require "uri"
 require "net/http"
 require "net/https"
+require "timber/log_truck/delivery"
 
 module Timber
   # Temporary class for alpha / beta purposes.
@@ -9,20 +10,11 @@ module Timber
   # to that daemon.
   class LogTruck
     THROTTLE_SECONDS = 3.freeze
-    READ_TIMEOUT = 15.freeze
-    TARGET = URI.parse("https://timber-odin.herokuapp.com/")
-    HTTPS = Net::HTTP.new(TARGET.host, TARGET.port).tap do |https|
-      https.use_ssl = true
-      https.read_timeout = READ_TIMEOUT # seconds
-    end
-    CONTENT_TYPE = 'application/json'.freeze
 
-    # Error classes
     class NoPayloadError < ArgumentError; end
-    class DeliveryError < StandardError; end
 
     class << self
-      def start(options = {}, &block)
+      def start!(options = {}, &block)
         # Old school options to support ruby 1.9 :(
         options[:throttle_seconds] = THROTTLE_SECONDS if !options.key?(:throttle_seconds)
 
@@ -32,7 +24,7 @@ module Timber
           loop do
             begin
               deliver!
-            rescue DeliveryError => e
+            rescue Delivery::DeliveryError => e
               # Note: if this fails it will try again
               # TODO: handle subsequent failures by increasing the backoff rate
               Config.logger.error(e)
@@ -50,6 +42,7 @@ module Timber
       # Deliver, return LogTruck object, otherwise
       # raise an error.
       def deliver!
+        Config.logger.debug("attempting log pile delivery")
         log_truck = nil
         LogPile.empty do |log_line_hashes|
           # LogPile only empties if no exception is raised
@@ -63,30 +56,13 @@ module Timber
 
     def initialize(log_line_hashes)
       if log_line_hashes.empty?
-        raise NoPayloadError.new("a truck must contain at least one log line")
+        raise NoPayloadError.new("a truck must contain a payload (at least one log line)")
       end
       @log_line_hashes = log_line_hashes
     end
 
     def deliver!
-      HTTPS.request(new_request).tap do |res|
-        if res.code.to_s != "200"
-          raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
-        end
-      end
-    rescue Exception => e
-      # Ensure that we are always returning a consistent error.
-      # This ensures we handle it appropriately and don't kill the
-      # thread above.
-      raise DeliveryError.new(e.to_s)
+      Delivery.new(log_line_hashes).deliver!
     end
-
-    private
-      def new_request
-        Net::HTTP::Post.new(TARGET.request_uri).tap do |req|
-          req['Content-Type'] = CONTENT_TYPE
-          req.body = log_line_hashes.to_json
-        end
-      end
   end
 end

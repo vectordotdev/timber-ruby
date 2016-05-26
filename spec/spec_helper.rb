@@ -14,7 +14,8 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))
 require 'timber'
 
 # Config
-logger = Logger.new(STDOUT, Logger::DEBUG)
+logger = Logger.new(STDOUT)
+logger.level = Logger::ERROR
 Timber::Config.logger = logger
 
 RSpec.configure do |config|
