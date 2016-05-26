@@ -55,6 +55,7 @@ describe Timber::Probes::ActionController do
     after(:each) do
       Object.send(:remove_const, :RailsApp)
       Object.send(:remove_const, :UsersController)
+      Rails.application = nil
     end
 
     let(:controller_class) { UsersController }
