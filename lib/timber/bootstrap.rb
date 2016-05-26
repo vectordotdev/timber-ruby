@@ -18,7 +18,7 @@ module Timber
 
       Probes.insert!
       LogDeviceInstaller.install!(logger)
-      LogTruck.start!
+      LogTruck.start! if Config.log_truck_enabled?
 
       true
     end

@@ -4,6 +4,10 @@ module Timber
   class Config
     include Patterns::DelegatedSingleton
 
+    #
+    # enabled
+    #
+
     def enabled=(value)
       @enabled = value
     end
@@ -17,6 +21,34 @@ module Timber
       enabled == true
     end
 
+    #
+    # application_id
+    #
+
+    def application_id=(value)
+      @application_id = value
+    end
+
+    def application_id
+      @application_id
+    end
+
+    #
+    # application_key
+    #
+
+    def application_key=(value)
+      @application_key = value
+    end
+
+    def application_key
+      @application_key
+    end
+
+    #
+    # logger
+    #
+
     # Set a customer logger that the Timber library will use.
     def logger=(value)
       @logger = value
@@ -29,26 +61,29 @@ module Timber
       @logger ||= Logger.new(STDOUT)
     end
 
-    def application_id=(value)
-      @application_id = value
+    #
+    # log_truck_enabled
+    #
+
+    def log_truck_enabled=(value)
+      @log_truck_enabled = value
     end
 
-    def application_id
-      @application_id
+    def log_truck_enabled
+      return @log_truck_enabled if defined?(@log_truck_enabled)
+      @log_truck_enabled = true
     end
 
-    def application_key=(value)
-      @application_key = value
+    def log_truck_enabled?
+      log_truck_enabled == true
     end
 
-    def application_key
-      @application_key
-    end
+    #
+    # resetting
+    #
 
-    def reset!
-      instance_variables.each do |ivar|
-        remove_instance_variable(ivar)
-      end
+    def reset!(name)
+      remove_instance_variable(:"@#{name}") if instance_variable_defined?(:"@#{name}")
     end
   end
 end

@@ -4,9 +4,11 @@ describe Timber::LogTruck::Delivery do
   describe "#deliver!" do
     context "with an application_id" do
       before(:each) { Timber::Config.application_id = 1234 }
+      after(:each) { Timber::Config.application_id = nil }
 
       context "with an application_id" do
         before(:each) { Timber::Config.application_key = "key" }
+        after(:each) { Timber::Config.application_key = nil }
 
         let(:log_line_hashes) { [{:message => "hello"}] }
         let(:delivery) { described_class.new(log_line_hashes) }
