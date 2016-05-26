@@ -82,7 +82,7 @@ module Timber
 
     private
       def new_request
-        Net::HTTP::Post.new(TARGET).tap do |req|
+        Net::HTTP::Post.new(TARGET.request_uri).tap do |req|
           req['Content-Type'] = CONTENT_TYPE
           req.body = log_line_hashes.to_json
         end
