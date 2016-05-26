@@ -5,7 +5,8 @@ require "net/https"
 module Timber
   # Temporary class for alpha / beta purposes.
   # Log lines will be written to a file where a daemon
-  # will pick them up.
+  # will pick them up. Most of this code will be moved
+  # to that daemon.
   class LogTruck
     THROTTLE_SECONDS = 3.freeze
     READ_TIMEOUT = 15.freeze
