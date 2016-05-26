@@ -11,6 +11,32 @@ describe Timber::Probes::ActionController do
     end
 
     before(:each) do
+      # This is only needed for older versions of rails because
+      # ActionDispatch::TestRequest.new calls Rails.application.env_config
+      # So we make a fake application and boot it so that it's not nil.
+      class RailsApp < Rails::Application
+        if Rails.version =~ /^3\./
+          config.secret_token = '095f674153982a9ce59914b561f4522a'
+        else
+          config.secret_key_base = '095f674153982a9ce59914b561f4522a'
+        end
+
+        if Rails.version =~ /^3/
+          # Workaround for initialization issue with 3.2
+          #config.action_view.stylesheet_expansions = {}
+          #config.action_view.javascript_expansions = {}
+        end
+
+        config.active_support.deprecation = :stderr
+
+        config.logger = Logger.new(STDOUT)
+        config.logger.level = Logger::DEBUG
+
+        config.eager_load = false
+      end
+
+      RailsApp.initialize!
+
       Timber::Probes::ActionController.insert!
 
       class UsersController < ActionController::Base
@@ -27,6 +53,7 @@ describe Timber::Probes::ActionController do
     end
 
     after(:each) do
+      Object.send(:remove_const, :RailsApp)
       Object.send(:remove_const, :UsersController)
     end
 
