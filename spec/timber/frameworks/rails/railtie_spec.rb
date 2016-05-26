@@ -7,6 +7,11 @@ describe Timber::Frameworks::Rails::Railtie do
 
   before(:each) do
     class RailsApp < Rails::Application
+      if Rails.version =~ /^3\./
+        config.secret_token = '095f674153982a9ce59914b561f4522a'
+      else
+        config.secret_key_base = '095f674153982a9ce59914b561f4522a'
+      end
       config.active_support.deprecation = :stderr
       config.logger = Timber::Config.logger
       config.eager_load = false
