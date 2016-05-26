@@ -16,9 +16,9 @@ describe Timber::Probes::ActionController do
       # So we make a fake application and boot it so that it's not nil.
       class RailsApp < Rails::Application
         if Rails.version =~ /^3\./
-          config.secret_token = '095f674153982a9ce59914b561f4522a'
+          config.secret_token = '1e05af2b349457936a41427e63450937'
         else
-          config.secret_key_base = '095f674153982a9ce59914b561f4522a'
+          config.secret_key_base = '1e05af2b349457936a41427e63450937'
         end
         config.active_support.deprecation = :stderr
         config.logger = Timber::Config.logger
@@ -43,6 +43,11 @@ describe Timber::Probes::ActionController do
     end
 
     after(:each) do
+      if Rails.version =~ /^3.0/
+        Rails::Application.class_eval do
+          @@instance = nil
+        end
+      end
       Object.send(:remove_const, :RailsApp)
       Object.send(:remove_const, :UsersController)
       Rails.application = nil

@@ -8,9 +8,9 @@ describe Timber::Frameworks::Rails::Railtie do
   before(:each) do
     class RailsApp < Rails::Application
       if Rails.version =~ /^3\./
-        config.secret_token = '095f674153982a9ce59914b561f4522a'
+        config.secret_token = '1e05af2b349457936a41427e63450937'
       else
-        config.secret_key_base = '095f674153982a9ce59914b561f4522a'
+        config.secret_key_base = '1e05af2b349457936a41427e63450937'
       end
       config.active_support.deprecation = :stderr
       config.logger = Timber::Config.logger

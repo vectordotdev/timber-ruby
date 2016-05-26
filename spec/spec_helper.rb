@@ -15,7 +15,7 @@ require 'timber'
 
 # Config
 logger = Logger.new(STDOUT)
-logger.level = Logger::WARN
+logger.level = Logger::DEBUG
 Timber::Config.tap do |config|
   config.logger = logger
 
