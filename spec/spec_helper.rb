@@ -1,6 +1,7 @@
 # Base
 require 'rubygems'
 require 'bundler/setup'
+require 'rails'
 
 # Testing
 require 'rspec'
