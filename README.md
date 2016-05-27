@@ -1,6 +1,10 @@
 # Timber
 
-This readme is under construction. We're currently testing with select alpha testers. If you're interested in getting early access visit http://timber.io
+**Note: this Readme is underconstruction, we're currently in alpha testing**
+
+Timber is the logging system I wish I had for the past 8 years. It takes logging a step further by add context. Context is key, it makes your logs unbelievably powerful and meaningful.
+
+We're currently testing with select alpha testers. If you're interested in getting early access visit http://timber.io
 
 ## Install
 
