@@ -13,7 +13,7 @@ describe Timber::LogTruck::Delivery do
         let(:log_line_hashes) { [{:message => "hello"}] }
         let(:delivery) { described_class.new(log_line_hashes) }
         let(:stub) {
-          stub_request(:post, "https://timber-odin.herokuapp.com/").
+          stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
             with(:body => "[{\"message\":\"hello\"}]",
                  :headers => {'Content-Type'=>'application/json'})
         }
