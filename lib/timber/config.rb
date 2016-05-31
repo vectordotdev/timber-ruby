@@ -30,7 +30,7 @@ module Timber
     end
 
     def application_key
-      @application_key
+      @application_key ||= ENV['TIMBER_KEY']
     end
 
     #
