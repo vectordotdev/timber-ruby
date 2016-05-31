@@ -37,8 +37,8 @@ describe Timber::LogTruck do
   end
 
   describe "#initialize" do
-    let(:log_line_hashes) { [] }
-    let(:log_truck) { described_class.new(log_line_hashes) }
+    let(:log_line_jsons) { [] }
+    let(:log_truck) { described_class.new(log_line_jsons) }
     subject { log_truck }
 
     it "should raise an exception" do
@@ -46,14 +46,14 @@ describe Timber::LogTruck do
     end
 
     context "with a log pile" do
-      let(:log_line_hashes) { [{:message => "hello"}] }
-      its(:log_line_hashes) { should eq(log_line_hashes) }
+      let(:log_line_jsons) { ["{\"message\": \"hello\"}"] }
+      its(:log_line_jsons) { should eq(log_line_jsons) }
     end
   end
 
   describe "#deliver!" do
-    let(:log_line_hashes) { [{:message => "hello"}] }
-    let(:log_truck) { described_class.new(log_line_hashes) }
+    let(:log_line_jsons) { ["{\"message\": \"hello\"}"] }
+    let(:log_truck) { described_class.new(log_line_jsons) }
 
     it "should delivery successfully" do
       expect_any_instance_of(Timber::LogTruck::Delivery).to receive(:deliver!)

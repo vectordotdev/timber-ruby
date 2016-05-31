@@ -1,5 +1,5 @@
 # core classes
-require "json" # brings to_json to the Hash class
+require "json" # brings to_json to the core classes
 
 # Base (must come first, order matters)
 require "timber/patterns"

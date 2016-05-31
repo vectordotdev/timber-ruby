@@ -17,10 +17,10 @@ module Timber
       class NoApplicationSlugError < StandardError; end
       class NoApplicationKeyError < StandardError; end
 
-      attr_reader :log_line_hashes
+      attr_reader :log_line_jsons
 
-      def initialize(log_line_hashes)
-        @log_line_hashes = log_line_hashes
+      def initialize(log_line_jsons)
+        @log_line_jsons = log_line_jsons
       end
 
       def deliver!
@@ -52,24 +52,34 @@ module Timber
           end
         end
 
-        def body_hash
-          {
-            :agent_log_frame => {
-              :log_lines => log_line_hashes
-            }
-          }
+        def body_json
+          return @body_json if defined?(@body_json)
+          # Build the json as a string since it is more efficient.
+          # We are also working with string upstream for the same reason.
+          @body_json ||= <<-JSON
+            {"agent_log_frame": {"log_lines": #{log_lines_json}}}
+          JSON
+          @body_json.strip!
+          @body_json
         end
 
-        def body_json
-          body_hash.to_json
+        def log_lines_json
+          return @log_lines_json if defined?(@log_lines_json)
+          @log_lines_json = "["
+          last_index = log_line_jsons.size - 1
+          log_line_jsons.each_with_index do |log_line_json, index|
+            @log_lines_json += log_line_json
+            @log_lines_json += ", " if index != last_index
+          end
+          @log_lines_json += "]"
         end
 
         def application_key
-          Config.application_key || raise(NoApplicationKeyError.new)
+          @application_key ||= Config.application_key || raise(NoApplicationKeyError.new)
         end
 
         def authorization_payload
-          "Basic #{application_key}"
+          @authorization_payload ||= "Basic #{application_key}"
         end
     end
   end

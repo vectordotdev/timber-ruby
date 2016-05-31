@@ -2,24 +2,24 @@ module Timber
   class LogLine
     DATE_TIME_FORMAT = "%FT%T.%6N%:z".freeze
 
-    attr_reader :context, :dt, :message
+    attr_reader :context_json, :dt, :message
 
     def initialize(message)
       @dt = Time.now.utc
       @message = message
-      @context = CurrentContext.to_hash
+      @context_json = CurrentContext.json
     end
 
-    def to_hash
-      {
-        :dt => formatted_dt,
-        :message => message,
-        :context => context
-      }
-    end
-
-    def to_json
-      to_hash.to_json
+    def json
+      return @json if defined?(@json)
+      # Loglines are immutable, cache the json.
+      # Also build the json as a string as it's better for performance.
+      # This avoid converting hashes to json strings over and over.
+      @json = <<-JSON
+        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context_json}}
+      JSON
+      @json.strip!
+      @json
     end
 
     private

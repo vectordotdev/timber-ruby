@@ -14,15 +14,8 @@ module Timber
       self.class.const_get(:NAME)
     end
 
-    def to_hash
-      {
-        :id => id,
-        :version => version
-      }
-    end
-
-    def to_json(*args)
-      to_hash.to_json(*args)
+    def json
+      @json ||= hash.to_json
     end
 
     def version
@@ -32,6 +25,16 @@ module Timber
     private
       def generate_secure_random
         SecureRandom.urlsafe_base64(SECURE_RANDOM_LENGTH)
+      end
+
+      # Private so that we force callers to use #json. This is
+      # better for performance. This way we aren't constantly converting
+      # hashes to strings.
+      def hash
+        @hash ||= {
+          :id => id,
+          :version => version
+        }
       end
   end
 end

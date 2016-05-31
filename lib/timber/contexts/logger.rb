@@ -12,8 +12,9 @@ module Timber
         @progname = progname
       end
 
-      def to_hash
-        super.merge(:level => level).tap do |hash|
+      def hash
+        # Contexts are immutable. Cache the hash for performance reasons.
+        @hash ||= super.merge(:level => level).tap do |hash|
           if progname
             hash[:progname] = progname
           end

@@ -24,8 +24,9 @@ module Timber
         @request_id = request.request_id rescue nil
       end
 
-      def to_hash
-        super.merge(
+      def hash
+        # Contexts are immutable. Cache the hash for performance reasons.
+        @hash ||= super.merge(
           :controller => controller,
           :action => action,
           :params => params,

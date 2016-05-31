@@ -11,8 +11,9 @@ module Timber
         @dyno = dyno
       end
 
-      def to_hash
-        super.merge(:dyno => dyno)
+      def hash
+        # Contexts are immutable. Cache the hash for performance reasons.
+        @hash ||= super.merge(:dyno => dyno)
       end
     end
   end

@@ -11,16 +11,9 @@ describe Timber::LogLine do
     its(:message) { should equal(message) }
   end
 
-  describe "#to_hash" do
-    subject { log_line.to_hash }
-    its([:dt]) { should eq(log_line.dt.strftime("%FT%T.%6N%:z")) }
-    its([:message]) { should eq(message) }
-    its([:context]) { should eq({}) }
-  end
-
-  describe "#to_json" do
-    let(:hash) { log_line.to_hash }
-    subject { log_line.to_json }
-    it { should eq(hash.to_json) }
+  describe "#json" do
+    let(:json) { "{\"dt\":#{log_line.dt.strftime("%FT%T.%6N%:z").to_json}, \"message\":#{log_line.message.to_json}, \"context\":#{log_line.context_json}}" }
+    subject { log_line.json }
+    it { should eq(json) }
   end
 end
