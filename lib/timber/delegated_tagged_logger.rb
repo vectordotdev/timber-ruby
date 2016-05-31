@@ -17,6 +17,18 @@ module Timber
       logger.debug(format_message(message))
     end
 
+    def error(message)
+      logger.error(format_message(message))
+    end
+
+    def fatal(message)
+      logger.fatal(format_message(message))
+    end
+
+    def info(message)
+      logger.info(format_message(message))
+    end
+
     def warn(message)
       logger.warn(format_message(message))
     end
@@ -24,6 +36,10 @@ module Timber
     private
       def format_message(message)
         "#{TAG} #{message}"
+      end
+
+      def method_missing(name, *args, &block)
+        logger.send(name, *args, &block)
       end
   end
 end
