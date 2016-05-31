@@ -39,9 +39,7 @@ module Timber
 
       private
         def https
-          @https ||= HTTPS.tap do |https|
-            https.set_debug_output(Config.logger)
-          end
+          @https ||= HTTPS
         end
 
         def new_request
