@@ -14,6 +14,15 @@ module Timber
       Probes.insert!
       LogDeviceInstaller.install!(logger)
       LogTruck.start! if Config.log_truck_enabled?
+      log_message = <<-LOG
+_,-,
+T_  | Timber enabled
+||`-'
+||
+||
+~~
+LOG
+      Config.logger.info(log_message.strip)
 
       true
     end
