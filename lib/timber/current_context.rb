@@ -32,7 +32,7 @@ module Timber
 
     private
       def clear_cache
-        remove_instance_variable(:@json) if instanve_variable_defined?(:@json)
+        remove_instance_variable(:@json) if instance_variable_defined?(:@json)
       end
 
       def size
