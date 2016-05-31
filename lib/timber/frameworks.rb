@@ -2,9 +2,9 @@
 # dependency because we want to support multiple frameworks.
 begin
   require("rails")
-  Config.logger.debug("Rails successfully required")
+  Timber::Config.logger.debug("Rails successfully required")
 rescue LoadError
-  Config.logger.debug("Rails could not be required")
+  Timber::Config.logger.debug("Rails could not be required")
 end
 
 if defined?(Rails)
