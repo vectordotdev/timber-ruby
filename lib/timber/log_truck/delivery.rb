@@ -15,7 +15,7 @@ module Timber
       CONTENT_TYPE = 'application/json'.freeze
 
       class DeliveryError < StandardError; end
-      class NoApplicationIDError < StandardError; end
+      class NoApplicationSlugError < StandardError; end
       class NoApplicationKeyError < StandardError; end
 
       attr_reader :log_line_hashes
@@ -56,16 +56,12 @@ module Timber
           log_line_hashes.to_json
         end
 
-        def application_id
-          Config.application_id || raise(NoApplicationIDError.new)
-        end
-
         def application_key
           Config.application_key || raise(NoApplicationKeyError.new)
         end
 
         def authorization_payload
-          "Basic #{application_id}:#{application_key}"
+          "Basic #{application_key}"
         end
     end
   end

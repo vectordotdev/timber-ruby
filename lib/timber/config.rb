@@ -26,18 +26,6 @@ module Timber
     end
 
     #
-    # application_id
-    #
-
-    def application_id=(value)
-      @application_id = value
-    end
-
-    def application_id
-      @application_id
-    end
-
-    #
     # application_key
     #
 

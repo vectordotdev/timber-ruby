@@ -6,11 +6,6 @@ module Timber
         return false
       end
 
-      if Config.application_id.nil?
-        Config.logger.warn("Skipping Timber bootstrap, Timber::Config.application_id is not set")
-        return false
-      end
-
       if Config.application_key.nil?
         Config.logger.warn("Skipping Timber bootstrap, Timber::Config.application_key is not set")
         return false

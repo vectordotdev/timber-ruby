@@ -29,19 +29,14 @@ describe Timber::Frameworks::Rails::Railtie do
   end
 
   describe "initializer" do
-    context "with an application_id" do
-      before(:each) { Timber::Config.application_id = 123 }
-      after(:each) { Timber::Config.application_id = nil }
+    context "with an application_key" do
+      before(:each) { Timber::Config.application_key = "key" }
+      after(:each) { Timber::Config.application_key = nil }
 
-      context "with an application_key" do
-        before(:each) { Timber::Config.application_key = "key" }
-        after(:each) { Timber::Config.application_key = nil }
-
-        it "bootstraps" do
-          expect(Timber::Bootstrap).to receive(:bootstrap!).once
-          expect(Timber::Config.instance).to receive(:logger=).once
-          boot
-        end
+      it "bootstraps" do
+        expect(Timber::Bootstrap).to receive(:bootstrap!).once
+        expect(Timber::Config.instance).to receive(:logger=).once
+        boot
       end
     end
   end
