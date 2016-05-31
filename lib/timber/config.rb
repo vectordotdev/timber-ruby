@@ -4,13 +4,6 @@ module Timber
   class Config
     include Patterns::DelegatedSingleton
 
-    # Used to prefix Timber logs with [Timber] without any dependencies.
-    module LogFormatter
-      def call(severity, timestamp, progname, msg)
-        super(severity, timestamp, progname, "[Timber] #{msg}")
-      end
-    end
-
     #
     # enabled
     #
@@ -84,9 +77,7 @@ module Timber
 
     private
       def set_logger(logger)
-        logger.formatter ||= ::Logger::Formatter.new
-        logger.formatter.extend LogFormatter
-        @logger = logger
+        @logger = DelegatedTaggedLogger.new(logger)
       end
   end
 end
