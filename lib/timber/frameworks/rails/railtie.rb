@@ -7,7 +7,7 @@ module Timber
 
         initializer 'timber.bootstrap', after: :initialize_logger do |app|
           # Grab the rails logger
-          logger = Rails.logger
+          logger = ::Rails.logger
           if logger.nil?
             Config.logger.warn("Rails.logger is nil, can't install Timber")
           else
