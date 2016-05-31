@@ -5,9 +5,9 @@ module Timber
         # Make timber available via rails config
         config.timber = Config.instance
 
-        initializer 'timber.bootstrap', after: :load_config_initializers do |app|
+        initializer 'timber.bootstrap', after: :initialize_logger do |app|
           # Grab the rails logger
-          logger = app.config.logger
+          logger = Rails.logger
           if logger.nil?
             Config.logger.warn("Rails.logger is nil, can't install Timber")
           else
