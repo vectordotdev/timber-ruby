@@ -52,12 +52,16 @@ module Timber
           end
         end
 
-        def body
+        def body_hash
           {
             :agent_log_frame => {
-              :log_lines => log_line_hashes.to_json
+              :log_lines => log_line_hashes
             }
           }
+        end
+
+        def body
+          body_hash.to_json
         end
 
         def application_key
