@@ -14,10 +14,8 @@ Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))
 require 'timber'
 
 # Config
-logger = Logger.new(STDOUT)
-logger.level = Logger::DEBUG
 Timber::Config.tap do |config|
-  config.logger = logger
+  config.logger = Logger.new(nil)
 
   # Turn this off for testing, no reason to spin up a thread
   # and send network calls unless the test explicitly calls
