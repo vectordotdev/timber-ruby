@@ -5,7 +5,6 @@ require "net/https"
 module Timber
   class LogTruck
     class Delivery
-      SUCCESS_CODE = "202".freeze
       READ_TIMEOUT = 15.freeze # seconds
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
@@ -27,7 +26,8 @@ module Timber
       def deliver!
         Config.logger.debug("Attempting delivery of:\n\n#{body_json}")
         https.request(new_request).tap do |res|
-          if res.code.to_s != SUCCESS_CODE
+          code = res.code.to_i
+          if code >= 200 && code < 300
             raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
           end
         end
