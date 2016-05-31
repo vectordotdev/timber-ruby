@@ -25,6 +25,7 @@ module Timber
       end
 
       def deliver!
+        Config.logger.debug("Attempting delivery of:\n\n#{body_json}")
         https.request(new_request).tap do |res|
           if res.code.to_s != SUCCESS_CODE
             raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
@@ -34,6 +35,7 @@ module Timber
         # Ensure that we are always returning a consistent error.
         # This ensures we handle it appropriately and don't kill the
         # thread above.
+        Config.logger.warn(e)
         raise DeliveryError.new(e.to_s)
       end
 
@@ -46,7 +48,7 @@ module Timber
           Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
             req['Content-Type'] = CONTENT_TYPE
             req['Authorization'] = authorization_payload
-            req.body = body
+            req.body = body_json
           end
         end
 
@@ -58,7 +60,7 @@ module Timber
           }
         end
 
-        def body
+        def body_json
           body_hash.to_json
         end
 

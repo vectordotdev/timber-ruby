@@ -4,6 +4,13 @@ module Timber
   class Config
     include Patterns::DelegatedSingleton
 
+    # Used to prefix Timber logs with [Timber] without any dependencies.
+    module LogFormatter
+      def call(severity, timestamp, progname, msg)
+        super(severity, timestamp, progname, "[Timber] #{msg}")
+      end
+    end
+
     #
     # enabled
     #
@@ -39,14 +46,15 @@ module Timber
 
     # Set a customer logger that the Timber library will use.
     def logger=(value)
-      @logger = value
+      set_logger(value)
     end
 
     # The logger that the Timber library will use.
     # Note: each framework resets the default logger
     # unless you explicitly set it as part of configuration.
     def logger
-      @logger ||= Logger.new(STDOUT)
+      return @logger if defined?(@logger)
+      set_logger(Logger.new(STDOUT))
     end
 
     #
@@ -73,5 +81,12 @@ module Timber
     def reset!(name)
       remove_instance_variable(:"@#{name}") if instance_variable_defined?(:"@#{name}")
     end
+
+    private
+      def set_logger(logger)
+        logger.formatter ||= ::Logger::Formatter.new
+        logger.formatter.extend LogFormatter
+        @logger = logger
+      end
   end
 end
