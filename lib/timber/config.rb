@@ -4,6 +4,10 @@ module Timber
   class Config
     include Patterns::DelegatedSingleton
 
+    def set(&block)
+      yield self
+    end
+
     #
     # enabled
     #
