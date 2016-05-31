@@ -27,7 +27,7 @@ module Timber
         Config.logger.debug("Attempting delivery of:\n\n#{body_json}")
         https.request(new_request).tap do |res|
           code = res.code.to_i
-          if code >= 200 && code < 300
+          if code < 200 || code >= 300
             raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
           end
         end
