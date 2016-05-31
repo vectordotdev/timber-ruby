@@ -23,6 +23,7 @@ T_  | Timber enabled
 ~~
 LOG
       log_message.strip!
+      log_message = " " + log_message
       logger.info(log_message)
 
       true
