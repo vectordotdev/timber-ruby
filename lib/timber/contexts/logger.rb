@@ -7,7 +7,7 @@ module Timber
       attr_reader :level
 
       def initialize(level, progname)
-        super
+        super()
         @level = level
         @progname = progname
       end
