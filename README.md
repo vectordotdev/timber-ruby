@@ -1,6 +1,4 @@
-<div style="text-align:center">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_364/v1464712828/Screenshot_2016-05-30_10.47.32_ppmrxw.png" /></a>
-</div>
+<a href="http://github.com/timberio/timber-ruby" style="display: block; text-align: center;"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_364/v1464712828/Screenshot_2016-05-30_10.47.32_ppmrxw.png" /></a>
 
 
 # Timber
