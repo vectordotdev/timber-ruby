@@ -1,4 +1,6 @@
-->![Timber Ruby Gem](http://res.cloudinary.com/timber/image/upload/c_scale,w_364/v1464712828/Screenshot_2016-05-30_10.47.32_ppmrxw.png)<-
+<p align="center">
+![Timber Ruby Gem](http://res.cloudinary.com/timber/image/upload/c_scale,w_364/v1464712828/Screenshot_2016-05-30_10.47.32_ppmrxw.png)
+</p>
 
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 
