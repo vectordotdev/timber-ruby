@@ -1,4 +1,4 @@
-# Timber - Ruby Gem
+# Timber - Ruby
 
 <p align="center" style="background: #140f2a;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_537/v1464797600/how-it-works_sfgfjp.gif" /></a>

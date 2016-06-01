@@ -13,7 +13,7 @@ describe Timber::Frameworks::Rails::Railtie do
         config.secret_key_base = '1e05af2b349457936a41427e63450937'
       end
       config.active_support.deprecation = :stderr
-      config.logger = Timber::Config.logger
+      config.logger = Logger.new(STDOUT)
       config.eager_load = false
     end
   end
