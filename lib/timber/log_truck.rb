@@ -27,8 +27,8 @@ module Timber
               deliver!
             rescue Delivery::DeliveryError => e
               # Note: if this fails it will try again
-              # TODO: handle subsequent failures by increasing the backoff rate
-              # TODO: kill the thread after a certain number of failed retires :/
+              # TODO: Handle subsequent failures by increasing the backoff rate
+              # TODO: Kill the thread after a certain number of failed retires :/
               # TODO: How do we handle server timeouts? The request could have still been sent.
             end
 

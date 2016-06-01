@@ -12,8 +12,8 @@ module Timber
             Config.logger.warn("Rails.logger is nil, can't install Timber")
           else
             # TODO: this overrides any custom loggers set in config. We
-            # want to honor any custom logger they set, but default to the
-            # rails logger if they dont.
+            #       want to honor any custom logger they set, but default to the
+            #       rails logger if they dont.
             app.config.timber.logger = logger
 
             # Bootitup!

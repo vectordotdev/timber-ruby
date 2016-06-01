@@ -1,4 +1,9 @@
 module Timber
+  # Takes a logger instance and extends the embedded
+  # log device to listen for writes.
+  # TODO: Should we extend the log device or just the logger?
+  #       The main reason I extend the device is to handle puts.
+  #       Unfortunately people use puts for logging in Heroku.
   class LogDeviceInstaller
     module Collector
       def write(*args)

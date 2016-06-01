@@ -2,7 +2,7 @@ require "thread"
 
 module Timber
   # TODO: Have these log lines persist to a file where
-  # a daemon can pick them up.
+  #       a daemon can pick them up.
   class LogPile
     include Patterns::DelegatedSingleton
 
