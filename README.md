@@ -5,6 +5,7 @@
 </p>
 
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
+[![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 
 **Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io**
 
