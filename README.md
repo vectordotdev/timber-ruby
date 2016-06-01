@@ -4,7 +4,7 @@
 <a href="http://github.com/timberio/timber-ruby"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_537/v1464797600/how-it-works_sfgfjp.gif" /></a>
 </p>
 
-[![CircleCI](https://circleci.com/gh/timberio/timber-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
+[![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 
 **Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io**
