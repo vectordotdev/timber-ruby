@@ -4,7 +4,7 @@
 
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 
-**Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io **
+**Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io**
 
 Timber is a different kind of logging system; it's built specifically for application developers. It goes beyond raw log files with full text searching. In Timber, each log line is captured with it's context, providing powerful search capabilities. In effect turning each log line into a data-rich event. Because of this you could do things like:
 
