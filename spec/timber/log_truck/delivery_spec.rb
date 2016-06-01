@@ -2,6 +2,9 @@ require "spec_helper"
 
 describe Timber::LogTruck::Delivery do
   describe "#deliver!" do
+    before(:each) { described_class::RETRY_COUNT = 0 }
+    after(:each) { described_class::RETRY_COUNT = 3 }
+
     context "with an application_key" do
       def new_stub
         stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").

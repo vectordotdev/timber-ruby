@@ -5,16 +5,17 @@ require "net/https"
 module Timber
   class LogTruck
     class Delivery
-      READ_TIMEOUT = 15.freeze # seconds
+      READ_TIMEOUT = 35.freeze # seconds
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
         https.use_ssl = true
         https.read_timeout = READ_TIMEOUT
       end
       CONTENT_TYPE = 'application/json'.freeze
+      RETRY_COUNT = 3.freeze
+      RETRY_BACKOFF = 5.freeze # seconds
 
       class DeliveryError < StandardError; end
-      class NoApplicationSlugError < StandardError; end
       class NoApplicationKeyError < StandardError; end
 
       attr_reader :log_line_jsons
@@ -23,20 +24,25 @@ module Timber
         @log_line_jsons = log_line_jsons
       end
 
-      def deliver!
-        Config.logger.debug("Attempting delivery of:\n\n#{body_json}")
-        https.request(new_request).tap do |res|
-          code = res.code.to_i
-          if code < 200 || code >= 300
-            raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
-          end
-        end
+      def deliver!(retry_count = 0)
+        Config.logger.debug("Attempting delivery of: #{body_json}")
+        request!
       rescue Exception => e
         # Ensure that we are always returning a consistent error.
         # This ensures we handle it appropriately and don't kill the
         # thread above.
-        Config.logger.warn(e)
-        raise DeliveryError.new(e.to_s)
+        Config.logger.warn("Failed delivery: #{e.message}")
+
+        retry_count += 1
+        if retry_count <= RETRY_COUNT
+          backoff = retry_count * RETRY_BACKOFF
+          Config.logger.warn("Backing off #{backoff} seconds")
+          sleep backoff
+          Config.logger.warn("Retrying, attempt #{retry_count}")
+          deliver!(retry_count)
+        else
+          raise DeliveryError.new(e.message)
+        end
       end
 
       private
@@ -44,12 +50,28 @@ module Timber
           @https ||= HTTPS
         end
 
+        def request!
+          https.request(new_request).tap do |res|
+            code = res.code.to_i
+            if code < 200 || code >= 300
+              raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
+            end
+            Config.logger.debug("Success! #{code}: #{res.body}")
+          end
+        end
+
         def new_request
           Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
             req['Content-Type'] = CONTENT_TYPE
             req['Authorization'] = authorization_payload
+            req['Body-Checksum'] = body_checksum # the API checks for duplicate requests
             req.body = body_json
           end
+        end
+
+        # Used by the API to check for duplicate requests.
+        def body_checksum
+          @body_checksum ||= Digest::MD5.hexdigest(body_json)
         end
 
         def body_json

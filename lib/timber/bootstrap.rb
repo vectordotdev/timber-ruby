@@ -20,11 +20,11 @@ module Timber
       LogTruck.start! if Config.log_truck_enabled?
       log_message = <<-LOG
 #{tag}  _,-,
-       T_  | Timber enabled
-       ||`-'
-       ||
-       ||
-       ~~
+#{tag} T_  | Timber enabled
+#{tag} ||`-'
+#{tag} ||
+#{tag} ||
+#{tag} ~~
 LOG
       log_message.strip!
       log_message.split("\n").each do |line|
