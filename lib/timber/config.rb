@@ -47,7 +47,7 @@ module Timber
     # unless you explicitly set it as part of configuration.
     def logger
       return @logger if defined?(@logger)
-      set_logger(Logger.new(STDOUT))
+      set_logger(::Logger.new(STDOUT))
     end
 
     #
@@ -77,7 +77,7 @@ module Timber
 
     private
       def set_logger(logger)
-        @logger = DelegatedTaggedLogger.new(logger)
+        @logger = Logger.new(logger)
       end
   end
 end

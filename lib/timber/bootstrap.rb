@@ -2,12 +2,12 @@ module Timber
   module Bootstrap
     def self.bootstrap!(logger)
       if !Config.enabled?
-        logger.warn("Skipping bootstrap, Timber::Config.enabled is not true")
+        Config.logger.warn("Skipping bootstrap, Timber::Config.enabled is not true")
         return false
       end
 
       if Config.application_key.nil?
-        logger.warn("Skipping bootstrap, Timber::Config.application_key is nil")
+        Config.logger.warn("Skipping bootstrap, Timber::Config.application_key is nil")
         return false
       end
 
@@ -25,7 +25,7 @@ LOG
       log_message.strip!
       log_message = " " + log_message
       log_message.split("\n").each do |line|
-        logger.info(line)
+        Config.logger.info(line)
       end
 
       true
