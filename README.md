@@ -1,5 +1,7 @@
-<p align="center">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_364/v1464712828/Screenshot_2016-05-30_10.47.32_ppmrxw.png" /></a>
+# Timber
+
+<p align="center" style="background: #140f2a;">
+<a href="http://github.com/timberio/timber-ruby"><img src="http://res.cloudinary.com/timber/image/upload/c_scale,w_537/v1464797600/how-it-works_sfgfjp.gif" /></a>
 </p>
 
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby/tree/master.svg?style=svg)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
