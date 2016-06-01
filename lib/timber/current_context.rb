@@ -22,7 +22,7 @@ module Timber
       # Build the json with string, it's better for performance.
       # It leverages the context.json cached string.
       @json = "{"
-      last_index = size = 1
+      last_index = size - 1
       stack.each_with_index do |context, index|
         @json += "#{context.name.to_json}: #{context.json}"
         @json += ", " if index != last_index
