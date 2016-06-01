@@ -4,7 +4,7 @@ module Timber
   # Timber.ignore do
   #   # code
   # end
-  def self.ingnore(&block)
+  def self.ignore(&block)
     Thread.current[:_timber_ignoring] = true
     yield
   ensure
