@@ -1,7 +1,5 @@
 module Timber
   class LogLine
-    DATE_TIME_FORMAT = "%FT%T.%6N%:z".freeze
-
     attr_reader :context_json, :dt, :message
 
     def initialize(message)
@@ -24,7 +22,7 @@ module Timber
 
     private
       def formatted_dt
-        @formatted_dt ||= dt.strftime(DATE_TIME_FORMAT)
+        @formatted_dt ||= dt.iso8601
       end
   end
 end

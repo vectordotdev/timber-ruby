@@ -65,6 +65,7 @@ module Timber
             req['Content-Type'] = CONTENT_TYPE
             req['Authorization'] = authorization_payload
             req['Body-Checksum'] = body_checksum # the API checks for duplicate requests
+            req['Log-Line-Count'] = log_line_jsons.size # additional check to ensure the correct # of log lines were sent
             req.body = body_json
           end
         end

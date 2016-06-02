@@ -12,7 +12,7 @@ describe Timber::LogLine do
   end
 
   describe "#json" do
-    let(:json) { "{\"dt\":#{log_line.dt.strftime("%FT%T.%6N%:z").to_json}, \"message\":#{log_line.message.to_json}, \"context\":#{log_line.context_json}}" }
+    let(:json) { "{\"dt\":#{log_line.dt.iso8601.to_json}, \"message\":#{log_line.message.to_json}, \"context\":#{log_line.context_json}}" }
     subject { log_line.json }
     it { should eq(json) }
   end
