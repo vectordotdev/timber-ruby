@@ -9,9 +9,14 @@ module Timber
       def write(*args)
         super.tap do
           unless Timber.ignoring?
-            message = args.first
-            log_line = LogLine.new(message)
-            LogPile.drop(log_line)
+            begin
+              message = args.first
+              log_line = LogLine.new(message)
+              LogPile.drop(log_line)
+            rescue LogLine::InvalidMessageError => e
+              # Ignore the error and log it.
+              Config.logger.error(e)
+            end
           end
         end
       end

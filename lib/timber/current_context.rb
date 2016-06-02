@@ -7,6 +7,7 @@ module Timber
     include Patterns::DelegatedSingleton
 
     def add(context, &block)
+      # Ensure we clear the cacke when the stack changes
       (stack << context).tap { clear_cache }
       yield if block_given?
     ensure
@@ -14,6 +15,7 @@ module Timber
     end
 
     def remove(context)
+      # Ensure we clear the cacke when the stack changes
       stack.delete(context).tap { clear_cache }
     end
 

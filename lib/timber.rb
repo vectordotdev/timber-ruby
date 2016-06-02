@@ -8,6 +8,7 @@ require "timber/context"
 require "timber/probe"
 
 # Other (sorted alphabetically)
+require "timber/api_settings"
 require "timber/bootstrap"
 require "timber/contexts"
 require "timber/current_context"
