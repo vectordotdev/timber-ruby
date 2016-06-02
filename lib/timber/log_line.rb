@@ -37,9 +37,7 @@ module Timber
 
     private
       def formatted_dt
-        # Note: very important that we keep the iso8601 format. Otherwise the Timber API
-        # will recognized the date as invalid.
-        @formatted_dt ||= dt.iso8601
+        @formatted_dt ||= dt.send(APISettings::DATE_FORMAT)
       end
   end
 end
