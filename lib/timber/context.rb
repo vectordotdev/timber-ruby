@@ -10,8 +10,8 @@ module Timber
       @id = generate_secure_random
     end
 
-    def name
-      self.class.const_get(:NAME)
+    def key_name
+      self.class.const_get(:KEY_NAME)
     end
 
     def json

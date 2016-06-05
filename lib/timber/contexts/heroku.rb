@@ -2,7 +2,7 @@ module Timber
   module Contexts
     class Heroku < Context
       VERSION = "1".freeze
-      NAME = "heroku".freeze
+      KEY_NAME = "heroku".freeze
 
       attr_reader :dyno
 

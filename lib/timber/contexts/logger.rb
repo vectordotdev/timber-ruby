@@ -2,7 +2,7 @@ module Timber
   module Contexts
     class Logger < Context
       VERSION = "1".freeze
-      NAME = "logger".freeze
+      KEY_NAME = "logger".freeze
 
       attr_reader :level
 
