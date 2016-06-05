@@ -26,7 +26,7 @@ module Timber
       @json = "{"
       last_index = size - 1
       stack.each_with_index do |context, index|
-        @json += "#{context.name.to_json}: #{context.json}"
+        @json += "#{context.key_name.to_json}: #{context.json}"
         @json += ", " if index != last_index
       end
       @json += "}"
