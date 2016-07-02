@@ -2,6 +2,15 @@ require "securerandom"
 
 module Timber
   class Context
+    class << self
+      attr_reader :properties
+
+      def property(*names)
+        @properties = names
+        attr_reader *names
+      end
+    end
+
     SECURE_RANDOM_LENGTH = 32.freeze
 
     attr_reader :id
@@ -34,7 +43,15 @@ module Timber
         @hash ||= {
           :id => id,
           :version => version
-        }
+        }.tap do |h|
+          properties.each do |property|
+            h[property] = send(property)
+          end
+        end
+      end
+
+      def properties
+        self.class.properties
       end
   end
 end

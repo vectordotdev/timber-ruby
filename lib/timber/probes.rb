@@ -1,18 +1,15 @@
 require "timber/probes/action_controller"
 require "timber/probes/heroku"
 require "timber/probes/logger"
+require "timber/probes/rack"
 
 module Timber
   module Probes
-    PROBES = [
-      ActionController,
-      Heroku,
-      Logger
-    ]
-
-    # Should be called to activate timber and insert probes
-    def self.insert!
-      PROBES.each(&:insert!)
+    def self.insert!(middleware)
+      ActionController.insert!
+      Heroku.insert!
+      Logger.insert!
+      Rack.insert!(middleware)
     end
   end
 end

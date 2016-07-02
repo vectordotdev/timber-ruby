@@ -5,6 +5,9 @@ require "net/https"
 module Timber
   class LogTruck
     class Delivery
+      class DeliveryError < StandardError; end
+      class NoApplicationKeyError < StandardError; end
+      
       READ_TIMEOUT = 35.freeze # seconds
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
@@ -14,9 +17,6 @@ module Timber
       CONTENT_TYPE = 'application/json'.freeze
       RETRY_COUNT = 3.freeze
       RETRY_BACKOFF = 5.freeze # seconds
-
-      class DeliveryError < StandardError; end
-      class NoApplicationKeyError < StandardError; end
 
       attr_reader :log_line_jsons
 

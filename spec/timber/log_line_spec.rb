@@ -4,6 +4,11 @@ describe Timber::LogLine do
   let(:message) { "this is a message" }
   let(:log_line) { described_class.new(message) }
 
+  around(:each) do |example|
+    heroku = Timber::Contexts::Heroku.new("web.1")
+    Timber::CurrentContext.add(heroku) { example.run }
+  end
+
   describe "#initialize" do
     subject { log_line }
 

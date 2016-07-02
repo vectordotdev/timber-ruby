@@ -3,8 +3,8 @@ module Timber
     class RequirementNotMetError < StandardError; end
 
     class << self
-      def insert!
-        new.insert!
+      def insert!(*args)
+        new(*args).insert!
         Config.logger.debug("Inserted probe #{name}")
         true
       # RequirementUnsatisfiedError is the only silent failure we support
@@ -15,7 +15,7 @@ module Timber
     end
 
     def insert!
-      raise NotImplementedError.new("You must implement #insert!")
+      raise NotImplementedError.new("You must implement #insert")
     end
   end
 end

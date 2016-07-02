@@ -43,7 +43,6 @@ module Timber
       # Deliver, return LogTruck object, otherwise
       # raise an error.
       def deliver!
-        Config.logger.debug("Checking log pile for delivery")
         log_truck = nil
         LogPile.empty do |log_line_jsons|
           # LogPile only empties if no exception is raised

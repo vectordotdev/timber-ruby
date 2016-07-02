@@ -8,14 +8,14 @@ describe Timber::LogTruck::Delivery do
     context "with an application_key" do
       def new_stub
         stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"message\": \"hello\"}]}}",
+          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"message\": \"hello\", \"context\": {\"version\": \"1.0\"}}]}}",
                :headers => {'Content-Type'=>'application/json'})
       end
 
       before(:each) { Timber::Config.application_key = "key" }
       after(:each) { Timber::Config.application_key = nil }
 
-      let(:log_line_jsons) { ["{\"message\": \"hello\"}"] }
+      let(:log_line_jsons) { ["{\"message\": \"hello\", \"context\": {\"version\": \"1.0\"}}"] }
       let(:delivery) { described_class.new(log_line_jsons) }
       let(:stub) { new_stub }
 

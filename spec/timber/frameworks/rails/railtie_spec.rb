@@ -35,7 +35,6 @@ describe Timber::Frameworks::Rails::Railtie do
 
       it "bootstraps" do
         expect(Timber::Bootstrap).to receive(:bootstrap!).once
-        expect(Timber::Config.instance).to receive(:logger=).once
         boot
       end
     end
