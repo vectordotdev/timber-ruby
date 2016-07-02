@@ -4,7 +4,6 @@ gemspec
 group :test do
   gem 'appraisal'
   gem 'json',     '~> 1'
-  gem 'rack'
   gem 'rake'
   gem 'rspec',    '~> 3.4'
   gem 'rspec-its'
