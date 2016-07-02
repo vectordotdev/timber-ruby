@@ -1,5 +1,5 @@
 module Timber
-  # These settings are controlled by the Timber API. Violating these will result
+  # These settings are established by the Timber API. Changing these will result
   # in unsuccessful log delivery.
   module APISettings
     DATE_FORMAT = :iso8601.freeze # must be a method name

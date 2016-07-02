@@ -38,7 +38,7 @@ module Timber
 
       def enabled?
         if !Config.enabled?
-          logger.warn("#{log_tag} Skipping bootstrap, Timber::Config.enabled is not true")
+          Config.logger.warn("Skipping bootstrap, Timber::Config.enabled is not true")
           false
         else
           true
@@ -49,35 +49,20 @@ module Timber
         if Config.application_key.nil?
           # TODO: Add a better explanation on how to get a key. Perhaps a rake task
           #       That provides a quick setup.
-          logger.warn("#{log_tag} Skipping bootstrap, Timber::Config.application_key is nil")
+          Config.logger.warn("Skipping bootstrap, Timber::Config.application_key is nil")
           false
         else
           true
         end
       end
 
-      def log_tag
-        Logger::TAG
-      end
-
-      def log_message
-        return @log_message if defined?(@log_message)
-        @log_message = <<-LOG
-#{log_tag}  _,-,
-#{log_tag} T_  | Timber enabled
-#{log_tag} ||`-'
-#{log_tag} ||
-#{log_tag} ||
-#{log_tag} ~~
-LOG
-        @log_message.strip!
-        @log_message
-      end
-
       def log_started
-        log_message.split("\n").each do |line|
-          logger.info(line)
-        end
+        Config.logger.info(" _,-,")
+        Config.logger.info("T_  | Timber enabled")
+        Config.logger.info("||`-'")
+        Config.logger.info("||")
+        Config.logger.info("||")
+        Config.logger.info("~~")
       end
   end
 end
