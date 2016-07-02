@@ -2,7 +2,7 @@ module Timber
   module Contexts
     class Rack < HTTPRequest
       def initialize(env)
-        request = Rack::Request.new(env)
+        request = ::Rack::Request.new(env)
         @content_type = request.content_type
         @host = request.host
         @ip = request.ip

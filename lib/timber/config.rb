@@ -76,6 +76,8 @@ module Timber
     end
 
     private
+      # Wraps the loggers in a delegated class that ignores and
+      # wraps the messages. See Logger.
       def set_logger(logger)
         @logger = Logger.new(logger)
       end
