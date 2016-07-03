@@ -28,7 +28,7 @@ module Timber
 
       private
         def initialized_improperly?
-          !host.nil?
+          host.nil?
         end
     end
   end
