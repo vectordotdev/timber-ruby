@@ -2,14 +2,14 @@ require "securerandom"
 
 module Timber
   class Context
+    include ClassLevelInheritableAttributes
+    inheritable_attributes :properties
+    self.properties ||= []
+
     class << self
       def property(*properties)
         @properties = properties
         attr_reader *properties
-      end
-
-      def properties
-        @properties ||= []
       end
     end
 
