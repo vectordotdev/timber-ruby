@@ -3,11 +3,13 @@ require "securerandom"
 module Timber
   class Context
     class << self
-      attr_reader :properties
+      def property(*properties)
+        @properties = properties
+        attr_reader *properties
+      end
 
-      def property(*names)
-        @properties = names
-        attr_reader *names
+      def properties
+        @properties ||= []
       end
     end
 
