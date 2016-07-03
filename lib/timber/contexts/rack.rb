@@ -14,7 +14,7 @@ module Timber
         @request_id = env["X-Request-ID"]
         @scheme = request.scheme
         @user_agent = request.user_agent
-        super
+        super()
       end
     end
   end
