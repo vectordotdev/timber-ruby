@@ -18,7 +18,7 @@ module Timber
 
       def initialize
         # Check to make sure the class was initialized properly
-        if initialized_properly?
+        if initialized_improperly?
           raise NotImplementedError.new(
             "This is an abstract class and initialization must be implement via subclasses"
           )
@@ -27,7 +27,7 @@ module Timber
       end
 
       private
-        def initialized_properly?
+        def initialized_improperly?
           !host.nil?
         end
     end
