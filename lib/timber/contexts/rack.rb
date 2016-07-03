@@ -11,7 +11,7 @@ module Timber
         @path = request.path
         @port = request.port
         @referrer = request.referrer
-        @request_id = request.request_id
+        @request_id = env["X-Request-ID"]
         @scheme = request.scheme
         @user_agent = request.user_agent
         super
