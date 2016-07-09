@@ -3,7 +3,7 @@ module Timber
     class Rack < HTTPRequest
       def initialize(env)
         request = ::Rack::Request.new(env)
-        Config.logger env.inspect
+        Config.logger.info env.inspect
         @content_type = request.content_type
         @host = request.host
         @ip = request.ip
