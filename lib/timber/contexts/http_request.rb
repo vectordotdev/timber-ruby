@@ -4,7 +4,8 @@ module Timber
       VERSION = "1".freeze
       KEY_NAME = "http_request".freeze
 
-      property :content_type,
+      property :connect_time,
+        :content_type,
         :host,
         :ip,
         :method,
