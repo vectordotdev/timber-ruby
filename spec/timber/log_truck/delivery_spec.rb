@@ -2,8 +2,8 @@ require "spec_helper"
 
 describe Timber::LogTruck::Delivery do
   describe "#deliver!" do
-    before(:each) { described_class::RETRY_COUNT = 0 }
-    after(:each) { described_class::RETRY_COUNT = 3 }
+    before(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 0 } }
+    after(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 3 } }
 
     context "with an application_key" do
       def new_stub

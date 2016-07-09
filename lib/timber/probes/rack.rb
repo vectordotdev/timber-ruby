@@ -14,18 +14,20 @@ module Timber
         end
       end
 
-      attr_reader :middleware
+      attr_reader :middleware, :insert_before
 
-      def initialize(middleware)
+      def initialize(middleware, insert_before)
         if middleware.nil?
           raise RequirementNotMetError.new("The middleware class attribute is not set. " +
             "We need a middleware to insert the probe.")
         end
         @middleware = middleware
+        @insert_before = insert_before
       end
 
       def insert!
-        middleware.use Middleware
+        # Ensures
+        middleware.insert_before insert_before, Middleware
       end
     end
   end

@@ -37,7 +37,7 @@ module Timber
 
     private
       def formatted_dt
-        @formatted_dt ||= dt.send(APISettings::DATE_FORMAT)
+        @formatted_dt ||= dt.send(APISettings::DATE_FORMAT, APISettings::DATE_FORMAT_PRECISION)
       end
   end
 end

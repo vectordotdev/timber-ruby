@@ -7,6 +7,8 @@ gem "rails", "~> 4.2.6"
 
 group :test do
   gem "appraisal"
+  gem "json", "~> 1"
+  gem "pry"
   gem "rake"
   gem "rspec", "~> 3.4"
   gem "rspec-its"

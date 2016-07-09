@@ -23,7 +23,7 @@ module Timber
             "This is an abstract class and initialization must be implement via subclasses"
           )
         end
-        super
+        super()
       end
 
       private

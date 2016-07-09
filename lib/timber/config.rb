@@ -68,6 +68,18 @@ module Timber
     end
 
     #
+    # monitor
+    #
+
+    def monitor=(*loggers)
+      @monitor = loggers
+    end
+
+    def monitor
+      @monitor ||= []
+    end
+
+    #
     # resetting
     #
 

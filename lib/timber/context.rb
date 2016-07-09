@@ -17,7 +17,7 @@ module Timber
 
     attr_reader :id
 
-    def initialize
+    def initialize(*values)
       @id = generate_secure_random
     end
 

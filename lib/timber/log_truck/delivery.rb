@@ -7,16 +7,17 @@ module Timber
     class Delivery
       class DeliveryError < StandardError; end
       class NoApplicationKeyError < StandardError; end
-      
-      READ_TIMEOUT = 35.freeze # seconds
+
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
+      CONTENT_TYPE = 'application/json'.freeze
+      READ_TIMEOUT = 35.freeze # seconds
+      RETRY_BACKOFF = 5.freeze # seconds
+      RETRY_COUNT = 3.freeze
+
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
         https.use_ssl = true
         https.read_timeout = READ_TIMEOUT
       end
-      CONTENT_TYPE = 'application/json'.freeze
-      RETRY_COUNT = 3.freeze
-      RETRY_BACKOFF = 5.freeze # seconds
 
       attr_reader :log_line_jsons
 
@@ -35,9 +36,9 @@ module Timber
 
         retry_count += 1
         if retry_count <= RETRY_COUNT
-          backoff = retry_count * RETRY_BACKOFF
+          backoff_seconds = retry_count * RETRY_BACKOFF
           Config.logger.warn("Backing off #{backoff} seconds")
-          sleep backoff
+          sleep backoff_seconds
           Config.logger.warn("Retrying, attempt #{retry_count}")
           deliver!(retry_count)
         else

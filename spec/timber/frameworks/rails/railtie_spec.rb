@@ -20,8 +20,10 @@ describe Timber::Frameworks::Rails::Railtie do
 
   after(:each) do
     if Rails.version =~ /^3.0/
-      Rails::Application.class_eval do
-        @@instance = nil
+      ActiveSupport.silence_warnings do
+        Rails::Application.class_eval do
+          @@instance = nil
+        end
       end
     end
     Object.send(:remove_const, :RailsApp)

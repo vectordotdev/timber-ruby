@@ -3,6 +3,7 @@ module Timber
     class Rack < HTTPRequest
       def initialize(env)
         request = ::Rack::Request.new(env)
+        Config.logger env.inspect
         @content_type = request.content_type
         @host = request.host
         @ip = request.ip
@@ -11,7 +12,7 @@ module Timber
         @path = request.path
         @port = request.port
         @referrer = request.referrer
-        @request_id = env["X-Request-ID"]
+        @request_id = env["HTTP_X_REQUEST_ID"] || env["action_dispatch.request_id"]
         @scheme = request.scheme
         @user_agent = request.user_agent
         super()

@@ -7,10 +7,10 @@ module Timber
       property :action, :controller, :format
 
       def initialize(controller)
-        super()
         @action = controller.action_name
         @controller = controller.class.name
         @format = controller.request.format.try(:ref)
+        super()
       end
     end
   end

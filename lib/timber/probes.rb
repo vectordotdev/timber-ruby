@@ -5,11 +5,11 @@ require "timber/probes/rack"
 
 module Timber
   module Probes
-    def self.insert!(middleware)
+    def self.insert!(middleware, insert_before)
       ActionController.insert!
       Heroku.insert!
       Logger.insert!
-      Rack.insert!(middleware)
+      Rack.insert!(middleware, insert_before)
     end
   end
 end

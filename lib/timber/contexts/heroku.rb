@@ -7,8 +7,8 @@ module Timber
       property :dyno
 
       def initialize(dyno)
-        super()
         @dyno = dyno
+        super()
       end
     end
   end

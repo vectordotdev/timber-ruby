@@ -1,20 +1,21 @@
 module Timber
-  # Intermediary class between frameworks and Timber. Normalizes
-  # the setup process.
+  # Intermediary class between frameworks and Timber. Defines
+  # requirements and normalized the setup process.
   class Bootstrap
-    def self.bootstrap!(logger, middleware)
-      new(logger, middleware).bootstrap!
+    def self.bootstrap!(*args)
+      new(*args).bootstrap!
     end
 
-    attr_reader :logger, :middleware
+    attr_reader :logger, :middleware, :insert_before
 
-    def initialize(logger, middleware)
+    def initialize(logger, middleware, insert_before)
       if logger.nil?
         raise ArgumentError.new("logger is required")
       end
 
       @logger = logger
       @middleware = middleware
+      @insert_before = insert_before
     end
 
     def bootstrap!
@@ -24,7 +25,7 @@ module Timber
       #       want to honor any custom logger they set, but default to the
       #       rails logger if they dont.
       Config.logger = logger
-      Probes.insert!(middleware)
+      Probes.insert!(middleware, insert_before)
       LogDeviceInstaller.install!(logger)
       LogTruck.start! if Config.log_truck_enabled?
       log_started

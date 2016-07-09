@@ -7,9 +7,9 @@ module Timber
       property :level, :progname
 
       def initialize(level, progname)
-        super()
         @level = level
         @progname = progname
+        super()
       end
     end
   end
