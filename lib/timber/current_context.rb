@@ -6,10 +6,6 @@ module Timber
 
     include Patterns::DelegatedSingleton
 
-    def initialize(stack = nil)
-      @stack = stack
-    end
-
     def add(context, &block)
       # Ensure we clear the cacke when the stack changes
       (stack << context).tap { clear_cache }
@@ -19,10 +15,11 @@ module Timber
       remove(context) if block_given?
     end
 
-    # Used to efficiently clone the context.
-    def clone
+    # Used to efficiently clone the context. Cached to avoid
+    # uneccessary cloning if the context has not changed
+    def frozen_clone
       # Cloning the array is efficient and will point to the same objects.
-      self.class.new(stack.clone)
+      @frozen_clone ||= Timber::FrozenContext.new(stack.clone)
     end
 
     def remove(context)
@@ -30,22 +27,9 @@ module Timber
       stack.delete(context).tap { clear_cache }
     end
 
-    def json
-      return @json if defined?(@json)
-      # Build the json with string, it's better for performance.
-      # It leverages the context.json cached string.
-      @json = "{"
-      last_index = size - 1
-      stack.each_with_index do |context, index|
-        @json += "#{context.key_name.to_json}: #{context.json}"
-        @json += ", " if index != last_index
-      end
-      @json += "}"
-    end
-
     private
       def clear_cache
-        remove_instance_variable(:@json) if instance_variable_defined?(:@json)
+        remove_instance_variable(:@frozen_clone) if instance_variable_defined?(:@frozen_clone)
       end
 
       def size
@@ -53,7 +37,7 @@ module Timber
       end
 
       def stack
-        @stack || (Thread.current[THREAD_NAMESPACE] ||= [])
+        (Thread.current[THREAD_NAMESPACE] ||= [])
       end
   end
 end

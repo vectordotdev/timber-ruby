@@ -24,7 +24,7 @@ module Timber
       # This code needs to be efficient, hence the use of clone.
       # We do not want to convery to json here as it's done inline.
       # Leave that to the background task.
-      @context = CurrentContext.clone
+      @context = CurrentContext.frozen_clone
     end
 
     def json
