@@ -2,19 +2,20 @@ require "spec_helper"
 
 describe Timber::LogTruck::Delivery do
   describe "#deliver!" do
+    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
     before(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 0 } }
     after(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 3 } }
 
     context "with an application_key" do
       def new_stub
         stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T17:00:00.000000Z\", \"message\":\"hello\", \"context\":{}}]}}",
+          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"#{time.iso8601(6)}\", \"message\":\"hello\", \"context\":{}}]}}",
                :headers => {'Content-Type'=>'application/json'})
       end
 
       around(:each) do |example|
-        new_time = Time.local(2016, 9, 1, 12, 0, 0)
-        Timecop.freeze(new_time) { example.run }
+        Timecop.freeze(time) { example.run }
       end
       before(:each) { Timber::Config.application_key = "key" }
       after(:each) { Timber::Config.application_key = nil }
