@@ -32,10 +32,6 @@ module Timber
         remove_instance_variable(:@frozen_clone) if instance_variable_defined?(:@frozen_clone)
       end
 
-      def size
-        stack.size
-      end
-
       def stack
         (Thread.current[THREAD_NAMESPACE] ||= [])
       end
