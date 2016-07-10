@@ -44,25 +44,25 @@ module Timber
       # raise an error.
       def deliver!
         log_truck = nil
-        LogPile.empty do |log_line_jsons|
+        LogPile.empty do |log_lines|
           # LogPile only empties if no exception is raised
-          log_truck = new(log_line_jsons).tap(&:deliver!)
+          log_truck = new(log_lines).tap(&:deliver!)
         end
         log_truck
       end
     end
 
-    attr_reader :log_line_jsons
+    attr_reader :log_lines
 
-    def initialize(log_line_jsons)
-      if log_line_jsons.empty?
+    def initialize(log_lines)
+      if log_lines.empty?
         raise NoPayloadError.new("a truck must contain a payload (at least one log line)")
       end
-      @log_line_jsons = log_line_jsons
+      @log_lines = log_lines
     end
 
     def deliver!
-      Delivery.new(log_line_jsons).deliver!
+      Delivery.new(log_lines).deliver!
     end
   end
 end

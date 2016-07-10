@@ -9,5 +9,6 @@ group :test do
   gem 'rspec',    '~> 3.4'
   gem 'rspec-its'
   gem 'simplecov', require: false
+  gem 'timecop'
   gem 'webmock',  '~> 2.0.3'
 end

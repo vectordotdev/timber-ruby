@@ -3,6 +3,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'rails'
 require 'pry'
+require 'timecop'
 
 # Testing
 require 'rspec'

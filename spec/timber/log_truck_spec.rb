@@ -37,23 +37,23 @@ describe Timber::LogTruck do
   end
 
   describe "#initialize" do
-    let(:log_line_jsons) { [] }
-    let(:log_truck) { described_class.new(log_line_jsons) }
+    let(:log_lines) { [] }
+    let(:log_truck) { described_class.new(log_lines) }
     subject { log_truck }
 
     it "should raise an exception" do
       expect { subject }.to raise_exception(Timber::LogTruck::NoPayloadError)
     end
 
-    context "with a log pile" do
-      let(:log_line_jsons) { ["{\"message\": \"hello\"}"] }
-      its(:log_line_jsons) { should eq(log_line_jsons) }
+    context "with log lines" do
+      let(:log_lines) { [Timber::LogLine.new("hello")] }
+      its(:log_lines) { should eq(log_lines) }
     end
   end
 
   describe "#deliver!" do
-    let(:log_line_jsons) { ["{\"message\": \"hello\"}"] }
-    let(:log_truck) { described_class.new(log_line_jsons) }
+    let(:log_lines) { [Timber::LogLine.new("hello")] }
+    let(:log_truck) { described_class.new(log_lines) }
 
     it "should delivery successfully" do
       expect_any_instance_of(Timber::LogTruck::Delivery).to receive(:deliver!)

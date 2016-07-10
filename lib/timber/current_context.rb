@@ -6,12 +6,23 @@ module Timber
 
     include Patterns::DelegatedSingleton
 
+    def initialize(stack = nil)
+      @stack = stack
+    end
+
     def add(context, &block)
       # Ensure we clear the cacke when the stack changes
       (stack << context).tap { clear_cache }
       yield if block_given?
+      #
     ensure
       remove(context) if block_given?
+    end
+
+    # Used to efficiently clone the context.
+    def clone
+      # Cloning the array is efficient and will point to the same objects.
+      self.class.new(stack.clone)
     end
 
     def remove(context)
@@ -42,8 +53,7 @@ module Timber
       end
 
       def stack
-        # Ensure the stack is thread-safe
-        Thread.current[THREAD_NAMESPACE] ||= []
+        @stack || (Thread.current[THREAD_NAMESPACE] ||= [])
       end
   end
 end

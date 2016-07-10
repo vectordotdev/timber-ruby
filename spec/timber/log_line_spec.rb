@@ -31,7 +31,7 @@ describe Timber::LogLine do
   describe "#json" do
     # Note: very important that we keep the iso8601 format. Otherwise the Timber API
     # will recognized the date as invalid.
-    let(:json) { "{\"dt\":#{log_line.dt.iso8601(6).to_json}, \"message\":#{log_line.message.to_json}, \"context\":#{log_line.context_json}}" }
+    let(:json) { "{\"dt\":#{log_line.dt.iso8601(6).to_json}, \"message\":#{log_line.message.to_json}, \"context\":#{log_line.context.json}}" }
     subject { log_line.json }
     it { should eq(json) }
   end

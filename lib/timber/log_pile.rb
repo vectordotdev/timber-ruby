@@ -10,13 +10,13 @@ module Timber
 
     def drop(log_line)
       SEMAPHORE.synchronize do
-        log_line_jsons << log_line.json
+        log_lines << log_line
       end
     end
 
     def empty(&block)
-      if log_line_jsons.any?
-        copy = log_line_jsons_copy
+      if log_lines.any?
+        copy = log_lines_copy
         yield(copy) if block_given?
         remove(copy)
         self
@@ -24,30 +24,30 @@ module Timber
     end
 
     def size
-      log_line_jsons.size
+      log_lines.size
     end
 
     private
-      def remove(log_line_jsons_copy)
+      def remove(log_lines_copy)
         SEMAPHORE.synchronize do
           # Delete items by object_id since we are working
           # with the same object. Do not use equality here.
-          log_line_jsons_copy.each do |l1|
-            log_line_jsons.delete_if { |l2| l2.object_id == l1.object_id }
+          log_lines_copy.each do |l1|
+            log_lines.delete_if { |l2| l2.object_id == l1.object_id }
           end
         end
       end
 
-      def log_line_jsons_copy
+      def log_lines_copy
         SEMAPHORE.synchronize do
           # Copy the array structure so we aren't dealing with
           # a changing array, but do not copy the items.
-          Array.new(log_line_jsons)
+          log_lines.clone
         end
       end
 
-      def log_line_jsons
-        @log_line_jsons ||= []
+      def log_lines
+        @log_lines ||= []
       end
   end
 end

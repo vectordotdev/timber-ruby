@@ -1,9 +1,10 @@
 module Timber
   class LogLine
     # Raised when there is an issue with the message being passed.
+    # Note: this is handled in LogDeviceInstaller
     class InvalidMessageError < ArgumentError; end
 
-    attr_reader :context_json, :dt, :message
+    attr_reader :context, :dt, :message
 
     def initialize(message)
       # Not all objects will be a string.
@@ -20,7 +21,10 @@ module Timber
 
       @dt = Time.now.utc
       @message = message
-      @context_json = CurrentContext.json
+      # This code needs to be efficient, hence the use of clone.
+      # We do not want to convery to json here as it's done inline.
+      # Leave that to the background task.
+      @context = CurrentContext.clone
     end
 
     def json
@@ -29,7 +33,7 @@ module Timber
       # Also build the json as a string as it's better for performance.
       # This avoid converting hashes to json strings over and over.
       @json = <<-JSON
-        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context_json}}
+        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context.json}}
       JSON
       @json.strip!
       @json

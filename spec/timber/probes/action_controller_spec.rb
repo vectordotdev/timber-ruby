@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Timber::Probes::ActionController do
-  context Timber::Probes::ActionController::InstanceMethods do
+  describe Timber::Probes::ActionController::InstanceMethods do
     def dispatch(action)
       if controller.method(:dispatch).arity == 3
         controller.dispatch(action, request, ActionDispatch::TestResponse.new)
@@ -11,21 +11,7 @@ describe Timber::Probes::ActionController do
     end
 
     before(:each) do
-      # This is only needed for older versions of rails because
-      # ActionDispatch::TestRequest.new calls Rails.application.env_config
-      # So we make a fake application and boot it so that it's not nil.
-      class RailsApp < Rails::Application
-        if Rails.version =~ /^3\./
-          config.secret_token = '1e05af2b349457936a41427e63450937'
-        else
-          config.secret_key_base = '1e05af2b349457936a41427e63450937'
-        end
-        config.active_support.deprecation = :stderr
-        config.logger = Logger.new(STDOUT)
-        config.eager_load = false
-      end
-
-      RailsApp.initialize!
+      initialize_rails_app
 
       Timber::Probes::ActionController.insert!
 
@@ -43,16 +29,8 @@ describe Timber::Probes::ActionController do
     end
 
     after(:each) do
-      if Rails.version =~ /^3.0/
-        ActiveSupport.silence_warnings do
-          Rails::Application.class_eval do
-            @@instance = nil
-          end
-        end
-      end
-      Object.send(:remove_const, :RailsApp)
+      reset_rails_app
       Object.send(:remove_const, :UsersController)
-      Rails.application = nil
     end
 
     let(:controller_class) { UsersController }

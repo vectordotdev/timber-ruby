@@ -19,10 +19,10 @@ module Timber
         https.read_timeout = READ_TIMEOUT
       end
 
-      attr_reader :log_line_jsons
+      attr_reader :log_lines
 
-      def initialize(log_line_jsons)
-        @log_line_jsons = log_line_jsons
+      def initialize(log_lines)
+        @log_lines = log_lines
       end
 
       def deliver!(retry_count = 0)
@@ -66,7 +66,7 @@ module Timber
             req['Content-Type'] = CONTENT_TYPE
             req['Authorization'] = authorization_payload
             req['Body-Checksum'] = body_checksum # the API checks for duplicate requests
-            req['Log-Line-Count'] = log_line_jsons.size # additional check to ensure the correct # of log lines were sent
+            req['Log-Line-Count'] = log_lines.size # additional check to ensure the correct # of log lines were sent
             req.body = body_json
           end
         end
@@ -90,9 +90,9 @@ module Timber
         def log_lines_json
           return @log_lines_json if defined?(@log_lines_json)
           @log_lines_json = "["
-          last_index = log_line_jsons.size - 1
-          log_line_jsons.each_with_index do |log_line_json, index|
-            @log_lines_json += log_line_json
+          last_index = log_lines.size - 1
+          log_lines.each_with_index do |log_line, index|
+            @log_lines_json += log_line.json
             @log_lines_json += ", " if index != last_index
           end
           @log_lines_json += "]"

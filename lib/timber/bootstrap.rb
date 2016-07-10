@@ -9,10 +9,6 @@ module Timber
     attr_reader :logger, :middleware, :insert_before
 
     def initialize(logger, middleware, insert_before)
-      if logger.nil?
-        raise ArgumentError.new("logger is required")
-      end
-
       @logger = logger
       @middleware = middleware
       @insert_before = insert_before
