@@ -1,4 +1,5 @@
-require "timber/contexts/action_controller"
+require "timber/contexts/action_controller_request"
+require "timber/contexts/active_record_query"
 require "timber/contexts/heroku"
 require "timber/contexts/http_request"
 require "timber/contexts/logger"

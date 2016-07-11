@@ -15,14 +15,12 @@ module Timber
 
     SECURE_RANDOM_LENGTH = 32.freeze
 
-    attr_reader :id
-
-    def initialize(*values)
-      @id = generate_secure_random
+    def id
+      @id ||= generate_secure_random
     end
 
     def key_name
-      self.class.const_get(:KEY_NAME)
+      @key_name ||= self.class.const_get(:KEY_NAME)
     end
 
     def json
@@ -30,7 +28,7 @@ module Timber
     end
 
     def version
-      self.class.const_get(:VERSION)
+      @version ||= self.class.const_get(:VERSION)
     end
 
     private

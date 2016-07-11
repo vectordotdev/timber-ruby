@@ -1,8 +1,8 @@
 module Timber
   module Contexts
-    class ActionController < Context
+    class ActionControllerRequest < Context
       VERSION = "1".freeze
-      KEY_NAME = "ruby_action_controller".freeze
+      KEY_NAME = "ruby_action_controller_request".freeze
 
       property :action, :controller, :format
 

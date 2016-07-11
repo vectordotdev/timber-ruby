@@ -7,6 +7,9 @@ module Timber
     attr_reader :context, :dt, :message
 
     def initialize(message)
+      # Capture the time as soon as possible
+      @dt = Time.now.utc
+
       # Not all objects will be a string.
       # TODO: handle converting objects to json or kv?
       message = message.to_s
@@ -19,7 +22,6 @@ module Timber
         raise InvalidMessageError.new("the log message must not exceed #{APISettings::MESSAGE_BYTE_SIZE_MAX} bytes")
       end
 
-      @dt = Time.now.utc
       @message = message
       # This code needs to be efficient, hence the use of clone.
       # We do not want to convery to json here as it's done inline.

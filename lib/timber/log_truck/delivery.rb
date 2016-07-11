@@ -13,6 +13,7 @@ module Timber
       READ_TIMEOUT = 35.freeze # seconds
       RETRY_BACKOFF = 5.freeze # seconds
       RETRY_COUNT = 3.freeze
+      USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
 
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
         https.use_ssl = true
@@ -63,10 +64,11 @@ module Timber
 
         def new_request
           Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
-            req['Content-Type'] = CONTENT_TYPE
             req['Authorization'] = authorization_payload
             req['Body-Checksum'] = body_checksum # the API checks for duplicate requests
+            req['Content-Type'] = CONTENT_TYPE
             req['Log-Line-Count'] = log_lines.size # additional check to ensure the correct # of log lines were sent
+            req['User-Agent'] = USER_AGENT
             req.body = body_json
           end
         end

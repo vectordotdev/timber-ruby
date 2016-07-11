@@ -3,7 +3,7 @@ module Timber
     class ActionController < Probe
       module InstanceMethods
         def process_action(*args)
-          context = Contexts::ActionController.new(self)
+          context = Contexts::ActionControllerRequest.new(self)
           CurrentContext.add(context) do
             super
           end
