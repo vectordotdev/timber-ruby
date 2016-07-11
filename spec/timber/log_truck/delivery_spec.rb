@@ -4,8 +4,8 @@ describe Timber::LogTruck::Delivery do
   describe "#deliver!" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
-    before(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 0 } }
-    after(:each) { ActiveSupport.silence_warnings { described_class::RETRY_COUNT = 3 } }
+    before(:each) { ActiveSupport.send(:silence_warnings) { described_class::RETRY_COUNT = 0 } }
+    after(:each) { ActiveSupport.send(:silence_warnings) { described_class::RETRY_COUNT = 3 } }
 
     context "with an application_key" do
       def new_stub
