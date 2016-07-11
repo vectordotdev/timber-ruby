@@ -11,6 +11,7 @@ describe Timber::Probes::ActionController do
     end
 
     before(:each) do
+      setup_rails_app
       initialize_rails_app
 
       Timber::Probes::ActionController.insert!

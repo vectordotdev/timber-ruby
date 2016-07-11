@@ -1,9 +1,7 @@
 require 'spec_helper'
 
 describe Timber::Frameworks::Rails::Railtie do
-  after(:each) do
-    reset_rails_app
-  end
+  around(:each) { |example| with_rails_app(example) }
 
   describe "initializer" do
     context "with an application_key" do
