@@ -39,7 +39,7 @@ describe Timber::Probes::ActionController do
     let(:request) do
       ActionDispatch::TestRequest.new('REQUEST_METHOD' => 'GET', 'rack.input' => '')
     end
-    let(:context_class) { Timber::Contexts::ActionController }
+    let(:context_class) { Timber::Contexts::ActionControllerRequest }
 
     describe "#process_action" do
       it "should set the context" do
