@@ -24,7 +24,7 @@ module Timber
     end
 
     def json
-      @json ||= hash.to_json
+      @json ||= to_hash.to_json
     end
 
     def version
@@ -39,7 +39,7 @@ module Timber
       # Private so that we force callers to use #json. This is
       # better for performance. This way we aren't constantly converting
       # hashes to strings.
-      def hash
+      def to_hash
         @hash ||= {
           :id => id,
           :version => version

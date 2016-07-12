@@ -6,13 +6,13 @@ module Timber
 
     include Patterns::DelegatedSingleton
 
-    def add(context, &block)
-      # Ensure we clear the cacke when the stack changes
-      (stack << context).tap { clear_cache }
+    def add(*contexts, &block)
+      stack.push(*(contexts.compact))
+      clear_cache # Ensure we clear the cacke when the stack changes
       yield if block_given?
-      #
+      self
     ensure
-      remove(context) if block_given?
+      remove(*contexts) if block_given?
     end
 
     # Used to efficiently clone the context. Cached to avoid
@@ -22,9 +22,13 @@ module Timber
       @frozen_clone ||= Timber::FrozenContext.new(stack.clone)
     end
 
-    def remove(context)
+    def remove(*contexts)
       # Ensure we clear the cacke when the stack changes
-      stack.delete(context).tap { clear_cache }
+      contexts.each do |context|
+        stack.delete(context)
+      end
+      clear_cache
+      self
     end
 
     private
@@ -33,7 +37,7 @@ module Timber
       end
 
       def stack
-        (Thread.current[THREAD_NAMESPACE] ||= [])
+        Thread.current[THREAD_NAMESPACE] ||= []
       end
   end
 end

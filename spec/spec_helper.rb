@@ -18,7 +18,7 @@ require 'timber'
 
 # Config
 Timber::Config.tap do |config|
-  config.logger = Logger.new(STDOUT)
+  config.logger = Logger.new(nil)
 
   # Turn this off for testing, no reason to spin up a thread
   # and send network calls unless the test explicitly calls

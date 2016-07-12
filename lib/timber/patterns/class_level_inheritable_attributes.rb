@@ -17,8 +17,9 @@ module Timber
       end
 
       def inherited(subclass)
+        subclass.instance_variable_set(:"@inheritable_attributes_array", @inheritable_attributes_array)
         (@inheritable_attributes_array || []).each do |inheritable_attribute|
-          instance_var = "@#{inheritable_attribute}"
+          instance_var = :"@#{inheritable_attribute}"
           subclass.instance_variable_set(instance_var, instance_variable_get(instance_var))
         end
       end
