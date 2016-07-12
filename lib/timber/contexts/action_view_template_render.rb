@@ -2,14 +2,16 @@ module Timber
   module Contexts
     class ActionViewTemplateRender < Context
       VERSION = "1".freeze
-      KEY_NAME = "ruby-action_view-template_render".freeze
+      KEY_NAME = "ruby_action_view_template_render".freeze
 
-      property :identifier, :layout, :time_ms
+      property :cache_hits, :count, :identifier, :layout, :time_ms
 
       def initialize(event)
         payload = event.payload
-        @connection_id = payload[:connection_id]
-        @transaction_id = payload[:transaction_id]
+        @cache_hits = payload[:cache_hits]
+        @count = payload[:count]
+        @identifier = payload[:identifier]
+        @layout = payload[:layout]
         @time_ms = event.duration
         super()
       end

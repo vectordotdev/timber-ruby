@@ -26,6 +26,7 @@ module Timber
             begin
               deliver!
             rescue Delivery::DeliveryError => e
+              Config.logger.exception(e)
               # Note: if this fails it will try again
               # TODO: Kill the thread after a certain number of failed retires :/
               # TODO: How do we handle server timeouts? The request could have still been processed.
@@ -38,6 +39,10 @@ module Timber
             sleep options[:throttle_seconds]
           end
         end
+
+      rescue Exception => e
+        # failsafe to ensure we don't kill the app
+        Config.logger.exception(e)
       end
 
       # Deliver, return LogTruck object, otherwise

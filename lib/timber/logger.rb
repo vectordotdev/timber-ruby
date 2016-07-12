@@ -21,6 +21,17 @@ module Timber
       Timber.ignore { logger.error(format_message(message)) }
     end
 
+    # This is a convenience method for logging exceptions. Also
+    # allows us to build a notify hook for any exception that happen in
+    # the Timber library. This is extremely important for quality control.
+    def exception(exception)
+      if exception.is_a?(Exception)
+        raise ArgumentError.new("#exception must take an Exception type")
+      end
+      # TODO: notify us that this exception happened
+      error(exception)
+    end
+
     def fatal(message)
       Timber.ignore { logger.fatal(format_message(message)) }
     end

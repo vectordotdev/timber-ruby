@@ -21,8 +21,7 @@ module Timber
             end
           rescue Exception => e
             # Fail safe to ensure the Timber gem never fails the app.
-            Config.logger.error("Fatal Timber error")
-            Config.logger.error(e)
+            Config.logger.exception(e)
           end
         end
       end

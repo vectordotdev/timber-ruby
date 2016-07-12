@@ -4,6 +4,9 @@ module Timber
   class Bootstrap
     def self.bootstrap!(*args)
       new(*args).bootstrap!
+    rescue Exception => e
+      # Failsafe to ensure Timber never takes down the app
+      Config.logger.exception(e)
     end
 
     attr_reader :logger, :middleware, :insert_before
