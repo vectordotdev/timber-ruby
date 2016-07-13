@@ -9,6 +9,7 @@ module Timber
       private
         def set_properties(object)
           super(object, properties)
+          @id = @id.to_s unless @id.nil? # ensure id is a string, we can't assume everyone uses integers
         end
     end
   end
