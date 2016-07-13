@@ -6,6 +6,7 @@ require "timber/patterns"
 require "timber/config"
 require "timber/context"
 require "timber/probe"
+require "timber/version"
 
 # Other (sorted alphabetically)
 require "timber/api_settings"
@@ -22,7 +23,6 @@ require "timber/log_truck"
 require "timber/logger"
 require "timber/probes"
 require "timber/system"
-require "timber/version"
 
 # Load frameworks last
 require "timber/frameworks"
