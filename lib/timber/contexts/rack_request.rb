@@ -1,6 +1,6 @@
 module Timber
   module Contexts
-    class Rack < HTTPRequest
+    class RackRequest < HTTPRequest
       def initialize(env)
         request = ::Rack::Request.new(env)
         @connect_time_ms = env["HTTP_CONNECT_TIME"]

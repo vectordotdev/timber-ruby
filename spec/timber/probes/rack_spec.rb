@@ -11,7 +11,7 @@ describe Timber::Probes::Rack do
           }
         end
       end
-      let(:context_class) { Timber::Contexts::Rack }
+      let(:context_class) { Timber::Contexts::RackRequest }
 
       def request
         Rack::MockRequest.new(app).get('/')
