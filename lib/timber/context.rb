@@ -15,8 +15,12 @@ module Timber
 
     SECURE_RANDOM_LENGTH = 32.freeze
 
-    def id
-      @id ||= generate_secure_random
+    def _id
+      @_id ||= generate_secure_random
+    end
+
+    def _version
+      @_version ||= self.class.const_get(:VERSION)
     end
 
     def key_name
@@ -25,10 +29,6 @@ module Timber
 
     def to_json
       @json ||= to_hash.to_json
-    end
-
-    def version
-      @version ||= self.class.const_get(:VERSION)
     end
 
     private
@@ -41,8 +41,8 @@ module Timber
       # hashes to strings.
       def to_hash
         @hash ||= {
-          :id => id,
-          :version => version
+          :_id => _id,
+          :_version => _version
         }.tap do |h|
           properties.each do |property|
             h[property] = send(property)
