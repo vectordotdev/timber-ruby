@@ -17,20 +17,17 @@ module Timber
       def start!(options = {}, &block)
         # Old school options to support ruby 1.9 :(
         options[:throttle_seconds] = THROTTLE_SECONDS if !options.key?(:throttle_seconds)
-        Config.logger.debug("Started log truck with a #{options[:throttle_seconds]} second throttle")
+        Config.logger.debug("Starting log truck with a #{options[:throttle_seconds]} second throttle")
 
         # A new thread for looping and monitoring. We need to
         # use a thread so that we can share memory.
         Thread.new do
+          # ensure we always deliver upon exiting
+          at_exit { deliver }
+
+          # Keep looking for logs
           loop do
-            begin
-              deliver!
-            rescue Delivery::DeliveryError => e
-              Config.logger.exception(e)
-              # Note: if this fails it will try again
-              # TODO: Kill the thread after a certain number of failed retires :/
-              # TODO: How do we handle server timeouts? The request could have still been processed.
-            end
+            deliver
 
             # Yield a block, primarily for testing purposes
             yield(Thread.current) if block_given?
@@ -43,6 +40,15 @@ module Timber
       rescue Exception => e
         # failsafe to ensure we don't kill the app
         Config.logger.exception(e)
+      end
+
+      def deliver
+        deliver!
+      rescue Delivery::DeliveryError => e
+        Config.logger.exception(e)
+        # Note: if this fails it will try again
+        # TODO: Kill the thread after a certain number of failed retires :/
+        # TODO: How do we handle server timeouts? The request could have still been processed.
       end
 
       # Deliver, return LogTruck object, otherwise
