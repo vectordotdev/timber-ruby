@@ -26,6 +26,11 @@ describe Timber::LogLine do
       subject { lambda { log_line } }
       it { should raise_error(Timber::LogLine::InvalidMessageError, "the log message must not exceed #{limit} bytes") }
     end
+
+    it "increments the log line indexes" do
+      expect(Timber::CurrentLineIndexes).to receive(:increment).once
+      subject
+    end
   end
 
   describe "#to_json" do
