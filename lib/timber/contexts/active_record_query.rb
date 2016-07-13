@@ -21,9 +21,10 @@ module Timber
         def formatted_binds(binds)
           return nil if binds.nil?
 
-          formatted_binds = {}
-          binds.each do |(attribute,value)|
-            formatted_binds[attribute.name] = value
+          {}.tap do |hash|
+            binds.each do |(attribute,value)|
+              hash[attribute.name] = {:type => attribute.type, :value => value}
+            end
           end
         end
     end
