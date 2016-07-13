@@ -40,7 +40,7 @@ module Timber
         retry_count += 1
         if retry_count <= RETRY_COUNT
           backoff_seconds = retry_count * RETRY_BACKOFF
-          Config.logger.warn("Backing off #{backoff} seconds")
+          Config.logger.warn("Backing off #{backoff_seconds} seconds")
           sleep backoff_seconds
           Config.logger.warn("Retrying, attempt #{retry_count}")
           deliver!(retry_count)
