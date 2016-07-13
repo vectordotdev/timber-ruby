@@ -14,8 +14,11 @@ module Timber
         stack << context
       end
       clear_cache # Ensure we clear the cacke when the stack changes
-      yield if block_given?
-      self
+      if block_given?
+        yield
+      else
+        self
+      end
     ensure
       remove(*contexts) if block_given?
     end
