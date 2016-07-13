@@ -43,6 +43,7 @@ module Timber
           Config.logger.warn("Retrying, attempt #{retry_count}")
           deliver!(retry_count)
         else
+          Config.logger.warn("Retry attempts exceeded, dropping logs")
           raise DeliveryError.new(e.message)
         end
       end
