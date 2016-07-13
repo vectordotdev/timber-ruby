@@ -21,10 +21,9 @@ module Timber
         def formatted_binds(binds)
           return nil if binds.nil?
 
-          {}.tap do |hash|
-            binds.each do |(attribute,value)|
-              hash[attribute.name] = {:type => attribute.type, :value => value}
-            end
+          # Bind order is relevant
+          binds.collect do |(attribute,value)|
+            {:name => attribute.name, :type => attribute.type, :value => value}
           end
         end
     end

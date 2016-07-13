@@ -29,6 +29,8 @@ module Timber
       def deliver!(retry_count = 0)
         Config.logger.debug("Attempting delivery of: #{body_json}")
         request!
+      # Catch them all because of all the unknown exceptions that can happen during
+      # a http request.
       rescue Exception => e
         # Ensure that we are always returning a consistent error.
         # This ensures we handle it appropriately and don't kill the
