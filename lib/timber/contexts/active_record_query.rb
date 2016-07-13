@@ -9,10 +9,10 @@ module Timber
       def initialize(event)
         payload = event.payload
         @binds = formatted_binds(payload[:binds])
-        @connection_id = payload[:connection_id]
+        @connection_id = payload[:connection_id].try(:to_s)
         @sql = payload[:sql].try(:strip)
         @statement_name = payload[:statement_name]
-        @transaction_id = event.transaction_id
+        @transaction_id = event.transaction_id.try(:to_s)
         @time_ms = event.duration
         super()
       end
