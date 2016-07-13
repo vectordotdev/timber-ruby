@@ -28,6 +28,9 @@ module Timber
       # We do not want to convert to json here as it's done inline.
       # Leaving that to the background task.
       @context_snapshot = CurrentContext.snapshot
+
+      # Bump the indexes
+      CurrentLineIndexes.increment
     end
 
     def to_json
