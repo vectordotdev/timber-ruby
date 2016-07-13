@@ -4,9 +4,6 @@ require 'bundler/setup'
 require 'rails'
 require 'active_record'
 require 'pry'
-require 'timecop'
-
-# Testing
 require 'rspec'
 require 'rspec/its'
 

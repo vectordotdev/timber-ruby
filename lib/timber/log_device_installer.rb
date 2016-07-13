@@ -8,20 +8,8 @@ module Timber
     module Collector
       def write(*args)
         super.tap do
-          begin
-            unless Timber.ignoring?
-              begin
-                message = args.first
-                log_line = LogLine.new(message)
-                LogPile.drop(log_line)
-              rescue LogLine::InvalidMessageError => e
-                # Ignore the error and log it.
-                Config.logger.error(e)
-              end
-            end
-          rescue Exception => e
-            # Fail safe to ensure the Timber gem never fails the app.
-            Config.logger.exception(e)
+          unless Timber.ignoring?
+            LogPile.drop_message(args.first)
           end
         end
       end

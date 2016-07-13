@@ -23,7 +23,7 @@ module Timber
       @key_name ||= self.class.const_get(:KEY_NAME)
     end
 
-    def json
+    def to_json
       @json ||= to_hash.to_json
     end
 

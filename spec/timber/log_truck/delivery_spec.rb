@@ -10,7 +10,7 @@ describe Timber::LogTruck::Delivery do
     context "with an application_key" do
       def new_stub
         stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"#{time.iso8601(6)}\", \"message\":\"hello\", \"context\":{}}]}}",
+          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\", \"message\":\"hello\", \"context\":{\"indexes\": {}, \"hierarchy\": [], \"data\": {}}}]}}",
                :headers => {'Content-Type'=>'application/json'})
       end
 

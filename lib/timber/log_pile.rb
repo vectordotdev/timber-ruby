@@ -1,12 +1,25 @@
 require "thread"
 
 module Timber
+  # This is a thread safe queue for transporting logs to the Timber API.
   # TODO: Have these log lines persist to a file where
   #       a daemon can pick them up.
   class LogPile
     include Patterns::DelegatedSingleton
 
     SEMAPHORE = Mutex.new
+
+    def drop_message(message)
+      log_line = LogLine.new(message)
+      drop(log_line)
+    rescue LogLine::InvalidMessageError => e
+      # Ignore the error and log it.
+      Config.logger.error(e)
+    rescue Exception => e
+      raise e.inspect
+      # Fail safe to ensure the Timber gem never fails the app.
+      Config.logger.exception(e)
+    end
 
     def drop(log_line)
       SEMAPHORE.synchronize do

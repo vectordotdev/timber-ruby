@@ -4,7 +4,7 @@ module Timber
     # Note: this is handled in LogDeviceInstaller
     class InvalidMessageError < ArgumentError; end
 
-    attr_reader :context, :dt, :message
+    attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
       # Capture the time as soon as possible
@@ -23,19 +23,20 @@ module Timber
       end
 
       @message = message
-      # This code needs to be efficient, hence the use of clone.
-      # We do not want to convery to json here as it's done inline.
-      # Leave that to the background task.
-      @context = CurrentContext.frozen_clone
+
+      # This code needs to be efficient, hence the use of snapshotting.
+      # We do not want to convert to json here as it's done inline.
+      # Leaving that to the background task.
+      @context_snapshot = CurrentContext.snapshot
     end
 
-    def json
+    def to_json
       return @json if defined?(@json)
       # Loglines are immutable, cache the json.
       # Also build the json as a string as it's better for performance.
       # This avoid converting hashes to json strings over and over.
       @json = <<-JSON
-        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context.json}}
+        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context_snapshot.to_json}}
       JSON
       @json.strip!
       @json

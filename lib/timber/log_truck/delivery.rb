@@ -94,7 +94,7 @@ module Timber
           @log_lines_json = "["
           last_index = log_lines.size - 1
           log_lines.each_with_index do |log_line, index|
-            @log_lines_json += log_line.json
+            @log_lines_json += log_line.to_json
             @log_lines_json += ", " if index != last_index
           end
           @log_lines_json += "]"
