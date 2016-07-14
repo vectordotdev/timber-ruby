@@ -33,7 +33,10 @@ module Timber
         :_version => _version
       }.tap do |h|
         properties.each do |property|
-          h[property] = send(property)
+          # Don't include nil values, normalizes the results
+          if !(value = send(property)).nil?
+            h[property] = value
+          end
         end
       end
     end
