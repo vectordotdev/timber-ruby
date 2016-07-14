@@ -3,13 +3,6 @@ require "date"
 module Timber
   module Contexts
     class DynamicValues
-      BOOLEAN_TYPE = "integer".freeze
-      DATE_TYPE    = "date".freeze
-      FLOAT_TYPE   = "float".freeze
-      INTEGER_TYPE = "integer".freeze
-      NIL_TYPE     = "nil".freeze
-      STRING_TYPE  = "string".freeze
-
       BOOLEAN_TYPES = [FalseClass, TrueClass].freeze
       DATE_TYPES    = [Date, Time].freeze
       FLOAT_TYPES   = [BigDecimal, Float].freeze
@@ -47,17 +40,17 @@ module Timber
         def type(value)
           # Using is_a? because it checks the entire hierarchy, unlike a case statement.
           if BOOLEAN_TYPES.any? { |type| value.is_a?(type) }
-            BOOLEAN_TYPE
+            APISettings::BOOLEAN_TYPE
           elsif DATE_TYPES.any? { |type| value.is_a?(type) }
-            DATE_TYPE
+            APISettings::DATE_TYPE
           elsif FLOAT_TYPES.any? { |type| value.is_a?(type) }
-            FLOAT_TYPE
+            APISettings::FLOAT_TYPE
           elsif INTEGER_TYPES.any? { |type| value.is_a?(type) }
-            INTEGER_TYPE
+            APISettings::INTEGER_TYPE
           elsif NIL_TYPES.any? { |type| value.is_a?(type) }
-            NIL_TYPE
+            APISettings::NIL_TYPE
           else
-            STRING_TYPE
+            APISettings::STRING_TYPE
           end
         end
     end
