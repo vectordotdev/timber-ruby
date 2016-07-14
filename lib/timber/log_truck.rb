@@ -42,22 +42,21 @@ module Timber
         Config.logger.exception(e)
       end
 
-      def deliver
-        deliver!
-      rescue Delivery::DeliveryError => e
-        Config.logger.exception(e)
-        # Note: if this fails it will try again
-        # TODO: Kill the thread after a certain number of failed retires :/
-        # TODO: How do we handle server timeouts? The request could have still been processed.
-      end
-
       # Deliver, return LogTruck object, otherwise
       # raise an error.
-      def deliver!
+      def deliver
         log_truck = nil
         LogPile.empty do |log_lines|
           # LogPile only empties if no exception is raised
-          log_truck = new(log_lines).tap(&:deliver!)
+          begin
+            # This will retry a number of times. If we can't get it during the retries
+            # we drop the logs. Note, this strategy will improve when we write to a file
+            # and use an actual agent.
+            log_truck = new(log_lines).tap(&:deliver!)
+          rescue Delivery::DeliveryError => e
+            Config.logger.exception(e)
+            # TODO: How do we handle server timeouts? The request could have still been processed.
+          end
         end
         log_truck
       end

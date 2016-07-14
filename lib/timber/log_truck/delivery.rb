@@ -10,14 +10,14 @@ module Timber
 
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
       CONTENT_TYPE = 'application/json'.freeze
-      READ_TIMEOUT = 35.freeze # seconds
-      RETRY_BACKOFF = 5.freeze # seconds
-      RETRY_COUNT = 3.freeze
+      READ_TIMEOUT_SECONDS = 35.freeze
+      RETRY_BACKOFF_SECONDS = 1.freeze
+      RETRY_COUNT = 4.freeze
       USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
 
       HTTPS = Net::HTTP.new(API_URI.host, API_URI.port).tap do |https|
         https.use_ssl = true
-        https.read_timeout = READ_TIMEOUT
+        https.read_timeout = READ_TIMEOUT_SECONDS
       end
 
       attr_reader :log_lines
@@ -39,7 +39,7 @@ module Timber
 
         retry_count += 1
         if retry_count <= RETRY_COUNT
-          backoff_seconds = retry_count * RETRY_BACKOFF
+          backoff_seconds = RETRY_BACKOFF_SECONDS ** retry_count
           Config.logger.warn("Backing off #{backoff_seconds} seconds")
           sleep backoff_seconds
           Config.logger.warn("Retrying, attempt #{retry_count}")

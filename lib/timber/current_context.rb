@@ -9,7 +9,8 @@ module Timber
     include Patterns::DelegatedSingleton
 
     def add(*contexts, &block)
-      contexts.compact.each do |context|
+      contexts = contexts.compact
+      contexts.each do |context|
         CurrentLineIndexes.context_added(context)
         stack << context
       end
