@@ -4,7 +4,6 @@ module Timber
   class CurrentContext
     THREAD_NAMESPACE = :_timber_current_context.freeze
     STACK_KEYNAME = :stack.freeze
-    SNAPSHOT_KEYNAME = :snapshot.freeze
 
     include Patterns::DelegatedSingleton
 

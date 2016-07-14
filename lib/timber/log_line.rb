@@ -33,16 +33,17 @@ module Timber
       CurrentLineIndexes.increment
     end
 
-    def to_json
-      return @json if defined?(@json)
-      # Loglines are immutable, cache the json.
-      # Also build the json as a string as it's better for performance.
-      # This avoid converting hashes to json strings over and over.
-      @json = <<-JSON
-        {"dt":#{formatted_dt.to_json}, "message":#{message.to_json}, "context":#{context_snapshot.to_json}}
-      JSON
-      @json.strip!
-      @json
+    def as_json(*args)
+      @as_json ||= {
+        :dt      => formatted_dt,
+        :message => message,
+        :context => context_snapshot
+      }
+    end
+
+    def to_json(*args)
+      # Note: this is run in the background thread, hence the hash creation.
+      @to_json ||= as_json.to_json(*args)
     end
 
     private

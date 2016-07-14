@@ -10,21 +10,17 @@ module Timber
       @indexes = CurrentLineIndexes.indexes.clone.freeze
     end
 
-    def to_json
-      return @json if defined?(@json)
-      # Build the json with string, it's better for performance.
-      # It leverages the context.to_json cached string. It also
-      # avoids creating an uneccessary hash.
-      @json = "{"
-      @json += "\"indexes\": #{indexes_hash.to_json}, "
-      @json += "\"hierarchy\": #{hierarchy.to_json}, "
-      @json += "\"data\": {"
-      last_index = size - 1
-      stack.each_with_index do |context, index|
-        @json += "#{context.key_name.to_json}: #{context.to_json}"
-        @json += ", " if index != last_index
-      end
-      @json += "}}"
+    def as_json(*args)
+      @as_json ||= {
+        indexes: indexes_hash,
+        hierarchy: hierarchy,
+        data: stack_hash
+      }
+    end
+
+    def to_json(*args)
+      # Note: this is run in the background thread, hence the hash creation.
+      @json ||= as_json.to_json(*args)
     end
 
     def hierarchy
@@ -42,6 +38,10 @@ module Timber
             hash[context.key_name] = index
           end
         end
+      end
+
+      def stack_hash
+        @stack_hash ||= stack.group_by(&:key_name)
       end
   end
 end

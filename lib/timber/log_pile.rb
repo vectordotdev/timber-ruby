@@ -16,7 +16,6 @@ module Timber
       # Ignore the error and log it.
       Config.logger.error(e)
     rescue Exception => e
-      raise e.inspect
       # Fail safe to ensure the Timber gem never fails the app.
       Config.logger.exception(e)
     end

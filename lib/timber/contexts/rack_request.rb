@@ -8,7 +8,7 @@ module Timber
         @host = request.host
         @ip = request.ip
         @method = request.request_method
-        @params = request.params
+        @params = DynamicValues.new(request.params)
         @path = request.path
         @port = request.port
         @referrer = request.referrer

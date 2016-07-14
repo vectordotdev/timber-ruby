@@ -1,4 +1,5 @@
 # Base, order is relevant
+require "timber/contexts/dynamic_values"
 require "timber/contexts/http_request"
 require "timber/contexts/object_based"
 require "timber/contexts/organization"

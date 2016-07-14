@@ -8,7 +8,7 @@ describe Timber::Probes::ActiveRecord do
       class User < ::ActiveRecord::Base
       end
 
-      User.first # get initialization out of the way (has additional queries)
+      #User.first # get initialization out of the way (has additional queries)
     end
 
     after(:each) do

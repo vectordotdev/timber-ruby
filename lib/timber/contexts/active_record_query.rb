@@ -8,7 +8,8 @@ module Timber
 
       def initialize(event)
         payload = event.payload
-        @binds = formatted_binds(payload[:binds])
+        raise payload[:binds].inspect
+        @binds = DynamicValues.new(payload[:binds])
         @connection_id = payload[:connection_id].try(:to_s)
         @sql = payload[:sql].try(:strip)
         @statement_name = payload[:statement_name]
@@ -16,16 +17,6 @@ module Timber
         @time_ms = event.duration
         super()
       end
-
-      private
-        def formatted_binds(binds)
-          return nil if binds.nil?
-
-          # Bind order is relevant
-          binds.collect do |(attribute,value)|
-            {:name => attribute.name, :type => attribute.type, :value => value.to_s}
-          end
-        end
     end
   end
 end
