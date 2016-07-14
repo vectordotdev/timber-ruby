@@ -14,6 +14,9 @@ module Timber
       attr_reader :object
 
       def initialize(object)
+        if object.nil?
+          raise ArgumentError.new("object cannot be nil")
+        end
         @object = object
       end
 

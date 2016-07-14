@@ -8,7 +8,7 @@ module Timber
 
       def initialize(event)
         payload = event.payload
-        @binds = DynamicValues.new(payload[:binds])
+        @binds = payload[:binds] && DynamicValues.new(payload[:binds])
         @connection_id = payload[:connection_id].try(:to_s)
         @sql = payload[:sql].try(:strip)
         @statement_name = payload[:statement_name]
