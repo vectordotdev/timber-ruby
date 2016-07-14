@@ -11,6 +11,8 @@ module Timber
       NIL_TYPES     = [NilClass].freeze
       STRING_TYPES  = [String].freeze
 
+      attr_reader :object
+
       def initialize(object)
         @object = object
       end
