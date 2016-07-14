@@ -18,7 +18,7 @@ describe Timber::Probes::ActiveRecord do
     let(:context_class) { Timber::Contexts::ActiveRecordQuery }
 
     describe "#sql" do
-      it "should set the context" do
+      xit "should set the context" do
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(context_class)).and_yield.once
         User.first
       end
