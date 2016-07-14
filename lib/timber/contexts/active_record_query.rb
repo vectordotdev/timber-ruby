@@ -23,7 +23,7 @@ module Timber
 
           # Bind order is relevant
           binds.collect do |(attribute,value)|
-            {:name => attribute.name, :type => attribute.type, :value => value}
+            {:name => attribute.name, :type => attribute.type, :value => value.to_s}
           end
         end
     end
