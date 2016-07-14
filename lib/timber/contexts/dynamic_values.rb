@@ -1,3 +1,4 @@
+require "bigdecimal"
 require "date"
 
 module Timber
