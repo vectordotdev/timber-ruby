@@ -41,7 +41,11 @@ module Timber
       end
 
       def stack_hash
-        @stack_hash ||= stack.group_by(&:key_name)
+        @stack_hash ||= {}.tap do |hash|
+          stack.each do |context|
+            hash[context.key_name] = context
+          end
+        end
       end
   end
 end
