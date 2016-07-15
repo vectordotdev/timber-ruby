@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Timber::Probes::Rack do
-  describe Timber::Probes::Rack::Middleware do
+  describe described_class::Middleware do
     describe ".call" do
       let(:app) do
         Rack::Builder.new do

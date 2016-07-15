@@ -4,7 +4,23 @@ module Timber
       module InstanceMethods
         def self.included(klass)
           klass.class_eval do
+            alias_method :old_render_collection, :render_collection
+            alias_method :old_render_partial, :render_partial
             alias_method :old_render_template, :render_template
+
+            def render_collection(event)
+              context = Contexts::ActionViewTemplateRender.new(event)
+              CurrentContext.add(context) do
+                old_render_collection(event)
+              end
+            end
+
+            def render_partial(event)
+              context = Contexts::ActionViewTemplateRender.new(event)
+              CurrentContext.add(context) do
+                old_render_partial(event)
+              end
+            end
 
             def render_template(event)
               context = Contexts::ActionViewTemplateRender.new(event)

@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Timber::Probes::ActionController do
-  describe Timber::Probes::ActionController::InstanceMethods do
+  describe described_class::InstanceMethods do
     def dispatch(action)
       if controller.method(:dispatch).arity == 3
         controller.dispatch(action, request, ActionDispatch::TestResponse.new)

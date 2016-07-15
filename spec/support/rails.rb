@@ -15,9 +15,14 @@ module Support
           config.secret_key_base = '1e05af2b349457936a41427e63450937'
         end
         config.active_support.deprecation = :stderr
-        config.logger = Logger.new(STDOUT)
+        config.logger = LOGGER
         config.eager_load = false
       end
+
+      ::ActionController::Base.prepend_view_path("#{File.dirname(__FILE__)}/rails/templates")
+      ::ActionController::Base.logger = LOGGER
+      ::ActiveRecord::Base.logger = LOGGER
+      ::ActionView::Base.logger = LOGGER if ::ActionView::Base.respond_to?(:logger=)
 
       Object.const_set(:RailsApp, app)
 
@@ -36,6 +41,14 @@ module Support
       ::RailsApp.reset_instance
       ::Rails.application = nil
       Object.send(:remove_const, :RailsApp)
+    end
+
+    def dispatch_rails_request(controller, action)
+      if controller.method(:dispatch).arity == 3
+        controller.dispatch(action, request, ActionDispatch::TestResponse.new)
+      else
+        controller.dispatch(action, request)
+      end
     end
   end
 end

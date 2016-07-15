@@ -1,7 +1,11 @@
+require "logger"
+LOGGER = Logger.new(STDOUT)
+
 # Base
 require 'rubygems'
 require 'bundler/setup'
 require 'rails'
+require 'action_controller'
 require 'active_record'
 require 'pry'
 require 'rspec'
@@ -15,7 +19,7 @@ require 'timber'
 
 # Config
 Timber::Config.tap do |config|
-  config.logger = Logger.new(STDOUT)
+  config.logger = LOGGER
 
   # Turn this off for testing, no reason to spin up a thread
   # and send network calls unless the test explicitly calls
