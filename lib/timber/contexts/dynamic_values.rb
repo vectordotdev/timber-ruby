@@ -13,9 +13,7 @@ module Timber
       NIL_TYPES     = [NilClass].freeze
       STRING_TYPES  = [String].freeze
 
-      attr_reader :values_array
-
-      def initialize(values_array = [])
+      def initialize(values_array = nil)
         @values_array = values_array
       end
 
@@ -31,6 +29,10 @@ module Timber
       end
 
       private
+        def values_array
+          @values_array
+        end
+
         def to_item(value)
           {
             :name  => value[:name],

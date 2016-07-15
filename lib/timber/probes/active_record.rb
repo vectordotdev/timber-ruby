@@ -9,7 +9,7 @@ module Timber
             def sql(event)
               # AR only logs queries if debugging, no need to do anything otherwise
               return unless logger.debug?
-              context = Contexts::ActiveRecordQuery.new(event)
+              context = Contexts::ActiveRecordQuery.new(self, event)
               CurrentContext.add(context) do
                 old_sql(event)
               end
