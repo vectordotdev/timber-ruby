@@ -10,7 +10,7 @@ module Timber
 
       def initialize(event)
         payload = event.payload
-        Config.logger.error payload[:binds].inspect
+        Config.logger.error "\n\n\n\n------------------\n\n" + payload[:binds].inspect + "\n\n------------------\n\n\n\n\n"
         @binds = payload[:binds] && Binds.new(payload[:binds])
         @connection_id = payload[:connection_id].try(:to_s)
         @sql = payload[:sql].try(:strip)
