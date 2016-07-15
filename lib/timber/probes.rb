@@ -10,6 +10,7 @@ module Timber
   module Probes
     def self.insert!(middleware, insert_before)
       ActionController.insert!
+      ActionDispatchDebugExceptions.insert!
       ActionView.insert!
       ActiveRecord.insert!
       Heroku.insert!
