@@ -1,3 +1,5 @@
+require "timber/contexts/active_record_query/binds"
+
 module Timber
   module Contexts
     class ActiveRecordQuery < Context
@@ -8,7 +10,8 @@ module Timber
 
       def initialize(event)
         payload = event.payload
-        @binds = payload[:binds] && DynamicValues.new(payload[:binds])
+        Config.logger.error payload[:binds].inspect
+        @binds = payload[:binds] && Binds.new(payload[:binds])
         @connection_id = payload[:connection_id].try(:to_s)
         @sql = payload[:sql].try(:strip)
         @statement_name = payload[:statement_name]

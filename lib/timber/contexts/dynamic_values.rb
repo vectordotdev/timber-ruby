@@ -4,6 +4,8 @@ require "date"
 module Timber
   module Contexts
     class DynamicValues
+      class UnrecognizedObjectTypeError < StandardError; end
+
       BOOLEAN_TYPES = [FalseClass, TrueClass].freeze
       DATE_TYPES    = [Date, Time].freeze
       FLOAT_TYPES   = [BigDecimal, Float].freeze
@@ -11,21 +13,15 @@ module Timber
       NIL_TYPES     = [NilClass].freeze
       STRING_TYPES  = [String].freeze
 
-      attr_reader :object
+      attr_reader :values_array
 
-      def initialize(object)
-        if object.nil?
-          raise ArgumentError.new("object cannot be nil")
-        end
-        @object = object
+      def initialize(values_array = [])
+        @values_array = values_array
       end
 
       def as_json
-        @as_json ||= case object
-        when Hash
-          object.collect do |key, value|
-            to_item(key, value)
-          end
+        @as_json ||= values_array.collect do |value|
+          to_item(value)
         end
       end
 
@@ -35,11 +31,11 @@ module Timber
       end
 
       private
-        def to_item(name, value)
+        def to_item(value)
           {
-            :name  => name,
-            :type  => type(value),
-            :value => value
+            :name  => value[:name],
+            :type  => type(value[:value]),
+            :value => value[:value]
           }
         end
 

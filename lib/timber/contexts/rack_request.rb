@@ -1,3 +1,5 @@
+require "timber/contexts/rack_request/params"
+
 module Timber
   module Contexts
     class RackRequest < HTTPRequest
@@ -8,7 +10,7 @@ module Timber
         @host = request.host
         @ip = request.ip
         @method = request.request_method
-        @params = request.params && DynamicValues.new(request.params)
+        @params = request.params && Params.new(request.params)
         @path = request.path
         @port = request.port
         @referrer = request.referrer
