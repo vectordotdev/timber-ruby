@@ -16,21 +16,6 @@ module Timber
         :request_id,
         :scheme,
         :user_agent
-
-      def initialize
-        # Check to make sure the class was initialized properly
-        if initialized_improperly?
-          raise NotImplementedError.new(
-            "This is an abstract class and initialization must be implement via subclasses"
-          )
-        end
-        super()
-      end
-
-      private
-        def initialized_improperly?
-          host.nil?
-        end
     end
   end
 end

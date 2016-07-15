@@ -6,12 +6,12 @@ module Timber
           request_context = Contexts::ActionControllerRequest.new(self)
           organization_context = begin
             Contexts::ActionControllerOrganization.new(self)
-          rescue Contexts::ObjectBased::ObjectRequiredError
+          rescue Contexts::ActionControllerOrganization::OrganizationRequiredError
             nil
           end
           user_context = begin
             Contexts::ActionControllerUser.new(self)
-          rescue Contexts::ObjectBased::ObjectRequiredError
+          rescue Contexts::ActionControllerUser::UserRequiredError
             nil
           end
           # The order is relevant here, request_context is higher in the hierarchy

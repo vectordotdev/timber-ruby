@@ -1,4 +1,5 @@
 require "timber/probes/action_controller"
+require "timber/probes/action_dispatch_debug_exceptions"
 require "timber/probes/action_view"
 require "timber/probes/active_record"
 require "timber/probes/heroku"

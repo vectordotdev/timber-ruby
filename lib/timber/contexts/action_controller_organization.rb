@@ -1,6 +1,8 @@
 module Timber
   module Contexts
     class ActionControllerOrganization < Organization
+      class OrganizationRequiredError < StandardError; end
+
       DEFAULT_METHOD_NAME = :current_organization.freeze
 
       class << self
@@ -12,10 +14,13 @@ module Timber
       end
 
       def initialize(controller)
-        object = controller.respond_to?(self.class.method_name, true) ?
+        organization = controller.respond_to?(self.class.method_name, true) ?
           controller.send(self.class.method_name) :
           nil
-        super(object)
+        if organization.nil?
+          raise OrganizationRequiredError.new
+        end
+        super(organization)
       end
     end
   end
