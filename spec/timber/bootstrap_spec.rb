@@ -24,24 +24,26 @@ describe Timber::Bootstrap do
       end
     end
 
-    it_should_not_bootstrap
-
-    context "with an application_key" do
-      before(:each) do
-        Timber::Config.application_key = "1234"
-        Timber::Config.log_truck_enabled = true
-      end
-
-      after(:each) do
-        Timber::Config.application_key = nil
-        Timber::Config.log_truck_enabled = false
-      end
+    context "log truck enabled" do
+      before(:each) { Timber::Config.log_truck_enabled = true }
+      after(:each) { Timber::Config.log_truck_enabled = false }
 
       it_should_bootstrap
+
+      context "without an application_key" do
+        before(:each) do
+          @old_application_key = Timber::Config.application_key
+          Timber::Config.application_key = nil
+        end
+        after(:each) { Timber::Config.application_key = @old_application_key }
+
+        it_should_not_bootstrap
+      end
 
       context "disabled" do
         before(:each) { Timber::Config.enabled = false }
         after(:each) { Timber::Config.enabled = true }
+
         it_should_not_bootstrap
       end
     end

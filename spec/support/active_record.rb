@@ -1,6 +1,6 @@
 require 'active_record'
 
-ActiveRecord::Base.logger = Logger.new(nil)
+ActiveRecord::Base.logger = Rails.logger
 ActiveRecord::Base.establish_connection adapter: "sqlite3", database: ":memory:"
 ActiveRecord::Schema.define do
   self.verbose = false

@@ -22,10 +22,12 @@ module Timber
       remove(*contexts) if block_given?
     end
 
-    # Used to efficiently clone the context
-    def snapshot
-      # Cloning the array is efficient and will point to the same objects.
-      Timber::ContextSnapshot.new
+    def stack
+      @stack
+    end
+    
+    def includes?(context_class)
+      stack.any? { |context| context.is_a?(context_class) }
     end
 
     def remove(*contexts)
@@ -35,6 +37,12 @@ module Timber
         stack.delete(context)
       end
       self
+    end
+
+    # Used to efficiently clone the context
+    def snapshot
+      # Cloning the array is efficient and will point to the same objects.
+      Timber::ContextSnapshot.new
     end
 
     def stack

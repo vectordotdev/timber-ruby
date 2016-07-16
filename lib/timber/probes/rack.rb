@@ -9,7 +9,7 @@ module Timber
         def call(env)
           context = Contexts::RackRequest.new(env)
           CurrentContext.add(context) do
-            status, headers, body = @app.call(env)
+            @app.call(env)
           end
         end
       end
@@ -26,7 +26,9 @@ module Timber
       end
 
       def insert!
-        # Ensures
+        return true if middleware.instance_variable_get(:"@_timber_inserted") == true
+        # Fucking rails uses a proxy
+        middleware.instance_variable_set(:"@_timber_inserted", true)
         middleware.insert_before insert_before, Middleware
       end
     end

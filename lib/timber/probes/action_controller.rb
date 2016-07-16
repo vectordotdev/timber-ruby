@@ -28,6 +28,7 @@ module Timber
       end
 
       def insert!
+        return true if ::ActionController::Base.include?(InstanceMethods)
         ::ActionController::Base.send(:include, InstanceMethods)
       end
     end

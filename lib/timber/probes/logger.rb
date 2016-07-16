@@ -13,6 +13,7 @@ module Timber
       end
 
       def insert!
+        return true if ::Logger.include?(InstanceMethods)
         ::Logger.send(:include, InstanceMethods)
       end
     end

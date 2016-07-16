@@ -9,6 +9,7 @@ module Timber
       end
 
       def insert!
+        return true if CurrentContext.incude?(Contexts::Heroku)
         context = Contexts::Heroku.new(dyno)
         # Note we don't use a block here, this is because
         # the context is persistent.

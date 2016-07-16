@@ -7,58 +7,54 @@ describe Timber::LogTruck::Delivery do
     before(:each) { ActiveSupport.send(:silence_warnings) { described_class::RETRY_COUNT = 0 } }
     after(:each) { ActiveSupport.send(:silence_warnings) { described_class::RETRY_COUNT = 3 } }
 
-    context "with an application_key" do
-      def new_stub
-        stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-          with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"indexes\":{},\"hierarchy\":[],\"data\":{}}}]}}",
-               :headers => {'Content-Type'=>'application/json'})
+    def new_stub
+      stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
+        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"indexes\":{},\"hierarchy\":[],\"data\":{}}}]}}",
+             :headers => {'Content-Type'=>'application/json'})
+    end
+
+    around(:each) do |example|
+      Timecop.freeze(time) { example.run }
+    end
+
+    let(:log_lines) { [Timber::LogLine.new("hello")] }
+    let(:delivery) { described_class.new(log_lines) }
+    let(:stub) { new_stub }
+
+    before(:each) { stub }
+
+    it "should delivery successfully" do
+      delivery.deliver!
+      expect(stub).to have_been_requested
+    end
+
+    context "timeout error" do
+      let(:stub) {
+        new_stub.to_timeout
+      }
+
+      it "should raise an error" do
+        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
       end
+    end
 
-      around(:each) do |example|
-        Timecop.freeze(time) { example.run }
+    context "random error" do
+      let(:stub) {
+        new_stub.to_raise(StandardError.new("some error"))
+      }
+
+      it "should raise an error" do
+        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
       end
-      before(:each) { Timber::Config.application_key = "key" }
-      after(:each) { Timber::Config.application_key = nil }
+    end
 
-      let(:log_lines) { [Timber::LogLine.new("hello")] }
-      let(:delivery) { described_class.new(log_lines) }
-      let(:stub) { new_stub }
+    context "internal server error" do
+      let(:stub) {
+        new_stub.to_return(status: [500, "Internal Server Error"])
+      }
 
-      before(:each) { stub }
-
-      it "should delivery successfully" do
-        delivery.deliver!
-        expect(stub).to have_been_requested
-      end
-
-      context "timeout error" do
-        let(:stub) {
-          new_stub.to_timeout
-        }
-
-        it "should raise an error" do
-          expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
-        end
-      end
-
-      context "random error" do
-        let(:stub) {
-          new_stub.to_raise(StandardError.new("some error"))
-        }
-
-        it "should raise an error" do
-          expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
-        end
-      end
-
-      context "internal server error" do
-        let(:stub) {
-          new_stub.to_return(status: [500, "Internal Server Error"])
-        }
-
-        it "should raise an error" do
-          expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
-        end
+      it "should raise an error" do
+        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
       end
     end
   end

@@ -1,31 +1,24 @@
-require "logger"
-LOGGER = Logger.new(STDOUT)
-
 # Base
 require 'rubygems'
 require 'bundler/setup'
-require 'rails'
-require 'action_controller'
-require 'active_record'
+
+# Testing
 require 'pry'
 require 'rspec'
 require 'rspec/its'
+require 'rspec/mocks'
 
-# Support files
-Dir[File.expand_path(File.join(File.dirname(__FILE__), 'support', '**', '*.rb'))].each {|f| require f}
-
-# Must require last in order to be mocked via webmock
-require 'timber'
-
-# Config
-Timber::Config.tap do |config|
-  config.logger = LOGGER
-
-  # Turn this off for testing, no reason to spin up a thread
-  # and send network calls unless the test explicitly calls
-  # for it.
-  config.log_truck_enabled = false
-end
+# Support files, order is relevant
+require File.join(File.dirname(__FILE__), 'support', 'simplecov')
+require File.join(File.dirname(__FILE__), 'support', 'timecop')
+require File.join(File.dirname(__FILE__), 'support', 'webmock')
+require File.join(File.dirname(__FILE__), 'support', 'timber')
+require File.join(File.dirname(__FILE__), 'support', 'rails')
+require File.join(File.dirname(__FILE__), 'support', 'action_controller')
+require File.join(File.dirname(__FILE__), 'support', 'action_view')
+require File.join(File.dirname(__FILE__), 'support', 'active_record')
+require File.join(File.dirname(__FILE__), 'support', 'log_pile')
+require File.join(File.dirname(__FILE__), 'support', 'rails')
 
 RSpec.configure do |config|
   config.color = true

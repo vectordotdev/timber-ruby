@@ -35,6 +35,10 @@ module Timber
       end
     end
 
+    def log_lines
+      @log_lines ||= []
+    end
+
     def size
       log_lines.size
     end
@@ -56,10 +60,6 @@ module Timber
           # a changing array, but do not copy the items.
           log_lines.clone
         end
-      end
-
-      def log_lines
-        @log_lines ||= []
       end
   end
 end
