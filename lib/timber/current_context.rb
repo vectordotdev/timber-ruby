@@ -22,14 +22,6 @@ module Timber
       remove(*contexts) if block_given?
     end
 
-    def stack
-      @stack
-    end
-    
-    def includes?(context_class)
-      stack.any? { |context| context.is_a?(context_class) }
-    end
-
     def remove(*contexts)
       # Ensure we clear the cacke when the stack changes
       contexts.each do |context|
@@ -45,11 +37,11 @@ module Timber
       Timber::ContextSnapshot.new
     end
 
-    def stack
-      storage[STACK_KEYNAME] ||= []
-    end
-
     private
+      def stack
+        storage[STACK_KEYNAME] ||= []
+      end
+    
       def storage
         Thread.current[THREAD_NAMESPACE] ||= {}
       end
