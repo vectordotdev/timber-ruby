@@ -1,6 +1,3 @@
-# We want to test as if the app is in production
-RAILS_ENV = "production"
-
 require "rails"
 
 class RailsApp < Rails::Application
@@ -10,7 +7,7 @@ class RailsApp < Rails::Application
     config.secret_key_base = '1e05af2b349457936a41427e63450937'
   end
   config.active_support.deprecation = :stderr
-  config.logger = Logger.new(StringIO.new)
+  config.logger = Logger.new(STDOUT)
   config.log_level = :debug
   config.eager_load = false
 end
