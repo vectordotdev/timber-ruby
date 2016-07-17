@@ -1,4 +1,4 @@
-require "timber/probes/action_controller"
+require "timber/probes/action_controller_base"
 require "timber/probes/action_dispatch_debug_exceptions"
 require "timber/probes/action_view"
 require "timber/probes/active_record"
@@ -9,7 +9,7 @@ require "timber/probes/rack"
 module Timber
   module Probes
     def self.insert!(middleware, insert_before)
-      ActionController.insert!
+      ActionControllerBase.insert!
       ActionDispatchDebugExceptions.insert!
       ActionView.insert!
       ActiveRecord.insert!
