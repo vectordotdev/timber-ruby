@@ -27,7 +27,7 @@ module Timber
 
       def insert!
         return true if middleware.instance_variable_get(:"@_timber_inserted") == true
-        # Fucking rails uses a proxy
+        # Rails uses a proxy :/
         middleware.instance_variable_set(:"@_timber_inserted", true)
         middleware.insert_before insert_before, Middleware
       end
