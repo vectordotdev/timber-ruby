@@ -30,7 +30,7 @@ module Timber
     	end
 
     	def status
-    		@status ||= Rack::Utils::HTTP_STATUS_CODES[payload[:status]]
+    		@status ||= payload[:status]
     	end
 
     	def time_ms

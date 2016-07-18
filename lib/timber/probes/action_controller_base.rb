@@ -27,7 +27,7 @@ module Timber
           # object by including complex objects, so we include them here.
           def append_info_to_payload(payload)
             super
-            payload[:cache_controler] = response.cache_control
+            payload[:cache_control] = response.cache_control
             payload[:content_disposition] = response.headers['Content-Disposition']
             payload[:content_length] = response.content_length
           end
