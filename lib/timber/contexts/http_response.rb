@@ -3,7 +3,7 @@ module Timber
   	# Generica HTTP response shared across all platforms.
     class HTTPResponse < Context
       VERSION = "1".freeze
-      KEY_NAME = "http_request".freeze
+      KEY_NAME = "http_response".freeze
 
       property :content_length,
       	:cache_control,
