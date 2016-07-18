@@ -20,7 +20,7 @@ module Timber
     	def content_disposition
     		@content_disposition ||= payload[:content_disposition]
     	end
-    	
+
     	def content_type
     		@content_type ||= payload[:content_type]
     	end
@@ -36,6 +36,11 @@ module Timber
     	def time_ms
     		@time_ms ||= event.duration
     	end
+
+    	private
+    		def payload
+    			event.payload
+    		end
     end
   end
 end
