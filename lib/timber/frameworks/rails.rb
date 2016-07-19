@@ -15,7 +15,7 @@ module Timber
 
       private
         def self.also_log_to_stdout?
-          !ENV["RAILS_LOG_TO_STDOUT"].nil? || defined?(::RailsStdoutLogging)
+          !ENV["RAILS_LOG_TO_STDOUT"].nil? || !ENV["DYNO"].nil? || defined?(::RailsStdoutLogging)
         end
 
       class Railtie < ::Rails::Railtie
