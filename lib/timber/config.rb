@@ -21,7 +21,7 @@ module Timber
 
     # Internal logger for the Timber library
     def logger
-      @logger ||= ::Logger.new(STDOUT)
+      @logger ||= InternalLogger.new(STDOUT)
     end
 
     def log_truck_enabled
