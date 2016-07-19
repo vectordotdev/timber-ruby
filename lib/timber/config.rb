@@ -4,12 +4,10 @@ module Timber
   class Config
     include Patterns::DelegatedSingleton
 
-    #
-    # enabled
-    #
+    attr_writer :application_key, :enabled, :logger, :log_truck_enabled, :monitor
 
-    def enabled=(value)
-      @enabled = value
+    def application_key
+      @application_key ||= ENV['TIMBER_KEY']
     end
 
     def enabled
@@ -21,41 +19,9 @@ module Timber
       enabled == true
     end
 
-    #
-    # application_key
-    #
-
-    def application_key=(value)
-      @application_key = value
-    end
-
-    def application_key
-      @application_key ||= ENV['TIMBER_KEY']
-    end
-
-    #
-    # logger
-    #
-
-    # Set a customer logger that the Timber library will use.
-    def logger=(value)
-      set_logger(value)
-    end
-
-    # The logger that the Timber library will use.
-    # Note: each framework resets the default logger
-    # unless you explicitly set it as part of configuration.
+    # Internal logger for the Timber library
     def logger
-      return @logger if defined?(@logger)
-      set_logger(::Logger.new(STDOUT))
-    end
-
-    #
-    # log_truck_enabled
-    #
-
-    def log_truck_enabled=(value)
-      @log_truck_enabled = value
+      @logger ||= Logger.new(STDOUT)
     end
 
     def log_truck_enabled
@@ -67,31 +33,12 @@ module Timber
       log_truck_enabled == true
     end
 
-    #
-    # monitor
-    #
-
-    def monitor=(*loggers)
-      @monitor = loggers
-    end
-
     def monitor
       @monitor ||= []
     end
 
-    #
-    # resetting
-    #
-
     def reset!(name)
       remove_instance_variable(:"@#{name}") if instance_variable_defined?(:"@#{name}")
     end
-
-    private
-      # Wraps the loggers in a delegated class that ignores and
-      # wraps the messages. See Logger.
-      def set_logger(logger)
-        @logger = Logger.new(logger)
-      end
   end
 end

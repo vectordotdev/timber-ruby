@@ -1,7 +1,7 @@
 module Timber
   class LogLine
     # Raised when there is an issue with the message being passed.
-    # Note: this is handled in LogDeviceInstaller
+    # Note: this is handled in Logger
     class InvalidMessageError < ArgumentError; end
 
     attr_reader :context_snapshot, :dt, :line_indexes, :message

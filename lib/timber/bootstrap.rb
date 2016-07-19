@@ -9,23 +9,16 @@ module Timber
       Config.logger.exception(e)
     end
 
-    attr_reader :logger, :middleware, :insert_before
+    attr_reader :middleware, :insert_before
 
-    def initialize(logger, middleware, insert_before)
-      @logger = logger
+    def initialize(middleware, insert_before)
       @middleware = middleware
       @insert_before = insert_before
     end
 
     def bootstrap!
       return false unless can_bootstrap?
-
-      # TODO: this overrides any custom loggers set in config. We
-      #       want to honor any custom logger they set, but default to the
-      #       rails logger if they dont.
-      Config.logger = logger
       Probes.insert!(middleware, insert_before)
-      LogDeviceInstaller.install!(logger)
       LogTruck.start! if Config.log_truck_enabled?
       log_started
       true

@@ -1,52 +1,68 @@
 module Timber
-  # Allows us to prefix all logs with [Timber] without having to
-  # rely on external dependencies. This is slightly different
-  # in that we don't want to create an entirely new logger or modify
-  # the logger they pass us. We only want to prefix logs in the context
-  # of this library.
-  class Logger
-    TAG = "[Timber]"
+	class Logger
+		module Severity
+      DEBUG   = 0
+      INFO    = 1
+      WARN    = 2
+      ERROR   = 3
+      FATAL   = 4
+      UNKNOWN = 5
+    end
+    include Severity
 
-    attr_reader :logger
+    class << self
+    	attr_writer :silencer
+			def silencer
+				return @silencer if defined?(@silencer)
+				@silencer = true
+			end
+		end
 
-    def initialize(logger)
-      @logger = logger
+    attr_accessor :application_key, :level
+
+    def initialize(application_key = nil, level = DEBUG)
+    	self.application_key = application_key || Config.application_key
+      self.level = level
     end
 
-    def debug(message)
-      Timber.ignore { logger.debug(format_message(message)) }
-    end
-
-    def error(message)
-      Timber.ignore { logger.error(format_message(message)) }
-    end
-
-    # This is a convenience method for logging exceptions. Also
-    # allows us to build a notify hook for any exception that happen in
-    # the Timber library. This is extremely important for quality control.
-    def exception(exception)
-      if !exception.is_a?(Exception)
-        raise ArgumentError.new("#exception must take an Exception type")
+    # Silences the logger for the duration of the block.
+    def silence(temporary_level = ERROR)
+      if silencer
+        begin
+          old_logger_level, self.level = level, temporary_level
+          yield self
+        ensure
+          self.level = old_logger_level
+        end
+      else
+        yield self
       end
-      # TODO: notify us that this exception happened
-      error(exception)
     end
 
-    def fatal(message)
-      Timber.ignore { logger.fatal(format_message(message)) }
+    def add(severity, message = nil, progname = nil, &block)
+      return if level > severity
+      message = (message || (block && block.call) || progname).to_s
+      LogPile.drop_message(message)
+      message
+    rescue LogLine::InvalidMessageError => e
+    	Config.logger.exception(e)
+    	false
     end
 
-    def info(message)
-      Timber.ignore { logger.info(format_message(message)) }
-    end
+    # Dynamically add methods such as:
+    # def info
+    # def warn
+    # def debug
+    for severity in Severity.constants
+      class_eval <<-EOT, __FILE__, __LINE__ + 1
+        def #{severity.downcase}(message = nil, progname = nil, &block) # def debug(message = nil, progname = nil, &block)
+          add(#{severity}, message, progname, &block)                   #   add(DEBUG, message, progname, &block)
+        end                                                             # end
 
-    def warn(message)
-      Timber.ignore { logger.warn(format_message(message)) }
+        def #{severity.downcase}?                                       # def debug?
+          #{severity} >= level                                          #   DEBUG >= level
+        end                                                             # end
+      EOT
     end
-
-    private
-      def format_message(message)
-        "#{TAG} #{message}"
-      end
-  end
+	end
 end

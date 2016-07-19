@@ -7,7 +7,7 @@ class RailsApp < Rails::Application
     config.secret_key_base = '1e05af2b349457936a41427e63450937'
   end
   config.active_support.deprecation = :stderr
-  config.logger = Logger.new(STDOUT)
+  config.logger = Timber::Logger.new
   config.log_level = :debug
   config.eager_load = false
 end
