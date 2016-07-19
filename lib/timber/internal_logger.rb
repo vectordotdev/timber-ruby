@@ -5,11 +5,18 @@ module Timber
   # the logger they pass us. We only want to prefix logs in the context
   # of this library.
   class InternalLogger < ::Logger
-    TAG = "[Timber]"
+    class Formatter < ::Logger::Formatter
+      TAG = "[Timber]"
+  
+      # This method is invoked when a log event occurs
+      def call(severity, timestamp, progname, msg)
+        "#{TAG} #{String === msg ? msg : msg.inspect}\n"
+      end
+    end
 
-    def add(severity, message = nil, progname = nil, &block)
-      message = "#{TAG} #{message}"
+    def initialize(*args)
       super
+      @formatter = Formatter.new
     end
 
     # This is a convenience method for logging exceptions. Also
