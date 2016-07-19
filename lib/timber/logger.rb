@@ -10,6 +10,26 @@ module Timber
     end
     include Severity
 
+    class LogDevice
+    	def close(*args)
+    	end
+
+    	def write(message)
+    		LogPile.drop_message(message)
+	      message
+	    rescue LogLine::InvalidMessageError => e
+	    	Config.logger.exception(e)
+	    	false
+	    end
+    end
+
+    class SimpleFormatter < ::Logger::Formatter
+      # This method is invoked when a log event occurs
+      def call(severity, timestamp, progname, msg)
+        "#{String === msg ? msg : msg.inspect}\n"
+      end
+    end
+
     class << self
     	attr_writer :silencer
 			def silencer
@@ -23,6 +43,8 @@ module Timber
     def initialize(application_key = nil, level = DEBUG)
     	self.application_key = application_key || Config.application_key
       self.level = level
+      super(LogDevice.new)
+      @formatter = SimpleFormatter.new
     end
 
     # Silences the logger for the duration of the block.
@@ -37,16 +59,6 @@ module Timber
       else
         yield self
       end
-    end
-
-    def add(severity, message = nil, progname = nil, &block)
-      return if level > severity
-      message = (message || (block && block.call) || progname).to_s
-      LogPile.drop_message(message)
-      message
-    rescue LogLine::InvalidMessageError => e
-    	Config.logger.exception(e)
-    	false
     end
 
     # Dynamically add methods such as:
