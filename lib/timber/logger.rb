@@ -1,5 +1,5 @@
 module Timber
-	class Logger
+	class Logger < ::Logger
 		module Severity
       DEBUG   = 0
       INFO    = 1
@@ -50,15 +50,11 @@ module Timber
     end
 
     # Dynamically add methods such as:
-    # def info
-    # def warn
-    # def debug
+    # def info?
+    # def warn?
+    # def debug?
     for severity in Severity.constants
       class_eval <<-EOT, __FILE__, __LINE__ + 1
-        def #{severity.downcase}(message = nil, progname = nil, &block) # def debug(message = nil, progname = nil, &block)
-          add(#{severity}, message, progname, &block)                   #   add(DEBUG, message, progname, &block)
-        end                                                             # end
-
         def #{severity.downcase}?                                       # def debug?
           #{severity} >= level                                          #   DEBUG >= level
         end                                                             # end
