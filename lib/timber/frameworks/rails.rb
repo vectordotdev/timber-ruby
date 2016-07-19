@@ -8,7 +8,7 @@ module Timber
       def self.build_logger
         ::ActiveSupport::TaggedLogging.new(Logger.new).tap do |logger|
           if also_log_to_stdout?
-            ::ActiveSupport::Logger.broadcast(StdoutLogger.new(STDOUT))
+            logger.extend ::ActiveSupport::Logger.broadcast(StdoutLogger.new(STDOUT))
           end
         end
       end
