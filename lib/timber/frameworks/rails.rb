@@ -7,6 +7,7 @@ module Timber
         # Must come after load_config_initializers so that we honor any
         # config changes in a timber.rb initializer
         initializer 'timber.bootstrap', after: :load_config_initializers do |app|
+          puts "Attempting Timber bootstrap"
           Bootstrap.bootstrap!(app.middleware, ::Rails::Rack::Logger)
         end
       end
