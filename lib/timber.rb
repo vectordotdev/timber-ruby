@@ -21,6 +21,7 @@ require "timber/log_line"
 require "timber/log_pile"
 require "timber/log_truck"
 require "timber/logger"
+require "timber/patches"
 require "timber/probes"
 require "timber/system"
 
