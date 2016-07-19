@@ -17,9 +17,19 @@ module Timber
     end
 
     def bootstrap!
-      return false unless can_bootstrap?
+      unless can_bootstrap?
+        log_cant_bootstrap_message
+        return false
+      end
+      
       Probes.insert!(middleware, insert_before)
-      LogTruck.start! if Config.log_truck_enabled?
+
+      if Config.log_truck_enabled?
+        LogTruck.start!
+      else
+        Config.logger.warn("Log truck is disabled, enable with Config::Timber.log_truck_enabled = true")
+      end
+      
       log_started
       true
     end
@@ -27,6 +37,16 @@ module Timber
     private
       def can_bootstrap?
         enabled? && has_application_key?
+      end
+
+      def log_cant_bootstrap_message
+        unless enabled?
+          Config.logger.warn("Can't bootstrap, Timber::Config.enabled must be true")
+        end
+
+        unless has_application_key?
+          Config.logger.warn("Can't bootstrap, Timber::Config.application_key must be set")
+        end          
       end
 
       def enabled?
