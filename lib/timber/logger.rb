@@ -40,9 +40,9 @@ module Timber
 
     attr_accessor :application_key, :level
 
-    def initialize(application_key = nil, level = DEBUG)
+    def initialize(application_key = nil, level = nil)
     	self.application_key = application_key || Config.application_key
-      self.level = level
+      self.level = level || ENV['LOG_LEVEL'] || DEBUG
       super(LogDevice.new)
       @formatter = SimpleFormatter.new
     end
