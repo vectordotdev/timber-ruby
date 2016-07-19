@@ -3,12 +3,13 @@
 source "https://rubygems.org"
 
 gem "minitest"
-gem "rails", "~> 5.0.0.beta4"
+gem "rails", "~> 5.0.0"
 
 group :test do
   gem "appraisal"
   gem "json", "~> 1"
   gem "pry"
+  gem "rails_stdout_logging"
   gem "rake"
   gem "rspec", "~> 3.4"
   gem "rspec-its"
