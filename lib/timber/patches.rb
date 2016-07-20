@@ -1,1 +1,0 @@
-require "timber/patches/rails_stdout_logging"
