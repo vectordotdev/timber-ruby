@@ -25,10 +25,12 @@ gem 'timber-ruby'
 Rails installation. In your `config/environments/production.rb` set your logger as:
 
 ```ruby
-logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(ENV['TIMBER_KEY']))
+logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(ENV['TIMBER_KEY'])) # argument is optional
 logger.formatter = config.log_formatter
 config.logger = logger
 ```
+
+**Make sure you replace any existing definitions of `config.logger =`**
 
 Prefer to continue logging to your original backend? Add:
 

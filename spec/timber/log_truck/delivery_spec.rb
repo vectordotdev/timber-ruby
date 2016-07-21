@@ -18,7 +18,7 @@ describe Timber::LogTruck::Delivery do
     end
 
     let(:log_lines) { [Timber::LogLine.new("hello")] }
-    let(:delivery) { described_class.new(log_lines) }
+    let(:delivery) { described_class.new(Timber::Config.application_key, log_lines) }
     let(:stub) { new_stub }
 
     before(:each) { stub }

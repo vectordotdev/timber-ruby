@@ -46,33 +46,36 @@ module Timber
       # raise an error.
       def deliver
         log_truck = nil
-        LogPile.empty do |log_lines|
-          # LogPile only empties if no exception is raised
-          begin
-            # This will retry a number of times. If we can't get it during the retries
-            # we drop the logs. Note, this strategy will improve when we write to a file
-            # and use an actual agent.
-            log_truck = new(log_lines).tap(&:deliver!)
-          rescue Delivery::DeliveryError => e
-            Config.logger.exception(e)
-            # TODO: How do we handle server timeouts? The request could have still been processed.
+        LogPile.each do |log_pile|
+          log_pile.empty do |log_lines|
+            # LogPile only empties if no exception is raised
+            begin
+              # This will retry a number of times. If we can't get it during the retries
+              # we drop the logs. Note, this strategy will improve when we write to a file
+              # and use an actual agent.
+              log_truck = new(log_pile.application_key, log_lines).tap(&:deliver!)
+            rescue Delivery::DeliveryError => e
+              Config.logger.exception(e)
+              # TODO: How do we handle server timeouts? The request could have still been processed.
+            end
           end
         end
         log_truck
       end
     end
 
-    attr_reader :log_lines
+    attr_reader :application_key, :log_lines
 
-    def initialize(log_lines)
+    def initialize(application_key, log_lines)
       if log_lines.empty?
         raise NoPayloadError.new("a truck must contain a payload (at least one log line)")
       end
+      @application_key = application_key
       @log_lines = log_lines
     end
 
     def deliver!
-      Delivery.new(log_lines).deliver!
+      Delivery.new(application_key, log_lines).deliver!
     end
   end
 end

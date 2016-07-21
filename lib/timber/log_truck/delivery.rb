@@ -6,7 +6,6 @@ module Timber
   class LogTruck
     class Delivery
       class DeliveryError < StandardError; end
-      class NoApplicationKeyError < StandardError; end
 
       API_URI = URI.parse("https://timber-odin.herokuapp.com/agent_log_frames")
       CONTENT_TYPE = 'application/json'.freeze
@@ -20,9 +19,10 @@ module Timber
         https.read_timeout = READ_TIMEOUT_SECONDS
       end
 
-      attr_reader :log_lines
+      attr_reader :application_key, :log_lines
 
-      def initialize(log_lines)
+      def initialize(application_key, log_lines)
+        @application_key = application_key
         @log_lines = log_lines
       end
 
@@ -101,10 +101,6 @@ module Timber
             @log_lines_json += ", " if index != last_index
           end
           @log_lines_json += "]"
-        end
-
-        def application_key
-          @application_key ||= Config.application_key || raise(NoApplicationKeyError.new)
         end
 
         def authorization_payload

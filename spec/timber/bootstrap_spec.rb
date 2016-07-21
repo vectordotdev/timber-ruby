@@ -27,16 +27,6 @@ describe Timber::Bootstrap do
 
       it_should_bootstrap
 
-      context "without an application_key" do
-        before(:each) do
-          @old_application_key = Timber::Config.application_key
-          Timber::Config.application_key = nil
-        end
-        after(:each) { Timber::Config.application_key = @old_application_key }
-
-        it_should_not_bootstrap
-      end
-
       context "disabled" do
         before(:each) { Timber::Config.enabled = false }
         after(:each) { Timber::Config.enabled = true }

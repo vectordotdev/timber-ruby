@@ -17,10 +17,7 @@ module Timber
     end
 
     def bootstrap!
-      unless can_bootstrap?
-        log_cant_bootstrap_message
-        return false
-      end
+      return false unless enabled?
       
       Probes.insert!(middleware, insert_before)
 
@@ -29,40 +26,15 @@ module Timber
       else
         Config.logger.warn("Log truck is disabled, enable with Config::Timber.log_truck_enabled = true")
       end
-      
+
       log_started
       true
     end
 
     private
-      def can_bootstrap?
-        enabled? && has_application_key?
-      end
-
-      def log_cant_bootstrap_message
-        unless enabled?
-          Config.logger.warn("Can't bootstrap, Timber::Config.enabled must be true")
-        end
-
-        unless has_application_key?
-          Config.logger.warn("Can't bootstrap, Timber::Config.application_key must be set")
-        end          
-      end
-
       def enabled?
         if !Config.enabled?
           Config.logger.warn("Skipping bootstrap, Timber::Config.enabled is not true")
-          false
-        else
-          true
-        end
-      end
-
-      def has_application_key?
-        if Config.application_key.nil?
-          # TODO: Add a better explanation on how to get a key. Perhaps a rake task
-          #       That provides a quick setup.
-          Config.logger.warn("Skipping bootstrap, Timber::Config.application_key is nil")
           false
         else
           true

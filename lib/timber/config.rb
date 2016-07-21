@@ -19,9 +19,8 @@ module Timber
       enabled == true
     end
 
-    # Internal logger for the Timber library
-    def logger
-      @logger ||= InternalLogger.new(STDOUT)
+    def log_level
+      @log_level ||= ENV['LOG_LEVEL'] || ::Logger::DEBUG
     end
 
     def log_truck_enabled
@@ -31,6 +30,11 @@ module Timber
 
     def log_truck_enabled?
       log_truck_enabled == true
+    end
+
+    # Internal logger for the Timber library
+    def logger
+      @logger ||= InternalLogger.new(STDOUT)
     end
 
     def monitor

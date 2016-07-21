@@ -16,29 +16,31 @@ describe Timber::LogTruck do
   end
 
   describe ".deliver" do
+    let(:log_pile) { Timber::LogPile.get(Timber::Config.application_key) }
+
     it "doesn't deliver because there is nothing to deliver" do
-      expect_any_instance_of(described_class).to_not receive(:deliver)
+      expect(log_pile).to_not receive(:deliver)
       described_class.deliver
     end
 
     context "with a log pile" do
       before(:each) do
         log_line = Timber::LogLine.new("this is a log line")
-        Timber::LogPile.drop(log_line)
+        log_pile.drop(log_line)
       end
 
       it "delivers once and empties the log pile" do
-        expect(Timber::LogPile.size).to eq(1)
+        expect(log_pile.size).to eq(1)
         expect_any_instance_of(described_class).to receive(:deliver!).once
         described_class.deliver
-        expect(Timber::LogPile.size).to eq(0)
+        expect(log_pile.size).to eq(0)
       end
     end
   end
 
   describe "#initialize" do
     let(:log_lines) { [] }
-    let(:log_truck) { described_class.new(log_lines) }
+    let(:log_truck) { described_class.new(Timber::Config.application_key, log_lines) }
     subject { log_truck }
 
     it "should raise an exception" do
@@ -53,7 +55,7 @@ describe Timber::LogTruck do
 
   describe "#deliver!" do
     let(:log_lines) { [Timber::LogLine.new("hello")] }
-    let(:log_truck) { described_class.new(log_lines) }
+    let(:log_truck) { described_class.new(Timber::Config.application_key, log_lines) }
 
     it "should delivery successfully" do
       expect_any_instance_of(Timber::LogTruck::Delivery).to receive(:deliver!)
