@@ -6,7 +6,7 @@ describe Timber::CurrentLineIndexes do
   end
 
   describe "#log_line_added" do
-    fit "only includes the valid stack" do
+    it "only includes the valid stack" do
       expect(Timber::CurrentContext).to receive(:valid_stack).twice.and_return([])
       add_log_line
     end
@@ -20,17 +20,19 @@ describe Timber::CurrentLineIndexes do
         end
       end
 
-      it "sets the context to 0" do
-        add_log_line
-        expect(described_class.indexes).to eq({heroku_context => 0})
-      end
-
-      context "with an additional log line" do
+      context "with a log line" do
         before(:each) { add_log_line }
 
-        it "increments properly" do
-          add_log_line
-          expect(described_class.indexes).to eq({heroku_context => 1})
+        it "sets the context to 0" do
+          expect(described_class.indexes).to eq({heroku_context => 0})
+        end
+
+        context "with an additional log line" do
+          before(:each) { add_log_line }
+
+          it "increments properly" do
+            expect(described_class.indexes).to eq({heroku_context => 1})
+          end
         end
       end
     end

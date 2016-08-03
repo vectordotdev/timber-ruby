@@ -49,7 +49,8 @@ module Timber
       end
 
       def request_id
-        @request_id ||= env.find do |k,v|
+        return @request_id if defined?(@request_id)
+        found = env.find do |k,v|
           # Needs to support:
           # action_dispatch.request_id
           # HTTP_X_REQUEST_ID
@@ -58,8 +59,9 @@ module Timber
           # X-Request-ID
           # X-Request-Id
           # etc
-          k.downcase.include?("request_id") || k.downcase.include?("request-id")
+          (k.downcase.include?("request_id") || k.downcase.include?("request-id")) && !v.nil?
         end
+        @request_id = found && found.last
       end
 
       def scheme
