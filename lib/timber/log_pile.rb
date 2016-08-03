@@ -11,7 +11,7 @@ module Timber
       end
 
       def get(application_key)
-        @instances[application_key] ||= new(application_key)
+        instances[application_key] ||= new(application_key)
       end
 
       private

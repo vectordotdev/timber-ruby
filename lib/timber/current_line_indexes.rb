@@ -5,10 +5,6 @@ module Timber
 
     include Patterns::DelegatedSingleton
 
-    def context_added(context)
-      indexes[context] = 0
-    end
-
     def context_removed(context)
       indexes.delete(context)
     end
@@ -17,10 +13,14 @@ module Timber
       Thread.current[THREAD_NAMESPACE] ||= {}
     end
 
-    def increment
-      indexes.each do |context, _index|
-        indexes[context] += 1
-      end
+    def log_line_added
+      CurrentContext.valid_stack.each do |context|
+        if indexes.key?(context)
+          indexes[context] += 1
+        else
+          indexes[context] = 0
+        end
+      end 
     end
 
     def snapshot

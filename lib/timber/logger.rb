@@ -1,25 +1,25 @@
 module Timber
-	class Logger < defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger : ::Logger
-		# Add silencer if defined.
-		include ::LoggerSilence if defined?(::LoggerSilence)
+  class Logger < defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger : ::Logger
+    # Add silencer if defined.
+    include ::LoggerSilence if defined?(::LoggerSilence)
 
     class LogDevice
-    	attr_reader :application_key
+      attr_reader :application_key
 
-    	def initialize(application_key)
-    		@application_key = application_key
-    	end
+      def initialize(application_key)
+        @application_key = application_key
+      end
 
-    	def close(*args)
-    	end
+      def close(*args)
+      end
 
-    	def write(message)
-    		LogPile.get(application_key).drop_message(message)
-	      message
-	    rescue LogLine::InvalidMessageError => e
-	    	Config.logger.exception(e)
-	    	false
-	    end
+      def write(message)
+        LogPile.get(application_key).drop_message(message)
+        message
+      rescue LogLine::InvalidMessageError => e
+        Config.logger.exception(e)
+        false
+      end
     end
 
     class SimpleFormatter < ::Logger::Formatter
@@ -32,10 +32,10 @@ module Timber
     attr_reader :application_key
 
     def initialize(application_key = nil, level = nil)
-    	@application_key = application_key || Config.application_key
-    	if @application_key.nil?
-    		raise ArgumentError.new("A Timber application_key is required")
-    	end
+      @application_key = application_key || Config.application_key
+      if @application_key.nil?
+        raise ArgumentError.new("A Timber application_key is required")
+      end
       @level = level || Config.log_level
       super(LogDevice.new(@application_key))
       @formatter = SimpleFormatter.new
@@ -52,5 +52,5 @@ module Timber
         end
       EOT
     end
-	end
+  end
 end

@@ -23,10 +23,7 @@ module Timber
       @_version ||= self.class.const_get(:VERSION)
     end
 
-    def key_name
-      @key_name ||= self.class.const_get(:KEY_NAME)
-    end
-
+    # This method name is required for rails' awesome changes to #to_json
     def as_json(*args)
       @as_json ||= {
         :_id => _id,
@@ -41,9 +38,20 @@ module Timber
       end
     end
 
+    def key_name
+      @key_name ||= self.class.const_get(:KEY_NAME)
+    end
+
     def to_json(*args)
       # Note: this is run in the background thread, hence the hash creation.
       @to_json ||= as_json.to_json(*args)
+    end
+
+    # Some contexts hold mutable object that change as the context block
+    # executes. This method checks the state of that object to ensure
+    # that the context is valid and ready to be copied for each log line.
+    def valid?
+      true
     end
 
     private

@@ -6,7 +6,7 @@ module Timber
       # Cloning arrays and hashes is extremely fast. This
       # should not be a concern for hindering performance as we are
       # only cloning the structures, not the content.
-      @stack = CurrentContext.stack.clone.freeze
+      @stack = CurrentContext.valid_stack.clone.freeze
       @indexes = CurrentLineIndexes.indexes.clone.freeze
     end
 

@@ -27,8 +27,8 @@ describe Timber::LogLine do
       it { should raise_error(Timber::LogLine::InvalidMessageError, "the log message must not exceed #{limit} bytes") }
     end
 
-    it "increments the log line indexes" do
-      expect(Timber::CurrentLineIndexes).to receive(:increment).once
+    it "notifies CurrentLineIndexes" do
+      expect(Timber::CurrentLineIndexes).to receive(:log_line_added).once
       subject
     end
   end

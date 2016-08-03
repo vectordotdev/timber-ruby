@@ -32,10 +32,6 @@ module Timber
         @method ||= request.request_method
       end
 
-      def params
-        @params ||= request.params && Params.new(request.params)
-      end
-
       def path
         @path ||= request.path
       end
@@ -44,12 +40,26 @@ module Timber
         @port ||= request.port
       end
 
+      def query_params
+        @query_params ||= request.params && Params.new(request.params)
+      end
+
       def referrer
         @referrer ||= request.referrer
       end
 
       def request_id
-        @request_id ||= env["HTTP_X_REQUEST_ID"] || env["action_dispatch.request_id"]
+        @request_id ||= env.find do |k,v|
+          # Needs to support:
+          # action_dispatch.request_id
+          # HTTP_X_REQUEST_ID
+          # Request-ID
+          # Request-Id
+          # X-Request-ID
+          # X-Request-Id
+          # etc
+          k.downcase.include?("request_id") || k.downcase.include?("request-id")
+        end
       end
 
       def scheme

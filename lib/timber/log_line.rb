@@ -24,13 +24,13 @@ module Timber
 
       @message = message
 
+      # Bump the indexes
+      CurrentLineIndexes.log_line_added
+
       # This code needs to be efficient, hence the use of snapshotting.
       # We do not want to convert to json here as it's done inline.
       # Leaving that to the background task.
       @context_snapshot = CurrentContext.snapshot
-
-      # Bump the indexes
-      CurrentLineIndexes.increment
     end
 
     def as_json(*args)

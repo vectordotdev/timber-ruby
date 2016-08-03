@@ -7,13 +7,6 @@ module Timber
       attr_reader :user
       property :email, :id, :name
 
-      def initialize(user)
-        # Initialize should be as fast as possible since it is executed inline.
-        # Hence the lazy methods below.
-        @user = user
-        super()
-      end
-
       def email
         return @email if defined?(@email)
         @email = user.respond_to?(:email) ? user.email : nil
@@ -27,6 +20,10 @@ module Timber
       def name
         return @name if defined?(@name)
         @name = user.respond_to?(:name) ? user.name : nil
+      end
+
+      def valid?
+        !user.nil?
       end
     end
   end
