@@ -39,7 +39,7 @@ module Timber
       end
 
       def valid?
-        !event.nil?
+        !response.nil? && !event.nil?
       end
 
       private

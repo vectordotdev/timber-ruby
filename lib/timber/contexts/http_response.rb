@@ -11,7 +11,7 @@ module Timber
         :content_type,
         :location,
         :status,
-        :duration_ms
+        :time_ms
     end
   end
 end
