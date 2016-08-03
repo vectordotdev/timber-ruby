@@ -5,8 +5,8 @@ module Timber
   # This context gets copied as each log line is written.
   class CurrentContext
     class ContextAlreadyAddedError < StandardError
-      def initialize(context)
-        super("Context of type #{context.class.name} has already been added")
+      def initialize(contexts)
+        super("Context of type #{contexts.collect { |context| context.class.name }} has already been added")
       end
     end
 
@@ -19,7 +19,7 @@ module Timber
     # Adds a context to the current stack.
     def add(*contexts, &block)
       if include?(*contexts)
-        raise ContextAlreadyAddedError.new(context)
+        raise ContextAlreadyAddedError.new(contexts)
       end
       contexts = contexts.compact
       contexts.each { |context| stack << context }
@@ -68,7 +68,7 @@ module Timber
       def stack
         storage[STACK_KEYNAME] ||= Set.new
       end
-    
+
       def storage
         Thread.current[THREAD_NAMESPACE] ||= {}
       end

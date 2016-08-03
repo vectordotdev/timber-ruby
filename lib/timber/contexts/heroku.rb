@@ -6,13 +6,25 @@ module Timber
       DELIMITER = "."
 
       property :dyno_type, :dyno_id
+      attr_reader :dyno
 
       def initialize(dyno)
-        dyno_type, dyno_id = dyno.split(DELIMITER)
-        @dyno_type = dyno_type
-        @dyno_id = dyno_id
+        @dyno = dyno
         super()
       end
+
+      def dyno_type
+        @dyno_type ||= parts.first
+      end
+
+      def dyno_id
+        @dyno_id ||= parts.last
+      end
+
+      private
+        def parts
+          @parts ||= dyno.split(DELIMITER)
+        end
     end
   end
 end

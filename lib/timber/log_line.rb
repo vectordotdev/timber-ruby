@@ -25,7 +25,7 @@ module Timber
       @message = message
 
       # Bump the indexes
-      CurrentLineIndexes.log_line_added
+      CurrentLineIndexes.log_line_added(self)
 
       # This code needs to be efficient, hence the use of snapshotting.
       # We do not want to convert to json here as it's done inline.

@@ -13,14 +13,14 @@ module Timber
       Thread.current[THREAD_NAMESPACE] ||= {}
     end
 
-    def log_line_added
+    def log_line_added(_log_line)
       CurrentContext.valid_stack.each do |context|
         if indexes.key?(context)
           indexes[context] += 1
         else
           indexes[context] = 0
         end
-      end 
+      end
     end
 
     def snapshot
