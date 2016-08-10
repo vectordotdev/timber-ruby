@@ -29,7 +29,7 @@ module Timber
       end
 
       def method
-        @method ||= request.request_method
+        @method ||= request.request_method.upcase
       end
 
       def path

@@ -5,7 +5,7 @@ module Timber
       KEY_NAME = "heroku".freeze
       DELIMITER = "."
 
-      property :dyno_type, :dyno_id
+      property :process_type, :dyno_id
       attr_reader :dyno
 
       def initialize(dyno)
@@ -13,8 +13,8 @@ module Timber
         super()
       end
 
-      def dyno_type
-        @dyno_type ||= parts.first
+      def process_type
+        @process_type ||= parts.first
       end
 
       def dyno_id
