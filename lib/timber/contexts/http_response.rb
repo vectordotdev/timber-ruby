@@ -5,10 +5,7 @@ module Timber
       VERSION = "1".freeze
       KEY_NAME = "http_response".freeze
 
-      property :content_length,
-        :cache_control,
-        :content_disposition,
-        :content_type,
+      property :headers,
         :location,
         :status,
         :time_ms

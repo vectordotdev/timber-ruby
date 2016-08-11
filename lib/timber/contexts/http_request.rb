@@ -4,18 +4,13 @@ module Timber
       VERSION = "1".freeze
       KEY_NAME = "http_request".freeze
 
-      property :connect_time_ms,
-        :content_type,
+      property :headers,
         :host,
-        :ip,
         :method,
         :path,
         :port,
         :query_params,
-        :referrer,
-        :request_id,
-        :scheme,
-        :user_agent
+        :scheme
     end
   end
 end
