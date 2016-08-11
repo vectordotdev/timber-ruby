@@ -5,7 +5,7 @@ module Timber
       KEY_NAME = "exception".freeze
 
       attr_reader :exception
-      property :backtrace, :class_name, :message
+      property :backtrace, :name, :message
 
       def initialize(exception)
         # Initialize should be as fast as possible since it is executed inline.
@@ -19,8 +19,8 @@ module Timber
         @backtrace ||= exception.backtrace[0..5]
       end
 
-      def class_name
-        @class_name ||= exception.class.name
+      def name
+        @name ||= exception.class.name
       end
 
       def message
