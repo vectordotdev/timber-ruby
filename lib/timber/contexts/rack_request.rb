@@ -4,9 +4,10 @@ module Timber
   module Contexts
     class RackRequest < HTTPRequest
       class Headers
-        attr_reader :request
+        attr_reader :env, :request
 
-        def initialize(request)
+        def initialize(env, request)
+          @env = env
           @request = request
         end
 
@@ -73,7 +74,7 @@ module Timber
       end
 
       def headers
-        @headers ||= Headers.new(request)
+        @headers ||= Headers.new(env, request)
       end
 
       def host
