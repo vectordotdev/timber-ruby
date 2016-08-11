@@ -53,6 +53,10 @@ module Timber
         @controller = controller
       end
 
+      def headers
+        @headers ||= Headers.new(response)
+      end
+
       def status
         @status ||= response.status
       end
