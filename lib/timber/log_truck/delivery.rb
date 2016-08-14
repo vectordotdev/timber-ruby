@@ -1,6 +1,7 @@
-require "uri"
+require "base64"
 require "net/http"
 require "net/https"
+require "uri"
 
 module Timber
   class LogTruck
@@ -104,7 +105,7 @@ module Timber
         end
 
         def authorization_payload
-          @authorization_payload ||= "Basic #{application_key}"
+          @authorization_payload ||= "Basic #{Base64.encode64(application_key).chomp}"
         end
     end
   end
