@@ -105,7 +105,7 @@ module Timber
         end
 
         def authorization_payload
-          @authorization_payload ||= "Basic #{Base64.encode64(application_key).chomp}"
+          @authorization_payload ||= "Basic #{Base64.strict_encode64(application_key).chomp}"
         end
     end
   end
