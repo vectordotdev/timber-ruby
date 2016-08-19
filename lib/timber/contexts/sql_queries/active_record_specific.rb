@@ -38,7 +38,7 @@ module Timber
         private
           def json_payload
             @json_payload ||= DeepMerger.merge(super, {
-              Rack._root_key => {
+              SQLQuery._root_key => {
                 _root_key => {
                   :binds => binds,
                   :connection_id => connection_id,
