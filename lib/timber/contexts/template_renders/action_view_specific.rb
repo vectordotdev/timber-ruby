@@ -2,7 +2,11 @@ module Timber
   module Contexts
     module TemplateRenders
       # Because this is a sub type we extend Context
-      class ActionViewSpecific < TemplateRender
+      class ActionViewSpecific < Context
+        PATH = "#{TemplateRender._root_key}.action_view"
+        ROOT_KEY = :action_view.freeze
+        VERSION = 1.freeze
+
         attr_reader :event
 
         def initialize(event)

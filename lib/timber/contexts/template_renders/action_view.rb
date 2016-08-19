@@ -1,7 +1,7 @@
 module Timber
   module Contexts
     module TemplateRenders
-      class ActionView < Context
+      class ActionView < TemplateRender
         attr_reader :event
 
         def initialize(event)
