@@ -10,3 +10,10 @@ Timber::Config.tap do |config|
   # for it.
   config.log_truck_enabled = false
 end
+
+RSpec.configure do |config|
+  config.after(:each) do
+    Timber::CurrentLineIndexes.reset!
+    Timber::LogPile.each { |log_pile| log_pile.empty }
+  end
+end

@@ -23,6 +23,10 @@ module Timber
       end
     end
 
+    def reset!
+      indexes.clear
+    end
+
     def snapshot
       # No need to cache, this is blown out for each log line
       LineIndexesSnapshot.new(self)

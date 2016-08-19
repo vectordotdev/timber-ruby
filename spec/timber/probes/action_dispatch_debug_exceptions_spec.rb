@@ -25,12 +25,12 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
         Object.send(:remove_const, :ExceptionController)
       end
 
-      let(:rack_request_context_class) { Timber::Contexts::RackRequest }
-      let(:context_class) { Timber::Contexts::Exception }
+      let(:rack_request_context_class) { Timber::Contexts::HTTPRequests::Rack }
+      let(:exception_context_class) { Timber::Contexts::Exception }
 
       it "should set the context" do
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(rack_request_context_class)).and_yield.once
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(context_class)).and_yield
+        expect(Timber::CurrentContext).to receive(:add).with(kind_of(exception_context_class)).and_yield
         dispatch_rails_request("/exception")
       end
     end

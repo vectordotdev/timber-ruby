@@ -1,5 +1,7 @@
 module Timber
   class LogLine
+    include Patterns::ToJSON
+
     # Raised when there is an issue with the message being passed.
     # Note: this is handled in Logger
     class InvalidMessageError < ArgumentError; end
@@ -33,22 +35,18 @@ module Timber
       @context_snapshot = CurrentContext.snapshot
     end
 
-    def as_json(*args)
-      @as_json ||= {
-        :dt      => formatted_dt,
-        :message => message,
-        :context => context_snapshot
-      }
-    end
-
-    def to_json(*args)
-      # Note: this is run in the background thread, hence the hash creation.
-      @to_json ||= as_json.to_json(*args)
-    end
-
     private
       def formatted_dt
         @formatted_dt ||= dt.send(APISettings::DATE_FORMAT, APISettings::DATE_FORMAT_PRECISION)
+      end
+
+      def json_payload
+        @json_payload ||= {
+          :dt                => formatted_dt,
+          :message           => message,
+          :context           => context_snapshot.context_hash,
+          :context_hierarchy => context_snapshot.hierarchy
+        }
       end
   end
 end

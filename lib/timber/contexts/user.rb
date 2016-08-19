@@ -1,11 +1,10 @@
 module Timber
   module Contexts
     class User < Context
-      VERSION = "1".freeze
-      KEY_NAME = "user".freeze
+      ROOT_KEY = :user.freeze
+      VERSION = 1.freeze
 
       attr_reader :user
-      property :email, :id, :name
 
       def email
         return @email if defined?(@email)
@@ -25,6 +24,15 @@ module Timber
       def valid?
         !user.nil?
       end
+
+      private
+        def json_payload
+          @json_payload ||= DeepMerger.merge(super, {
+            :email => email,
+            :id => id,
+            :name => name
+          })
+        end
     end
   end
 end

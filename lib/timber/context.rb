@@ -2,49 +2,45 @@ require "securerandom"
 
 module Timber
   class Context
-    include ClassLevelInheritableAttributes
-    inheritable_attributes :properties
-    self.properties ||= []
-
-    class << self
-      def property(*properties)
-        @properties = properties
-        attr_reader *properties
-      end
-    end
+    include Patterns::ToJSON
 
     SECURE_RANDOM_LENGTH = 32.freeze
+
+    class << self
+      def _version
+        @_version ||= const_get(:VERSION)
+      end
+
+      def _path
+        @_path ||= (const_defined?(:PATH) ? const_get(:PATH) : _root_key).to_s
+      end
+
+      def _root_key
+        @_root_key ||= const_get(:ROOT_KEY)
+      end
+    end
 
     def _id
       @_id ||= generate_secure_random
     end
 
     def _version
-      @_version ||= self.class.const_get(:VERSION)
+      self.class._version
     end
 
-    # This method name is required for rails' awesome changes to #to_json
-    def as_json(*args)
-      @as_json ||= {
-        :_id => _id,
-        :_version => _version
-      }.tap do |h|
-        properties.each do |property|
-          # Don't include nil values, normalizes the results
-          if !(value = send(property)).nil?
-            h[property] = value
-          end
-        end
-      end
+    def _path
+      self.class._path
     end
 
-    def key_name
-      @key_name ||= self.class.const_get(:KEY_NAME)
+    def _root_key
+      self.class._root_key
     end
 
-    def to_json(*args)
-      # Note: this is run in the background thread, hence the hash creation.
-      @to_json ||= as_json.to_json(*args)
+    def as_json_with_index(index)
+      keys = _path.split(".")
+      hash = keys.inject(as_json) {|acc, value| acc[value]}
+      hash[:_index] = index
+      hash
     end
 
     # Some contexts hold mutable object that change as the context block
@@ -55,12 +51,15 @@ module Timber
     end
 
     private
-      def generate_secure_random
-        SecureRandom.urlsafe_base64(SECURE_RANDOM_LENGTH)
+      def json_payload
+        @json_payload ||= {
+          :_id => _id,
+          :_version => _version
+        }
       end
 
-      def properties
-        self.class.properties
+      def generate_secure_random
+        SecureRandom.urlsafe_base64(SECURE_RANDOM_LENGTH)
       end
   end
 end

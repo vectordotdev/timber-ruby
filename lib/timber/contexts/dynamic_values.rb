@@ -6,6 +6,8 @@ module Timber
     class DynamicValues
       class UnrecognizedObjectTypeError < StandardError; end
 
+      include Patterns::ToJSON
+
       BOOLEAN_TYPES = [FalseClass, TrueClass].freeze
       DATE_TYPES    = [Date, Time].freeze
       FLOAT_TYPES   = [BigDecimal, Float].freeze
@@ -17,20 +19,11 @@ module Timber
         @values_array = values_array
       end
 
-      def as_json
-        @as_json ||= values_array.collect do |value|
-          to_item(value)
-        end
-      end
-
-      def to_json(*args)
-        # Note: this is run in the background thread, hence the hash creation.
-        @json ||= as_json.to_json(*args)
-      end
-
       private
-        def values_array
-          @values_array
+        def json_payload
+          @json_payload ||= values_array.collect do |value|
+            to_item(value)
+          end
         end
 
         def to_item(value)
@@ -56,6 +49,10 @@ module Timber
           else
             APISettings::STRING_TYPE
           end
+        end
+
+        def values_array
+          @values_array
         end
     end
   end

@@ -28,7 +28,7 @@ module Timber
       remove(*contexts) if block_given?
     end
 
-    # Get a specific contet type off the stack
+    # Get a specific context type off the stack
     def get(type)
       stack.find { |context| context.is_a?(type) }
     end

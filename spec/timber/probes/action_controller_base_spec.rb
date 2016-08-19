@@ -24,11 +24,11 @@ describe Timber::Probes::ActionControllerBase do
       Object.send(:remove_const, :PagesPlainController)
     end
 
-    let(:rack_request_context_class) { Timber::Contexts::RackRequest }
-    let(:request_context_class) { Timber::Contexts::ActionControllerRequest }
-    let(:organization_context_class) { Timber::Contexts::ActionControllerOrganization }
-    let(:user_context_class) { Timber::Contexts::ActionControllerUser }
-    let(:response_context_class) { Timber::Contexts::ActionControllerResponse }
+    let(:rack_request_context_class) { Timber::Contexts::HTTPRequests::Rack }
+    let(:request_context_class) { Timber::Contexts::HTTPRequests::ActionControllerSpecific }
+    let(:organization_context_class) { Timber::Contexts::Organizations::ActionController }
+    let(:user_context_class) { Timber::Contexts::Users::ActionController }
+    let(:response_context_class) { Timber::Contexts::HTTPResponses::ActionController }
 
     describe "#process" do
       it "should set the context" do

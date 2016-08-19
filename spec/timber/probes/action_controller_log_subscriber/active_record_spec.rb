@@ -3,7 +3,8 @@ require "spec_helper"
 describe Timber::Probes::ActiveSupportLogSubscriber::ActiveRecord do
   before(:each) { Timber::Probes::ActiveSupportLogSubscriber.insert! }
 
-  let(:context_class) { Timber::Contexts::ActiveRecordQuery }
+  let(:active_record_context_class) { Timber::Contexts::SQLQueries::ActiveRecord }
+  let(:active_record_specific_context_class) { Timber::Contexts::SQLQueries::ActiveRecordSpecific }
 
   describe "#sql" do
     context "log level debug" do
@@ -15,7 +16,7 @@ describe Timber::Probes::ActiveSupportLogSubscriber::ActiveRecord do
       after(:each) { ::ActiveRecord::Base.logger.level = @old_level }
 
       it "should set the context" do
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(context_class)).and_yield.once
+        expect(Timber::CurrentContext).to receive(:add).with(kind_of(active_record_context_class), kind_of(active_record_specific_context_class)).and_yield.once
         ActiveRecord::Base.connection.execute("select * from users")
       end
     end

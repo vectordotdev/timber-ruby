@@ -7,7 +7,7 @@ module Timber
         end
 
         def call(env)
-          context = Contexts::RackRequest.new(env)
+          context = Contexts::HTTPRequests::Rack.new(env)
           CurrentContext.add(context) do
             @app.call(env)
           end

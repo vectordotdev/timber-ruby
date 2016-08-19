@@ -1,5 +1,7 @@
 module Timber
   class ContextSnapshot
+    include Patterns::ToJSON
+
     attr_reader :indexes, :stack
 
     def initialize
@@ -10,42 +12,21 @@ module Timber
       @indexes = CurrentLineIndexes.indexes.clone.freeze
     end
 
-    def as_json(*args)
-      @as_json ||= {
-        indexes: indexes_hash,
-        hierarchy: hierarchy,
-        data: stack_hash
-      }
-    end
-
-    def to_json(*args)
-      # Note: this is run in the background thread, hence the hash creation.
-      @json ||= as_json.to_json(*args)
+    def context_hash
+      @context_hash ||= {}.tap do |hash|
+        stack.each do |context|
+          specific_hash = context.as_json_with_index(indexes[context])
+          hash.replace(DeepMerger.merge(hash, specific_hash))
+        end
+      end
     end
 
     def hierarchy
-      @hierarchy ||= stack.collect(&:key_name)
+      @hierarchy ||= stack.collect(&:_path).uniq
     end
 
     def size
       stack.size
     end
-
-    private
-      def indexes_hash
-        @indexes_hash ||= {}.tap do |hash|
-          indexes.each do |context, index|
-            hash[context.key_name] = index
-          end
-        end
-      end
-
-      def stack_hash
-        @stack_hash ||= {}.tap do |hash|
-          stack.each do |context|
-            hash[context.key_name] = context
-          end
-        end
-      end
   end
 end

@@ -1,16 +1,15 @@
 module Timber
   module Contexts
-    # Generica HTTP response shared across all platforms.
-    class HTTPResponse < Context
-      ROOT_KEY = :http_response.freeze
+    # Base class for SQLQuery sub types.
+    class SQLQuery < Context
+      ROOT_KEY = :sql_query.freeze
       VERSION = 1.freeze
 
       private
         def json_payload
           @json_payload ||= DeepMerger.merge(super, {
             _root_key => {
-              :headers => headers,
-              :status => status,
+              :sql => sql,
               :time_ms => time_ms
             }
           })

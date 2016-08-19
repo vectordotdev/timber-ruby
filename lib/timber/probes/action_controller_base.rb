@@ -5,10 +5,10 @@ module Timber
     class ActionControllerBase < Probe
       module InstanceMethods
         def process(*args)
-          request_context      = Contexts::ActionControllerRequest.new(self)
-          organization_context = Contexts::ActionControllerOrganization.new(self)
-          user_context         = Contexts::ActionControllerUser.new(self)
-          response_context     = Contexts::ActionControllerResponse.new(self)
+          request_context      = Contexts::HTTPRequests::ActionControllerSpecific.new(self)
+          organization_context = Contexts::Organizations::ActionController.new(self)
+          user_context         = Contexts::Users::ActionController.new(self)
+          response_context     = Contexts::HTTPResponses::ActionController.new(self)
           # The order is relevant here, request_context is higher in the hierarchy
           CurrentContext.add(request_context, organization_context, user_context, response_context) do
             super

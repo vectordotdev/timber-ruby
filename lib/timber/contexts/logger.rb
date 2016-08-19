@@ -1,16 +1,26 @@
 module Timber
   module Contexts
     class Logger < Context
-      VERSION = "1".freeze
-      KEY_NAME = "logger".freeze
+      ROOT_KEY = :logger.freeze
+      VERSION = 1.freeze
 
-      property :level, :progname
+      attr_reader :level, :progname
 
       def initialize(level, progname)
         @level = level
         @progname = progname
         super()
       end
+
+      private
+        def json_payload
+          @json_payload ||= DeepMerger.merge(super, {
+            _root_key => {
+              :level => level,
+              :progname => progname
+            }
+          })
+        end
     end
   end
 end

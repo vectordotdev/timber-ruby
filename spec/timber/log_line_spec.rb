@@ -5,7 +5,7 @@ describe Timber::LogLine do
   let(:log_line) { described_class.new(message) }
 
   around(:each) do |example|
-    heroku = Timber::Contexts::Heroku.new("web.1")
+    heroku = Timber::Contexts::Servers::HerokuSpecific.new("web.1")
     Timber::CurrentContext.add(heroku) { example.run }
   end
 
@@ -36,7 +36,7 @@ describe Timber::LogLine do
   describe "#to_json" do
     # Note: very important that we keep the iso8601 format. Otherwise the Timber API
     # will recognized the date as invalid.
-    let(:json) { "{\"dt\":#{log_line.dt.iso8601(6).to_json},\"message\":#{log_line.message.to_json},\"context\":#{log_line.context_snapshot.to_json}}" }
+    let(:json) { "{\"dt\":#{log_line.dt.iso8601(6).to_json},\"message\":#{log_line.message.to_json},\"context\":#{log_line.context_snapshot.context_hash.to_json},\"context_hierarchy\":#{log_line.context_snapshot.hierarchy.to_json}}" }
     subject { log_line.to_json }
     it { should eq(json) }
   end

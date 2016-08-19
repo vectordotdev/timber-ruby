@@ -17,7 +17,6 @@ require File.join(File.dirname(__FILE__), 'support', 'rails')
 require File.join(File.dirname(__FILE__), 'support', 'action_controller')
 require File.join(File.dirname(__FILE__), 'support', 'action_view')
 require File.join(File.dirname(__FILE__), 'support', 'active_record')
-require File.join(File.dirname(__FILE__), 'support', 'log_pile')
 require File.join(File.dirname(__FILE__), 'support', 'rails')
 
 RSpec.configure do |config|
