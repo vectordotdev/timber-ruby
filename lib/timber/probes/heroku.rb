@@ -14,7 +14,7 @@ module Timber
 
       def insert!
         return true if self.class.inserted == true
-        context = Contexts::Servers::Heroku.new(dyno)
+        context = Contexts::Servers::HerokuSpecific.new(dyno)
         # Note we don't use a block here, this is because
         # the context is persistent.
         CurrentContext.add(context)
