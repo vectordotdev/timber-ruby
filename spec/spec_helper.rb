@@ -18,6 +18,7 @@ require File.join(File.dirname(__FILE__), 'support', 'action_controller')
 require File.join(File.dirname(__FILE__), 'support', 'action_view')
 require File.join(File.dirname(__FILE__), 'support', 'active_record')
 require File.join(File.dirname(__FILE__), 'support', 'rails')
+require File.join(File.dirname(__FILE__), 'support', 'socket_hostname')
 
 RSpec.configure do |config|
   config.color = true
