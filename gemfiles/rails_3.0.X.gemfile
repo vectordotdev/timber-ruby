@@ -16,6 +16,7 @@ group :test do
   gem "simplecov", :require => false
   gem "sqlite3"
   gem "timecop"
+  gem "tins", "~> 1.6.0"
   gem "webmock", "~> 2.0.3"
 end
 
