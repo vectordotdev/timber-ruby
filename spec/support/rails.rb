@@ -1,9 +1,13 @@
 require "rails"
 
+log_dev = Timber::LogDevices::IO.new
+
 if defined?(::ActiveSupport::TaggedLogging)
-  Rails.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
+  Rails.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(log_dev))
+elsif defined?(::ActiveSupport::Logger)
+  Rails.logger = ::ActiveSupport::Logger.new(log_dev)
 else
-  Rails.logger = ::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new)
+  Rails.logger = ::Logger.new(log_dev)
 end
 
 class RailsApp < Rails::Application
