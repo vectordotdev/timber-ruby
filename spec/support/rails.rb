@@ -1,16 +1,8 @@
 require "rails"
 
 log_dev = Timber::LogDevices::IO.new
-logger = if defined?(::ActiveSupport::Logger)
-  Rails.logger = ::ActiveSupport::Logger.new(log_dev)
-else
-  Rails.logger = ::Logger.new(log_dev)
-end
-Rails.logger = if defined?(::ActiveSupport::TaggedLogging)
-  ::ActiveSupport::TaggedLogging.new(logger)
-else
-  ::Logger.new(logger)
-end
+logger = defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger.new(log_dev) : ::Logger.new(log_dev)
+Rails.logger = defined?(::ActiveSupport::TaggedLogging) ? ::ActiveSupport::TaggedLogging.new(logger) : logger
 
 class RailsApp < Rails::Application
   if ::Rails.version =~ /^3\./
