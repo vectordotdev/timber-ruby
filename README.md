@@ -45,7 +45,7 @@ Now add the log drain:
 $ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logplex_frames
 ```
 
-\* *the `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)*
+<sup>*the `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)*</sup>
 
 #### HTTP
 
