@@ -9,6 +9,7 @@ require 'rspec/its'
 require 'rspec/mocks'
 
 # Support files, order is relevant
+require File.join(File.dirname(__FILE__), 'support', 'socket_hostname')
 require File.join(File.dirname(__FILE__), 'support', 'simplecov')
 require File.join(File.dirname(__FILE__), 'support', 'timecop')
 require File.join(File.dirname(__FILE__), 'support', 'webmock')
@@ -17,8 +18,6 @@ require File.join(File.dirname(__FILE__), 'support', 'rails')
 require File.join(File.dirname(__FILE__), 'support', 'action_controller')
 require File.join(File.dirname(__FILE__), 'support', 'action_view')
 require File.join(File.dirname(__FILE__), 'support', 'active_record')
-require File.join(File.dirname(__FILE__), 'support', 'rails')
-require File.join(File.dirname(__FILE__), 'support', 'socket_hostname')
 
 RSpec.configure do |config|
   config.color = true

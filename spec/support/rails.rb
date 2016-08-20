@@ -1,5 +1,10 @@
 require "rails"
 
+log_dev = Timber::LogDevices::IO.new
+logger = defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger.new(log_dev) : ::Logger.new(log_dev)
+Rails.logger = defined?(::ActiveSupport::TaggedLogging) ? ::ActiveSupport::TaggedLogging.new(logger) : logger
+Rails.logger.level = ::Logger::FATAL
+
 class RailsApp < Rails::Application
   if ::Rails.version =~ /^3\./
     config.secret_token = '1e05af2b349457936a41427e63450937'
@@ -7,13 +12,8 @@ class RailsApp < Rails::Application
     config.secret_key_base = '1e05af2b349457936a41427e63450937'
   end
   config.active_support.deprecation = :stderr
-  if defined?(::ActiveSupport::TaggedLogging)
-    config.logger = ::ActiveSupport::TaggedLogging.new(Timber::Logger.new)
-  else
-    config.logger = Timber::Logger.new
-  end
-  config.log_level = :debug
   config.eager_load = false
+  config.log_level = :fatal
 end
 
 RailsApp.initialize!

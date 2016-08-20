@@ -7,16 +7,16 @@ module Timber
       VERSION = 1.freeze
 
       def hostname
-        @hostname ||= Socket.gethostname
+        @hostname ||= ::Socket.gethostname
       end
 
       private
         def json_payload
-          @json_payload ||= DeepMerger.merge(super, {
+          @json_payload ||= Core::DeepMerger.merge({
             _root_key => {
               :hostname => hostname
             }
-          })
+          }, super)
         end
     end
   end

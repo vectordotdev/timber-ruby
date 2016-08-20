@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::LogTruck do
+describe Timber::LogDevices::HTTP::LogTruck do
   describe ".start!" do
     it "spawns a new thread" do
       expect(Thread).to receive(:new).once
@@ -16,7 +16,7 @@ describe Timber::LogTruck do
   end
 
   describe ".deliver" do
-    let(:log_pile) { Timber::LogPile.get(Timber::Config.application_key) }
+    let(:log_pile) { Timber::LogDevices::HTTP::LogPile.get(Timber::Config.application_key) }
 
     it "doesn't deliver because there is nothing to deliver" do
       expect(log_pile).to_not receive(:deliver)
@@ -44,7 +44,7 @@ describe Timber::LogTruck do
     subject { log_truck }
 
     it "should raise an exception" do
-      expect { subject }.to raise_exception(Timber::LogTruck::NoPayloadError)
+      expect { subject }.to raise_exception(Timber::LogDevices::HTTP::LogTruck::NoPayloadError)
     end
 
     context "with log lines" do
@@ -58,7 +58,7 @@ describe Timber::LogTruck do
     let(:log_truck) { described_class.new(Timber::Config.application_key, log_lines) }
 
     it "should delivery successfully" do
-      expect_any_instance_of(Timber::LogTruck::Delivery).to receive(:deliver!)
+      expect_any_instance_of(Timber::LogDevices::HTTP::LogTruck::Delivery).to receive(:deliver!)
       log_truck.deliver!
     end
   end

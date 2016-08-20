@@ -31,14 +31,14 @@ module Timber
           end
 
           def json_payload
-            @json_payload ||= DeepMerger.merge(super, {
-              Server._root_key => {
+            @json_payload ||= {
+              Server._root_key => Core::DeepMerger.merge({
                 _root_key => {
                   :dyno_id => dyno_id,
                   :process_type => process_type
                 }
-              }
-            })
+              }, super)
+            }
           end
       end
     end

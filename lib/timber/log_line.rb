@@ -6,47 +6,45 @@ module Timber
     # Note: this is handled in Logger
     class InvalidMessageError < ArgumentError; end
 
+    LOGFMT_DELIMITER = "\n\t"
+
     attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
-      # Capture the time as soon as possible
-      @dt = Time.now.utc
-
-      # Not all objects will be a string.
-      # TODO: handle converting objects to json or kv?
-      message = message.to_s
-
-      if !message.respond_to?(:bytesize)
-        raise InvalidMessageError.new("the log message must respond to bytesize")
-      end
-
+      @dt = Time.now.utc # Capture the time as soon as possible
+      message = message.to_s # TODO: handle converting objects to json or kv?
       if message.bytesize > APISettings::MESSAGE_BYTE_SIZE_MAX
-        raise InvalidMessageError.new("the log message must not exceed #{APISettings::MESSAGE_BYTE_SIZE_MAX} bytes")
+        raise InvalidMessageError.new("the log message must not exceed " +
+          "#{APISettings::MESSAGE_BYTE_SIZE_MAX} bytes")
       end
-
       @message = message
-
-      # Bump the indexes
-      CurrentLineIndexes.log_line_added(self)
-
-      # This code needs to be efficient, hence the use of snapshotting.
-      # We do not want to convert to json here as it's done inline.
-      # Leaving that to the background task.
+      CurrentLineIndexes.log_line_added(self) # Bump the indexes
       @context_snapshot = CurrentContext.snapshot
+    end
+
+    def to_logfmt(options = {})
+      @to_logfmt ||= {}
+      @to_logfmt[options] ||= "".tap do |string|
+        filtered_json_payload = options[:except] ?
+          Core::Rejecter.reject(base_json_payload, options[:except]) :
+          base_json_payload
+        string << Core::LogfmtEncoder.encode(filtered_json_payload)
+        string << LOGFMT_DELIMITER
+        string << context_snapshot.to_logfmt(:delimiter => LOGFMT_DELIMITER, :except_contexts => options[:except_contexts])
+      end
     end
 
     private
       def formatted_dt
-        @formatted_dt ||= dt.send(APISettings::DATE_FORMAT, APISettings::DATE_FORMAT_PRECISION)
+        @formatted_dt ||= Core::DateFormatter.format(dt)
+      end
+
+      def base_json_payload
+        @base_json_payload ||= {:dt => formatted_dt, :message => message}
       end
 
       def json_payload
-        @json_payload ||= {
-          :dt                => formatted_dt,
-          :message           => message,
-          :context           => context_snapshot.context_hash,
-          :context_hierarchy => context_snapshot.hierarchy
-        }
+        @json_payload ||= base_json_payload.merge(context_snapshot.as_json)
       end
   end
 end

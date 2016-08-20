@@ -6,7 +6,7 @@ module Timber
 
       private
         def json_payload
-          @json_payload ||= DeepMerger.merge(super, {
+          @json_payload ||= Core::DeepMerger.merge({
             _root_key => {
               :headers => headers,
               :host => host,
@@ -16,7 +16,7 @@ module Timber
               :query_params => query_params,
               :scheme => scheme
             }
-          })
+          }, super)
         end
     end
   end

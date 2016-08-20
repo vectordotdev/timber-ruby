@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::LogTruck::Delivery do
+describe Timber::LogDevices::HTTP::LogTruck::Delivery do
   describe "#deliver!" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
@@ -9,12 +9,17 @@ describe Timber::LogTruck::Delivery do
 
     def new_stub
       stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"_version\":1,\"hostname\":\"computer-name.domain.com\",\"_index\":0},\"context_hierarchy\":[\"server\"]}]}}",
+        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"_version\":1,\"server\":{\"hostname\":\"computer-name.domain.com\",\"_dt\":\"2016-09-01T12:00:00.000000Z\",\"_version\":1,\"_index\":0}},\"context_hierarchy\":[\"server\"]}]}}",
              :headers => {'Content-Type'=>'application/json'})
     end
 
     around(:each) do |example|
       Timecop.freeze(time) { example.run }
+    end
+
+    before(:each) do
+      server_context = Timber::CurrentContext.get(Timber::Contexts::Server)
+      allow(server_context).to receive(:_dt).and_return(time)
     end
 
     let(:log_lines) { [Timber::LogLine.new("hello")] }
@@ -34,7 +39,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
 
@@ -44,7 +49,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
 
@@ -54,7 +59,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
   end

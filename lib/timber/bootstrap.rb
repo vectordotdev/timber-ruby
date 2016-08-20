@@ -18,15 +18,7 @@ module Timber
 
     def bootstrap!
       return false unless enabled?
-      
       Probes.insert!(middleware, insert_before)
-
-      if Config.log_truck_enabled?
-        LogTruck.start!
-      else
-        Config.logger.warn("Log truck is disabled, enable with Config::Timber.log_truck_enabled = true")
-      end
-
       log_started
       true
     end

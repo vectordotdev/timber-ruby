@@ -1,3 +1,5 @@
+require "logger"
+
 module Timber
   # Allows us to prefix all logs with [Timber] without having to
   # rely on external dependencies. This is slightly different
@@ -7,7 +9,7 @@ module Timber
   class InternalLogger < ::Logger
     class Formatter < ::Logger::Formatter
       TAG = "[Timber]"
-  
+
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
         "#{TAG} #{String === msg ? msg : msg.inspect}\n"

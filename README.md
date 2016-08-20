@@ -14,7 +14,13 @@
 
 ## Install
 
-Grab your API key by signing up at [timber.io](http://timber.io).
+### 1. Get your API key
+
+You can obtain your API key by signing up at [timber.io](http://timber.io).
+
+*Note: Timber looks for the `TIMBER_KEY` environment variable. If set, you do not need to explicitly pass the key as shown below.*
+
+### 2. Install the gem
 
 Add timber to your Gemfile:
 
@@ -22,19 +28,37 @@ Add timber to your Gemfile:
 gem 'timber-ruby'
 ```
 
-Rails installation. In your `config/environments/production.rb` set your logger as:
+### 3. Choose a log transport strategy
+
+Timber allows you to choose how you want to log your data. In your environment configuration files (ex: `config/environments/production.rb`) copy any of the following examples:
+
+#### Heroku
 
 ```ruby
-logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(ENV['TIMBER_KEY'])) # argument is optional
-logger.formatter = config.log_formatter
-config.logger = logger
+# config/environments/production.rb (or staging, etc)
+config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
 ```
 
-**Make sure you replace any existing definitions of `config.logger =`**
+Now add the log drain:
 
-Prefer to continue logging to your original backend? Add:
+```
+$ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logplex_frames
+```
+
+*the `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)*
+
+#### HTTP
 
 ```ruby
-# insert above config.logger = logger
-logger.extend ActiveSupoort::Logger.broadcast(Rails.logger)
+# config/environments/production.rb (or staging, etc)
+config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
+```
+
+#### IO (STDOUT, STDERR, files, etc.)
+
+The IO format will write to anything that responds to the `#write` method.
+
+```ruby
+# config/environments/production.rb (or staging, etc)
+config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
 ```
