@@ -18,7 +18,7 @@
 
 You can obtain your API key by signing up at [timber.io](http://timber.io).
 
-*Note: Timber looks for the `TIMBER_KEY` environment variable. If set, do you not need to explicitly pass the key as shown below.*
+*Note: Timber looks for the `TIMBER_KEY` environment variable. If set, you do not need to explicitly pass the key as shown below.*
 
 ### 2. Install the gem
 
@@ -34,9 +34,8 @@ Timber allows you to choose how you want to log your data. In your environment c
 
 #### Heroku
 
-In your environment configuration file(s) (ex: `config/environments/production.rb`) copy the following code:
-
 ```ruby
+# config/environments/production.rb (or staging, etc)
 config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
 ```
 
@@ -50,9 +49,8 @@ The `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)
 
 #### HTTP
 
-In your environment configuration file(s) (ex: `config/environments/production.rb`) copy the following code:
-
 ```ruby
+# config/environments/production.rb (or staging, etc)
 config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
 ```
 
@@ -60,8 +58,7 @@ config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(T
 
 The IO format will write to anything that responds to the `#write` method.
 
-In your environment configuration file(s) (ex: `config/environments/production.rb`) copy the following code:
-
 ```ruby
+# config/environments/production.rb (or staging, etc)
 config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
 ```
