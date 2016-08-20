@@ -19,7 +19,7 @@ module Timber
 
     # Internal logger for the Timber library
     def logger
-      @logger ||= InternalLogger.new(STDOUT)
+      @logger ||= InternalLogger.new(nil)
     end
   end
 end

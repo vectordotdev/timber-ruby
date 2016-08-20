@@ -13,6 +13,9 @@ group :test do
   gem 'simplecov', require: false
   gem 'sqlite3'
   gem 'timecop'
-  gem 'tins', '~> 1.6.0' # > 1.6 requires ruby 2+, we have tests for 1.9
   gem 'webmock', '~> 2.0.3'
+
+  # for coveralls
+  gem 'rest-client', '~> 1.8' # >= 2.0 requires ruby 2+, we have tests for 1.9
+  gem 'tins', '~> 1.6.0' # > 1.6 requires ruby 2+, we have tests for 1.9
 end
