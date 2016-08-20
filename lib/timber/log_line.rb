@@ -1,6 +1,7 @@
 module Timber
   class LogLine
     include Patterns::ToJSON
+    include Patterns::ToLogfmt
 
     # Raised when there is an issue with the message being passed.
     # Note: this is handled in Logger
@@ -14,7 +15,7 @@ module Timber
 
       # Not all objects will be a string.
       # TODO: handle converting objects to json or kv?
-      message = message.to_s
+      message = message.to_s.chomp
 
       if !message.respond_to?(:bytesize)
         raise InvalidMessageError.new("the log message must respond to bytesize")

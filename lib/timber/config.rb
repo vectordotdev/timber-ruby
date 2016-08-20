@@ -1,10 +1,8 @@
-require "logger"
-
 module Timber
   class Config
     include Patterns::DelegatedSingleton
 
-    attr_writer :application_key, :enabled, :logger, :log_truck_enabled, :monitor
+    attr_writer :application_key, :enabled, :logger
 
     def application_key
       @application_key ||= ENV['TIMBER_KEY']
@@ -19,30 +17,9 @@ module Timber
       enabled == true
     end
 
-    def log_level
-      @log_level ||= ENV['LOG_LEVEL'] || ::Logger::DEBUG
-    end
-
-    def log_truck_enabled
-      return @log_truck_enabled if defined?(@log_truck_enabled)
-      @log_truck_enabled = true
-    end
-
-    def log_truck_enabled?
-      log_truck_enabled == true
-    end
-
     # Internal logger for the Timber library
     def logger
       @logger ||= InternalLogger.new(STDOUT)
-    end
-
-    def monitor
-      @monitor ||= []
-    end
-
-    def reset!(name)
-      remove_instance_variable(:"@#{name}") if instance_variable_defined?(:"@#{name}")
     end
   end
 end

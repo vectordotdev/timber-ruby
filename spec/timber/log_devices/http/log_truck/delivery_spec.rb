@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::LogTruck::Delivery do
+describe Timber::LogDevices::HTTP::LogTruck::Delivery do
   describe "#deliver!" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
@@ -34,7 +34,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
 
@@ -44,7 +44,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
 
@@ -54,7 +54,7 @@ describe Timber::LogTruck::Delivery do
       }
 
       it "should raise an error" do
-        expect { delivery.deliver! }.to raise_error(Timber::LogTruck::Delivery::DeliveryError)
+        expect { delivery.deliver! }.to raise_error(Timber::LogDevices::HTTP::LogTruck::Delivery::DeliveryError)
       end
     end
   end

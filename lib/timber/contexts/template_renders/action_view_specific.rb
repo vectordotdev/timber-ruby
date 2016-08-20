@@ -30,15 +30,15 @@ module Timber
 
         private
           def json_payload
-            @json_payload ||= DeepMerger.merge(super, {
-              TemplateRender._root_key => {
+            @json_payload ||= {
+              TemplateRender._root_key => Core::DeepMerger.merge(super, {
                 _root_key => {
                   :cache_hits => cache_hits,
                   :count => count,
                   :layout => layout
                 }
-              }
-            })
+              })
+            }
           end
 
           def payload

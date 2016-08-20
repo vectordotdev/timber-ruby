@@ -22,9 +22,11 @@ module Timber
 
       private
         def json_payload
-          @json_payload ||= DeepMerger.merge(super, {
-            :id => id,
-            :name => name
+          @json_payload ||= Core::DeepMerger.merge(super, {
+            _root_key => {
+              :id => id,
+              :name => name
+            }
           })
         end
     end

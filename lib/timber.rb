@@ -2,10 +2,11 @@
 require "json" # brings to_json to the core classes
 
 # Base (must come first, order matters)
-require "timber/deep_merger"
+require "timber/core"
 require "timber/patterns"
 require "timber/config"
 require "timber/context"
+require "timber/log_device"
 require "timber/probe"
 require "timber/version"
 
@@ -18,10 +19,8 @@ require "timber/current_context"
 require "timber/current_line_indexes"
 require "timber/ignore"
 require "timber/internal_logger"
+require "timber/log_devices"
 require "timber/log_line"
-require "timber/log_pile"
-require "timber/log_truck"
-require "timber/logger"
 require "timber/probes"
 
 # Load frameworks last

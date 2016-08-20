@@ -1,8 +1,6 @@
 module Timber
   module Contexts
     class Exception < Context
-      include Patterns::ToJSON
-
       ROOT_KEY = :exception.freeze
       VERSION = 1.freeze
 
@@ -30,9 +28,11 @@ module Timber
 
       private
         def json_payload
-          @json_payload ||= DeepMerger.merge(super, {
-            :name => name,
-            :message => message
+          @json_payload ||= Core::DeepMerger.merge(super, {
+            _root_key => {
+              :name => name,
+              :message => message
+            }
           })
         end
     end

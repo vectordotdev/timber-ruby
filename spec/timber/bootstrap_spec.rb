@@ -8,7 +8,6 @@ describe Timber::Bootstrap do
     def self.it_should_not_bootstrap
       it "should not bootstrap" do
         expect(Timber::Probes).to_not receive(:insert!)
-        expect(Timber::LogTruck).to_not receive(:start)
         expect(described_class.bootstrap!(middleware, insert_before)).to be false
       end
     end
@@ -16,23 +15,17 @@ describe Timber::Bootstrap do
     def self.it_should_bootstrap
       it "should bootstrap" do
         expect(Timber::Probes).to receive(:insert!).once
-        expect(Timber::LogTruck).to receive(:start!).once
         expect(described_class.bootstrap!(middleware, insert_before)).to be true
       end
     end
 
-    context "log truck enabled" do
-      before(:each) { Timber::Config.log_truck_enabled = true }
-      after(:each) { Timber::Config.log_truck_enabled = false }
+    it_should_bootstrap
 
-      it_should_bootstrap
+    context "disabled" do
+      before(:each) { Timber::Config.enabled = false }
+      after(:each) { Timber::Config.enabled = true }
 
-      context "disabled" do
-        before(:each) { Timber::Config.enabled = false }
-        after(:each) { Timber::Config.enabled = true }
-
-        it_should_not_bootstrap
-      end
+      it_should_not_bootstrap
     end
   end
 end

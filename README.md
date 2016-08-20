@@ -14,7 +14,7 @@
 
 ## Install
 
-Grab your API key by signing up at [timber.io](http://timber.io).
+Grab your API key by signing up at [timber.io](http://timber.io). If you place your API key in the `TIMBER_KEY` environment variable you do not have to specify it below.
 
 Add timber to your Gemfile:
 
@@ -22,19 +22,30 @@ Add timber to your Gemfile:
 gem 'timber-ruby'
 ```
 
-Rails installation. In your `config/environments/production.rb` set your logger as:
+### Rails >= 3.2.1
+
+In your environment configuration files (ex: `config/environments/production.rb`) set your logger as:
 
 ```ruby
-logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(ENV['TIMBER_KEY'])) # argument is optional
-logger.formatter = config.log_formatter
-config.logger = logger
+config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
 ```
 
-**Make sure you replace any existing definitions of `config.logger =`**
+### Rails <= 3.2.0
 
-Prefer to continue logging to your original backend? Add:
+In your environment configuration files (ex: `config/environments/production.rb`) set your logger as:
 
 ```ruby
-# insert above config.logger = logger
-logger.extend ActiveSupoort::Logger.broadcast(Rails.logger)
+config.logger = ::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY'])) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
+```
+
+### Heroku
+
+If you wish to use Heroku's [log drains feature](https://devcenter.heroku.com/articles/log-drains), you can use the `IO` log device.
+
+Instead of `Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY'])` use `Timber::LogDevices::IO.new`.
+
+Then run
+
+```
+$ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logplex_frames
 ```

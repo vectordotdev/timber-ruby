@@ -8,11 +8,10 @@ class RailsApp < Rails::Application
   end
   config.active_support.deprecation = :stderr
   if defined?(::ActiveSupport::TaggedLogging)
-    config.logger = ::ActiveSupport::TaggedLogging.new(Timber::Logger.new)
+    config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
   else
-    config.logger = Timber::Logger.new
+    config.logger = ::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new)
   end
-  config.log_level = :debug
   config.eager_load = false
 end
 

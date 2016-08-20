@@ -3,6 +3,7 @@ require "securerandom"
 module Timber
   class Context
     include Patterns::ToJSON
+    include Patterns::ToLogfmt
 
     SECURE_RANDOM_LENGTH = 32.freeze
 
@@ -38,9 +39,16 @@ module Timber
 
     def as_json_with_index(index)
       keys = _path.split(".")
-      hash = keys.inject(as_json) {|acc, value| acc[value]}
-      hash[:_index] = index
+      hash = as_json
+      target_hash = keys.inject(hash) do |acc, value|
+        acc[value] || raise("could not find key #{inspect(value)}")
+      end
+      target_hash["_index"] = index
       hash
+    end
+
+    def inspect
+      "#<#{self.class.name}:#{object_id} ...>"
     end
 
     # Some contexts hold mutable object that change as the context block
@@ -53,8 +61,10 @@ module Timber
     private
       def json_payload
         @json_payload ||= {
-          :_id => _id,
-          :_version => _version
+          _root_key => {
+            :_id => _id,
+            :_version => _version
+          }
         }
       end
 

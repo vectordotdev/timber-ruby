@@ -1,7 +1,5 @@
 module Timber
   class ContextSnapshot
-    include Patterns::ToJSON
-
     CONTEXT_VERSION = 1.freeze
 
     attr_reader :indexes, :stack
@@ -16,10 +14,10 @@ module Timber
 
     def context_hash
       @context_hash ||= {}.tap do |hash|
-        hash[:_version] = CONTEXT_VERSION
+        hash["_version"] = CONTEXT_VERSION
         stack.each do |context|
           specific_hash = context.as_json_with_index(indexes[context])
-          hash.replace(DeepMerger.merge(hash, specific_hash))
+          hash.replace(Core::DeepMerger.merge(hash, specific_hash))
         end
       end
     end
