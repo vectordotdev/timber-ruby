@@ -5,7 +5,7 @@ module Timber
     include Patterns::ToJSON
     include Patterns::ToLogfmt
 
-    SECURE_RANDOM_LENGTH = 32.freeze
+    SECURE_RANDOM_LENGTH = 16.freeze
 
     class << self
       def _version
@@ -21,8 +21,8 @@ module Timber
       end
     end
 
-    def _id
-      @_id ||= generate_secure_random
+    def _dt
+      @_dt ||= Time.now.utc
     end
 
     def _version
@@ -62,7 +62,7 @@ module Timber
       def json_payload
         @json_payload ||= {
           _root_key => {
-            :_id => _id,
+            :_dt => Core::DateFormatter.format(_dt),
             :_version => _version
           }
         }

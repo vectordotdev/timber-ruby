@@ -18,7 +18,7 @@ module Timber
       end
 
       def write(message)
-        log_line = LogLine.new(message)
+        log_line = LogLine.new(message.chmop)
         LogPile.get(application_key).drop(log_line)
         message
       rescue Exception => e

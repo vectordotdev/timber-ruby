@@ -8,7 +8,7 @@ module Timber
 
       def write(message)
         # Cleanup dt, server.heroku context, and move at and message to the front
-        log_line = LogLine.new(message)
+        log_line = LogLine.new(message.chomp)
         logfmt = log_line.to_logfmt(:except => [:dt]) + "\n"
         io.write(logfmt)
       rescue Exception => e

@@ -9,12 +9,20 @@ describe Timber::LogDevices::HTTP::LogTruck::Delivery do
 
     def new_stub
       stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"_version\":1,\"hostname\":\"computer-name.domain.com\",\"_index\":0},\"context_hierarchy\":[\"server\"]}]}}",
+        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"_version\":1,\"server\":{\"hostname\":\"computer-name.domain.com\",\"_dt\":\"2016-09-01T12:00:00.000000Z\",\"_version\":1,\"_index\":0}},\"context_hierarchy\":[\"server\"]}]}}",
              :headers => {'Content-Type'=>'application/json'})
     end
 
     around(:each) do |example|
       Timecop.freeze(time) { example.run }
+    end
+
+    before(:each) do
+      server_context = Timber::CurrentContext.get(Timber::Contexts::Server)
+      server_context.instance_variable_set(:"@as_json", nil)
+      server_context.instance_variable_set(:"@json_payload", nil)
+      server_context.instance_variable_set(:"@to_json", nil)
+      allow(server_context).to receive(:_dt).and_return(time)
     end
 
     let(:log_lines) { [Timber::LogLine.new("hello")] }

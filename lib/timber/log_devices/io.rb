@@ -10,7 +10,7 @@ module Timber
       end
 
       def write(message)
-        log_line = LogLine.new(message)
+        log_line = LogLine.new(message.chomp)
         io.write(log_line.to_logfmt + "\n")
       rescue Exception => e
         Config.logger.exception(e)

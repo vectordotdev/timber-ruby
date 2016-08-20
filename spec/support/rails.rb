@@ -1,5 +1,11 @@
 require "rails"
 
+if defined?(::ActiveSupport::TaggedLogging)
+  Rails.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
+else
+  Rails.logger = ::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new)
+end
+
 class RailsApp < Rails::Application
   if ::Rails.version =~ /^3\./
     config.secret_token = '1e05af2b349457936a41427e63450937'
@@ -7,12 +13,8 @@ class RailsApp < Rails::Application
     config.secret_key_base = '1e05af2b349457936a41427e63450937'
   end
   config.active_support.deprecation = :stderr
-  if defined?(::ActiveSupport::TaggedLogging)
-    config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
-  else
-    config.logger = ::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new)
-  end
   config.eager_load = false
+  config.log_level = :fatal
 end
 
 RailsApp.initialize!

@@ -31,13 +31,13 @@ module Timber
         private
           def json_payload
             @json_payload ||= {
-              Rack._root_key => Core::DeepMerger.merge(super, {
+              Rack._root_key => Core::DeepMerger.merge({
                 _root_key => {
                   :action => action,
                   :controller => controller,
                   :format => format
                 }
-              })
+              }, super)
             }
           end
       end

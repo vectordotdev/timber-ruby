@@ -4,6 +4,7 @@ require 'timber'
 # Config
 Timber::Config.tap do |config|
   config.application_key = "my_key"
+  config.logger.level = ::Logger::FATAL
 end
 
 RSpec.configure do |config|

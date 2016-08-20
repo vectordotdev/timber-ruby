@@ -7,13 +7,13 @@ module Timber
 
       private
         def json_payload
-          @json_payload ||= Core::DeepMerger.merge(super, {
+          @json_payload ||= Core::DeepMerger.merge({
             _root_key => {
               :headers => headers,
               :status => status,
               :time_ms => time_ms
             }
-          })
+          }, super)
         end
     end
   end

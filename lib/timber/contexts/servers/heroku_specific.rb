@@ -32,12 +32,12 @@ module Timber
 
           def json_payload
             @json_payload ||= {
-              Server._root_key => Core::DeepMerger.merge(super, {
+              Server._root_key => Core::DeepMerger.merge({
                 _root_key => {
                   :dyno_id => dyno_id,
                   :process_type => process_type
                 }
-              })
+              }, super)
             }
           end
       end
