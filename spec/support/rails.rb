@@ -3,6 +3,7 @@ require "rails"
 log_dev = Timber::LogDevices::IO.new
 logger = defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger.new(log_dev) : ::Logger.new(log_dev)
 Rails.logger = defined?(::ActiveSupport::TaggedLogging) ? ::ActiveSupport::TaggedLogging.new(logger) : logger
+Rails.logger.level = ::Logger::FATAL
 
 class RailsApp < Rails::Application
   if ::Rails.version =~ /^3\./
