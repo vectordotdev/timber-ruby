@@ -12,7 +12,7 @@ describe Timber::LogDevices::HerokuLogplex do
     end
 
     it "writes a proper logfmt line" do
-      expect(STDOUT).to receive(:write).with("message=\"this is a message\"\n\tserver.hostname=computer-name.domain.com server._dt=2016-09-01T12:00:00.000000Z server._version=1\n")
+      expect(STDOUT).to receive(:write).with("message=\"this is a message\" _version=1 server.hostname=computer-name.domain.com server._dt=2016-09-01T12:00:00.000000Z server._version=1 server._index=0\n")
       # Notice we do not have dt for the log line since Heroku provides this
       log_device.write("this is a message\n")
     end
@@ -25,7 +25,7 @@ describe Timber::LogDevices::HerokuLogplex do
 
       # No need for the heroku context since logplex includes that data by default
       it "does not include the heroku context" do
-        expect(STDOUT).to receive(:write).with("message=\"this is a message\"\n\tserver.hostname=computer-name.domain.com server._dt=2016-09-01T12:00:00.000000Z server._version=1\n")
+        expect(STDOUT).to receive(:write).with("message=\"this is a message\" _version=1 server.hostname=computer-name.domain.com server._dt=2016-09-01T12:00:00.000000Z server._version=1 server._index=0\n")
         # Notice we do not have dt for the log line since Heroku provides this
         log_device.write("this is a message\n")
       end

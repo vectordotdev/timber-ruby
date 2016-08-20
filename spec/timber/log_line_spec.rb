@@ -49,8 +49,8 @@ describe Timber::LogLine do
 
   describe "#to_logfmt" do
     let(:logfmt) do
-      "dt=#{log_line.dt.iso8601(6)} message=#{log_line.message.to_json}" +
-        "\n\t#{log_line.context_snapshot.to_logfmt(:delimiter => "\n\t")}"
+      "dt=#{log_line.dt.iso8601(6)} message=#{log_line.message.to_json} " +
+        log_line.context_snapshot.to_logfmt
     end
     subject { log_line.to_logfmt }
     it { should eq(logfmt) }

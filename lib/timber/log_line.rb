@@ -6,8 +6,6 @@ module Timber
     # Note: this is handled in Logger
     class InvalidMessageError < ArgumentError; end
 
-    LOGFMT_DELIMITER = "\n\t"
-
     attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
@@ -29,8 +27,8 @@ module Timber
           Core::Rejecter.reject(base_json_payload, options[:except]) :
           base_json_payload
         string << Core::LogfmtEncoder.encode(filtered_json_payload)
-        string << LOGFMT_DELIMITER
-        string << context_snapshot.to_logfmt(:delimiter => LOGFMT_DELIMITER, :except_contexts => options[:except_contexts])
+        string << " "
+        string << context_snapshot.to_logfmt(:except => options[:except_contexts])
       end
     end
 

@@ -20,19 +20,16 @@ module Timber
 
     def to_logfmt(options = {})
       @to_logfmt ||= {}
-      @to_logfmt[options] ||= begin
-        filtered = stack.select { |context| !(options[:except_contexts] || []).include?(context.class) }
-        filtered.collect do |context|
-          Core::LogfmtEncoder.encode(context.as_json)
-        end.join(options[:delimiter] || " ")
-      end
+      @to_logfmt[options] ||= Core::LogfmtEncoder.encode(context_hash(options))
     end
 
     private
-      def context_hash
-        @context_hash ||= {}.tap do |hash|
+      def context_hash(options = {})
+        @context_hash ||= {}
+        @context_hash[options] ||= {}.tap do |hash|
           hash["_version"] = CONTEXT_VERSION
-          stack.each do |context|
+          filtered = stack.select { |context| !(options[:except] || []).include?(context.class) }
+          filtered.each do |context|
             specific_hash = context.as_json_with_index(indexes[context])
             hash.replace(Core::DeepMerger.merge(hash, specific_hash))
           end
