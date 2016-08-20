@@ -9,6 +9,7 @@ require 'rspec/its'
 require 'rspec/mocks'
 
 # Support files, order is relevant
+require File.join(File.dirname(__FILE__), 'support', 'coveralls')
 require File.join(File.dirname(__FILE__), 'support', 'socket_hostname')
 require File.join(File.dirname(__FILE__), 'support', 'simplecov')
 require File.join(File.dirname(__FILE__), 'support', 'timecop')
