@@ -25,9 +25,12 @@ module Timber
     def to_logfmt(options = {})
       @to_logfmt ||= {}
       @to_logfmt[options] ||= "".tap do |string|
-        string << Core::LogfmtEncoder.encode(base_json_payload)
+        filtered_json_payload = options[:except] ?
+          Core::Rejecter.reject(base_json_payload, options[:except]) :
+          base_json_payload
+        string << Core::LogfmtEncoder.encode(filtered_json_payload)
         string << LOGFMT_DELIMITER
-        string << context_snapshot.to_logfmt(LOGFMT_DELIMITER)
+        string << context_snapshot.to_logfmt(:delimiter => LOGFMT_DELIMITER, :except_contexts => options[:except_contexts])
       end
     end
 

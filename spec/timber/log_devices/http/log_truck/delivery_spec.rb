@@ -19,9 +19,6 @@ describe Timber::LogDevices::HTTP::LogTruck::Delivery do
 
     before(:each) do
       server_context = Timber::CurrentContext.get(Timber::Contexts::Server)
-      server_context.instance_variable_set(:"@as_json", nil)
-      server_context.instance_variable_set(:"@json_payload", nil)
-      server_context.instance_variable_set(:"@to_json", nil)
       allow(server_context).to receive(:_dt).and_return(time)
     end
 

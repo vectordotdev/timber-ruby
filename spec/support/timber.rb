@@ -11,5 +11,12 @@ RSpec.configure do |config|
   config.after(:each) do
     Timber::CurrentLineIndexes.reset!
     Timber::LogDevices::HTTP::LogPile.each { |log_pile| log_pile.empty }
+
+    # Reset permanent context caches since we mock, etc.
+    Timber::CurrentContext.send(:stack).each do |context|
+      context.instance_variable_set(:"@as_json", nil)
+      context.instance_variable_set(:"@json_payload", nil)
+      context.instance_variable_set(:"@to_json", nil)
+    end
   end
 end

@@ -18,10 +18,14 @@ module Timber
       stack.size
     end
 
-    def to_logfmt(delimiter = " ")
-      @to_logfmt ||= stack.collect do |context|
-        Core::LogfmtEncoder.encode(context.as_json)
-      end.join(delimiter)
+    def to_logfmt(options = {})
+      @to_logfmt ||= {}
+      @to_logfmt[options] ||= begin
+        filtered = stack.select { |context| !(options[:except_contexts] || []).include?(context.class) }
+        filtered.collect do |context|
+          Core::LogfmtEncoder.encode(context.as_json)
+        end.join(options[:delimiter] || " ")
+      end
     end
 
     private
