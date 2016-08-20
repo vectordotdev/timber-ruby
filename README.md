@@ -48,7 +48,7 @@ $ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logp
 
 The `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)
 
-### HTTP
+#### HTTP
 
 In your environment configuration file(s) (ex: `config/environments/production.rb`) copy the following code:
 
@@ -56,7 +56,7 @@ In your environment configuration file(s) (ex: `config/environments/production.r
 config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
 ```
 
-### IO (STDOUT, STDERR, files, etc.)
+#### IO (STDOUT, STDERR, files, etc.)
 
 The IO format will write to anything that responds to the `#write` method.
 
