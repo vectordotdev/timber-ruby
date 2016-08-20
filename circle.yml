@@ -1,3 +1,7 @@
+machine:
+  environment:
+    COVERALLS_REPO_TOKEN: fzLA6t2EFT4KBemv3du0AdHGcqTzyRzlr
+
 dependencies:
   override:
     - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 bundle install
