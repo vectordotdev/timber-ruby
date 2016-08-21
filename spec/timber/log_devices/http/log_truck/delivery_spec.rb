@@ -9,7 +9,7 @@ describe Timber::LogDevices::HTTP::LogTruck::Delivery do
 
     def new_stub
       stub_request(:post, "https://timber-odin.herokuapp.com/agent_log_frames").
-        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"_version\":1,\"server\":{\"hostname\":\"computer-name.domain.com\",\"_dt\":\"2016-09-01T12:00:00.000000Z\",\"_version\":1,\"_index\":0}},\"context_hierarchy\":[\"server\"]}]}}",
+        with(:body => "{\"agent_log_frame\": {\"log_lines\": [{\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"hello\",\"context\":{\"server\":{\"hostname\":\"computer-name.domain.com\",\"_dt\":\"2016-09-01T12:00:00.000000Z\",\"_version\":1,\"_index\":0},\"_version\":1},\"context_hierarchy\":[\"server\"]}]}}",
              :headers => {'Content-Type'=>'application/json'})
     end
 

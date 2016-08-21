@@ -14,28 +14,23 @@ module Timber
       @indexes = CurrentLineIndexes.indexes.clone.freeze
     end
 
+    def context_hash(options = {})
+      @context_hash ||= {}
+      @context_hash[options] ||= {}.tap do |hash|
+        filtered = stack.select { |context| !(options[:except] || []).include?(context.class) }
+        filtered.each do |context|
+          specific_hash = context.as_json_with_index(indexes[context])
+          hash.replace(Core::DeepMerger.merge(hash, specific_hash))
+        end
+        hash["_version"] = CONTEXT_VERSION
+      end
+    end
+
     def size
       stack.size
     end
 
-    def to_logfmt(options = {})
-      @to_logfmt ||= {}
-      @to_logfmt[options] ||= Core::LogfmtEncoder.encode(context_hash(options))
-    end
-
     private
-      def context_hash(options = {})
-        @context_hash ||= {}
-        @context_hash[options] ||= {}.tap do |hash|
-          hash["_version"] = CONTEXT_VERSION
-          filtered = stack.select { |context| !(options[:except] || []).include?(context.class) }
-          filtered.each do |context|
-            specific_hash = context.as_json_with_index(indexes[context])
-            hash.replace(Core::DeepMerger.merge(hash, specific_hash))
-          end
-        end
-      end
-
       def hierarchy
         @hierarchy ||= stack.collect(&:_path).uniq
       end

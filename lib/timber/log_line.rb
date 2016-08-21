@@ -20,29 +20,13 @@ module Timber
       @context_snapshot = CurrentContext.snapshot
     end
 
-    def to_logfmt(options = {})
-      @to_logfmt ||= {}
-      @to_logfmt[options] ||= "".tap do |string|
-        filtered_json_payload = options[:except] ?
-          Core::Rejecter.reject(base_json_payload, options[:except]) :
-          base_json_payload
-        string << Core::LogfmtEncoder.encode(filtered_json_payload)
-        string << " "
-        string << context_snapshot.to_logfmt(:except => options[:except_contexts])
-      end
+    def formatted_dt
+      @formatted_dt ||= Core::DateFormatter.format(dt)
     end
 
     private
-      def formatted_dt
-        @formatted_dt ||= Core::DateFormatter.format(dt)
-      end
-
-      def base_json_payload
-        @base_json_payload ||= {:dt => formatted_dt, :message => message}
-      end
-
       def json_payload
-        @json_payload ||= base_json_payload.merge(context_snapshot.as_json)
+        @json_payload ||= {:dt => formatted_dt, :message => message}.merge(context_snapshot.as_json)
       end
   end
 end

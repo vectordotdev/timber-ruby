@@ -3,7 +3,6 @@ require "securerandom"
 module Timber
   class Context
     include Patterns::ToJSON
-    include Patterns::ToLogfmt
 
     SECURE_RANDOM_LENGTH = 16.freeze
 
