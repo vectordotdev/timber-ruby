@@ -14,8 +14,8 @@ module Timber
               :host => host,
               :port => port,
               :path => path,
-              :query_params => query_params,
-              :headers => headers
+              :query_params => query_params.as_json,
+              :headers => headers.as_json
             }
           }, super)
         end
