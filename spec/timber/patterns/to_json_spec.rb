@@ -31,5 +31,10 @@ describe Timber::Patterns::ToJSON do
       let(:hash) { {:test => []} }
       it { should eq({}) }
     end
+
+    context "with an empty hash" do
+      let(:hash) { {:test => {}} }
+      it { should eq({}) }
+    end
   end
 end
