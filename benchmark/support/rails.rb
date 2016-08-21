@@ -53,8 +53,6 @@ class PagesController < ActionController::Base
   layout nil
 
   def index
-    # Similuate above average logging for a single action
-    25.times { Rails.logger.info("this is a test log message") }
     render json: {}
   end
 

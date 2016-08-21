@@ -76,11 +76,15 @@ The following results were run on a bare metal server in order to achieve consis
 +---------------------------+------------+-----------------+------------------+
 |                           | Total      | Per request avg | Per request diff |
 +---------------------------+------------+-----------------+------------------+
-| Control                   | 0.00717974 | 0.00071797      |                  |
-| Timber probes only        | 0.00859213 | 0.00085921      | 0.00014124       |
-| Timber probes and logging | 0.0439229  | 0.00439229      | 0.00353308       |
+| Control                   | 0.00568414 | 0.00056841      |                  |
+| Timber probes only        | 0.00673819 | 0.00067382      | 0.0001054        |
+| Timber probes and logging | 0.00912786 | 0.00091279      | 0.00023897       |
 +---------------------------+------------+-----------------+------------------+
 ```
+
+1. `Control` - This is vanilla rails app without Timber installed.
+2. `Timber probels only` - The same rails app but with the `Timber::Probes` installed, isolating probes performance.
+3. `Timber probes and logging` - Testing the full Timber library, probes and adding context to each log line.
 
 The benchmark can be run yourself via:
 
