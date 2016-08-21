@@ -59,10 +59,10 @@ with_timber_per_line = with_timber_per_req / log_line_count
 
 title = "Timber benchmarking. #{ITERATIONS} requests per test. Times are \"real\" CPU time."
 table = Terminal::Table.new(:title => title) do |t|
-  t << [nil, "Total", "Per request avg", "Per request diff", "Per log line"]
+  t << [nil, "Total", "Per request avg", "Per log line"]
   t.add_separator
-  t << [control.label, control.real.round(PRECISION), control_per_req.round(PRECISION), nil, control_per_line.round(PRECISION)]
-  t << [probes_only.label, probes_only.real.round(PRECISION), probes_only_per_req.round(PRECISION), probes_only_per_req_diff.round(PRECISION), probes_only_per_line.round(PRECISION)]
-  t << [with_timber.label, with_timber.real.round(PRECISION), with_timber_per_req.round(PRECISION), with_timber_per_req_diff.round(PRECISION), with_timber_per_line.round(PRECISION)]
+  t << [control.label, control.real.round(PRECISION), control_per_req.round(PRECISION), control_per_line.round(PRECISION)]
+  t << [probes_only.label, probes_only.real.round(PRECISION), probes_only_per_req.round(PRECISION), probes_only_per_line.round(PRECISION)]
+  t << [with_timber.label, with_timber.real.round(PRECISION), with_timber_per_req.round(PRECISION), with_timber_per_line.round(PRECISION)]
 end
 puts table

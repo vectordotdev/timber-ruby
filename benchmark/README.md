@@ -5,15 +5,15 @@ Timber was designed with an obsessive focus on performance and resource usage. I
 The following results were run on a bare metal server in order to achieve consistent and repeatable results.
 
 ```console
-+---------------------------+------------+-----------------+------------------+--------------+
-|           Timber benchmarking. 10 requests per test. Times are "real" CPU time.            |
-+---------------------------+------------+-----------------+------------------+--------------+
-|                           | Total      | Per request avg | Per request diff | Per log line |
-+---------------------------+------------+-----------------+------------------+--------------+
-| Control                   | 0.00614905 | 0.00061491      |                  | 2.05e-05     |
-| Timber probes only        | 0.00667906 | 0.00066791      | 5.3e-05          | 2.226e-05    |
-| Timber probes and logging | 0.01047921 | 0.00104792      | 0.00038002       | 3.493e-05    |
-+---------------------------+------------+-----------------+------------------+--------------+
++---------------------------+------------+-----------------+--------------+
+|  Timber benchmarking. 10 requests per test. Times are "real" CPU time.  |
++---------------------------+------------+-----------------+--------------+
+|                           | Total      | Per request avg | Per log line |
++---------------------------+------------+-----------------+--------------+
+| Control                   | 0.0077939  | 0.00077939      | 2.598e-05    |
+| Timber probes only        | 0.00694394 | 0.00069439      | 2.315e-05    |
+| Timber probes and logging | 0.00897193 | 0.00089719      | 2.991e-05    |
++---------------------------+------------+-----------------+--------------+
 ```
 
 1. `Control` - This is vanilla rails app without Timber installed.
