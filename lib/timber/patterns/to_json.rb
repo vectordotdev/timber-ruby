@@ -7,7 +7,8 @@ module Timber
         @as_json ||= {}
         @as_json[args] ||= begin
           hash = json_payload # only call the function once incase it is not cached
-          hash.respond_to?(:as_json) ? hash.as_json(*args) : hash
+          hash = hash.respond_to?(:as_json) ? hash.as_json(*args) : hash
+          hash.reject { |k,v| v.nil? || v == [] }
         end
       end
 

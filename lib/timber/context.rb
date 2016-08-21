@@ -40,13 +40,13 @@ module Timber
       keys = _path.split(".")
       hash = as_json
       target_hash = keys.inject(hash) do |acc, value|
-        acc[value] || raise("could not find key #{inspect(value)}")
+        acc[value] || raise("could not find key #{value.inspect} for #{hash}")
       end
       target_hash["_index"] = index
       hash
     end
 
-    def inspect
+    def inspect(*args)
       "#<#{self.class.name}:#{object_id} ...>"
     end
 
