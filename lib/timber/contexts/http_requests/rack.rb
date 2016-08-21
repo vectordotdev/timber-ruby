@@ -14,10 +14,6 @@ module Timber
             @request = request
           end
 
-          def connect_time_ms
-            @connect_time_ms ||= env["HTTP_CONNECT_TIME"]
-          end
-
           def content_type
             @content_type ||= request.content_type
           end
@@ -53,7 +49,6 @@ module Timber
           private
             def json_payload
               @json_payload ||= {
-                :connect_time_ms => connect_time_ms,
                 :content_type => content_type,
                 :referrer => referrer,
                 :remote_addr => remote_addr,
