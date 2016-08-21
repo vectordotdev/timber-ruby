@@ -34,8 +34,9 @@ module Timber
             @json_payload ||= {
               Server._root_key => Core::DeepMerger.merge({
                 _root_key => {
-                  :dyno_id => dyno_id,
-                  :process_type => process_type
+                  # order is relevant for logfmt styling
+                  :process_type => process_type,
+                  :dyno_id => dyno_id
                 }
               }, super)
             }

@@ -33,8 +33,9 @@ module Timber
             @json_payload ||= {
               Rack._root_key => Core::DeepMerger.merge({
                 _root_key => {
-                  :action => action,
+                  # order is relevant for logfmt styling
                   :controller => controller,
+                  :action => action,
                   :format => format
                 }
               }, super)

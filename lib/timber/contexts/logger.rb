@@ -16,6 +16,7 @@ module Timber
         def json_payload
           @json_payload ||= Core::DeepMerger.merge({
             _root_key => {
+              # order is relevant for logfmt styling
               :level => level,
               :progname => progname
             }
