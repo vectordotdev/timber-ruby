@@ -8,11 +8,13 @@ module Timber
   #    Timber specific functionality.
   module Logger
     def self.new(logger_or_logdev = nil)
-      if logger_or_logdev.is_a?(::Logger)
+      logger = if logger_or_logdev.is_a?(::Logger)
         logger_or_logdev
       else
         logger(logger_or_logdev)
       end
+      logger.extend(self)
+      logger
     end
 
     private
