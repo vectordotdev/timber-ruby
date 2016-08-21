@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::Core::LogfmtEncoder do
+describe Timber::Macros::LogfmtEncoder do
   describe ".encode" do
     subject { described_class.encode(target) }
 

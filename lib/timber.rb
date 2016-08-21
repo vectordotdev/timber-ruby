@@ -2,7 +2,7 @@
 require "json" # brings to_json to the core classes
 
 # Base (must come first, order matters)
-require "timber/core"
+require "timber/macros"
 require "timber/patterns"
 require "timber/config"
 require "timber/context"

@@ -20,7 +20,7 @@ module Timber
         filtered = stack.select { |context| !(options[:except] || []).include?(context.class) }
         filtered.each do |context|
           specific_hash = context.as_json_with_index(indexes[context])
-          hash.replace(Core::DeepMerger.merge(hash, specific_hash))
+          hash.replace(Macros::DeepMerger.merge(hash, specific_hash))
         end
         hash["_version"] = CONTEXT_VERSION
       end

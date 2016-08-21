@@ -38,7 +38,7 @@ module Timber
         private
           def json_payload
             @json_payload ||= {
-              SQLQuery._root_key => Core::DeepMerger.merge({
+              SQLQuery._root_key => Macros::DeepMerger.merge({
                 _root_key => {
                   :binds => binds.as_json,
                   :connection_id => connection_id,

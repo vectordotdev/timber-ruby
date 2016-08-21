@@ -1,5 +1,5 @@
 module Timber
-  module Core
+  module Macros
     # Deep merges hash keys
     module DeepMerger
       def self.merge(first, second)

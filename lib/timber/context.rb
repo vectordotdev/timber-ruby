@@ -61,7 +61,7 @@ module Timber
       def json_payload
         @json_payload ||= {
           _root_key => {
-            :_dt => Core::DateFormatter.format(_dt),
+            :_dt => Macros::DateFormatter.format(_dt),
             :_version => _version
           }
         }

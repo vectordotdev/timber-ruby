@@ -21,7 +21,7 @@ module Timber
     end
 
     def formatted_dt
-      @formatted_dt ||= Core::DateFormatter.format(dt)
+      @formatted_dt ||= Macros::DateFormatter.format(dt)
     end
 
     private

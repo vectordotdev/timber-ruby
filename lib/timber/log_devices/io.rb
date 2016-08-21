@@ -37,7 +37,7 @@ module Timber
           end
 
           def encoded_hash
-            @encoded_hash ||= Core::LogfmtEncoder.encode(context_hash)
+            @encoded_hash ||= Macros::LogfmtEncoder.encode(context_hash)
           end
       end
 

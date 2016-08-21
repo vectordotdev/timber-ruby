@@ -1,5 +1,5 @@
 module Timber
-  module Core
+  module Macros
     # Encodes a hash into a logfmt string
     module LogfmtEncoder
       KEY_DELIMITER = ".".freeze
