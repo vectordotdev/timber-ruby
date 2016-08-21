@@ -71,12 +71,15 @@ Timber was designed with an obsessive focus on performance and resource usage. I
 The following results were run on a bare metal server in order to achieve consistent and repeatable results.
 
 ```console
-Testing Rails request performance. 5000 requests per test.
-
-                  Total (real)   Per request avg (real)
-without Timber    4.44060183     0.00088812
-with Timber       4.55801511     0.0009116
-Difference       -0.11741328    -2.3482656478881797e-05
++---------------------------+------------+-----------------+------------------+
+|    Timber benchmarking. 10 requests per test. Times are "real" CPU time.    |
++---------------------------+------------+-----------------+------------------+
+|                           | Total      | Per request avg | Per request diff |
++---------------------------+------------+-----------------+------------------+
+| Control                   | 0.00717974 | 0.00071797      |                  |
+| Timber probes only        | 0.00859213 | 0.00085921      | 0.00014124       |
+| Timber probes and logging | 0.0439229  | 0.00439229      | 0.00353308       |
++---------------------------+------------+-----------------+------------------+
 ```
 
 The benchmark can be run yourself via:

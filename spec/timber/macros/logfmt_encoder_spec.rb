@@ -80,5 +80,10 @@ describe Timber::Macros::LogfmtEncoder do
       let(:target) { {"key" => ["this is a value",2,3]} }
       it { should eq("key=[\"this is a value\",2,3]") }
     end
+
+    context "with an array value that has a ," do
+      let(:target) { {"key" => ["this,is a value",2,3]} }
+      it { should eq("key=[\"this,is a value\",2,3]") }
+    end
   end
 end

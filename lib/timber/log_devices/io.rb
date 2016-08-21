@@ -21,7 +21,7 @@ module Timber
           end
 
           def context_message
-            @context_message ||= LogDevice::Formatter.format(:black, "#{CONTEXT_DELIMITER} #{encoded_hash}")
+            @context_message ||= LogDevice::Formatter.format(:black, "#{CONTEXT_DELIMITER} #{encoded_context}")
           end
 
           def final_message
@@ -32,12 +32,8 @@ module Timber
             @log_line ||= LogLine.new(message.chomp)
           end
 
-          def context_hash
-            @context_hash ||= log_line.context_snapshot.context_hash
-          end
-
-          def encoded_hash
-            @encoded_hash ||= Macros::LogfmtEncoder.encode(context_hash)
+          def encoded_context
+            @encoded_context ||= log_line.context_snapshot.to_logfmt
           end
       end
 

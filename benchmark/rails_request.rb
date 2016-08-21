@@ -13,24 +13,43 @@ $:.unshift File.dirname(__FILE__)
 require "support/rails"
 require "benchmark"
 require "logger"
+require 'terminal-table'
 
-ITERATIONS = 5_000
+ITERATIONS = 10
 PRECISION = 8
 test = Proc.new { ITERATIONS.times { Support::Rails.dispatch_rails_request("/") } }
 
-puts "\nTesting Rails request performance. #{ITERATIONS} requests per test.\n\n"
-puts "                  Total (real)   Per request avg (real)"
+# Set a default logger
+Support::Rails.set_logger(StringIO.new)
 
-without_timber = Benchmark.measure("without Timber", &test)
-without_timber_per = without_timber.real / ITERATIONS
-puts "#{without_timber.label}    #{without_timber.real.round(PRECISION)}     #{without_timber_per.round(PRECISION)}"
+# Control
+control = Benchmark.measure("Control", &test)
+control_per = control.real / ITERATIONS
 
-# Install Timber
+# Reset logger and insert probes
+Support::Rails.set_logger(StringIO.new)
 Timber::Config.enabled = true
 Timber::Bootstrap.bootstrap!(RailsApp.config.app_middleware, ::Rails::Rack::Logger)
 
-with_timber = Benchmark.measure("with Timber", &test)
-with_timber_per = with_timber.real / ITERATIONS
-puts "#{with_timber.label}       #{with_timber.real.round(PRECISION)}     #{with_timber_per.round(PRECISION)}"
+# Probes only
+probes_only = Benchmark.measure("Timber probes only", &test)
+probes_only_per = probes_only.real / ITERATIONS
+probes_only_diff = probes_only_per - control_per
 
-puts "Difference       #{(without_timber.real - with_timber.real).round(PRECISION)}    #{(without_timber_per - with_timber_per).round(PRECISION)}"
+# Install Timber
+Support::Rails.set_timber_logger
+
+# With timber logger
+with_timber = Benchmark.measure("Timber probes and logging", &test)
+with_timber_per = with_timber.real / ITERATIONS
+with_timber_diff = with_timber_per - probes_only_per
+
+title = "Timber benchmarking. #{ITERATIONS} requests per test. Times are \"real\" CPU time."
+table = Terminal::Table.new(:title => title) do |t|
+  t << [nil, "Total", "Per request avg", "Per request diff"]
+  t.add_separator
+  t << [control.label, control.real.round(PRECISION), control_per.round(PRECISION), nil]
+  t << [probes_only.label, probes_only.real.round(PRECISION), probes_only_per.round(PRECISION), probes_only_diff.round(PRECISION)]
+  t << [with_timber.label, with_timber.real.round(PRECISION), with_timber_per.round(PRECISION), with_timber_diff.round(PRECISION)]
+end
+puts table

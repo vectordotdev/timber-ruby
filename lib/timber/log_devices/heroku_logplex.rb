@@ -8,9 +8,10 @@ module Timber
             @base_message ||= log_line.message
           end
 
-          def context_hash
-            # remove heroku since that is included by default in the logplex format
-            @context_hash ||= log_line.context_snapshot.context_hash(:except => [Contexts::Servers::HerokuSpecific])
+          def encoded_context
+            @encoded_context ||= log_line.context_snapshot.to_logfmt(
+              :except => [Contexts::Servers::HerokuSpecific]
+            )
           end
       end
 

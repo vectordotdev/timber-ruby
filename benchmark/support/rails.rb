@@ -20,7 +20,8 @@ module Support
     end
 
     def self.set_timber_logger
-      set_logger(Timber::LogDevices::IO.new(StringIO.new))
+      ::Rails.logger = Timber::Logger.new(Timber::LogDevices::IO.new(StringIO.new))
+      ::Rails.logger.level = ::Logger::DEBUG # log everything
     end
   end
 end

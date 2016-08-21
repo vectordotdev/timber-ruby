@@ -4,6 +4,7 @@ module Timber
   class Context
     include Patterns::ToJSON
 
+    PATH_DELIMITER = ".".freeze
     SECURE_RANDOM_LENGTH = 16.freeze
 
     class << self
@@ -36,18 +37,12 @@ module Timber
       self.class._root_key
     end
 
-    def as_json_with_index(index)
-      keys = _path.split(".")
-      hash = as_json
-      target_hash = keys.inject(hash) do |acc, key|
-        acc[key.to_sym] || raise("could not find key #{value.inspect} for #{hash}")
-      end
-      target_hash["_index"] = index
-      hash
-    end
-
     def inspect(*args)
       "#<#{self.class.name}:#{object_id} ...>"
+    end
+
+    def to_logfmt
+      @to_logfmt ||= Macros::LogfmtEncoder.encode(json_payload).freeze
     end
 
     # Some contexts hold mutable object that change as the context block

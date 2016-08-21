@@ -17,6 +17,7 @@ RSpec.configure do |config|
       context.instance_variable_set(:"@as_json", nil)
       context.instance_variable_set(:"@json_payload", nil)
       context.instance_variable_set(:"@to_json", nil)
+      context.instance_variable_set(:"@to_logfmt", nil)
     end
   end
 end

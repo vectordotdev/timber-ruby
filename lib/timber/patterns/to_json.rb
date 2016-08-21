@@ -5,12 +5,12 @@ module Timber
     module ToJSON
       # We explicitly do not do anything with the arguments as we do not need them.
       # We avoid the unneccssary complexity.
-      def as_json(*args)
-        @as_json ||= Macros::Compactor.compact(json_payload)
+      def as_json(*_args)
+        @as_json ||= Macros::Compactor.compact(json_payload).freeze
       end
 
-      def to_json(*args)
-        @to_json ||= as_json.to_json
+      def to_json(*_args)
+        @to_json ||= as_json.to_json.freeze
       end
 
       private

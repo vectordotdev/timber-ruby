@@ -12,6 +12,7 @@ group :test do
   gem 'rspec-its'
   gem 'simplecov', require: false
   gem 'sqlite3'
+  gem 'terminal-table'
   gem 'timecop'
   gem 'webmock', '~> 2.0.3'
 
