@@ -63,3 +63,25 @@ The IO format will write to anything that responds to the `#write` method.
 # config/environments/production.rb (or staging, etc)
 config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
 ```
+
+## Performance
+
+Timber was designed with an obsessive focus on performance and resource usage. In the `/benchmark` folder you'll find benchmarking tests.
+
+The following results were run on a bare metal server in order to achieve consistent and repeatable results.
+
+```
+Testing Rails request performance. 5000 requests per test.
+
+                  Real           Per request
+without Timber    4.41308498     0.00088262
+with Timber       4.47020912     0.00089404
+Difference       -0.05712414    -1.142e-05
+```
+
+The benchmark can be run yourself via:
+
+```console
+$ appraisal ruby benchmark/rails_request.rb
+```
+

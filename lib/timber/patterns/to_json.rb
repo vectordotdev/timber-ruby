@@ -1,20 +1,16 @@
 module Timber
   module Patterns
-    # Module to fall inline with Rail's craziness changing default object behavior.
+    # Module to fall inline with Rail's core object crazy changes.
     # If Rails is present, it will play nice. If not, it will work just fine.
     module ToJSON
+      # We explicitly do not do anything with the arguments as we do not need them.
+      # We avoid the unneccssary complexity.
       def as_json(*args)
-        @as_json ||= {}
-        @as_json[args] ||= begin
-          hash = json_payload # only call the function once incase it is not cached
-          hash = hash.respond_to?(:as_json) ? hash.as_json(*args) : hash
-          Macros::Compactor.compact(hash)
-        end
+        @as_json ||= Macros::Compactor.compact(json_payload)
       end
 
       def to_json(*args)
-        @to_json ||= {}
-        @to_json[args] ||= as_json(*args).to_json
+        @to_json ||= as_json.to_json
       end
 
       private

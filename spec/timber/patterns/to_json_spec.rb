@@ -19,7 +19,7 @@ describe Timber::Patterns::ToJSON do
 
     context "with a value" do
       let(:hash) { {:test => 1} }
-      it { should eq({"test" => 1}) }
+      it { should eq({:test => 1}) }
     end
 
     context "with a nil value" do

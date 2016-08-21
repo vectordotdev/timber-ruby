@@ -39,8 +39,8 @@ module Timber
     def as_json_with_index(index)
       keys = _path.split(".")
       hash = as_json
-      target_hash = keys.inject(hash) do |acc, value|
-        acc[value] || raise("could not find key #{value.inspect} for #{hash}")
+      target_hash = keys.inject(hash) do |acc, key|
+        acc[key.to_sym] || raise("could not find key #{value.inspect} for #{hash}")
       end
       target_hash["_index"] = index
       hash
