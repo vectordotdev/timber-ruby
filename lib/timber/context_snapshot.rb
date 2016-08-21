@@ -23,6 +23,7 @@ module Timber
           hash.replace(Macros::DeepMerger.merge(hash, specific_hash))
         end
         hash["_version"] = CONTEXT_VERSION
+        hash["_hierarchy"] = hierarchy
       end
     end
 
@@ -36,10 +37,7 @@ module Timber
       end
 
       def json_payload
-        @json_payload ||= {
-          :context => context_hash,
-          :context_hierarchy => hierarchy
-        }
+        @json_payload ||= {:context => context_hash}
       end
   end
 end
