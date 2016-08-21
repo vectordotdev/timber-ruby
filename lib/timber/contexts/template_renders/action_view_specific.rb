@@ -3,9 +3,14 @@ module Timber
     module TemplateRenders
       # Because this is a sub type we extend Context
       class ActionViewSpecific < Context
-        PATH = "#{TemplateRender._root_key}.action_view"
         ROOT_KEY = :action_view.freeze
         VERSION = 1.freeze
+
+        class << self
+          def json_shell(&block)
+            TemplateRender.json_shell { super }
+          end
+        end
 
         attr_reader :event
 
@@ -30,15 +35,11 @@ module Timber
 
         private
           def json_payload
-            @json_payload ||= {
-              TemplateRender._root_key => Macros::DeepMerger.merge({
-                _root_key => {
-                  :cache_hits => cache_hits,
-                  :count => count,
-                  :layout => layout
-                }
-              }, super)
-            }
+            @json_payload ||= Macros::DeepMerger.merge({
+              :cache_hits => cache_hits,
+              :count => count,
+              :layout => layout
+            }, super)
           end
 
           def payload

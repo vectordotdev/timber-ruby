@@ -5,9 +5,14 @@ module Timber
     module SQLQueries
       # Because this is a sub context we extend Context
       class ActiveRecordSpecific < Context
-        PATH = "#{SQLQuery._root_key}.active_record"
         ROOT_KEY = :active_record.freeze
         VERSION = 1.freeze
+
+        class << self
+          def json_shell(&block)
+            SQLQuery.json_shell { super }
+          end
+        end
 
         attr_reader :log_subscriber, :event
 
@@ -37,16 +42,12 @@ module Timber
 
         private
           def json_payload
-            @json_payload ||= {
-              SQLQuery._root_key => Macros::DeepMerger.merge({
-                _root_key => {
-                  :binds => binds.as_json,
-                  :connection_id => connection_id,
-                  :statement_name => statement_name,
-                  :transaction_id => transaction_id
-                }
-              }, super)
-            }
+            @json_payload ||= Macros::DeepMerger.merge({
+              :binds => binds.as_json,
+              :connection_id => connection_id,
+              :statement_name => statement_name,
+              :transaction_id => transaction_id
+            }, super)
           end
 
           def payload

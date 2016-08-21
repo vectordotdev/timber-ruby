@@ -13,9 +13,7 @@ module Timber
       private
         def json_payload
           @json_payload ||= Macros::DeepMerger.merge({
-            _root_key => {
-              :hostname => hostname
-            }
+            :hostname => hostname
           }, super)
         end
     end

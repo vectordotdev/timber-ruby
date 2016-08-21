@@ -21,7 +21,7 @@ module Timber
           next if options[:except].is_a?(Array) && options[:except].include?(context.class)
           # Delegate to #to_logfmt on the context object for caching.
           # Add the index on the fly, as a string, since it's more performant.
-          context.to_logfmt + " #{context._path}#{Context::PATH_DELIMITER}_index=#{index(context)}"
+          Macros::LogfmtEncoder.join(context.to_logfmt, "#{context._path}._index=#{index(context)}")
         end.compact
         items << Macros::LogfmtEncoder.encode(:_version => CONTEXT_VERSION, :_hierarchy => hierarchy)
         Macros::LogfmtEncoder.join(*items)
@@ -34,12 +34,14 @@ module Timber
 
     private
       def context_hash
-        @context_hash ||= {}.tap do |hash|
-          hash = stack.inject(hash) do |hash, context|
-            Macros::DeepMerger.merge(hash, context.as_json)
+        @context_hash ||= begin
+          hash = stack.inject({}) do |acc, context|
+            acc = Macros::DeepMerger.merge(acc, context.as_json)
+            Macros::DeepMerger.merge(acc, index_hash(context))
           end
           hash[:_version] = CONTEXT_VERSION
           hash[:_hierarchy] = hierarchy
+          hash
         end
       end
 
@@ -49,6 +51,10 @@ module Timber
 
       def index(context)
         indexes[context] || raise("couldn't find index for #{context}")
+      end
+
+      def index_hash(context)
+        context.json_shell { {:_index => index(context)}}
       end
 
       def json_payload

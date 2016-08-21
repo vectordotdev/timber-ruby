@@ -8,16 +8,20 @@ module Timber
     SECURE_RANDOM_LENGTH = 16.freeze
 
     class << self
-      def _version
-        @_version ||= const_get(:VERSION)
+      def json_shell(&block)
+        {_root_key => yield}
       end
 
       def _path
-        @_path ||= (const_defined?(:PATH) ? const_get(:PATH) : _root_key).to_s
+        @path ||= Macros::LogfmtEncoder.encode(json_shell { 1 }).split("=").first
       end
 
       def _root_key
         @_root_key ||= const_get(:ROOT_KEY)
+      end
+
+      def _version
+        @_version ||= const_get(:VERSION)
       end
     end
 
@@ -25,16 +29,24 @@ module Timber
       @_dt ||= Time.now.utc
     end
 
-    def _version
-      self.class._version
-    end
-
     def _path
       self.class._path
     end
 
+    def _version
+      self.class._version
+    end
+
     def _root_key
       self.class._root_key
+    end
+
+    def as_json(*args)
+      @as_json ||= json_shell { super }
+    end
+
+    def json_shell(&block)
+      self.class.json_shell(&block)
     end
 
     def inspect(*args)
@@ -42,7 +54,7 @@ module Timber
     end
 
     def to_logfmt
-      @to_logfmt ||= Macros::LogfmtEncoder.encode(json_payload).freeze
+      @to_logfmt ||= Macros::LogfmtEncoder.encode(as_json).freeze
     end
 
     # Some contexts hold mutable object that change as the context block
@@ -55,10 +67,8 @@ module Timber
     private
       def json_payload
         @json_payload ||= {
-          _root_key => {
-            :_dt => Macros::DateFormatter.format(_dt),
-            :_version => _version
-          }
+          :_dt => Macros::DateFormatter.format(_dt),
+          :_version => _version
         }
       end
 

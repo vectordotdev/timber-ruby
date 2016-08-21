@@ -3,10 +3,15 @@ module Timber
     module Servers
       # Because this is a sub context we do not extend Server.
       class HerokuSpecific < Context
-        PATH = "#{Server._root_key}.heroku"
         ROOT_KEY = :heroku.freeze
         VERSION = 1.freeze
         DELIMITER = ".".freeze
+
+        class << self
+          def json_shell(&block)
+            Server.json_shell { super }
+          end
+        end
 
         attr_reader :dyno
 
@@ -31,15 +36,11 @@ module Timber
           end
 
           def json_payload
-            @json_payload ||= {
-              Server._root_key => Macros::DeepMerger.merge({
-                _root_key => {
-                  # order is relevant for logfmt styling
-                  :process_type => process_type,
-                  :dyno_id => dyno_id
-                }
-              }, super)
-            }
+            @json_payload ||= Macros::DeepMerger.merge({
+              # order is relevant for logfmt styling
+              :process_type => process_type,
+              :dyno_id => dyno_id
+            }, super)
           end
       end
     end

@@ -3,9 +3,14 @@ module Timber
     module HTTPRequests
       # Extend Context since we are a sub context and not an actual HTTPRequest
       class ActionControllerSpecific < Context
-        PATH = "#{Rack._root_key}.action_controller"
         ROOT_KEY = :action_controller.freeze
         VERSION = 1.freeze
+
+        class << self
+          def json_shell(&block)
+            Rack.json_shell { super }
+          end
+        end
 
         attr_reader :controller_obj
 
@@ -30,16 +35,12 @@ module Timber
 
         private
           def json_payload
-            @json_payload ||= {
-              Rack._root_key => Macros::DeepMerger.merge({
-                _root_key => {
-                  # order is relevant for logfmt styling
-                  :controller => controller,
-                  :action => action,
-                  :format => format
-                }
-              }, super)
-            }
+            @json_payload ||= Macros::DeepMerger.merge({
+              # order is relevant for logfmt styling
+              :controller => controller,
+              :action => action,
+              :format => format
+            }, super)
           end
       end
     end

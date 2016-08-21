@@ -15,11 +15,9 @@ module Timber
       private
         def json_payload
           @json_payload ||= Macros::DeepMerger.merge({
-            _root_key => {
-              # order is relevant for logfmt styling
-              :level => level,
-              :progname => progname
-            }
+            # order is relevant for logfmt styling
+            :level => level,
+            :progname => progname
           }, super)
         end
     end
