@@ -19,7 +19,7 @@ PRECISION = 8
 test = Proc.new { ITERATIONS.times { Support::Rails.dispatch_rails_request("/") } }
 
 puts "\nTesting Rails request performance. #{ITERATIONS} requests per test.\n\n"
-puts "                  Real           Per request"
+puts "                  Total (real)   Per request avg (real)"
 
 without_timber = Benchmark.measure("without Timber", &test)
 without_timber_per = without_timber.real / ITERATIONS

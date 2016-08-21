@@ -37,12 +37,12 @@ Timber allows you to choose how you want to log your data. In your environment c
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HerokuLogplex.new))
+config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new))
 ```
 
 Now add the log drain:
 
-```
+```console
 $ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logplex_frames
 ```
 
@@ -52,7 +52,7 @@ $ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logp
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
+config.logger = Timber::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
 ```
 
 #### IO (STDOUT, STDERR, files, etc.)
@@ -61,7 +61,7 @@ The IO format will write to anything that responds to the `#write` method.
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
+config.logger = Timber::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
 ```
 
 ## Performance
@@ -70,13 +70,13 @@ Timber was designed with an obsessive focus on performance and resource usage. I
 
 The following results were run on a bare metal server in order to achieve consistent and repeatable results.
 
-```
+```console
 Testing Rails request performance. 5000 requests per test.
 
-                  Real           Per request
-without Timber    4.41308498     0.00088262
-with Timber       4.47020912     0.00089404
-Difference       -0.05712414    -1.142e-05
+                  Total (real)   Per request avg (real)
+without Timber    4.44060183     0.00088812
+with Timber       4.55801511     0.0009116
+Difference       -0.11741328    -2.3482656478881797e-05
 ```
 
 The benchmark can be run yourself via:
@@ -84,4 +84,3 @@ The benchmark can be run yourself via:
 ```console
 $ appraisal ruby benchmark/rails_request.rb
 ```
-

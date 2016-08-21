@@ -21,6 +21,7 @@ require "timber/ignore"
 require "timber/internal_logger"
 require "timber/log_devices"
 require "timber/log_line"
+require "timber/logger"
 require "timber/probes"
 
 # Load frameworks last
