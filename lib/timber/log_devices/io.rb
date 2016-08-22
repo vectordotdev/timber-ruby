@@ -33,7 +33,7 @@ module Timber
           end
 
           def final_message
-            @final_message ||= "#{base_message} #{context_message}\n"
+            @final_message ||= "#{context_message}\r#{base_message}\n"
           end
 
           def log_line
