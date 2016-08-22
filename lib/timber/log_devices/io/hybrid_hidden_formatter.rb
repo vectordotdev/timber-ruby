@@ -17,6 +17,10 @@ module Timber
             position = CLEAR_STEP_SIZE
             sequence_size = CLEAR_SEQUENCE.size
             while position < text.length
+              # ensure we don't insert before a \
+              while text[position - 1] == "\\"
+                position += 1
+              end
               text.insert(position, CLEAR_SEQUENCE)
               position += (sequence_size + CLEAR_STEP_SIZE)
             end
