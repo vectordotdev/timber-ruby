@@ -30,7 +30,7 @@ module Timber
           if value.is_a?(Hash)
             encode(value, keys)
           else
-            "#{encode_keys(keys)}#{KEY_VALUE_DELIMITER}#{encode_value(value)}"
+            "#{encode_keys(keys)}#{KEY_VALUE_DELIMITER}#{encode_value(value)}\033[1K\r"
           end
         end.flatten
         join(*items)
