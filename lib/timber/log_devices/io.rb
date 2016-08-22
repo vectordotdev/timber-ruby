@@ -28,12 +28,19 @@ module Timber
           def context_message
             @context_message ||= begin
               text = "#{CONTEXT_DELIMITER} #{encoded_context}"
+              step_size = 20
+              position = 0
+              while position < text.length
+                text.insert(position, "\e8\e[K")
+                position += step_size
+              end
+              text += "\e8\e[K"
               colorize? ? LogDevice::Formatter.format(:black, text) : text
             end
           end
 
           def final_message
-            @final_message ||= "#{base_message}\e7#{context_message}\n"
+            @final_message ||= "\e7#{context_message}#{base_message}\n"
           end
 
           def log_line
