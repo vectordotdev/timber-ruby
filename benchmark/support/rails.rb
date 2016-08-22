@@ -14,8 +14,7 @@ module Support
     end
 
     def self.set_logger(log_dev)
-      logger = defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger.new(log_dev) : ::Logger.new(log_dev)
-      ::Rails.logger = defined?(::ActiveSupport::TaggedLogging) ? ::ActiveSupport::TaggedLogging.new(logger) : logger
+      ::Rails.logger = Timber::Frameworks::Rails.logger(log_dev)
       ::Rails.logger.level = ::Logger::DEBUG # log everything
     end
 

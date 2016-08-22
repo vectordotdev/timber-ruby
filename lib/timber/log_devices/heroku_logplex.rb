@@ -1,22 +1,13 @@
+require File.join(File.dirname(__FILE__), "heroku_logplex", "hybrid_formatter")
+
 module Timber
   module LogDevices
     class HerokuLogplex < IO
-      class Line < IO::Line
-        private
-          def base_message
-            # remove dt since that is included by default in the logplex format
-            @base_message ||= log_line.message
-          end
-
-          def encoded_context
-            @encoded_context ||= log_line.context_snapshot.to_logfmt(
-              :except => [Contexts::Servers::HerokuSpecific]
-            )
-          end
-      end
-
-      def initialize
+      def initialize(options = {})
         super(STDOUT)
+        if formatter.is_a?(IO::HybridFormatter)
+          formatter.extend HybridFormatter
+        end
       end
 
       private
