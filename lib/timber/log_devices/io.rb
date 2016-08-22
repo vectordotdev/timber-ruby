@@ -37,13 +37,15 @@ module Timber
           end
 
           def log_line
-            @log_line ||= LogLine.new(message.chomp)
+            @log_line ||= LogLine.new(message)
           end
 
           def encoded_context
             @encoded_context ||= log_line.context_snapshot.to_logfmt
           end
       end
+
+      NEWLINE = "\n".freeze
 
       attr_accessor :colorize
 
@@ -58,7 +60,9 @@ module Timber
       end
 
       def write(message)
-        line_class.new(io, message, colorize).write
+        message.chomp.split(NEWLINE).each do |message|
+          line_class.new(io, message, colorize).write
+        end
       rescue Exception => e
         Config.logger.exception(e)
         raise e
