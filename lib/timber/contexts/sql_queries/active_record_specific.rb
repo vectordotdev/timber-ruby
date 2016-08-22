@@ -47,7 +47,7 @@ module Timber
               :connection_id => connection_id,
               :statement_name => statement_name,
               :transaction_id => transaction_id
-            }, super)
+            }, super).freeze
           end
 
           def payload

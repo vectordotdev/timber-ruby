@@ -40,7 +40,7 @@ module Timber
               :controller => controller,
               :action => action,
               :format => format
-            }, super)
+            }, super).freeze
           end
       end
     end

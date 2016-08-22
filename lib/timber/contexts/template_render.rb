@@ -10,7 +10,7 @@ module Timber
             # order is relevant for logfmt styling
             :name => name,
             :time_ms => time_ms
-          }, super)
+          }, super).freeze
         end
     end
   end

@@ -14,7 +14,7 @@ module Timber
         def json_payload
           @json_payload ||= Macros::DeepMerger.merge({
             :hostname => hostname
-          }, super)
+          }, super).freeze
         end
     end
   end

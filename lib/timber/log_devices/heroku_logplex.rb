@@ -19,12 +19,10 @@ module Timber
         super(STDOUT)
       end
 
-      def write(message)
-        Line.new(io, message).write
-      rescue Exception => e
-        Config.logger.exception(e)
-        raise e
-      end
+      private
+        def line_class
+          Line
+        end
     end
   end
 end

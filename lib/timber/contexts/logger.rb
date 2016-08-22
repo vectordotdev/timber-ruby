@@ -18,7 +18,7 @@ module Timber
             # order is relevant for logfmt styling
             :level => level,
             :progname => progname
-          }, super)
+          }, super).freeze
         end
     end
   end

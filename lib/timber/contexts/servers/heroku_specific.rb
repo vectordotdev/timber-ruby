@@ -40,7 +40,7 @@ module Timber
               # order is relevant for logfmt styling
               :process_type => process_type,
               :dyno_id => dyno_id
-            }, super)
+            }, super).freeze.freeze
           end
       end
     end

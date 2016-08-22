@@ -26,7 +26,7 @@ module Timber
             # order is relevant for logfmt styling
             :id => id,
             :name => name
-          }, super)
+          }, super).freeze
         end
     end
   end

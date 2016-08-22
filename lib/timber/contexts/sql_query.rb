@@ -11,7 +11,7 @@ module Timber
             # order is relevant for logfmt styling
             :sql => sql,
             :time_ms => time_ms
-          }, super)
+          }, super).freeze
         end
     end
   end

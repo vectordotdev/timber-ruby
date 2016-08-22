@@ -32,7 +32,7 @@ module Timber
             :id => id,
             :name => name,
             :email => email
-          }, super)
+          }, super).freeze
         end
     end
   end

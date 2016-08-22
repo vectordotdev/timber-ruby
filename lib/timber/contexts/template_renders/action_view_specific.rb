@@ -39,7 +39,7 @@ module Timber
               :cache_hits => cache_hits,
               :count => count,
               :layout => layout
-            }, super)
+            }, super).freeze
           end
 
           def payload

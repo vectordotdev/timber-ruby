@@ -15,7 +15,7 @@ module Timber
             :path => path,
             :query_params => query_params.as_json,
             :headers => headers.as_json
-          }, super)
+          }, super).freeze
         end
     end
   end

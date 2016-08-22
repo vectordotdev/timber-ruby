@@ -32,7 +32,7 @@ module Timber
             # order is relevant for logfmt styling
             :name => name,
             :message => message
-          }, super)
+          }, super).freeze
         end
     end
   end

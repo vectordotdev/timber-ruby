@@ -12,7 +12,7 @@ module Timber
             :status => status,
             :headers => headers.as_json,
             :time_ms => time_ms
-          }, super)
+          }, super).freeze
         end
     end
   end

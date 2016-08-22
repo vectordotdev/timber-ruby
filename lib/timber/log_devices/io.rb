@@ -4,11 +4,12 @@ module Timber
       class Line
         CONTEXT_DELIMITER = "[timber.io]".freeze
 
-        attr_reader :io, :message
+        attr_reader :io, :message, :colorize
 
-        def initialize(io, message)
+        def initialize(io, message, colorize)
           @io = io
           @message = message
+          @colorize = colorize
         end
 
         def write
@@ -16,12 +17,19 @@ module Timber
         end
 
         private
+          def colorize?
+            colorize == true
+          end
+
           def base_message
             @base_message ||= "#{log_line.formatted_dt}: #{log_line.message}"
           end
 
           def context_message
-            @context_message ||= LogDevice::Formatter.format(:black, "#{CONTEXT_DELIMITER} #{encoded_context}")
+            @context_message ||= begin
+              text = "#{CONTEXT_DELIMITER} #{encoded_context}"
+              colorize? ? LogDevice::Formatter.format(:black, text) : text
+            end
           end
 
           def final_message
@@ -37,8 +45,11 @@ module Timber
           end
       end
 
-      def initialize(io = STDOUT)
+      attr_accessor :colorize
+
+      def initialize(io = STDOUT, options = {})
         io.sync = true if io.respond_to?(:sync=) # ensures logs are written immediately instead of being buffered by ruby
+        self.colorize = options[:colorize] != false
         @io = io
       end
 
@@ -47,7 +58,7 @@ module Timber
       end
 
       def write(message)
-        Line.new(io, message).write
+        line_class.new(io, message, colorize).write
       rescue Exception => e
         Config.logger.exception(e)
         raise e
@@ -56,6 +67,10 @@ module Timber
       private
         def io
           @io
+        end
+
+        def line_class
+          Line
         end
     end
   end
