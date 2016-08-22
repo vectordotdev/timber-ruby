@@ -3,6 +3,8 @@ module Timber
     class IO < LogDevice
       class Line
         CONTEXT_DELIMITER = "[timber.io]".freeze
+        CLEAR_SEQUENCE = "\e8\e[K".freeze
+        CLEAR_STEP_SIZE = 20.freeze
 
         attr_reader :io, :message, :colorize
 
@@ -27,14 +29,13 @@ module Timber
 
           def context_message
             @context_message ||= begin
-              text = "#{CONTEXT_DELIMITER} #{encoded_context}"
-              step_size = 20
+              text = "#{encoded_context}#{CONTEXT_DELIMITER}#{CLEAR_SEQUENCE}"
               position = 0
               while position < text.length
-                text.insert(position, "\e8\e[K")
-                position += step_size
+                text.insert(position, CLEAR_SEQUENCE)
+                position += CLEAR_STEP_SIZE
               end
-              text += "\e8\e[K"
+              text += CLEAR_SEQUENCE
               colorize? ? LogDevice::Formatter.format(:black, text) : text
             end
           end
