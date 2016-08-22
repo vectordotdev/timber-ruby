@@ -15,9 +15,8 @@ module Timber
           def context_message(log_line)
             text = "#{encoded_context(log_line)}#{CONTEXT_DELIMITER}"
             position = CLEAR_STEP_SIZE
-            text_length = text.length
             sequence_size = CLEAR_SEQUENCE.size
-            while position < text_length
+            while position < text.length
               text.insert(position, CLEAR_SEQUENCE)
               position += (sequence_size + CLEAR_STEP_SIZE)
             end
