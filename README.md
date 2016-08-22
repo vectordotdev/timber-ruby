@@ -35,6 +35,8 @@ Timber allows you to choose how you want to log your data. In your environment c
 
 #### Heroku
 
+Writes to STDOUT and formats the line to not include redundant info that is supplied by default in the Heroku logplex format.
+
 ```ruby
 # config/environments/production.rb (or staging, etc)
 config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new))
@@ -49,6 +51,8 @@ $ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logp
 *the `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)*
 
 #### HTTP
+
+Sends logs directly to the Timber API from within your app.
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
