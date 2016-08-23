@@ -1,7 +1,12 @@
-
 engines:
   duplication:
     enabled: true
+    config:
+      languages:
+      - ruby
+      - javascript
+      - python
+      - php
     exclude_fingerprints:
     - 491dd5b768852a27a80385aa82cf7e58
     - 538d87ce2b9bc468129f55f4f3978e58
@@ -13,3 +18,14 @@ engines:
     checks:
       Rubocop/Lint/RescueException:
         enabled: false
+ratings:
+  paths:
+  - "**.inc"
+  - "**.js"
+  - "**.jsx"
+  - "**.module"
+  - "**.php"
+  - "**.py"
+  - "**.rb"
+exclude_paths:
+- spec/
