@@ -2,7 +2,9 @@ module Timber
   module LogDevices
     class IO < LogDevice
       class HybridFormatter < Formatter
-        CONTEXT_DELIMITER = "[timber.io]".freeze
+        # Important that we do not change this, as the API matches on it
+        # to perform it's special parsing. Spaces included.
+        CONTEXT_DELIMITER = " [timber.io] ".freeze
 
         def initialize(options = {})
           super
@@ -14,7 +16,7 @@ module Timber
         end
 
         def format(log_line)
-          "#{log_line.message} #{context_message(log_line)}"
+          "#{log_line.message}#{context_message(log_line)}"
         end
 
         private
@@ -28,7 +30,7 @@ module Timber
           end
 
           def context_message(log_line)
-            ansi_format(BLACK, "#{CONTEXT_DELIMITER} #{encoded_context(log_line)}")
+            ansi_format(DARK_GRAY, "#{CONTEXT_DELIMITER}#{encoded_context(log_line)}")
           end
 
           def encoded_context(log_line)

@@ -7,63 +7,16 @@
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/timberio/timber-ruby/badge.svg?branch=master)](https://coveralls.io/github/timberio/timber-ruby?branch=master)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
+[![YARD Docs](https://camo.githubusercontent.com/448a183a8b3fe7f7b44fdb95c82eeee1e2f4ed56/687474703a2f2f696d672e736869656c64732e696f2f62616467652f796172642d646f63732d626c75652e737667)](http://www.rubydoc.info/github/timberio/timber-ruby)
 
 **Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io**
-
 
 [Timber](http://timber.io) is a different kind of logging platform; it goes beyond traditional logging by enriching your logs with *app* context. Turning them into rich structured events without altering the essence of logging. See for yourself at [timber.io](http://timber.io).
 
 ## Install
 
-### 1. Get your API key
+To ensure logs are transported efficiently, Timber offers a variety of transport solutions. Please choose your preferred method below:
 
-You can obtain your API key by signing up at [timber.io](http://timber.io).
-
-*Note: Timber looks for the `TIMBER_KEY` environment variable. If set, you do not need to explicitly pass the key as shown below.*
-
-### 2. Install the gem
-
-Add timber to your Gemfile:
-
-```
-gem 'timber-ruby'
-```
-
-### 3. Choose a log transport strategy
-
-Timber allows you to choose how you want to log your data. In your environment configuration files (ex: `config/environments/production.rb`) copy any of the following examples:
-
-#### Heroku
-
-Writes to STDOUT and formats the line to not include redundant info that is supplied by default in the Heroku logplex format.
-
-```ruby
-# config/environments/production.rb (or staging, etc)
-config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new))
-```
-
-Now add the log drain:
-
-```console
-$ heroku drains:add https://<application-id>:<api-key>@api.timber.io/heroku/logplex_frames
-```
-
-*the `<application-id>` and `<api-key>` can be obtained [here](https://timber.io)*
-
-#### HTTP
-
-Sends logs directly to the Timber API from within your app.
-
-```ruby
-# config/environments/production.rb (or staging, etc)
-config.logger = Timber::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']))) # Passing the ENV['TIMBER_KEY'] is optional, showing it for explicitness
-```
-
-#### IO (STDOUT, STDERR, files, etc.)
-
-The IO format will write to anything that responds to the `#write` method.
-
-```ruby
-# config/environments/production.rb (or staging, etc)
-config.logger = Timber::Logger.new(Timber::LogDevices::IO.new(STDOUT)))
-```
+1. **[Rails on Heroku](docs/installation/rails_on_heroku.md)**
+2. **[Rails over HTTP](docs/installation/rails_over_http.md)**
+2. **[Rails to IO (STDOUT, File, etc.)](docs/installation/rails_to_io.md)**

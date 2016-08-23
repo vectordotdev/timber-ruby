@@ -3,6 +3,7 @@ require "securerandom"
 module Timber
   class Context
     include Patterns::ToJSON
+    include Patterns::ToLogfmt
 
     PATH_DELIMITER = ".".freeze
     SECURE_RANDOM_LENGTH = 16.freeze
@@ -51,10 +52,6 @@ module Timber
 
     def inspect(*args)
       "#<#{self.class.name}:#{object_id} ...>"
-    end
-
-    def to_logfmt
-      @to_logfmt ||= Macros::LogfmtEncoder.encode(as_json).freeze
     end
 
     # Some contexts hold mutable object that change as the context block

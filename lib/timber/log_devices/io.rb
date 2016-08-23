@@ -1,6 +1,8 @@
 require File.join(File.dirname(__FILE__), "io", "formatter")
 require File.join(File.dirname(__FILE__), "io", "hybrid_formatter")
 require File.join(File.dirname(__FILE__), "io", "hybrid_hidden_formatter")
+require File.join(File.dirname(__FILE__), "io", "json_formatter")
+require File.join(File.dirname(__FILE__), "io", "logfmt_formatter")
 
 module Timber
   module LogDevices

@@ -8,6 +8,7 @@ module Timber
 
         # Colors
         BLACK   = "\e[30m"
+        DARK_GRAY = "\e[1;30m"
         RED     = "\e[31m"
         GREEN   = "\e[32m"
         YELLOW  = "\e[33m"

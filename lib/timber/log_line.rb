@@ -1,6 +1,7 @@
 module Timber
   class LogLine
     include Patterns::ToJSON
+    include Patterns::ToLogfmt
 
     # Raised when there is an issue with the message being passed.
     # Note: this is handled in Logger

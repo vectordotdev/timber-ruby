@@ -2,7 +2,6 @@ module Timber
   module LogDevices
     class IO < LogDevice
       class HybridHiddenFormatter < HybridFormatter
-        CONTEXT_DELIMITER = "[timber.io]".freeze
         CLEAR_SEQUENCE = "\e8\e[K".freeze
         CLEAR_STEP_SIZE = 20.freeze
         SAVE_CURSOR_POSITION = "\e7".freeze
@@ -25,7 +24,7 @@ module Timber
               position += (sequence_size + CLEAR_STEP_SIZE)
             end
             text += CLEAR_SEQUENCE
-            text
+            ansi_format(DARK_GRAY, text)
           end
 
           def encoded_context(log_line)
