@@ -9,7 +9,7 @@ module Timber
     SECURE_RANDOM_LENGTH = 16.freeze
 
     class << self
-      def json_shell(&block)
+      def json_shell(&_block)
         {_root_key => yield}
       end
 

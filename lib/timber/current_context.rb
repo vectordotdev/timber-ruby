@@ -17,7 +17,7 @@ module Timber
     include Patterns::DelegatedSingleton
 
     # Adds a context to the current stack.
-    def add(*contexts, &block)
+    def add(*contexts, &_block)
       if include?(*contexts)
         raise ContextAlreadyAddedError.new(contexts)
       end

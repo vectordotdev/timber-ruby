@@ -16,7 +16,7 @@ module Timber
         class NoPayloadError < ArgumentError; end
 
         class << self
-          def start!(options = {}, &block)
+          def start!(options = {}, &_block)
             return if @thread && @thread.alive?
 
             # Old school options to support ruby 1.9 :(

@@ -41,7 +41,7 @@ module Timber
           Config.logger.exception(e)
         end
 
-        def empty(&block)
+        def empty(&_block)
           if log_lines.any?
             copy = log_lines_copy
             yield(copy) if block_given?

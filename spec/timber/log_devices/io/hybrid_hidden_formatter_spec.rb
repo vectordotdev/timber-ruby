@@ -13,7 +13,7 @@ describe Timber::LogDevices::IO::HybridHiddenFormatter do
       allow(server_context).to receive(:_dt).and_return(time)
     end
 
-    it { should eq("\e7server.hostname=comp\e8\e[Kuter-name.domain.com\e8\e[K server._dt=2016-09-\e8\e[K01T12:00:00.000000Z \e8\e[Kserver._version=1 se\e8\e[Krver._index=0 _versi\e8\e[Kon=1 _hierarchy=[ser\e8\e[Kver][timber.io]\e8\e[Ka message") }
+    it { should eq("\e7\e[1;30mserver.hostname=comp\e8\e[Kuter-name.domain.com\e8\e[K server._dt=2016-09-\e8\e[K01T12:00:00.000000Z \e8\e[Kserver._version=1 se\e8\e[Krver._index=0 _versi\e8\e[Kon=1 _hierarchy=[ser\e8\e[Kver] [timber.io] \e8\e[K\e[0ma message") }
 
     context "with a slash" do
       let(:message) { "this is a long message that exceeds the step size".insert(described_class::CLEAR_STEP_SIZE - 1, "\\") }
@@ -22,7 +22,7 @@ describe Timber::LogDevices::IO::HybridHiddenFormatter do
         allow(formatter).to receive(:encoded_context).and_return(message)
       end
 
-      it { should eq("\e7this is a long mess\\a\e8\e[Kge that exceeds the \e8\e[Kstep size[timber.io]\e8\e[Kthis is a long mess\\age that exceeds the step size") }
+      it { should eq("\e7\e[1;30mthis is a long mess\\a\e8\e[Kge that exceeds the \e8\e[Kstep size [timber.io\e8\e[K] \e8\e[K\e[0mthis is a long mess\\age that exceeds the step size") }
     end
   end
 end

@@ -17,10 +17,10 @@ gem 'timber-ruby'
 config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new))
 ```
 
-* Awesome note: by default, Timber enriches and adds context without altering how your logs look! Try it out with `heroku logs --tail`.
-* For advanced options, such as formatting, see the [Timber::LogDevices::HerokuLogplex docs](http://www.rubydoc.info/github/timberio/timber-ruby/master/Timber/LogDevices/HerokuLogplex).
+* Awesome note: by default, Timber uses a log format that enriches your logs without changing how the look in your terminal! Try it out with `heroku logs --tail`.
+* You can change this default formatting, and other advanced options, by checking out the [Timber::LogDevices::HerokuLogplex docs](http://www.rubydoc.info/github/timberio/timber-ruby/master/Timber/LogDevices/HerokuLogplex).
 
-## 3. Setup your log drain
+## 3. Lastly, setup your log drain
 
 ```console
 $ heroku drains:add https://<your-timber-api-key>@api.timber.io/heroku/logplex_frames \

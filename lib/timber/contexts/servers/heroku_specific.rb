@@ -8,7 +8,7 @@ module Timber
         DELIMITER = ".".freeze
 
         class << self
-          def json_shell(&block)
+          def json_shell(&_block)
             Server.json_shell { super }
           end
         end

@@ -36,7 +36,7 @@ module Timber
         }.freeze
         EVENT_DELIMITER = ".".freeze
 
-        def wrap(log_subscriber, event, &block)
+        def wrap(log_subscriber, event, &_block)
           event_name, namespace = event.name.split(EVENT_DELIMITER)
           wrapper = WRAPPER_MAP[namespace]
           if wrapper && wrapper.respond_to?(event_name)

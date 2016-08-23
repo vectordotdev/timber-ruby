@@ -7,7 +7,7 @@ module Timber
         VERSION = 1.freeze
 
         class << self
-          def json_shell(&block)
+          def json_shell(&_block)
             TemplateRender.json_shell { super }
           end
         end

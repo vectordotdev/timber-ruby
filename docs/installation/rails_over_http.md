@@ -18,5 +18,5 @@ config.logger = Timber::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY'
 ```
 
 * You can obtain your Timber API key [here](https://timber.io).
-* If you set `ENV['TIMBER_KEY']`, you do not have to pass it as an argument.
-* The `Timber::Logger.new` function handles instantiating the Rails logger properly for your Rails version, including wrapping the logger in `ActiveSupport::TaggedLogger.new`.
+* If you set `ENV['TIMBER_KEY']`, you do not have to pass it as an argument. The example above provides it for explicitness.
+* The `Timber::Logger.new` function handles instantiating the Rails logger properly for your Rails version, including wrapping the logger in `ActiveSupport::TaggedLogger.new` (if available). It's equivalent to `Timber::Logger.new(ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY'])))`.
