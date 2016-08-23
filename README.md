@@ -15,7 +15,7 @@
 
 ## Install
 
-To ensure logs are transported efficiently, Timber offers a variety of transport solutions. Please choose your preferred method below:
+To ensure logs are transported efficiently, Timber offers a variety of solutions. Please choose your preferred method below:
 
 1. **[Rails on Heroku](docs/installation/rails_on_heroku.md)**
 2. **[Rails over HTTP](docs/installation/rails_over_http.md)**
