@@ -26,6 +26,5 @@ $ heroku drains:add https://<your-timber-api-key>@api.timber.io/heroku/logplex_f
   --app=<my-app-name>
 ```
 
-Replace `<your-timber-api-key>` with your actual key. You can obtain it [here](https://timber.io).
-
-Replace `<my-app-name>` with your heroku app name.
+* Replace `<your-timber-api-key>` with your actual key. You can obtain it [here](https://timber.io).
+* Replace `<my-app-name>` with your heroku app name.
