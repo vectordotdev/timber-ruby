@@ -19,5 +19,4 @@ To ensure logs are transported efficiently, Timber offers a variety of transport
 
 1. **[Rails on Heroku](docs/installation/rails_on_heroku.md)**
 2. **[Rails over HTTP](docs/installation/rails_over_http.md)**
-
-More coming soon!
+3. ...more coming soon!
