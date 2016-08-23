@@ -13,7 +13,7 @@ $:.unshift File.dirname(__FILE__)
 require "support/rails"
 require "benchmark"
 require "logger"
-require 'terminal-table'
+require "terminal-table"
 
 def line_count(io)
   io.rewind
