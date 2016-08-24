@@ -50,7 +50,7 @@ module Timber
       self.class.json_shell(&block)
     end
 
-    def inspect(*args)
+    def inspect(*_args)
       "#<#{self.class.name}:#{object_id} ...>"
     end
 
