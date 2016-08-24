@@ -9,7 +9,7 @@ module Timber
     # 2. It makes assumptions about the hash structure, and is designed
     #    specifically for Timber. We can reduce the edge cases and improve
     #    performance drastically.
-    module LogfmtEncoder
+    class LogfmtEncoder
       ARRAY_DELIMITER = ",".freeze
       ARRAY_END = "]".freeze
       ARRAY_START = "[".freeze

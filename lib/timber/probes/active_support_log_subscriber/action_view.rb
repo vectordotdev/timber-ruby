@@ -1,7 +1,7 @@
 module Timber
   module Probes
     class ActiveSupportLogSubscriber < Probe
-      module ActionView
+      class ActionView
         def self.render_collection(_log_subscriber, event, &_block)
           wrap(event) { yield }
         end

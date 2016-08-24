@@ -25,7 +25,7 @@ module Timber
         @io = io
       end
 
-      def close(*args)
+      def close(*_args)
         io.close
       end
 

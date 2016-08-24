@@ -25,7 +25,7 @@ module Timber
           @ansi_format == true
         end
 
-        def format(log_line)
+        def format(_log_line)
           raise NotImplementedError.new("#format is not implemented")
         end
 
