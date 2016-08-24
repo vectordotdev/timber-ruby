@@ -28,4 +28,7 @@ ratings:
   - "**.py"
   - "**.rb"
 exclude_paths:
+- benchmark/
+- docs/
+- gemfiles/
 - spec/
