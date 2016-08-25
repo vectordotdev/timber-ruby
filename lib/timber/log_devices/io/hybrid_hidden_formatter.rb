@@ -12,19 +12,19 @@ module Timber
 
         private
           def context_message(log_line)
-            text = "#{encoded_context(log_line)}#{CONTEXT_DELIMITER}"
+            text = encoded_context(log_line)
             position = CLEAR_STEP_SIZE
             sequence_size = CLEAR_SEQUENCE.size
+            step_size = sequence_size + CLEAR_STEP_SIZE
             while position < text.length
               # ensure we don't insert before a \
               while text[position - 1] == "\\"
                 position += 1
               end
               text.insert(position, CLEAR_SEQUENCE)
-              position += (sequence_size + CLEAR_STEP_SIZE)
+              position += step_size
             end
-            text += CLEAR_SEQUENCE
-            ansi_format(DARK_GRAY, text)
+            ansi_format(DARK_GRAY, "#{CALLOUT}#{CLEAR_SEQUENCE}#{text} #{CALLOUT_END}#{CLEAR_SEQUENCE}")
           end
 
           def encoded_context(log_line)

@@ -3,7 +3,7 @@ module Timber
     class IO < LogDevice
       class JSONFormatter < Formatter
         def format(log_line)
-          log_line.to_json
+          CALLOUT + log_line.to_json
         end
       end
     end

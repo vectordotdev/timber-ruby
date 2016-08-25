@@ -3,7 +3,7 @@ module Timber
     class IO < LogDevice
       class LogfmtFormatter < Formatter
         def format(log_line)
-          log_line.to_logfmt
+          @CALLOUT + log_line.to_logfmt
         end
       end
     end

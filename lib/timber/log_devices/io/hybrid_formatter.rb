@@ -2,10 +2,6 @@ module Timber
   module LogDevices
     class IO < LogDevice
       class HybridFormatter < Formatter
-        # Important that we do not change this, as the API matches on it
-        # to perform it's special parsing. Spaces included.
-        CONTEXT_DELIMITER = " [timber.io] ".freeze
-
         def initialize(options = {})
           super
           @date_prefix = options.key?(:date_prefix) ? options[:date_prefix] : false
@@ -30,7 +26,10 @@ module Timber
           end
 
           def context_message(log_line)
-            ansi_format(DARK_GRAY, "#{CONTEXT_DELIMITER}#{encoded_context(log_line)}")
+            # The callout must be before the formatting, otherwise we leave
+            # the message ending with a color formatting and not a reset.
+            # Anything before the callout modifies the original message.
+            CALLOUT + ansi_format(DARK_GRAY, encoded_context(log_line))
           end
 
           def encoded_context(log_line)
