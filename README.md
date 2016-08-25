@@ -7,7 +7,7 @@
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/timberio/timber-ruby/badge.svg?branch=master)](https://coveralls.io/github/timberio/timber-ruby?branch=master)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
-[![YARD Docs](https://camo.githubusercontent.com/448a183a8b3fe7f7b44fdb95c82eeee1e2f4ed56/687474703a2f2f696d672e736869656c64732e696f2f62616467652f796172642d646f63732d626c75652e737667)](http://www.rubydoc.info/github/timberio/timber-ruby)
+[![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
 **Note: Timber is in alpha testing, if interested in joining, please visit http://timber.io**
 
