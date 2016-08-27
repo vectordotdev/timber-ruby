@@ -15,7 +15,7 @@ module Timber
 
       def backtrace
         # only the first 5 lines to save on space
-        @backtrace ||= exception.backtrace[0..5]
+        @backtrace ||= exception.backtrace[0..4]
       end
 
       def name
@@ -31,7 +31,8 @@ module Timber
           @json_payload ||= Macros::DeepMerger.merge({
             # order is relevant for logfmt styling
             :name => name,
-            :message => message
+            :message => message,
+            :backtrace => backtrace
           }, super).freeze
         end
     end
