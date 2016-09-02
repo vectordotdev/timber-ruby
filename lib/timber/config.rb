@@ -17,7 +17,7 @@ module Timber
       enabled == true
     end
 
-    # Internal logger for the Timber library
+    # Internal logger for the Timber library, only for debugging purposes.
     def logger
       @logger ||= InternalLogger.new(nil)
     end
