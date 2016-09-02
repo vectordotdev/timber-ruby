@@ -2,7 +2,6 @@
 
 Timber was designed with an obsessive focus on performance and resource usage. In the `/benchmark` folder you'll find benchmarking tests.
 
-The following results were run on a bare metal server in order to achieve consistent and repeatable results.
 
 ```console
 +---------------------------+------------+-----------------+--------------+
@@ -17,7 +16,7 @@ The following results were run on a bare metal server in order to achieve consis
 ```
 
 1. `Control` - This is vanilla rails app without Timber installed.
-2. `Timber probels only` - The same rails app but with the `Timber::Probes` installed, isolating probes performance.
+2. `Timber probels only` - The same rails app but with *only* the `Timber::Probes` installed, isolating probes performance.
 3. `Timber probes and logging` - Testing the full Timber library, probes and adding context to each log line.
 
 The benchmark can be run yourself via:
