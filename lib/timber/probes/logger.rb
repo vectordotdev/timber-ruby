@@ -4,10 +4,16 @@ module Timber
   module Probes
     class Logger < Probe
       module InstanceMethods
-        def add(level, *args, &_block)
-          context = Contexts::Logger.new(level, progname)
-          CurrentContext.add(context) do
-            super
+        def self.included(klass)
+          klass.class_eval do
+            alias_method :_timber_old_add, :add
+
+            def add(level, *args, &block)
+              context = Contexts::Logger.new(level, progname)
+              CurrentContext.add(context) do
+                _timber_old_add(level, *args, &block)
+              end
+            end
           end
         end
       end

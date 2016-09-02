@@ -5,8 +5,8 @@ module Timber
   # This context gets copied as each log line is written.
   class CurrentContext
     class ContextAlreadyAddedError < StandardError
-      def initialize(contexts)
-        super("Context of type #{contexts.collect { |context| context.class.name }} has already been added")
+      def initialize(context)
+        super("Context of type #{context.class.name} has already been added")
       end
     end
 
@@ -18,11 +18,14 @@ module Timber
 
     # Adds a context to the current stack.
     def add(*contexts, &_block)
-      if include?(*contexts)
-        raise ContextAlreadyAddedError.new(contexts)
-      end
       contexts = contexts.compact
-      contexts.each { |context| stack << context }
+      contexts.each do |context|
+        if include?(context)
+          raise ContextAlreadyAddedError.new(context)
+        else
+          stack << context
+        end
+      end
       block_given? ? yield : self
     ensure
       remove(*contexts) if block_given?
@@ -36,11 +39,9 @@ module Timber
     # Check if any of the contexts have already been added.
     # The context stack is a unique set of context types, so we
     # check the class type only.
-    def include?(*contexts)
+    def include?(context)
       stack.any? do |current_context|
-        contexts.any? do |new_context|
-          current_context.class == new_context.class
-        end
+        current_context.class == context.class
       end
     end
 
