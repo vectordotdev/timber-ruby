@@ -6,7 +6,7 @@ module Timber
   class CurrentContext
     class ContextAlreadyAddedError < StandardError
       def initialize(context)
-        super("Context of type #{context.class.name} has already been added")
+        super("Context of type #{context.class.name} has already been added: #{context.as_json.inspect}")
       end
     end
 
