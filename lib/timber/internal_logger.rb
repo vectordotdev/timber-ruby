@@ -29,7 +29,7 @@ module Timber
         raise ArgumentError.new("#exception must take an Exception type")
       end
       # TODO: notify us that this exception happened
-      error(exception)
+      error("#{exception.inspect}: #{exception.backtrace.inspect}")
     end
   end
 end
