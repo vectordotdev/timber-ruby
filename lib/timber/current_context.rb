@@ -4,12 +4,6 @@ module Timber
   # Holds the current context in the current thread's memory.
   # This context gets copied as each log line is written.
   class CurrentContext
-    class ContextAlreadyAddedError < StandardError
-      def initialize(context)
-        super("Context of type #{context.class.name} has already been added: #{context.as_json.inspect}")
-      end
-    end
-
     THREAD_NAMESPACE = :_timber_current_context.freeze
     STACK_KEYNAME = :stack.freeze
     PRECISION = 8.freeze
@@ -20,11 +14,7 @@ module Timber
     def add(*contexts, &_block)
       contexts = contexts.compact
       contexts.each do |context|
-        if include?(context)
-          raise ContextAlreadyAddedError.new(context)
-        else
-          stack << context
-        end
+        stack << context
       end
       block_given? ? yield : self
     ensure
@@ -34,15 +24,6 @@ module Timber
     # Get a specific context type off the stack
     def get(type)
       stack.find { |context| context.is_a?(type) }
-    end
-
-    # Check if any of the contexts have already been added.
-    # The context stack is a unique set of context types, so we
-    # check the class type only.
-    def include?(context)
-      stack.any? do |current_context|
-        current_context.class == context.class
-      end
     end
 
     # Removes the contexts from the current stack.
