@@ -13,7 +13,6 @@ module Timber
                 _timber_old_add(level, *args, &block)
               else
                 context = Contexts::Logger.new(level, progname)
-                Config.logger.warn("Adding logger for #{level} #{args.inspect}")
                 CurrentContext.add(context) do
                   _timber_old_add(level, *args, &block)
                 end
