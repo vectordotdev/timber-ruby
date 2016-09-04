@@ -48,7 +48,7 @@ module Timber
 
     private
       def stack
-        storage[STACK_KEYNAME] ||= Set.new
+        storage[STACK_KEYNAME] ||= []
       end
 
       def storage
