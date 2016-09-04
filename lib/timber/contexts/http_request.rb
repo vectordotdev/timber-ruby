@@ -14,8 +14,7 @@ module Timber
             :port => port,
             :path => path,
             :query_params => query_params.as_json,
-            :headers => headers.as_json,
-            :session => session.as_json,
+            :headers => headers.as_json
           }, super).freeze
         end
     end

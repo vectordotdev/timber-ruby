@@ -13,7 +13,7 @@ describe Timber::Probes::Logger do
 
       it "should ignore Config.logger" do
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(context_class)).and_yield.once
-        Timnber::Config.logger.info("text")
+        Timber::Config.logger.info("text")
       end
     end
   end
