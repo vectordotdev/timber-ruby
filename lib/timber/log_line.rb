@@ -10,6 +10,7 @@ module Timber
     attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
+      puts message.inspect
       @dt = Time.now.utc # Capture the time as soon as possible
       message = message.to_s # TODO: handle converting objects to json or kv?
       if message.bytesize > APISettings::MESSAGE_BYTE_SIZE_MAX

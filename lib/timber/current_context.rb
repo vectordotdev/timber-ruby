@@ -16,7 +16,6 @@ module Timber
       contexts.each do |context|
         stack << context
       end
-      puts "Adding: #{caller.inspect}"
       block_given? ? yield : self
     ensure
       remove(*contexts) if block_given?
