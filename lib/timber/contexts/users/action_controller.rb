@@ -25,7 +25,8 @@ module Timber
           end
 
           def user
-            controller.respond_to?(method_name, true) ? controller.send(method_name) : nil
+            return @user if defined?(@user)
+            @user = controller.respond_to?(method_name, true) ? controller.send(method_name) : nil
           end
       end
     end

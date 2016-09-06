@@ -25,7 +25,8 @@ module Timber
           end
 
           def organization
-            controller.respond_to?(method_name, true) ? controller.send(method_name) : nil
+            return @organization if defined?(@organization)
+            @organization = controller.respond_to?(method_name, true) ? controller.send(method_name) : nil
           end
       end
     end

@@ -9,11 +9,6 @@ module Timber
           formatter.extend HybridFormatter
         end
       end
-
-      private
-        def line_class
-          Line
-        end
     end
   end
 end

@@ -25,6 +25,7 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
         Object.send(:remove_const, :ExceptionController)
       end
 
+      let(:logger_context_class) { Timber::Contexts::Logger }
       let(:rack_request_context_class) { Timber::Contexts::HTTPRequests::Rack }
       let(:request_context_class) { Timber::Contexts::HTTPRequests::ActionControllerSpecific }
       let(:organization_context_class) { Timber::Contexts::Organizations::ActionController }
@@ -33,6 +34,7 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
       let(:exception_context_class) { Timber::Contexts::Exception }
 
       it "should set the context" do
+        expect(Timber::CurrentContext).to receive(:add).with(kind_of(logger_context_class)).and_yield.once
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(rack_request_context_class)).and_yield.once
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(request_context_class), kind_of(organization_context_class), kind_of(user_context_class), kind_of(response_context_class)).and_yield.once
         expect(Timber::CurrentContext).to receive(:add).with(kind_of(exception_context_class)).and_yield

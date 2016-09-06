@@ -4,6 +4,8 @@ require File.join(File.dirname(__FILE__), "http", "log_truck")
 module Timber
   module LogDevices
     class HTTP < LogDevice
+      SPLIT_LINES = false
+
       attr_reader :application_key
 
       def initialize(application_key = nil)
@@ -17,14 +19,10 @@ module Timber
       def close(*args)
       end
 
-      def write(message)
-        log_line = LogLine.new(message.chmop)
-        LogPile.get(application_key).drop(log_line)
-        message
-      rescue Exception => e
-        Config.logger.exception(e)
-        raise e
-      end
+      private
+        def write_log_line(log_line)
+          LogPile.get(application_key).drop(log_line)
+        end
     end
   end
 end

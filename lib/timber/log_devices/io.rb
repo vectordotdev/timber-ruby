@@ -12,8 +12,6 @@ module Timber
     # The IO log device works with any IO object. That is, any object that
     # response to #write(message).
     class IO < LogDevice
-      NEWLINE = "\n".freeze
-
       attr_reader :formatter
 
       # Instantiates a new Timber IO log device.
@@ -29,19 +27,12 @@ module Timber
         io.close
       end
 
-      def write(message)
-        message.chomp.split(NEWLINE).each do |message|
-          log_line = LogLine.new(message)
-          message = formatter.format(log_line)
-          io.write(message + "\n")
-        end
-        true
-      rescue Exception => e
-        Config.logger.exception(e)
-        raise e
-      end
-
       private
+        def write_log_line(log_line)
+          formatted_message = formatter.format(log_line)
+          io.write(formatted_message + "\n")
+        end
+
         def io
           @io
         end

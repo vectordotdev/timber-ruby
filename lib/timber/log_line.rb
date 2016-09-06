@@ -10,7 +10,6 @@ module Timber
     attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
-      puts "\n\n#{message}\n#{caller.join("\n")}"
       @dt = Time.now.utc # Capture the time as soon as possible
       message = message.to_s
       if message.bytesize > APISettings::MESSAGE_BYTE_SIZE_MAX
