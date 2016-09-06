@@ -23,8 +23,8 @@ describe Timber::LogLine do
     context "exceeds bytesize limit" do
       let(:limit) { Timber::APISettings::MESSAGE_BYTE_SIZE_MAX }
       let(:message) { (1..(limit + 1)).collect { "A" }.join }
-      subject { lambda { log_line } }
-      it { should raise_error(Timber::LogLine::InvalidMessageError, "the log message must not exceed #{limit} bytes") }
+      its(:message) { should_not eq(message) }
+      its(:message) { should eq(message.byteslice(0, Timber::APISettings::MESSAGE_BYTE_SIZE_MAX)) }
     end
 
     it "notifies CurrentLineIndexes" do

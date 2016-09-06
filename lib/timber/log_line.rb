@@ -10,12 +10,12 @@ module Timber
     attr_reader :context_snapshot, :dt, :line_indexes, :message
 
     def initialize(message)
-      puts message.inspect
+      puts "\n\n#{message}\n#{caller[0..5].join("\n")}"
       @dt = Time.now.utc # Capture the time as soon as possible
-      message = message.to_s # TODO: handle converting objects to json or kv?
+      message = message.to_s
       if message.bytesize > APISettings::MESSAGE_BYTE_SIZE_MAX
-        raise InvalidMessageError.new("the log message must not exceed " +
-          "#{APISettings::MESSAGE_BYTE_SIZE_MAX} bytes")
+        Config.logger.warn("Log line message is too long, truncating")
+        message = message.byteslice(0, APISettings::MESSAGE_BYTE_SIZE_MAX)
       end
       @message = message
       CurrentLineIndexes.log_line_added(self) # Bump the indexes
