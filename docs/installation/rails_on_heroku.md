@@ -7,14 +7,14 @@ If your Rails app is on Heroku, you'll want to take advantage of the Heroku logp
 Add timber to your Gemfile:
 
 ```
-gem 'timber-ruby'
+gem 'timberio'
 ```
 
 ## 2. Add the logger to your environment files:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new))
+config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new)
 ```
 
 * Awesome note: by default, Timber uses a log format that enriches your logs without changing how the look in your terminal! Try it out with `heroku logs --tail`.
