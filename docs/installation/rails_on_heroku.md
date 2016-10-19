@@ -7,7 +7,7 @@ If your Rails app is on Heroku, you'll want to take advantage of the Heroku logp
 Add timber to your Gemfile:
 
 ```
-gem 'timberio'
+gem 'timberio', require: 'timber'
 ```
 
 ## 2. Add the logger to your environment files:
@@ -23,7 +23,7 @@ config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new)
 ## 3. Lastly, setup your log drain
 
 ```console
-$ heroku drains:add https://<your-timber-api-key>@api.timber.io/heroku/logplex_frames \
+$ heroku drains:add https://<application-id>:<timber-api-key>@api.timber.io/heroku/logplex_frames \
   --app=<my-app-name>
 ```
 
