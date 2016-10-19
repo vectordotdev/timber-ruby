@@ -23,10 +23,10 @@ config.logger = Timber::Logger.new(Timber::LogDevices::HerokuLogplex.new)
 ## 3. Lastly, setup your log drain
 
 ```console
-$ heroku drains:add https://<application-id>:<timber-api-key>@api.timber.io/heroku/logplex_frames \
+$ heroku drains:add https://<timber-application-id>:<timber-api-key>@api.timber.io/heroku/logplex_frames \
   --app=<heroku-app-name>
 ```
 
-* Replace `<application-id>` with your Timber application ID. You can obtain it [here](https://timber.io).
+* Replace `<timber-application-id>` with your Timber application ID. You can obtain it [here](https://timber.io).
 * Replace `<timber-api-key>` with your actual key. You can obtain it [here](https://timber.io).
 * Replace `<heroku-app-name>` with your heroku app name.
