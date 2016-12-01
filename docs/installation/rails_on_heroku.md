@@ -7,7 +7,7 @@ If your Rails app is on Heroku, you'll want to take advantage of the Heroku logp
 Add timber to your Gemfile:
 
 ```
-gem 'timberio', require: 'timber'
+gem 'timberio', require: true
 ```
 
 ## 2. Add the logger to your environment files:
