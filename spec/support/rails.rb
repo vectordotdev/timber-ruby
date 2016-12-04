@@ -1,7 +1,6 @@
 require "rails"
 
-log_dev = Timber::LogDevices::IO.new
-Rails.logger = Timber::Logger.new(log_dev)
+Rails.logger = Timber::Logger.new(STDOUT)
 Rails.logger.level = ::Logger::FATAL
 
 class RailsApp < Rails::Application

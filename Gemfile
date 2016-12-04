@@ -6,6 +6,7 @@ group :test do
   gem 'coveralls', require: false
   gem 'json', '~> 1'
   gem 'pry'
+  gem 'rails'
   gem 'rails_stdout_logging'
   gem 'rake'
   gem 'rspec', '~> 3.4'

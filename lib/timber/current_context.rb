@@ -8,10 +8,10 @@ module Timber
 
     # Adds a context to the current stack.
     def with(key, data)
-      contexts[key] = data
+      hash[key] = data
       yield
     ensure
-      contexts.delete(key)
+      hash.delete(key)
     end
 
     def snapshot
