@@ -1,17 +1,30 @@
 module Timber
   module Probes
-    class Rack < Probe
+    class RackHTTPContext < Probe
       class Middleware
         def initialize(app)
           @app = app
         end
 
         def call(env)
-          context = Contexts::HTTPRequests::Rack.new(env)
-          CurrentContext.add(context) do
+          request = ::Rack::Request.new(env)
+          context = Contexts::HTTP.new(
+            method: request.request_method,
+            path: request.path,
+            remote_addr: request.ip,
+            request_id: request_id(env)
+          )
+          CurrentContext.with(context.key, context) do
             @app.call(env)
           end
         end
+
+        private
+          def request_id(env)
+            env["X-Request-ID"] ||
+              env["X-Request-Id"] ||
+              env["action_dispatch.request_id"]
+          end
       end
 
       attr_reader :middleware, :insert_before
@@ -27,7 +40,7 @@ module Timber
 
       def insert!
         return true if middleware.instance_variable_get(:"@_timber_inserted") == true
-        # Rails uses a proxy :/
+        # Rails uses a proxy :/, so we need to do this instance variable hack
         middleware.instance_variable_set(:"@_timber_inserted", true)
         middleware.insert_before insert_before, Middleware
       end
