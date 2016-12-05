@@ -14,7 +14,7 @@ module Timber
             remote_addr: request.ip,
             request_id: request_id(env)
           )
-          CurrentContext.with(context.key, context) do
+          CurrentContext.instance.with(context) do
             @app.call(env)
           end
         end
@@ -39,9 +39,10 @@ module Timber
       end
 
       def insert!
-        return true if middleware.instance_variable_get(:"@_timber_inserted") == true
+        var_name = :"@_timber_rack_http_inserted"
+        return true if middleware.instance_variable_get(var_name) == true
         # Rails uses a proxy :/, so we need to do this instance variable hack
-        middleware.instance_variable_set(:"@_timber_inserted", true)
+        middleware.instance_variable_set(var_name, true)
         middleware.insert_before insert_before, Middleware
       end
     end

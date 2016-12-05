@@ -81,12 +81,16 @@ Besides automatically capturing known events, you can also add your custom event
 Logger.warn "Payment rejected for customer abcd1234, reason: Card expired"
 
 # More advanced
-Logger.warn message: "Payment rejected", event: %{customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+Logger.warn message: "Payment rejected", type: :payment_rejected, data: %{customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
-# Structured
+# Using a Struct
 PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
   def message
     "Payment rejected for #{customer_id}"
+  end
+
+  def type
+    :payment_rejected
   end
 end
 Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")

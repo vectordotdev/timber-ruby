@@ -6,8 +6,15 @@ module Timber
 
     THREAD_NAMESPACE = :_timber_current_context.freeze
 
+    class << self
+      def with(*args, &block)
+        instance.with(*args, &block)
+      end
+    end
+
     # Adds a context to the current stack.
-    def with(key, data)
+    def with(data)
+      key = data.keyspace
       hash[key] = data
       yield
     ensure

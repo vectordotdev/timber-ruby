@@ -1,7 +1,7 @@
 require "rails"
 
-Rails.logger = Timber::Logger.new(STDOUT)
-Rails.logger.level = ::Logger::FATAL
+logger = ::Logger.new(nil)
+Rails.logger = logger
 
 class RailsApp < Rails::Application
   if ::Rails.version =~ /^3\./
@@ -11,7 +11,6 @@ class RailsApp < Rails::Application
   end
   config.active_support.deprecation = :stderr
   config.eager_load = false
-  config.log_level = :fatal
 end
 
 RailsApp.initialize!
@@ -22,6 +21,8 @@ module Support
       application = ::Rails.application
       env = application.respond_to?(:env_config) ? application.env_config.clone : application.env_defaults.clone
       env["rack.request.cookie_hash"] = {}.with_indifferent_access
+      env["REMOTE_ADDR"] = "123.456.789.10"
+      env["X-Request-Id"] = "unique-request-id-1234"
       ::Rack::MockRequest.new(application).get(path, env)
     end
   end
