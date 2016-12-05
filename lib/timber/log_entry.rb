@@ -1,14 +1,6 @@
 module Timber
   class LogEntry
     DT_PRECISION = 6.freeze
-    SEVERITY_MAP = {
-      ::Logger::Severity::DEBUG => :debug,
-      ::Logger::Severity::INFO => :info,
-      ::Logger::Severity::WARN => :warn,
-      ::Logger::Severity::ERROR => :error,
-      ::Logger::Severity::FATAL => :fatal,
-      ::Logger::Severity::UNKNOWN => :unknown
-    }
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param severity [Integer] the log level / severity
