@@ -17,6 +17,25 @@ module Timber
             )
           end
         end
+
+        def process_action(event)
+          info do
+            payload   = event.payload
+            additions = ActionController::Base.log_process_action(payload)
+
+            status = payload[:status]
+            if status.nil? && payload[:exception].present?
+              exception_class_name = payload[:exception].first
+              status = ActionDispatch::ExceptionWrapper.status_code_for_exception(exception_class_name)
+            end
+
+            Events::HTTPResponse.new(
+              status: status,
+              time_ms: event.duration,
+              additions: additions
+            )
+          end
+        end
       end
     end
   end

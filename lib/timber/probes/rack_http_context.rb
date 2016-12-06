@@ -1,7 +1,7 @@
 module Timber
   module Probes
-    class RackHTTPContext < Probe
-      class Middleware
+    class RackHTTPContext < Probe # :nodoc:
+      class Middleware # :nodoc:
         def initialize(app)
           @app = app
         end

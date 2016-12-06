@@ -11,16 +11,23 @@ module Timber
   #
   # == Examples
   #
-  # The default logger interface is still preserved:
+  # Basic example (the origina ::Logger interface remains untouched):
   #
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
-  # Although this works as expected, it is encouraged to log structured data:
+  # Although this works as expected, it is encouraged to log structured data. For example, using
+  # a map:
   #
   #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
   #
-  # By providing `message`, `type`, and `data` keys Timber will classify this as a custom event.
-  # This allows us to make assumptions about your data and enhance your experience.
+  # By providing the `message`, `type`, and `data` keys, Timber will classify this as a custom
+  # event. You could also use a struct if your heart desires:
+  #
+  #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
+  #     def message; "Payment rejected for #{customer_id}"; end
+  #     def type; :payment_rejected; end
+  #   end
+  #   Logger.info PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
   #
   # == Advanced example
   #
@@ -97,7 +104,8 @@ module Timber
     #
     class JSONFormatter < Formatter
       def call(severity, time, progname, msg)
-        build_log_entry(severity, time, progname, msg).to_json()
+        # use << for concatenation for performance reasons
+        build_log_entry(severity, time, progname, msg).to_json() << "\n"
       end
     end
 
@@ -117,7 +125,9 @@ module Timber
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
         metadata = log_entry.to_json(:except => [:message])
-        "#{log_entry.message} #{METADATA_CALLOUT} #{metadata}"
+        # use << for concatenation for performance reasons
+        puts msg
+        log_entry.message << " " << METADATA_CALLOUT << " " << metadata << "\n"
       end
     end
 

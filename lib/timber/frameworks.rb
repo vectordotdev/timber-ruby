@@ -9,7 +9,7 @@ if defined?(Rails)
 end
 
 module Timber
-  module Frameworks
+  module Frameworks # :nodoc:
     def self.logger(logdev)
       if defined?(Timber::Frameworks::Rails)
         Rails.logger(logdev)

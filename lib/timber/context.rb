@@ -1,5 +1,5 @@
 module Timber
-  class Context
+  class Context # :nodoc:
     def keyspace
       raise NoImplementedError.new
     end

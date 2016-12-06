@@ -11,11 +11,7 @@ describe Timber::Probes::ActionControllerLogSubscriber do
     end
 
     around(:each) do |example|
-      Timecop.freeze(time) { example.run }
-    end
-
-    before(:each) do
-      class PagesPlainController < ActionController::Base
+      class LogSubscriberController < ActionController::Base
         layout nil
 
         def index
@@ -28,21 +24,21 @@ describe Timber::Probes::ActionControllerLogSubscriber do
       end
 
       ::RailsApp.routes.draw do
-        get 'pages_plain' => 'pages_plain#index'
+        get 'log_subscriber' => 'log_subscriber#index'
       end
 
-      @old_logger = ::ActionController::Base.logger
+      old_logger = ::ActionController::Base.logger
       ::ActionController::Base.logger = logger
+
+      Timecop.freeze(time) { example.run }
+
+      Object.send(:remove_const, :LogSubscriberController)
+      ::ActionController::Base.logger = old_logger
     end
 
-    after(:each) do
-      Object.send(:remove_const, :PagesPlainController)
-      ::ActionController::Base.logger = @old_logger
-    end
-
-    describe "#process" do
+    describe "#start_processing, #process_action" do
       it "should not log if the level is not sufficient" do
-        dispatch_rails_request("/pages_plain")
+        dispatch_rails_request("/log_subscriber")
         expect(io.string).to eq("")
       end
 
@@ -55,11 +51,16 @@ describe Timber::Probes::ActionControllerLogSubscriber do
         end
 
         it "should log the controller call event" do
-          dispatch_rails_request("/pages_plain")
-          message = <<-MSG
-            Processing by PagesPlainController#index as HTML @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z","event":{"controller_call":{"controller":"PagesPlainController","action":"index"}},"context":{"http":{"method":"GET","path":"/pages_plain","remote_addr":"123.456.789.10","request_id":"unique-request-id-1234"}}}
+          # Rails uses this to calculate the view runtime below
+          allow(Benchmark).to receive(:ms).and_return(0.1265370228793472).and_yield
+          dispatch_rails_request("/log_subscriber")
+          message1 = <<-MSG
+            Processing by LogSubscriberController#index as HTML @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z","event":{"controller_call":{"controller":"LogSubscriberController","action":"index"}},"context":{"http":{"method":"GET","path":"/log_subscriber","remote_addr":"123.456.789.10","request_id":"unique-request-id-1234"}}}
           MSG
-          expect(io.string).to eq(message.strip)
+          message2 = <<-MSG
+            Completed 200 OK in 0.0ms (Views: 0.1ms) @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z","event":{"http_response":{"status":200,"time_ms":0.0}},"context":{"http":{"method":"GET","path":"/log_subscriber","remote_addr":"123.456.789.10","request_id":"unique-request-id-1234"}}}
+          MSG
+          expect(io.string).to eq(message1.strip + "\n" + message2.strip + "\n")
         end
       end
     end

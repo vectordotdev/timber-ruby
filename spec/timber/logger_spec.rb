@@ -15,7 +15,7 @@ describe Timber::Logger do
 
       it "should accept strings" do
         logger.info("this is a test")
-        expect(io.string).to eq("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"}")
+        expect(io.string).to eq("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"}\n")
       end
 
       context "with a context" do
@@ -37,7 +37,7 @@ describe Timber::Logger do
         it "should snapshot and include the context" do
           expect(Timber::CurrentContext.instance).to receive(:snapshot).and_call_original
           logger.info("this is a test")
-          expect(io.string).to eq("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"context\":{\"http\":{\"method\":\"POST\",\"path\":\"/checkout\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"abcd1234\"}}}")
+          expect(io.string).to eq("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"context\":{\"http\":{\"method\":\"POST\",\"path\":\"/checkout\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"abcd1234\"}}}\n")
         end
       end
 
@@ -45,14 +45,14 @@ describe Timber::Logger do
         message = {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
         expect(Timber::Events).to receive(:build).with(message).and_call_original
         logger.info(message)
-        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}")
+        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}\n")
       end
 
       it "should allow functions" do
         logger.info do
           {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
         end
-        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}")
+        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}\n")
       end
     end
 
@@ -61,7 +61,7 @@ describe Timber::Logger do
 
       it "should log in the correct format" do
         logger.info("this is a test")
-        expect(io.string).to eq("{\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"this is a test\"}")
+        expect(io.string).to eq("{\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"this is a test\"}\n")
       end
     end
   end

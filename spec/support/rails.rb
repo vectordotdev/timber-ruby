@@ -1,6 +1,8 @@
 require "rails"
 
-logger = ::Logger.new(nil)
+# Defualt the rails logger to nothing, each test shoould be
+# responsible for setting up the logger
+logger = ::Logger.new(STDOUT)
 Rails.logger = logger
 
 class RailsApp < Rails::Application
@@ -17,12 +19,13 @@ RailsApp.initialize!
 
 module Support
   module Rails
-    def dispatch_rails_request(path)
+    def dispatch_rails_request(path, additional_env_options = {})
       application = ::Rails.application
       env = application.respond_to?(:env_config) ? application.env_config.clone : application.env_defaults.clone
       env["rack.request.cookie_hash"] = {}.with_indifferent_access
       env["REMOTE_ADDR"] = "123.456.789.10"
       env["X-Request-Id"] = "unique-request-id-1234"
+      env = env.merge(additional_env_options)
       ::Rack::MockRequest.new(application).get(path, env)
     end
   end

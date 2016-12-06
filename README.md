@@ -48,11 +48,7 @@ Into this:
   "event": {
     "http_response": {
       "status": 200,
-      "time_ms": 117,
-      "rails": {
-        "view_time_ms": 85.2,
-        "active_record_time_ms": 25.3
-      }
+      "time_ms": 117
     }
   }
 }
@@ -80,31 +76,28 @@ Besides automatically capturing known events, you can also add your custom event
 # Simple (original Logger interface remains untouched)
 Logger.warn "Payment rejected for customer abcd1234, reason: Card expired"
 
-# More advanced
+# Structured
 Logger.warn message: "Payment rejected", type: :payment_rejected, data: %{customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
 # Using a Struct
 PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
-  def message
-    "Payment rejected for #{customer_id}"
-  end
-
-  def type
-    :payment_rejected
-  end
+  def message; "Payment rejected for #{customer_id}"; end
+  def type; :payment_rejected; end
 end
 Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 ```
 
+(for more examples, see the `Timber::Logger` docs)
+
 No Timber specific code anywhere! In fact, this approach pushes things the opposite way. What if,
-as a result of structured logging, you could start decoupling other services?
+as a result of structured logging, you could start decoupling other services from your application?
 
 Before:
 
 ```
-               |---[HTTP]---> sentry / bugsnag / etc
-My Application |---[HTTP]---> librato / graphite / etc
-               |---[HTTP]---> new relic / etc
+               |---[HTTP]---> sentry / bugsnag / etc     |
+My Application |---[HTTP]---> librato / graphite / etc   | <---- dependencies, duplication
+               |---[HTTP]---> new relic / etc            |        code debt, lock-in, etc
                |--[STDOUT]--> logs
                                 |---> Logging service
                                 |---> S3
@@ -122,8 +115,8 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
                                |                    |-- RedShift
                                |                                 ^
                     fast, efficient, durable,                    |
-                      replayable, auditable         change any of these without
-                                                        touching your code
+                     replayable, auditable,        change any of these without
+                       no code debt risk                touching your code
                                                        *and* backfill them!
 ```
 

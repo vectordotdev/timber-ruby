@@ -1,5 +1,5 @@
 module Timber
-  class Probe
+  class Probe # :nodoc:
     class RequirementNotMetError < StandardError; end
 
     class << self
