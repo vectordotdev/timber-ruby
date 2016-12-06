@@ -25,6 +25,7 @@ module Support
       env["rack.request.cookie_hash"] = {}.with_indifferent_access
       env["REMOTE_ADDR"] = "123.456.789.10"
       env["X-Request-Id"] = "unique-request-id-1234"
+      env["action_dispatch.request_id"] = env["X-Request-Id"]
       env = env.merge(additional_env_options)
       ::Rack::MockRequest.new(application).get(path, env)
     end

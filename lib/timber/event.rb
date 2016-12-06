@@ -5,7 +5,10 @@ module Timber
     end
 
     def to_json(options = {})
-      as_json.to_json(options)
+      hash = as_json.select do |key, value|
+        !value.nil?
+      end
+      hash.to_json(options)
     end
   end
 end
