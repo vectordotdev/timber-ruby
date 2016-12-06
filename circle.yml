@@ -5,6 +5,7 @@ machine:
 dependencies:
   override:
     - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 bundle install
+    - appraisal generate
     - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.0.X bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.1.X bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.2.X bundle install
