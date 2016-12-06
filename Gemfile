@@ -18,6 +18,7 @@ group :test do
   ruby_version = Gem::Version.new("#{RUBY_VERSION}")
   if ruby_version < Gem::Version.new("2.0.0")
     gem 'public_suffix', '~> 1.4.6'
+    gem 'term-ansicolor', '~> 1.3.2'
     gem 'webmock', '~> 2.2.0'
   else
     gem 'webmock'
