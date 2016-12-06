@@ -16,6 +16,7 @@ group :test do
   gem 'timecop'
 
   ruby_version = Gem::Version.new("#{RUBY_VERSION}")
+  raise ruby_version.inspect
   if ruby_version < Gem::Version.new("2.0.0")
     gem 'public_suffix', '~> 1.4.6'
     gem 'webmock', '~> 2.2.0'
