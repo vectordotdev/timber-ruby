@@ -9,7 +9,7 @@ module Timber
         true
       # RequirementUnsatisfiedError is the only silent failure we support
       rescue RequirementNotMetError => e
-        Config.instance.logger.debug(message: "Failed inserting probe #{name}: #{e.message}")
+        Config.instance.logger.debug("Failed inserting probe #{name}: #{e.message}")
         false
       end
     end

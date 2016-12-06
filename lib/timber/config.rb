@@ -2,17 +2,10 @@ module Timber
   class Config
     include Singleton
 
-    attr_writer :enabled, :logger
+    attr_writer :logger
 
-    def enabled
-      return @enabled if defined?(@enabled)
-      @enabled = true
-    end
-
-    def enabled?
-      enabled == true
-    end
-
+    # Set a logger to view internal Timber library log message.
+    # Useful for debugging. Defaults to `::Logger.new(nil)`.
     def logger
       @logger ||= Logger.new(nil)
     end

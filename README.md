@@ -18,8 +18,9 @@
 
 ## What is Timber?
 
-Glad you asked. Timber *automatically* augments your logs with structured data without any
-risk of code debt or lock-in. For example, it turns this:
+Glad you asked. Timber *automatically* augments your logs with structured data, and provides a
+transparent, no risk of code-debt, API for logging structured events. For example, it automatically
+turns this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
