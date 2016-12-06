@@ -14,7 +14,13 @@ group :test do
   gem 'sqlite3'
   gem 'terminal-table'
   gem 'timecop'
-  gem 'webmock', '~> 2.0.3'
+
+  ruby_version = Gem::Version.new(RUBY_VERSION)
+  if ruby_version < Gem::Version.new("2.0.0")
+    gem 'webmock', '~> 1.24.6'
+  else
+    gem 'webmock'
+  end
 
   # for coveralls
   gem 'rest-client', '~> 1.8' # >= 2.0 requires ruby 2+, we have tests for 1.9
