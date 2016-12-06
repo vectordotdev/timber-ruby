@@ -11,9 +11,6 @@ describe Timber::Probes::ActionViewLogSubscriber do
     end
 
     around(:each) do |example|
-      old_logger = ::ActionView::Base.logger
-      ::ActionView::Base.logger = logger
-
       class ActionViewLogSubscriberController < ActionController::Base
         layout nil
 
@@ -33,11 +30,11 @@ describe Timber::Probes::ActionViewLogSubscriber do
       Timecop.freeze(time) { example.run }
 
       Object.send(:remove_const, :ActionViewLogSubscriberController)
-      ::ActionView::Base.logger = old_logger
     end
 
     describe "#sql" do
       it "should not log if the level is not sufficient" do
+        allow_any_instance_of(Timber::Probes::ActionViewLogSubscriber::LogSubscriber).to receive(:logger).and_return(logger)
         dispatch_rails_request("/action_view_log_subscriber")
         expect(io.string).to eq("")
       end
@@ -51,6 +48,7 @@ describe Timber::Probes::ActionViewLogSubscriber do
         end
 
         it "should log the controller call event" do
+          allow_any_instance_of(Timber::Probes::ActionViewLogSubscriber::LogSubscriber).to receive(:logger).and_return(logger)
           dispatch_rails_request("/action_view_log_subscriber")
           message = "  Rendered spec/support/rails/templates/template.html (0.0ms) @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/action_view_log_subscriber\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
           expect(io.string).to eq(message)

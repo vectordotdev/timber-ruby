@@ -6,7 +6,7 @@ module Timber
           info do
             payload = event.payload
             params  = payload[:params].except(*INTERNAL_PARAMS)
-            format  = payload[:format]
+            format  = extract_format(payload)
             format  = format.to_s.upcase if format.is_a?(Symbol)
 
             Events::ControllerCall.new(
@@ -36,6 +36,15 @@ module Timber
             )
           end
         end
+
+        private
+          def extract_format(payload)
+            if payload.key?(:format)
+              payload[:format] # rails > 4.X
+            elsif payload.key?(:formats)
+              payload[:formats].first # rails 3.X
+            end
+          end
       end
     end
   end

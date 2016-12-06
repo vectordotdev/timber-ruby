@@ -21,6 +21,7 @@ module Timber
     end
 
     def as_json(opts = {})
+      opts ||= {}
       hash = {level: level, dt: formatted_dt, message: message}
 
       if !event.nil?

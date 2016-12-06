@@ -41,7 +41,7 @@ module Timber
 
                 event = Events::Exception.new(
                   name: exception.class.name,
-                  exception_message: exeption.message,
+                  exception_message: exception.message,
                   backtrace: application_trace(exception)
                 )
 
@@ -68,8 +68,8 @@ module Timber
           return true if ::ActionDispatch::DebugExceptions.include?(DebugExceptionsInstanceMethods)
           ::ActionDispatch::DebugExceptions.send(:include, DebugExceptionsInstanceMethods)
         else
-          return true if ::ActionDispatch::ShowExceptions.include?(InstanceMethods)
-          ::ActionDispatch::ShowExceptions.send(:include, InstanceMethods)
+          return true if ::ActionDispatch::ShowExceptions.include?(ShowExceptionsInstanceMethods)
+          ::ActionDispatch::ShowExceptions.send(:include, ShowExceptionsInstanceMethods)
         end
       end
     end

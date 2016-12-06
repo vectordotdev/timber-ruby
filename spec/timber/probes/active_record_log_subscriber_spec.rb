@@ -21,7 +21,7 @@ describe Timber::Probes::ActiveRecordLogSubscriber do
 
     describe "#sql" do
       it "should not log if the level is not sufficient" do
-        User.all.first # first kicks the sql because it is lazily executed
+        User.order("users.id DESC").all.collect # collect kicks the sql because it is lazily executed
         expect(io.string).to eq("")
       end
 
@@ -34,8 +34,8 @@ describe Timber::Probes::ActiveRecordLogSubscriber do
         end
 
         it "should log the controller call event" do
-          User.all.first # first kicks the sql because it is lazily executed
-          message = "  \e[1m\e[36mUser Load (0.0ms)\e[0m  \e[1m\e[34mSELECT  \"users\".* FROM \"users\" ORDER BY \"users\".\"id\" ASC LIMIT ?\e[0m  [[\"LIMIT\", 1]] @timber.io {\"level\":\"debug\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"SELECT  \\\"users\\\".* FROM \\\"users\\\" ORDER BY \\\"users\\\".\\\"id\\\" ASC LIMIT ?\",\"time_ms\":0.0}}}\n"
+          User.order("users.id DESC").all.collect # collect kicks the sql because it is lazily executed
+          message = "  \e[1m\e[36mUser Load (0.0ms)\e[0m  \e[1m\e[34mSELECT \"users\".* FROM \"users\" ORDER BY users.id DESC\e[0m @timber.io {\"level\":\"debug\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"SELECT \\\"users\\\".* FROM \\\"users\\\" ORDER BY users.id DESC\",\"time_ms\":0.0}}}\n"
           expect(io.string).to eq(message)
         end
       end

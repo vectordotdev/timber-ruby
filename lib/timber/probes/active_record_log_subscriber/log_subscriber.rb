@@ -9,7 +9,7 @@ module Timber
 
           payload = event.payload
 
-          return if IGNORE_PAYLOAD_NAMES.include?(payload[:name])
+          return if defined?(IGNORE_PAYLOAD_NAMES) && IGNORE_PAYLOAD_NAMES.include?(payload[:name])
 
           name  = "#{payload[:name]} (#{event.duration.round(1)}ms)"
           sql   = payload[:sql]
@@ -32,6 +32,36 @@ module Timber
 
           debug event
         end
+
+        private
+          def colorize_payload_name(name, payload_name)
+            if payload_name.blank? || payload_name == "SQL" # SQL vs Model Load/Exists
+              color(name, MAGENTA, true)
+            else
+              color(name, CYAN, true)
+            end
+          end
+
+          def sql_color(sql)
+            case sql
+            when /\A\s*rollback/mi
+              RED
+            when /select .*for update/mi, /\A\s*lock/mi
+              WHITE
+            when /\A\s*select/i
+              BLUE
+            when /\A\s*insert/i
+              GREEN
+            when /\A\s*update/i
+              YELLOW
+            when /\A\s*delete/i
+              RED
+            when /transaction\s*\Z/i
+              CYAN
+              else
+              MAGENTA
+            end
+          end
       end
     end
   end
