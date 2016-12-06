@@ -26,7 +26,7 @@ module Timber
             status = payload[:status]
             if status.nil? && payload[:exception].present?
               exception_class_name = payload[:exception].first
-              status = ActionDispatch::ExceptionWrapper.status_code_for_exception(exception_class_name)
+              status = extract_status(exception_class_name)
             end
 
             Events::HTTPResponse.new(
@@ -43,6 +43,15 @@ module Timber
               payload[:format] # rails > 4.X
             elsif payload.key?(:formats)
               payload[:formats].first # rails 3.X
+            end
+          end
+
+          def extract_status(exception_class_name)
+            if defined?(ActionDispatch::ExceptionWrapper)
+              ActionDispatch::ExceptionWrapper.status_code_for_exception(exception_class_name)
+            else
+              # Rails 3.X
+              Rack::Utils.status_code(ActionDispatch::ShowExceptions.rescue_responses[exception_class_name]) rescue nil
             end
           end
       end
