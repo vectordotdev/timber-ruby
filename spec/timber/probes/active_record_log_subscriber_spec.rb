@@ -38,6 +38,7 @@ describe Timber::Probes::ActiveRecordLogSubscriber do
           message = "  \e[1m\e[36mUser Load (0.0ms)\e[0m  \e[1m\e[34mSELECT \"users\".* FROM \"users\" ORDER BY users.id DESC\e[0m @timber.io {\"level\":\"debug\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"SELECT \\\"users\\\".* FROM \\\"users\\\" ORDER BY users.id DESC\",\"time_ms\":0.0}}}\n"
           # Rails 4.X adds random spaces :/
           string = io.string.gsub("   ORDER BY", " ORDER BY")
+          string = string.gsub("  ORDER BY", " ORDER BY")
           expect(string).to eq(message)
         end
       end
