@@ -18,7 +18,7 @@ describe Timber::Events do
           Timber::Events::Custom.new(
             type: :payment_rejected,
             message: "Payment rejected for #{customer_id}",
-            data: to_h
+            data: respond_to?(:hash) ? hash : to_hash
           )
         end
       end

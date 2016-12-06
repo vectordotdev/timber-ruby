@@ -23,7 +23,7 @@ module Timber
         Events::Custom.new(
           type: obj.type,
           message: obj.message,
-          data: obj.to_h
+          data: obj.respond_to?(:hash) ? obj.hash : obj.to_h # ruby 1.9.3 does not have to_h
         )
       else
         nil
