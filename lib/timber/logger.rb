@@ -13,9 +13,10 @@ module Timber
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
   # @example Using a map
+  #   # The :message, :type, and :data keys are required
   #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
   #
-  # @example Using a Struct
+  # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
   #     def message; "Payment rejected for #{customer_id}"; end
   #     def type; :payment_rejected; end
@@ -23,8 +24,9 @@ module Timber
   #   Logger.info PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
   #
   # @example Using typed Event classes
-  #   # Event implementation is left to you. The only requirement is that it responds to
-  #   # #to_timber_event and return the appropriate Timber::Events::* type.
+  #   # Event implementation is left to you. Events should be simple classes.
+  #   # The only requirement is that it responds to #to_timber_event and return the
+  #   # appropriate Timber::Events::* type.
   #   class Event
   #     def to_hash
   #       hash = {}
@@ -43,9 +45,15 @@ module Timber
   #
   #   class PaymentRejectedEvent < Event
   #     attr_accessor :customer_id, :amount
+  #     def initialize(customer_id, amount)
+  #       @customer_id = customer_id
+  #       @amount = amount
+  #     end
   #     def message; "Payment rejected for customer #{customer_id}"; end
   #     def type; :payment_rejected_event; end
   #   end
+  #
+  #   Logger.info PymentRejectedEvent.new("abcd1234", 100)
   #
   class Logger < ::Logger
     # @private
