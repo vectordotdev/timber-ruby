@@ -10,20 +10,12 @@ module Timber
   # method signatures. This ensures Timber can be removed without consequence.
   #
   # @example Basic example (the original ::Logger interface remains untouched):
-  #
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
-  # Although this works as expected, it is encouraged to log structured data.
-  #
   # @example Using a map
-  #
   #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
   #
-  # By providing the `message`, `type`, and `data` keys, Timber will classify this as a custom
-  # event. You could also use a struct if your heart desires:
-  #
   # @example Using a Struct
-  #
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
   #     def message; "Payment rejected for #{customer_id}"; end
   #     def type; :payment_rejected; end
@@ -31,11 +23,8 @@ module Timber
   #   Logger.info PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
   #
   # @example Using typed Event classes
-  #
-  # While the above examples provide a simple way to kick the tires, once you feel comfortable
-  # we recommend defining typed events. Similar to how you'd do with exceptions. This provides
-  # a stronger contract with downstream consumers (graphs, alerts, BI tools, etc):
-  #
+  #   # Event implementation is left to you. The only requirement is that it responds to
+  #   # #to_timber_event and return the appropriate Timber::Events::* type.
   #   class Event
   #     def to_hash
   #       hash = {}
@@ -58,19 +47,6 @@ module Timber
   #     def type; :payment_rejected_event; end
   #   end
   #
-  # The `Event` implementation is left to you, The only requirement is that it
-  # responds to the `#to_timber_event` and returns the appropriate `Timber::Events::*` type.
-  #
-  # ---
-  #
-  # That's it! Happy logging!
-  #
-  #    _,-,
-  #   T_  |
-  #   ||`-'
-  #   ||
-  #   ||
-  #   ~~
   class Logger < ::Logger
     # @private
     class Formatter
