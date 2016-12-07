@@ -115,6 +115,7 @@ module Timber
     # The only difference is that it default the formatter to {HybridFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
     #
+    # @example Changing your formatter
     #   logger = Timber::Logger.new(STDOUT)
     #   logger.formatter = Timber::Logger::JSONFormatter.new
     def initialize(*args)

@@ -20,7 +20,7 @@
 
 Glad you asked :) Timber tames the crazy world that is logging. First, it *automatically*
 augments your logs with structured data. Second, it provides a transparent, no lock-in, API
-for logging your own events. Lastly, it can be paired with a [powerful console](https://timber.io) for querying.
+for logging your own events. Lastly, it can be paired with a [simple modern console](https://timber.io) for querying.
 
 For example, it automatically turns this:
 
