@@ -1,5 +1,7 @@
 module Timber
-  class Context #:nodoc:
+  # Base class for all `Timber::Contexts::*` classes.
+  # @private
+  class Context
     def keyspace
       raise NoImplementedError.new
     end

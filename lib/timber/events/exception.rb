@@ -1,5 +1,9 @@
 module Timber
   module Events
+    # The exception event is used to track exceptions.
+    #
+    # @note This event should be installed automatically through probes,
+    #   such as the {Probes::ActionDispatchDebugExceptions} probe.
     class Exception < Timber::Event
       attr_reader :name, :exception_message, :backtrace
 

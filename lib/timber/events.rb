@@ -7,7 +7,11 @@ require "timber/events/sql_query"
 require "timber/events/template_render"
 
 module Timber
-  module Events #:nodoc:
+  module Events
+    # Protocol for casting objects into a `Timber::Event`.
+    #
+    # @example Casting a hash
+    #   Timber::Events.build({type: :custom_event, message: "My log message", data: {my: "data"}})
     def self.build(obj)
       if obj.is_a?(::Timber::Event)
         obj

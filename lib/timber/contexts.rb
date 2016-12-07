@@ -1,8 +1,10 @@
+require "timber/contexts/custom"
 require "timber/contexts/http"
 require "timber/contexts/organization"
 require "timber/contexts/user"
 
 module Timber
-  module Contexts #:nodoc:
+  # @private
+  module Contexts
   end
 end

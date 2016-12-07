@@ -1,7 +1,8 @@
 module Timber
   module Probes
-    class RackHTTPContext < Probe #:nodoc:
-      class Middleware #:nodoc:
+    # Reponsible for automatically adding the HTTP context for applications that use `Rack`.
+    class RackHTTPContext < Probe
+      class Middleware
         def initialize(app)
           @app = app
         end

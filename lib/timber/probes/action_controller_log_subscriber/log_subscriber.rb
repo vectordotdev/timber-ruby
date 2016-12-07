@@ -1,7 +1,11 @@
 module Timber
   module Probes
-    class ActionControllerLogSubscriber < Probe #:nodoc:
-      class LogSubscriber < ::ActionController::LogSubscriber #:nodoc:
+    class ActionControllerLogSubscriber < Probe
+      # The log subscriber that replaces the default `ActionController::LogSubscriber`.
+      # The intent of this subscriber is to, as transparently as possible, properly
+      # track events that are being logged here. This LogSubscriber will never change
+      # default behavior / log messages.
+      class LogSubscriber < ::ActionController::LogSubscriber
         def start_processing(event)
           info do
             payload = event.payload

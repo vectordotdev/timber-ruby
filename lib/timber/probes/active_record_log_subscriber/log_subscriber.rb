@@ -1,6 +1,10 @@
 module Timber
   module Probes
-    class ActiveRecordLogSubscriber < Probe #:nodoc:
+    class ActiveRecordLogSubscriber < Probe
+      # The log subscriber that replaces the default `ActiveRecord::LogSubscriber`.
+      # The intent of this subscriber is to, as transparently as possible, properly
+      # track events that are being logged here. This LogSubscriber will never change
+      # default behavior / log messages.
       class LogSubscriber < ::ActiveRecord::LogSubscriber #:nodoc:
         def sql(event)
           return unless logger.debug?

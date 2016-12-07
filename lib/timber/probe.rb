@@ -1,5 +1,7 @@
 module Timber
-  class Probe #:nodoc:
+  # Base class for `Timber::Probes::*`.
+  # @private
+  class Probe
     class RequirementNotMetError < StandardError; end
 
     class << self

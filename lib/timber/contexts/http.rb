@@ -1,6 +1,11 @@
 module Timber
   module Contexts
-    # Represents the HTTP content.
+    # The HTTP content tracks the current HTTP request being processed. This serves
+    # as join data across your logs, allowing you to query all logs for any attribute
+    # presented here. For example, viewing all logs for a given request_id.
+    #
+    # @note This context should be installed automatically through probes,
+    #   such as the {Probes::RackHTTPContext} probe.
     class HTTP < Context
       attr_reader :method, :path, :remote_addr, :request_id
 

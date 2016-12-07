@@ -1,5 +1,11 @@
 module Timber
   module Events
+    # The controller call event tracks controller invocations. For example, this line in Rails:
+    #
+    #   Processing by PagesController#home as HTML
+    #
+    # @note This event should be installed automatically through probes,
+    #   such as the {Probes::ActionControllerLogSubscriber} probe.
     class ControllerCall < Timber::Event
       attr_reader :controller, :action, :params, :format
 

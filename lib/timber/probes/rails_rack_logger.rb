@@ -1,6 +1,8 @@
 module Timber
   module Probes
-    class RailsRackLogger < Probe #:nodoc:
+    # Responsible for automatically tracking the http request events for applications
+    # that use `Rack`.
+    class RailsRackLogger < Probe
       module InstanceMethods
         def self.included(klass)
           klass.class_eval do

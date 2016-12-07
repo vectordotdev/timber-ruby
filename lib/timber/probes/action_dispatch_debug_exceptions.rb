@@ -1,8 +1,11 @@
 module Timber
   module Probes
+    # Reponsible for automatically tracking exception events in Rails applications. While
+    # still preserving the default log style.
     class ActionDispatchDebugExceptions < Probe
       # For Rails >= 3.1
-      module DebugExceptionsInstanceMethods #:nodoc:
+      # @private
+      module DebugExceptionsInstanceMethods
         def self.included(klass)
           klass.class_eval do
             private
@@ -29,6 +32,7 @@ module Timber
       end
 
       # For Rails < 3.1
+      # @private
       module ShowExceptionsInstanceMethods #:nodoc:
         def self.included(klass)
           klass.class_eval do

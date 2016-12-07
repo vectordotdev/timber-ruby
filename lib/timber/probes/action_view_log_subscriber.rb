@@ -1,6 +1,8 @@
 module Timber
   module Probes
-    class ActionViewLogSubscriber < Probe #:nodoc:
+    # Reponsible for automatically tracking template rendering events in `ActionView` while
+    # still preserving the default log style.
+    class ActionViewLogSubscriber < Probe
       def initialize
         require "action_view/log_subscriber"
         require "timber/probes/action_view_log_subscriber/log_subscriber"

@@ -6,7 +6,9 @@ require "timber/probes/rack_http_context"
 require "timber/probes/rails_rack_logger"
 
 module Timber
-  module Probes #:nodoc:
+  # Namespace for all probes.
+  # @private
+  module Probes
     def self.insert!(middleware, insert_before)
       ActionControllerLogSubscriber.insert!
       ActionDispatchDebugExceptions.insert!

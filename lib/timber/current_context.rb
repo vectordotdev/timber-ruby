@@ -1,14 +1,22 @@
 require "singleton"
 
 module Timber
-  # Holds the current context in the current thread's memory.
-  # This context gets copied as each log line is written.
+  # Holds the current context in a thread safe memory storage. This context is
+  # appended to every log line. Think of context as join data between your log lines,
+  # allowing you to relate them and filter them appropriately.
   class CurrentContext
     include Singleton
 
     THREAD_NAMESPACE = :_timber_current_context.freeze
 
     class << self
+      # Convenience method for {#with}.
+      #
+      # @example Adding a context
+      #   custom_context = Timber::Contexts::Custom.new(type: :keyspace, data: %{my: "data"})
+      #   Timber::CurrentContext.with(custom_context) do
+      #     # ... anything logged here will have the context ...
+      #   end
       def with(*args, &block)
         instance.with(*args, &block)
       end

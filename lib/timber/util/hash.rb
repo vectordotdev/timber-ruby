@@ -1,6 +1,7 @@
 module Timber
   module Util
-    module Hash #:nodoc:
+    # @private
+    module Hash
       extend self
 
       def compact(hash)

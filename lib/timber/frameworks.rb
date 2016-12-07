@@ -12,13 +12,8 @@ if defined?(::Rails) && defined?(::Rails::Railtie)
 end
 
 module Timber
-  module Frameworks #:nodoc:
-    def self.logger(logdev)
-      if defined?(Timber::Frameworks::Rails)
-        Rails.logger(logdev)
-      else
-        ::Logger.new(logdev)
-      end
-    end
+  # Namespace for installing Timber into frameworks
+  # @private
+  module Frameworks
   end
 end

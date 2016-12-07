@@ -1,6 +1,8 @@
 module Timber
   module Probes
-    class ActiveRecordLogSubscriber < Probe #:nodoc:
+    # Reponsible for automatimcally tracking SQL query events in `ActiveRecord`, while still
+    # preserving the default log style.
+    class ActiveRecordLogSubscriber < Probe
       def initialize
         require "active_record/log_subscriber"
         require "timber/probes/active_record_log_subscriber/log_subscriber"

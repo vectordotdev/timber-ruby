@@ -1,6 +1,8 @@
 module Timber
   module Probes
-    class ActionControllerLogSubscriber < Probe #:nodoc:
+    # Responsible for automatically tracking controller call and http response events
+    # for applications that use `ActionController`.
+    class ActionControllerLogSubscriber < Probe
       def initialize
         require "action_controller/log_subscriber"
         require "timber/probes/action_controller_log_subscriber/log_subscriber"

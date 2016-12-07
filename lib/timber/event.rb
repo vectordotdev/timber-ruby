@@ -1,5 +1,7 @@
 module Timber
-  class Event #:nodoc:
+  # Base class for `Timber::Events::*`
+  # @private
+  class Event
     def as_json(options = {})
       raise NotImplementedError.new
     end

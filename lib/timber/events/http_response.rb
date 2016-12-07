@@ -1,5 +1,9 @@
 module Timber
   module Events
+    # The HTTP response event tracks outgoing HTTP request responses.
+    #
+    # @note This event should be installed automatically through probes,
+    #   such as the {Probes::ActionControllerLogSubscriber} probe.
     class HTTPResponse < Timber::Event
       attr_reader :status, :time_ms, :additions
 

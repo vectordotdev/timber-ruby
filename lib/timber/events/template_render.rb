@@ -1,5 +1,9 @@
 module Timber
   module Events
+    # The template render event track template renderings and their performance.
+    #
+    # @note This event should be installed automatically through probes,
+    #   such as the {Probes::ActionViewLogSubscriber} probe.
     class TemplateRender < Timber::Event
       attr_reader :message, :name, :time_ms
 

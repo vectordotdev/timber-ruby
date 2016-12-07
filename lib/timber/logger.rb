@@ -137,5 +137,14 @@ module Timber
       super(*args)
       self.formatter = HybridFormatter.new
     end
+
+    # Backwards compatibility with older ActiveSupport::Logger versions
+    Logger::Severity.constants.each do |severity|
+      class_eval(<<-EOT, __FILE__, __LINE__ + 1)
+        def #{severity.downcase}?                # def debug?
+          Logger::#{severity} >= level           #   DEBUG >= level
+        end                                      # end
+      EOT
+    end
   end
 end

@@ -1,7 +1,11 @@
 module Timber
   module Probes
-    class ActionViewLogSubscriber < Probe #:nodoc:
-      class LogSubscriber < ::ActionView::LogSubscriber #:nodoc:
+    class ActionViewLogSubscriber < Probe
+      # The log subscriber that replaces the default `ActionView::LogSubscriber`.
+      # The intent of this subscriber is to, as transparently as possible, properly
+      # track events that are being logged here. This LogSubscriber will never change
+      # default behavior / log messages.
+      class LogSubscriber < ::ActionView::LogSubscriber
         def render_template(event)
           info do
             full_name = from_rails_root(event.payload[:identifier])

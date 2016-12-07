@@ -1,4 +1,6 @@
 module Timber
+  # Represents a new log entry into the log. This is an intermediary class between
+  # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
 

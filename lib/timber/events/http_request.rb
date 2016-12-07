@@ -1,5 +1,9 @@
 module Timber
   module Events
+    # The HTTP request event tracks incoming HTTP requests.
+    #
+    # @note This event should be installed automatically through probes,
+    #   such as the {Probes::ActionControllerLogSubscriber} probe.
     class HTTPRequest < Timber::Event
       attr_reader :host, :method, :path, :port, :query_params, :content_type,
         :remote_addr, :referrer, :request_id, :user_agent
