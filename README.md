@@ -20,7 +20,9 @@
 
 Glad you asked :) Timber tames the crazy world that is logging. First, it *automatically*
 augments your logs with structured data. Second, it provides a transparent, no lock-in, API
-for logging your own events. For example, it automatically turns this:
+for logging your own events. Lastly, it can be paired with a [powerful console](https://timber.io) for querying.
+
+For example, it automatically turns this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
