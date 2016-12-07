@@ -140,16 +140,16 @@ For more details checkout our [timber.io](https://timber.io).
 
 ## Install
 
-#### 1. Install the gem:
+### 1. Install the gem:
 
 ```ruby
 # Gemfile
 gem 'timberio', require: "timber"
 ```
 
-#### 2. Install the logger:
+### 2. Install the logger:
 
-##### Heroku:
+#### Heroku:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
@@ -159,7 +159,7 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 The command to add your log drain will be displayed in the [Timber app](https://app.timber.io)
 after you add your application.
 
-##### Non-Heroku:
+#### Non-Heroku:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
