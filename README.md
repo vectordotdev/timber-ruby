@@ -18,9 +18,9 @@
 
 ## What is Timber?
 
-Glad you asked. Timber *automatically* augments your logs with structured data, and provides a
-transparent, no risk of code-debt, API for logging structured events. For example, it automatically
-turns this:
+Glad you asked :) Timber attempts to tame the crazy world that is logging. First, it
+*automatically* augments your logs with structured data. Second, it provides a transparent,
+no lock-in, API for logging your own events. For example, it automatically turns this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
@@ -55,14 +55,17 @@ Into this:
 }
 ```
 
-Allowing you to run queries that [even your mother would get excited about](http://i.giphy.com/7JYWGKgwxga5i.gif):
+It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
+and any other event your framework logs. (for a full list see `Timber::Events`)
+
+This enables you to query your logs in a way that
+[even your mother would get excited about](http://i.giphy.com/7JYWGKgwxga5i.gif)!
 
   1. `context.user.email:ben@johnson.com` - Tail a specific user!
   2. `context.http.request_id:1234` - View *all* logs for a given HTTP request!
-  3. `event.http_reponse.time_ms>3000` - Easily find outliers and have the proper context to fix them!
+  3. `event.http_reponse.time_ms>3000` - Easily find outliers and have the proper context to resolve them!
   4. `level:warn` - Log levels in your logs. Imagine that!
 
-For a full list of events, see `Timber::Events`.
 
 ## Examples
 
@@ -71,7 +74,7 @@ For a full list of events, see `Timber::Events`.
 Nope! This is exactly why we created Timber. Timber is Just Logging™. No special API, no risk
 of code debt, no weird proprietary data format locked away in our servers. Absolutely no lock-in!
 
-Besides automatically capturing known events, you can also add your custom events. Check it out:
+Besides automatically capturing known events, you can also log custom events. Check it out:
 
 ```ruby
 # Simple (original Logger interface remains untouched)
@@ -96,9 +99,9 @@ as a result of structured logging, you could start decoupling other services fro
 Before:
 
 ```
-               |---[HTTP]---> sentry / bugsnag / etc     |
-My Application |---[HTTP]---> librato / graphite / etc   | <---- dependencies, duplication
-               |---[HTTP]---> new relic / etc            |        code debt, lock-in, etc
+               |---[HTTP]---> sentry / bugsnag / etc
+My Application |---[HTTP]---> librato / graphite / etc
+               |---[HTTP]---> new relic / etc
                |--[STDOUT]--> logs
                                 |---> Logging service
                                 |---> S3
@@ -117,7 +120,7 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
                                |                                 ^
                     fast, efficient, durable,                    |
                      replayable, auditable,        change any of these without
-                       no code debt risk                touching your code
+                          just logging                  touching your code
                                                        *and* backfill them!
 ```
 
@@ -127,7 +130,7 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
 > This is all gravy, but wouldn't it get expensive?
 
 If you opt to send your data to the [Timber service](https://timber.io), we only charge for
-the size of the `message` and `dt` attributes. The additional `event` and `context` data are
+the size of the `message`, `dt`, and `event.custom` attributes. Everything else is
 stored at no cost to you. [Say wha?!](http://i.giphy.com/l0HlL2vlfpWI0meJi.gif). This ensures
 pricing remains predictable. And our pricing is simple, we charge per GB transferred to us and
 retained, no user limits, and no weird feature matrixes. Lastly, the data is yours, in a simple
