@@ -1,4 +1,0 @@
-* Task for tailing logs in the console?
-* Task for opening web / desktop app?
-* Track memory usage, but do it efficiently. Random process stat drops?
-* Re-think how the library logs itself. Should that be captured as well?
