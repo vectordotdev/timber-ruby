@@ -1,23 +1,8 @@
-# Base, order is relevant
-require "timber/contexts/dynamic_values"
-require "timber/contexts/exception"
-require "timber/contexts/http_request"
-require "timber/contexts/http_response"
-require "timber/contexts/logger"
+require "timber/contexts/http"
 require "timber/contexts/organization"
-require "timber/contexts/server"
-require "timber/contexts/sql_query"
-require "timber/contexts/template_render"
 require "timber/contexts/user"
 
-# Sub contexts, order is relevant
-require "timber/contexts/http_requests/rack"
-require "timber/contexts/http_requests/action_controller_specific"
-require "timber/contexts/http_responses/action_controller"
-require "timber/contexts/organizations/action_controller"
-require "timber/contexts/servers/heroku_specific"
-require "timber/contexts/sql_queries/active_record"
-require "timber/contexts/sql_queries/active_record_specific"
-require "timber/contexts/template_renders/action_view"
-require "timber/contexts/template_renders/action_view_specific"
-require "timber/contexts/users/action_controller"
+module Timber
+  module Contexts # :nodoc:
+  end
+end

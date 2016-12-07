@@ -1,24 +1,19 @@
-require "timber/probes/action_controller_base"
+require "timber/probes/action_controller_log_subscriber"
 require "timber/probes/action_dispatch_debug_exceptions"
-require "timber/probes/active_support_log_subscriber"
-require "timber/probes/heroku"
-require "timber/probes/logger"
-require "timber/probes/rack"
-require "timber/probes/server"
+require "timber/probes/action_view_log_subscriber"
+require "timber/probes/active_record_log_subscriber"
+require "timber/probes/rack_http_context"
+require "timber/probes/rails_rack_logger"
 
 module Timber
-  module Probes
+  module Probes # :nodoc:
     def self.insert!(middleware, insert_before)
-      # Persistent probes. Order is relevant.
-      Server.insert!
-      Heroku.insert!
-
-      # Transient probes, sorted alphabetically
-      ActionControllerBase.insert!
+      ActionControllerLogSubscriber.insert!
       ActionDispatchDebugExceptions.insert!
-      ActiveSupportLogSubscriber.insert!
-      Logger.insert!
-      Rack.insert!(middleware, insert_before)
+      ActionViewLogSubscriber.insert!
+      ActiveRecordLogSubscriber.insert!
+      RackHTTPContext.insert!(middleware, insert_before)
+      RailsRackLogger.insert!
     end
   end
 end

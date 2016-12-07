@@ -1,25 +1,13 @@
 module Timber
   class Config
-    include Patterns::DelegatedSingleton
+    include Singleton
 
-    attr_writer :application_key, :enabled, :logger
+    attr_writer :logger
 
-    def application_key
-      @application_key ||= ENV['TIMBER_KEY']
-    end
-
-    def enabled
-      return @enabled if defined?(@enabled)
-      @enabled = true
-    end
-
-    def enabled?
-      enabled == true
-    end
-
-    # Internal logger for the Timber library, only for debugging purposes.
+    # Set a logger to view internal Timber library log message.
+    # Useful for debugging. Defaults to `::Logger.new(nil)`.
     def logger
-      @logger ||= InternalLogger.new(nil)
+      @logger ||= Logger.new(nil)
     end
   end
 end

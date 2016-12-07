@@ -1,9 +1,17 @@
 require "spec_helper"
 
 describe Timber::Probes::ActionDispatchDebugExceptions do
-  describe described_class::InstanceMethods do
-    describe ".log_error" do
-      before(:each) do
+  describe "#{described_class}::*InstanceMethods" do
+    describe "#log_error" do
+      let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+      let(:io) { StringIO.new }
+      let(:logger) do
+        logger = Timber::Logger.new(io)
+        logger.level = ::Logger::DEBUG
+        logger
+      end
+
+      around(:each) do |example|
         class ExceptionController < ActionController::Base
           layout nil
 
@@ -19,26 +27,22 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
         ::RailsApp.routes.draw do
           get 'exception' => 'exception#index'
         end
-      end
 
-      after(:each) do
+        Timecop.freeze(time) { example.run }
+
         Object.send(:remove_const, :ExceptionController)
       end
 
-      let(:logger_context_class) { Timber::Contexts::Logger }
-      let(:rack_request_context_class) { Timber::Contexts::HTTPRequests::Rack }
-      let(:request_context_class) { Timber::Contexts::HTTPRequests::ActionControllerSpecific }
-      let(:organization_context_class) { Timber::Contexts::Organizations::ActionController }
-      let(:user_context_class) { Timber::Contexts::Users::ActionController }
-      let(:response_context_class) { Timber::Contexts::HTTPResponses::ActionController }
-      let(:exception_context_class) { Timber::Contexts::Exception }
-
       it "should set the context" do
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(logger_context_class)).and_yield.at_least(:once)
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(rack_request_context_class)).and_yield.once
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(request_context_class), kind_of(organization_context_class), kind_of(user_context_class), kind_of(response_context_class)).and_yield.once
-        expect(Timber::CurrentContext).to receive(:add).with(kind_of(exception_context_class)).and_yield
+        mock_class
         dispatch_rails_request("/exception")
+        message = "RuntimeError (boom):\n\nlib/timber/probes/rack_http_context.rb:18:in `block in call'\nlib/timber/current_context.rb:19:in `with'\nlib/timber/probes/rack_http_context.rb:17:in `call' @timber.io {\"level\":\"datal\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[\"lib/timber/probes/rack_http_context.rb:18:in `block in call'\",\"lib/timber/current_context.rb:19:in `with'\",\"lib/timber/probes/rack_http_context.rb:17:in `call'\"]}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/exception\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
+        expect(io.string).to eq(message)
+      end
+
+      def mock_class
+        klass = defined?(::ActionDispatch::DebugExceptions) ? ::ActionDispatch::DebugExceptions : ::ActionDispatch::ShowExceptions
+        allow_any_instance_of(klass).to receive(:logger).and_return(logger)
       end
     end
   end

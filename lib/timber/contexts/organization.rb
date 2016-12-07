@@ -1,33 +1,31 @@
 module Timber
   module Contexts
+    # The organization context tracks the organization of the currently
+    # authenticated user
+    #
+    # You will want to add this context at the time you determine
+    # the organization a user belongs to, typically in the authentication
+    # flow.
+    #
+    # Example:
+    #
+    #   organization_context = Timber::Contexts::Organization.new(id: "abc1234", name: "Timber Inc")
+    #   Timber::CurrentContext.with(organization_context) do
+    #     # Logging will automatically include this context
+    #     logger.info("This is a log message")
+    #   end
+    #
     class Organization < Context
-      ROOT_KEY = :organization.freeze
-      VERSION = 1.freeze
+      attr_reader :id, :name
 
-      attr_reader :organization
-
-      def id
-        return @id if defined?(@id)
-        @id = organization.respond_to?(:id) ? organization.id : nil
+      def initialize(attributes)
+        @id = attributes[:id]
+        @name = attributes[:name]
       end
 
-      def name
-        return @name if defined?(@name)
-        @name = organization.respond_to?(:name) ? organization.name : nil
+      def keyspace
+        :organization
       end
-
-      def valid?
-        !organization.nil?
-      end
-
-      private
-        def json_payload
-          @json_payload ||= Macros::DeepMerger.merge({
-            # order is relevant for logfmt styling
-            :id => id,
-            :name => name
-          }, super).freeze
-        end
     end
   end
 end
