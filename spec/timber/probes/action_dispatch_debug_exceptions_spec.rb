@@ -36,7 +36,7 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
       it "should set the context" do
         mock_class
         dispatch_rails_request("/exception")
-        message = "RuntimeError (boom):\n\nlib/timber/probes/rack_http_context.rb:18:in `block in call'\nlib/timber/current_context.rb:19:in `with'\nlib/timber/probes/rack_http_context.rb:17:in `call' @timber.io {\"level\":\"datal\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[\"lib/timber/probes/rack_http_context.rb:18:in `block in call'\",\"lib/timber/current_context.rb:19:in `with'\",\"lib/timber/probes/rack_http_context.rb:17:in `call'\"]}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/exception\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
+        message = "RuntimeError (boom):\n\nlib/timber/probes/rack_http_context.rb:18:in `block in call'\nlib/timber/current_context.rb:21:in `with'\nlib/timber/probes/rack_http_context.rb:17:in `call' @timber.io {\"level\":\"datal\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[\"lib/timber/probes/rack_http_context.rb:18:in `block in call'\",\"lib/timber/current_context.rb:21:in `with'\",\"lib/timber/probes/rack_http_context.rb:17:in `call'\"]}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/exception\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
         expect(io.string).to eq(message)
       end
 

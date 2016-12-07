@@ -27,6 +27,10 @@ module Timber
       def keyspace
         :user
       end
+
+      def as_json(_options = {})
+        {id: id, name: name}
+      end
     end
   end
 end

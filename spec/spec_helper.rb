@@ -15,10 +15,13 @@ require File.join(File.dirname(__FILE__), 'support', 'simplecov')
 require File.join(File.dirname(__FILE__), 'support', 'timecop')
 require File.join(File.dirname(__FILE__), 'support', 'webmock')
 require File.join(File.dirname(__FILE__), 'support', 'timber')
-require File.join(File.dirname(__FILE__), 'support', 'rails')
-require File.join(File.dirname(__FILE__), 'support', 'action_controller')
-require File.join(File.dirname(__FILE__), 'support', 'action_view')
-require File.join(File.dirname(__FILE__), 'support', 'active_record')
+
+if !ENV["RAILS_23"]
+  require File.join(File.dirname(__FILE__), 'support', 'rails')
+  require File.join(File.dirname(__FILE__), 'support', 'action_controller')
+  require File.join(File.dirname(__FILE__), 'support', 'action_view')
+  require File.join(File.dirname(__FILE__), 'support', 'active_record')
+end
 
 RSpec.configure do |config|
   config.color = true

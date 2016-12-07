@@ -7,7 +7,7 @@ begin
 rescue LoadError
 end
 
-if defined?(Rails)
+if defined?(::Rails) && defined?(::Rails::Railtie)
   require 'timber/frameworks/rails'
 end
 

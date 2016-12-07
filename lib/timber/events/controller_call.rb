@@ -15,7 +15,7 @@ module Timber
       end
       alias to_h to_hash
 
-      def as_json
+      def as_json(_options = {})
         {:controller_call => to_hash}
       end
 

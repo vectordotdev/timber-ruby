@@ -20,8 +20,8 @@ module Timber
       @event = event
     end
 
-    def as_json(opts = {})
-      opts ||= {}
+    def as_json(options = {})
+      options ||= {}
       hash = {level: level, dt: formatted_dt, message: message}
 
       if !event.nil?
@@ -32,13 +32,13 @@ module Timber
         hash[:context] = context
       end
 
-      if opts[:only]
+      if options[:only]
         hash.select do |key, _value|
-          opts[:only].include?(key)
+          options[:only].include?(key)
         end
-      elsif opts[:except]
+      elsif options[:except]
         hash.select do |key, _value|
-          !opts[:except].include?(key)
+          !options[:except].include?(key)
         end
       else
         hash
@@ -46,7 +46,7 @@ module Timber
     end
 
     def to_json(options = {})
-      as_json.to_json(options)
+      as_json(options).to_json
     end
 
     private

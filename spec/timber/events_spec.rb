@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::Events do
+describe Timber::Events, :rails_23 => true do
   describe ".build" do
     it "should build a Timber::Event" do
       event = Timber::Events::Custom.new(

@@ -14,6 +14,10 @@ module Timber
       def keyspace
         :http
       end
+
+      def as_json(_options = {})
+        {:method => method, :path => path, :remote_addr => remote_addr, :request_id => request_id}
+      end
     end
   end
 end

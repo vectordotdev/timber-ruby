@@ -14,7 +14,7 @@ module Timber
       end
       alias to_h to_hash
 
-      def as_json
+      def as_json(_options = {})
         {:http_response => to_hash}
       end
 

@@ -24,7 +24,7 @@ module Timber
       end
       alias to_h to_hash
 
-      def as_json
+      def as_json(_options = {})
         hash = to_hash
         hash[:headers] = Util::Hash.compact(hash[:headers])
         hash = Util::Hash.compact(hash)

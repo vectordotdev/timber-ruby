@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::Logger do
+describe Timber::Logger, :rails_23 => true do
   describe "#add" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
     let(:io) { StringIO.new }
