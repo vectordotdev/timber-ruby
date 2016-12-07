@@ -79,10 +79,10 @@ of code debt, no weird proprietary data format locked away in our servers. Absol
 Besides automatically capturing known events, you can also log custom events. Check it out:
 
 ```ruby
-# Simple (original Logger interface remains untouched)
+# Simple string (original Logger interface remains untouched)
 Logger.warn "Payment rejected for customer abcd1234, reason: Card expired"
 
-# Structured
+# Structured hash
 Logger.warn message: "Payment rejected", type: :payment_rejected,
   data: %{customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
