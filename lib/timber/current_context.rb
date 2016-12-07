@@ -1,3 +1,5 @@
+require "singleton"
+
 module Timber
   # Holds the current context in the current thread's memory.
   # This context gets copied as each log line is written.

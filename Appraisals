@@ -1,3 +1,7 @@
+appraise "rails-2.3.X" do
+  gem "rails", "~> 2.3.18"
+end
+
 appraise "rails-3.0.X" do
   gem "rails", "~> 3.0.20"
 end

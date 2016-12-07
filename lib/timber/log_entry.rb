@@ -45,6 +45,10 @@ module Timber
       end
     end
 
+    def to_json(options = {})
+      as_json.to_json(options)
+    end
+
     private
       def formatted_dt
         @formatted_dt ||= time.iso8601(DT_PRECISION)

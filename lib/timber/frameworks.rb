@@ -2,7 +2,10 @@ require "logger"
 
 # Attempt to require Rails. We can not list it as a gem
 # dependency because we want to support multiple frameworks.
-require("rails") rescue LoadError
+begin
+  require("rails")
+rescue LoadError
+end
 
 if defined?(Rails)
   require 'timber/frameworks/rails'

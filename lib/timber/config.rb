@@ -1,3 +1,5 @@
+require "singleton"
+
 module Timber
   class Config
     include Singleton
