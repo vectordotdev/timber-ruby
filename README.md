@@ -140,29 +140,42 @@ For more details checkout our [timber.io](https://timber.io).
 
 ## Install
 
-Install the gem:
+#### 1. Install the gem:
 
 ```ruby
 # Gemfile
 gem 'timberio', require: "timber"
 ```
 
-For Heroku:
+#### 2. Install the logger:
+
+##### Heroku:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = Timber::Logger.new(STDOUT)
+config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
 
-For non-Heroku:
+The command to add your log drain will be displayed in the [Timber app](https://app.timber.io)
+after you add your application.
+
+##### Non-Heroku:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
 log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']) # key can be obtained by signing up at https://timber.io
-config.logger = Timber::Logger.new(log_device)
+config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(log_device))
 ```
+
+Your Timber application key will be displayed in the [Timber app](https://app.timber.io)
+after you add your application.
+
+
+*Other transport methods coming soon!*
+
+---
 
 That's it! Log to your heart's content.
 
 For documentation on logging structured events, and other features,
-checkout [the docs](http://thedocs.com/).
+checkout [the docs](http://thedocs.com/). For more information on Timber visit [timber.io](https://timber.io).
