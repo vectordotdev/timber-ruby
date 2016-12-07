@@ -9,19 +9,20 @@ module Timber
   # from the `::Logger` interface. That is, it will *never* add methods, or alter any
   # method signatures. This ensures Timber can be removed without consequence.
   #
-  # == Examples
-  #
-  # Basic example (the origina ::Logger interface remains untouched):
+  # @example Basic example (the original ::Logger interface remains untouched):
   #
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
-  # Although this works as expected, it is encouraged to log structured data. For example, using
-  # a map:
+  # Although this works as expected, it is encouraged to log structured data.
+  #
+  # @example Using a map
   #
   #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
   #
   # By providing the `message`, `type`, and `data` keys, Timber will classify this as a custom
   # event. You could also use a struct if your heart desires:
+  #
+  # @example Using a Struct
   #
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
   #     def message; "Payment rejected for #{customer_id}"; end
@@ -29,7 +30,7 @@ module Timber
   #   end
   #   Logger.info PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
   #
-  # == Advanced example
+  # @example Using typed Event classes
   #
   # While the above examples provide a simple way to kick the tires, once you feel comfortable
   # we recommend defining typed events. Similar to how you'd do with exceptions. This provides
@@ -60,16 +61,19 @@ module Timber
   # The `Event` implementation is left to you, The only requirement is that it
   # responds to the `#to_timber_event` and returns the appropriate `Timber::Events::*` type.
   #
+  # ---
+  #
   # That's it! Happy logging!
   #
-  #  _,-,
-  # T_  |
-  # ||`-'
-  # ||
-  # ||
-  # ~~
+  #    _,-,
+  #   T_  |
+  #   ||`-'
+  #   ||
+  #   ||
+  #   ~~
   class Logger < ::Logger
-    class Formatter #:nodoc:
+    # @private
+    class Formatter
       # Formatters get the formatted level from the logger.
       SEVERITY_MAP = {
         "DEBUG" => :debug,
@@ -132,7 +136,11 @@ module Timber
     end
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
-    # The only difference is that it default the formatter to `Timber::Logger::HybridFormatter`.
+    # The only difference is that it default the formatter to {HybridFormatter}. Using
+    # a different formatter is easy. For example, if you prefer your logs in JSON.
+    #
+    #   logger = Timber::Logger.new(STDOUT)
+    #   logger.formatter = Timber::Logger::JSONFormatter.new
     def initialize(*args)
       super(*args)
       self.formatter = HybridFormatter.new
