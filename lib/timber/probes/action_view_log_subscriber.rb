@@ -1,6 +1,6 @@
 module Timber
   module Probes
-    class ActionViewLogSubscriber < Probe # :nodoc:
+    class ActionViewLogSubscriber < Probe #:nodoc:
       def initialize
         require "action_view/log_subscriber"
         require "timber/probes/action_view_log_subscriber/log_subscriber"

@@ -1,6 +1,6 @@
 module Timber
   module Util
-    module ActiveSupportLogSubscriber # :nodoc:
+    module ActiveSupportLogSubscriber #:nodoc:
       extend self
 
       def find(component, type)

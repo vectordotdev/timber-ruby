@@ -1,7 +1,7 @@
 module Timber
   module Probes
-    class ActionViewLogSubscriber < Probe # :nodoc:
-      class LogSubscriber < ::ActionView::LogSubscriber # :nodoc:
+    class ActionViewLogSubscriber < Probe #:nodoc:
+      class LogSubscriber < ::ActionView::LogSubscriber #:nodoc:
         def render_template(event)
           info do
             full_name = from_rails_root(event.payload[:identifier])

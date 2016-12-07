@@ -1,5 +1,5 @@
 module Timber
-  class Event # :nodoc:
+  class Event #:nodoc:
     def as_json(options = {})
       raise NotImplementedError.new
     end

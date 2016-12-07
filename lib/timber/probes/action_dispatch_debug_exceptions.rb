@@ -2,7 +2,7 @@ module Timber
   module Probes
     class ActionDispatchDebugExceptions < Probe
       # For Rails >= 3.1
-      module DebugExceptionsInstanceMethods # :nodoc:
+      module DebugExceptionsInstanceMethods #:nodoc:
         def self.included(klass)
           klass.class_eval do
             private
@@ -29,7 +29,7 @@ module Timber
       end
 
       # For Rails < 3.1
-      module ShowExceptionsInstanceMethods # :nodoc:
+      module ShowExceptionsInstanceMethods #:nodoc:
         def self.included(klass)
           klass.class_eval do
             private

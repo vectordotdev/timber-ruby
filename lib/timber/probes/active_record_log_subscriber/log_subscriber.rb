@@ -1,7 +1,7 @@
 module Timber
   module Probes
-    class ActiveRecordLogSubscriber < Probe # :nodoc:
-      class LogSubscriber < ::ActiveRecord::LogSubscriber # :nodoc:
+    class ActiveRecordLogSubscriber < Probe #:nodoc:
+      class LogSubscriber < ::ActiveRecord::LogSubscriber #:nodoc:
         def sql(event)
           return unless logger.debug?
 

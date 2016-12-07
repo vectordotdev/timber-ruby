@@ -3,6 +3,6 @@ require "timber/contexts/organization"
 require "timber/contexts/user"
 
 module Timber
-  module Contexts # :nodoc:
+  module Contexts #:nodoc:
   end
 end

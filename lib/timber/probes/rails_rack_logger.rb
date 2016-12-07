@@ -1,6 +1,6 @@
 module Timber
   module Probes
-    class RailsRackLogger < Probe # :nodoc:
+    class RailsRackLogger < Probe #:nodoc:
       module InstanceMethods
         def self.included(klass)
           klass.class_eval do

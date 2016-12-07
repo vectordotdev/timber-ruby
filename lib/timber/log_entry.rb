@@ -1,5 +1,5 @@
 module Timber
-  class LogEntry # :nodoc:
+  class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
 
     attr_reader :level, :time, :progname, :message, :context, :event

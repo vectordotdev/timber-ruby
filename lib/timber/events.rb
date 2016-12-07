@@ -7,7 +7,7 @@ require "timber/events/sql_query"
 require "timber/events/template_render"
 
 module Timber
-  module Events # :nodoc:
+  module Events #:nodoc:
     def self.build(obj)
       if obj.is_a?(::Timber::Event)
         obj

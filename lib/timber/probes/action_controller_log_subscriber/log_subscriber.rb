@@ -1,7 +1,7 @@
 module Timber
   module Probes
-    class ActionControllerLogSubscriber < Probe # :nodoc:
-      class LogSubscriber < ::ActionController::LogSubscriber # :nodoc:
+    class ActionControllerLogSubscriber < Probe #:nodoc:
+      class LogSubscriber < ::ActionController::LogSubscriber #:nodoc:
         def start_processing(event)
           info do
             payload = event.payload

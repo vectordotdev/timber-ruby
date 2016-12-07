@@ -69,7 +69,7 @@ module Timber
   # ||
   # ~~
   class Logger < ::Logger
-    class Formatter # :nodoc:
+    class Formatter #:nodoc:
       # Formatters get the formatted level from the logger.
       SEVERITY_MAP = {
         "DEBUG" => :debug,
