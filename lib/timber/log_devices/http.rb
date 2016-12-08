@@ -17,7 +17,9 @@ module Timber
         https.use_ssl = true
         https.read_timeout = 30
         https.ssl_timeout = 10
-        https.keep_alive_timeout = 60
+        if https.respond_to?(:keep_alive_timeout=)
+          https.keep_alive_timeout = 60
+        end
         https.open_timeout = 10
       end
 
