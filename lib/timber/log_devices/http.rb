@@ -1,3 +1,5 @@
+require "msgpack"
+
 module Timber
   module LogDevices
     # A log device that buffers and sends logs to the Timber API over HTTP in intervals. The buffer
@@ -26,7 +28,7 @@ module Timber
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
       # @param [Hash] options the options to create a HTTP log device with.
-      # @option attributes [Symbol] :delivery_frequency_seconds (2) How often the client should
+      # @option attributes [Symbol] :frequency_seconds (2) How often the client should
       #   attempt to deliver logs to the Timber API. The HTTP client buffers logs between calls.
       def initialize(api_key, options = {})
         @api_key = api_key
@@ -34,8 +36,8 @@ module Timber
         @delivery_thread = Thread.new do
           at_exit { deliver }
           loop do
+            sleep options[:frequency_seconds] || DEFAULT_DELIVERY_FREQUENCY
             deliver
-            sleep options[:delivery_frequency_seconds] || DEFAULT_DELIVERY_FREQUENCY
           end
         end
       end
@@ -65,8 +67,14 @@ module Timber
             if code < 200 || code >= 300
               raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
             end
-            Config.logger.debug("Success! #{code}: #{res.body}")
+            Config.instance.logger.debug("Success! #{code}: #{res.body}")
           end
+
+          @buffer.clear
+        end
+
+        def authorization_payload
+          @authorization_payload ||= "Basic #{Base64.strict_encode64(@api_key).chomp}"
         end
     end
   end

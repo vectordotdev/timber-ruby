@@ -41,7 +41,7 @@ module Timber
 
       def insert!
         var_name = :"@_timber_rack_http_inserted"
-        return true if middleware.instance_variable_get(var_name) == true
+        return true if middleware.instance_variable_defined?(var_name) && middleware.instance_variable_get(var_name) == true
         # Rails uses a proxy :/, so we need to do this instance variable hack
         middleware.instance_variable_set(var_name, true)
         middleware.insert_before insert_before, Middleware
