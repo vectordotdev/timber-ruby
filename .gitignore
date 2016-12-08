@@ -4,6 +4,7 @@
 coverage
 Gemfile.lock
 *.swp
+*.gem
 
 /.bundle
 /.yardoc
