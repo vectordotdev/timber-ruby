@@ -1,3 +1,4 @@
+require "monitor"
 require "msgpack"
 
 module Timber
@@ -34,7 +35,8 @@ module Timber
       #   attempt to deliver logs to the Timber API. The HTTP client buffers logs between calls.
       def initialize(api_key, options = {})
         @api_key = api_key
-        @buffer = MessagePack::Buffer.new # faster and better memory management
+        @buffer = []
+        @monitor = Monitor.new
         @delivery_thread = Thread.new do
           at_exit { deliver }
           loop do
@@ -45,7 +47,9 @@ module Timber
       end
 
       def write(msg)
-        @buffer << msg
+        @monitor.synchronize {
+          @buffer << msg
+        }
       end
 
       def close
