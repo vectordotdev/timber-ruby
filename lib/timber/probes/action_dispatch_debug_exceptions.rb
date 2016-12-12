@@ -11,7 +11,6 @@ module Timber
             private
               def log_error(request, wrapper)
                 logger = logger(request)
-                puts logger.inspect
                 return unless logger
 
                 exception = wrapper.exception
