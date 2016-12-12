@@ -1,7 +1,7 @@
 # Timber
 
 <p align="center" style="background: #140f2a;">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-header.gif" height="370" /></a>
+<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-header.gif" height="469" /></a>
 </p>
 
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
@@ -17,6 +17,10 @@
 
 
 ## What is Timber?
+
+Glad you asked! :) Timber turns your messy string logs into structured events with context.
+
+Timber is an application aware logger that turns your
 
 Glad you asked :) Timber tames the crazy world that is logging. First, it *automatically*
 augments your logs with structured data. Second, it provides a transparent, no lock-in, API
