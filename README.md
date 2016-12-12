@@ -11,8 +11,8 @@
 
 
 1. [What is timber?](#what-is-timber)
-2. [Custom Event Examples](#examples)
-3. [Pricing](#pricing)
+2. [Logger Examples](#logger-examples)
+3. [Console Pricing](#console-pricing)
 2. [Install](#install)
 
 
@@ -68,7 +68,7 @@ This enables you to query your logs in a way that
   4. `level:warn` - Log levels in your logs. Imagine that!
 
 
-## Examples
+## Logger Examples
 
 > Another service? More lock-in? More code debt? More sadness? :*(
 
@@ -127,7 +127,7 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
 ```
 
 
-## Pricing
+## Console Pricing
 
 > This is all gravy, but wouldn't it get expensive?
 
