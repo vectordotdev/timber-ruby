@@ -11,20 +11,15 @@
 
 
 1. [What is timber?](#what-is-timber)
-2. [Examples](#examples)
+2. [Custom Event Examples](#examples)
 3. [Pricing](#pricing)
 2. [Install](#install)
 
 
 ## What is Timber?
 
-Glad you asked! :) Timber turns your messy string logs into structured events with context.
-
-Timber is an application aware logger that turns your
-
-Glad you asked :) Timber tames the crazy world that is logging. First, it *automatically*
-augments your logs with structured data. Second, it provides a transparent, no lock-in, API
-for logging your own events. Lastly, it can be paired with a [simple modern console](https://timber.io) for querying.
+Glad you asked! :) Timber turns your messy string logs into structured events with context where
+it can optionally be paired with our [simple modern console](https://timber.io) for querying.
 
 For example, it automatically turns this:
 
