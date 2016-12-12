@@ -146,7 +146,7 @@ For more details checkout our [timber.io](https://timber.io).
 
 ```ruby
 # Gemfile
-gem 'timberio', require: "timber"
+gem 'timberio'
 ```
 
 ### 2. Install the logger:
