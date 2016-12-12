@@ -134,11 +134,11 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
 If you opt to send your data to the [Timber service](https://timber.io), we only charge for
 the size of the `message`, `dt`, and `event.custom` attributes. Everything else is
 stored at no cost to you. [Say wha?!](http://i.giphy.com/l0HlL2vlfpWI0meJi.gif). This ensures
-pricing remains predictable. And our pricing is simple, we charge per GB transferred to us and
-retained, no user limits, and no weird feature matrixes. Lastly, the data is yours, in a simple
-non-proprietary JSON format.
+pricing remains predictable and simple. We charge per GB transferred to us and
+retained, no user limits, and no weird feature matrixes. Finally, the data is yours, in a simple
+non-proprietary JSON format that you can export to S3, Redshift, or any of our other integrations.
 
-For more details checkout our [timber.io](https://timber.io).
+For more details checkout out [timber.io](https://timber.io).
 
 ## Install
 
