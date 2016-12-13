@@ -37,7 +37,7 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
         mock_class
         dispatch_rails_request("/exception")
         # Because constantly updating the line numbers sucks :/
-        expect(io.string).to include("RuntimeError (boom):\n\n")
+        expect(io.string).to include("RuntimeError (boom):\\n\\n")
         expect(io.string).to include("@timber.io")
         expect(io.string).to include("\"event\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[\"")
       end

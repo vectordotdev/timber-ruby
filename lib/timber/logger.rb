@@ -114,7 +114,7 @@ module Timber
         log_entry = build_log_entry(severity, time, progname, msg)
         metadata = log_entry.to_json(:except => [:message])
         # use << for concatenation for performance reasons
-        log_entry.message << " " << METADATA_CALLOUT << " " << metadata << "\n"
+        log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
       end
     end
 

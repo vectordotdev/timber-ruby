@@ -54,6 +54,11 @@ describe Timber::Logger, :rails_23 => true do
         end
         expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}\n")
       end
+
+      it "should escape new lines" do
+        logger.info "first\nsecond"
+        expect(io.string).to eq("first\\nsecond @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"}\n")
+      end
     end
 
     context "with the :json format" do
