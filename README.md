@@ -11,21 +11,36 @@
 
 
 1. [What is timber?](#what-is-timber)
-2. [Logger Examples](#logger-examples)
-3. [Console Pricing](#console-pricing)
+1. [How does it work?](#what-is-timber)
+2. [Logging Custom Events](#logging-custom-events)
+3. [The Timber Console / Pricing](#the-timber-console-pricing)
 2. [Install](#install)
 
 
 ## What is Timber?
 
-Glad you asked! :) Timber gives you complete application insight by using the one
-thing every application already has: logging. Timber autoamtically turns
+Timber automatically structures your logs with events and context in a non-proprietary JSON format.
+It’s simple, quick, managed, and has absolutely no risk of code debt or lock-in.
+It’s just good ol’ logging.
+
+Timber’s philosophy is that application insight should be complete, open, and owned by you.
+And there is no better vehicle than logging:
+
+1. It’s a shared practice that has been around since the dawn of computers.
+2. It’s baked into every language, library, and framework. Even your own apps.
+3. The data is entirely owned by you.
+
+The problem is that logs are messy, noisy, and hard to use. Timber solves this by being
+application aware, properly structuring your logs, and optionally providing a [fast, modern,
+and beautiful console](https://timber.io). Ultimately allowing you to realize the power of
+your logs.
 
 
-Timber turns your messy logs into structured events with context. where
-it can optionally be paired with our [simple modern console](https://timber.io) for querying.
+## How does it work?
 
-For example, it automatically turns this:
+Glad you asked! :) Timber automatically structures your logs by taking advantage of public APIs.
+
+For example, by subscribing to `ActiveSupport::Notifications`, Timber can automatically turn this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
@@ -63,23 +78,12 @@ Into this:
 It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
 and any other event your framework logs. (for a full list see `Timber::Events`)
 
-This enables you to query your logs in a way that
-[even your mother would get excited about](http://i.giphy.com/7JYWGKgwxga5i.gif)!
 
-  1. `context.user.email:ben@johnson.com` - Tail a specific user!
-  2. `context.http.request_id:1234` - View *all* logs for a given HTTP request!
-  3. `event.http_reponse.time_ms>3000` - Easily find outliers and have the proper context to resolve them!
-  4. `level:warn` - Log levels in your logs. Imagine that!
+## Logging Custom Events
 
+> Another service? More code debt? :*(
 
-## Logger Examples
-
-> Another service? More lock-in? More code debt? More sadness? :*(
-
-Nope! This is exactly why we created Timber. Timber is Just Logging™. No special API, no risk
-of code debt, no weird proprietary data format locked away in our servers. Absolutely no lock-in!
-
-Besides automatically capturing known events, you can also log custom events. Check it out:
+Nope! Logging custom events is Just Logging™. Check it out:
 
 ```ruby
 # Simple string (original Logger interface remains untouched)
@@ -99,7 +103,7 @@ Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 
 (for more examples, see the `Timber::Logger` docs)
 
-No Timber specific code anywhere! In fact, this approach pushes things the opposite way. What if,
+No mention of Timber anywhere! In fact, this approach pushes things the opposite way. What if,
 as a result of structured logging, you could start decoupling other services from your application?
 
 Before:
@@ -130,16 +134,19 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
                                                        *and* backfill them!
 ```
 
+[Mind-blown!](http://i.giphy.com/EldfH1VJdbrwY.gif)
 
-## Console Pricing
 
-> This is all gravy, but wouldn't it get expensive?
 
-If you opt to send your data to the [Timber service](https://timber.io), we only charge for
+## The Timber Console / Pricing
+
+> This is all gravy, but wouldn't the extra data get expensive?
+
+If you opt use the [Timber Console](https://timber.io), we only charge for
 the size of the `message`, `dt`, and `event.custom` attributes. Everything else is
 stored at no cost to you. [Say wha?!](http://i.giphy.com/l0HlL2vlfpWI0meJi.gif). This ensures
-pricing remains predictable and simple. We charge per GB transferred to us and
-retained, no user limits, and no weird feature matrixes. Finally, the data is yours, in a simple
+pricing remains predictable. We charge per GB sent to us and retained. No user limits,
+no weird feature matrixes, just data. Finally, the data is yours, in a simple
 non-proprietary JSON format that you can export to S3, Redshift, or any of our other integrations.
 
 For more details checkout out [timber.io](https://timber.io).
