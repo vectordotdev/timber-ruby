@@ -18,7 +18,11 @@
 
 ## What is Timber?
 
-Glad you asked! :) Timber turns your messy string logs into structured events with context where
+Glad you asked! :) Timber gives you complete application insight by using the one
+thing every application already has: logging. Timber autoamtically turns
+
+
+Timber turns your messy logs into structured events with context. where
 it can optionally be paired with our [simple modern console](https://timber.io) for querying.
 
 For example, it automatically turns this:
@@ -155,7 +159,7 @@ gem 'timberio'
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
-config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+config.logger = Timber::Logger.new(STDOUT)
 ```
 
 The command to add your log drain will be displayed in the [Timber app](https://app.timber.io)
@@ -166,7 +170,7 @@ after you add your application.
 ```ruby
 # config/environments/production.rb (or staging, etc)
 log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_KEY']) # key can be obtained by signing up at https://timber.io
-config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(log_device))
+config.logger = Timber::Logger.new(log_device)
 ```
 
 Your Timber application key will be displayed in the [Timber app](https://app.timber.io)

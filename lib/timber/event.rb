@@ -2,6 +2,10 @@ module Timber
   # Base class for `Timber::Events::*`
   # @private
   class Event
+    def message
+      raise NotImplementedError.new
+    end
+
     def as_json(options = {})
       raise NotImplementedError.new
     end
