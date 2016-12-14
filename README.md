@@ -139,7 +139,6 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
 [Mind-blown!](http://i.giphy.com/EldfH1VJdbrwY.gif)
 
 
-
 ## The Timber Console / Pricing
 
 > This is all gravy, but wouldn't the extra data get expensive?
