@@ -3,7 +3,7 @@ module Timber
     # Reponsible for automatimcally tracking SQL query events in `ActiveRecord`, while still
     # preserving the default log style.
     class ActiveSupportTaggedLogging < Probe
-      module InstanceMethods
+      module FormatterMethods
         def self.included(mod)
           mod.module_eval do
             alias_method :_timber_original_push_tags, :push_tags
@@ -41,6 +41,51 @@ module Timber
         end
       end
 
+      module LoggerMethods
+        def self.included(klass)
+          klass.class_eval do
+            alias_method :_timber_original_push_tags, :push_tags
+            alias_method :_timber_original_pop_tags, :pop_tags
+
+            def push_tags(*tags)
+              _timber_original_push_tags(*tags).tap do
+                if current_tags.size > 0
+                  context = Contexts::Tags.new(values: current_tags)
+                  CurrentContext.add(context)
+                end
+              end
+            end
+
+            def pop_tags(size = 1)
+              _timber_original_pop_tags(size).tap do
+                if current_tags.size == 0
+                  CurrentContext.remove(Contexts::Tags)
+                else
+                  context = Contexts::Tags.new(values: current_tags)
+                  CurrentContext.add(context)
+                end
+              end
+            end
+
+            def add(severity, message = nil, progname = nil, &block)
+              if message.nil?
+                if block_given?
+                  message = block.call
+                else
+                  message = progname
+                  progname = nil #No instance variable for this like Logger
+                end
+              end
+              if @logger.is_a?(Timber::Logger)
+                @logger.add(severity, message, progname)
+              else
+                @logger.add(severity, "#{tags_text}#{message}", progname)
+              end
+            end
+          end
+        end
+      end
+
       def initialize
         require "active_support/tagged_logging"
       rescue LoadError => e
@@ -48,9 +93,12 @@ module Timber
       end
 
       def insert!
-        return true if ActiveSupport::TaggedLogging.include?(InstanceMethods)
         if defined?(ActiveSupport::TaggedLogging::Formatter)
-          ActiveSupport::TaggedLogging::Formatter.send(:include, InstanceMethods)
+          return true if ActiveSupport::TaggedLogging::Formatter.include?(FormatterMethods)
+          ActiveSupport::TaggedLogging::Formatter.send(:include, FormatterMethods)
+        else
+          return true if ActiveSupport::TaggedLogging.include?(LoggerMethods)
+          ActiveSupport::TaggedLogging.send(:include, LoggerMethods)
         end
       end
     end
