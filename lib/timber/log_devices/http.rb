@@ -35,7 +35,7 @@ module Timber
       #   attempt to deliver logs to the Timber API. The HTTP client buffers logs between calls.
       def initialize(api_key, options = {})
         @api_key = api_key
-        @buffer = []
+        @buffer = nil
         @monitor = Monitor.new
         @delivery_thread = Thread.new do
           at_exit { deliver }
@@ -58,25 +58,27 @@ module Timber
 
       private
         def deliver
-          body = @buffer.read
+          @monitor.synchronize {
+            body = @buffer.read
 
-          request = Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
-            req['Authorization'] = authorization_payload
-            req['Connection'] = CONNECTION_HEADER
-            req['Content-Type'] = CONTENT_TYPE
-            req['User-Agent'] = USER_AGENT
-            req.body = body
-          end
-
-          HTTPS.request(request).tap do |res|
-            code = res.code.to_i
-            if code < 200 || code >= 300
-              raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
+            request = Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
+              req['Authorization'] = authorization_payload
+              req['Connection'] = CONNECTION_HEADER
+              req['Content-Type'] = CONTENT_TYPE
+              req['User-Agent'] = USER_AGENT
+              req.body = body
             end
-            Config.instance.logger.debug("Success! #{code}: #{res.body}")
-          end
 
-          @buffer.clear
+            HTTPS.request(request).tap do |res|
+              code = res.code.to_i
+              if code < 200 || code >= 300
+                raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
+              end
+              Config.instance.logger.debug("Success! #{code}: #{res.body}")
+            end
+
+            @buffer.clear
+          }
         end
 
         def authorization_payload

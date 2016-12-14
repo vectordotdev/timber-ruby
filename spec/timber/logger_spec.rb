@@ -76,7 +76,7 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    context "with TaggedLogging" do
+    context "with TaggedLogging", :rails_23 => false do
       let(:logger) { ActiveSupport::TaggedLogging.new(Timber::Logger.new(io)) }
 
       it "should format properly with events" do
