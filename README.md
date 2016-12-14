@@ -23,12 +23,14 @@ Timber automatically structures your logs with events and context in a non-propr
 It’s simple, quick, managed, and has absolutely no risk of code debt or lock-in.
 It’s just good ol’ logging.
 
-Timber’s philosophy is that application insight data should be open and owned by you.
-And there is no better, or more complete, vehicle than logging:
+Timber’s philosophy is that application insight should be open and owned by you. It should not
+require a myriad of services to accomplish. And there is no better, or more complete, vehicle
+than logging to solve this:
 
 1. It’s a shared practice that has been around since the dawn of computers.
 2. It’s baked into every language, library, and framework. Even your own apps.
-3. The data is entirely owned by you.
+3. The data is open and entirely owned by you. Yay!
+4. [The truth is the log](http://files.timber.io/images/log-is-the-truth.png) :)
 
 The problem is that logs are unstructured, noisy, and hard to use. Timber solves this by being
 application aware, properly structuring your logs, and optionally providing a [fast, modern,
@@ -135,7 +137,6 @@ My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
 ```
 
 [Mind-blown!](http://i.giphy.com/EldfH1VJdbrwY.gif)
-
 
 
 ## The Timber Console / Pricing
