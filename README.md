@@ -76,7 +76,7 @@ Into this:
 ```
 
 It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
-and any other event your framework logs. (for a full list see `Timber::Events`)
+and any other event your framework logs. (for a full list see [`Timber::Events`](lib/timber/events))
 
 
 ## Logging Custom Events
@@ -101,7 +101,7 @@ end
 Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 ```
 
-(for more examples, see the `Timber::Logger` docs)
+(for more examples, see [the `Timber::Logger` docs](lib/timber/logger.rb))
 
 No mention of Timber anywhere! In fact, this approach pushes things the opposite way. What if,
 as a result of structured logging, you could start decoupling other services from your application?
@@ -185,6 +185,19 @@ after you add your application.
 
 
 *Other transport methods coming soon!*
+
+
+#### Rails TaggedLogging?
+
+No probs! Use it as normal, Timber will even pull out the tags and include them in the `context`.
+
+```ruby
+config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+```
+
+**Warning**: Tags lack meaningful descriptions, they are a poor mans context. Not to worry though!
+Timber provides a simple system for adding custom context that you can optionally use. Checkout
+[the `Timber::CurrentContext` docs](lib/timber/current_context.rb) for examples.
 
 ---
 

@@ -8,15 +8,13 @@ module Timber
     #     # ... anything logged here will have the context ...
     #   end
     class Custom < Context
+      @keyspace = :custom
+
       attr_reader :type, :data
 
       def initialize(attributes)
         @type = attributes[:type] || raise(ArgumentError.new(":type is required"))
         @data = attributes[:data] || raise(ArgumentError.new(":data is required"))
-      end
-
-      def keyspace
-        :custom
       end
 
       def as_json(_options = {})

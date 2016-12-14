@@ -41,11 +41,7 @@ describe Timber::Probes::RackHTTPContext do
         dispatch_rails_request("/rack_http")
         http_context = Thread.current[:_timber_context][:http]
 
-        expect(http_context).to be_kind_of(Timber::Contexts::HTTP)
-        expect(http_context.method).to eq("GET")
-        expect(http_context.path).to eq("/rack_http")
-        expect(http_context.remote_addr).to eq("123.456.789.10")
-        expect(http_context.request_id).to_not be_nil
+        expect(http_context).to eq({:method=>"GET", :path=>"/rack_http", :remote_addr=>"123.456.789.10", :request_id=>"unique-request-id-1234"})
         message = "Processing by RackHttpController#index as HTML @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"controller_call\":{\"controller\":\"RackHttpController\",\"action\":\"index\"}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\nCompleted 200 OK in 0.0ms (Views: 1.0ms) @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"http_response\":{\"status\":200,\"time_ms\":0.0}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
         expect(io.string).to eq(message)
       end
