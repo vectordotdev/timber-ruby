@@ -23,7 +23,7 @@ Timber automatically structures your logs with events and context in a non-propr
 It’s simple, quick, managed, and has absolutely no risk of code debt or lock-in.
 It’s just good ol’ logging.
 
-Timber’s philosophy is that application insight should be complete, open, and owned by you.
+Timber’s philosophy is that application insight should be open and owned by you.
 And there is no better vehicle than logging:
 
 1. It’s a shared practice that has been around since the dawn of computers.
@@ -32,7 +32,7 @@ And there is no better vehicle than logging:
 
 The problem is that logs are messy, noisy, and hard to use. Timber solves this by being
 application aware, properly structuring your logs, and optionally providing a [fast, modern,
-and beautiful console](https://timber.io). Ultimately allowing you to realize the power of
+and beautiful console](https://timber.io) -- allowing you to realize the power of
 your logs.
 
 
