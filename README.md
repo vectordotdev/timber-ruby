@@ -157,7 +157,7 @@ For more details checkout out [timber.io](https://timber.io).
 
 ```ruby
 # Gemfile
-gem 'timberio'
+gem 'timber'
 ```
 
 ### 2. Install the logger:

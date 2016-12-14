@@ -3,7 +3,7 @@ $LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require "timber/version"
 
 Gem::Specification.new do |s|
-  s.name        = "timberio"
+  s.name        = "timber"
   s.version     = Timber::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Timber Technologies, Inc."]
