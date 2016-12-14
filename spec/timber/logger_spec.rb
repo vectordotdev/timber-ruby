@@ -75,15 +75,5 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to eq("{\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"this is a test\"}\n")
       end
     end
-
-    context "with TaggedLogging" do
-      let(:logger) { ActiveSupport::TaggedLogging.new(Timber::Logger.new(io)) }
-
-      it "should format properly with events" do
-        message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
-        logger.info(message)
-        expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}}}\n")
-      end
-    end
   end
 end
