@@ -23,17 +23,17 @@ Timber automatically structures your logs with events and context in a non-propr
 It’s simple, quick, managed, and has absolutely no risk of code debt or lock-in.
 It’s just good ol’ logging.
 
-Timber’s philosophy is that application insight should be open and owned by you.
-And there is no better vehicle than logging:
+Timber’s philosophy is that application insight data should be open and owned by you.
+And there is no better, or more complete, vehicle than logging:
 
 1. It’s a shared practice that has been around since the dawn of computers.
 2. It’s baked into every language, library, and framework. Even your own apps.
 3. The data is entirely owned by you.
 
-The problem is that logs are messy, noisy, and hard to use. Timber solves this by being
+The problem is that logs are unstructured, noisy, and hard to use. Timber solves this by being
 application aware, properly structuring your logs, and optionally providing a [fast, modern,
-and beautiful console](https://timber.io) -- allowing you to realize the power of
-your logs.
+and beautiful console](https://timber.io) -- allowing you to easily, and sanely, realize the
+power of your logs.
 
 
 ## How does it work?
@@ -157,7 +157,7 @@ For more details checkout out [timber.io](https://timber.io).
 
 ```ruby
 # Gemfile
-gem 'timberio'
+gem 'timber'
 ```
 
 ### 2. Install the logger:
