@@ -11,21 +11,37 @@
 
 
 1. [What is timber?](#what-is-timber)
-1. [How does it work?](#what-is-timber)
-2. [Logging Custom Events](#logging-custom-events)
-3. [The Timber Console / Pricing](#the-timber-console-pricing)
-2. [Install](#install)
+2. [Why timber?](#why-timber)
+3. [How does it work?](#how-does-it-work)
+4. [Logging Custom Events](#logging-custom-events)
+5. [The Timber Console / Pricing](#the-timber-console-pricing)
+6. [Install](#install)
 
 
 ## What is Timber?
 
-Timber automatically structures your logs with events and context in a non-proprietary JSON format.
-It’s simple, quick, managed, and has absolutely no risk of code debt or lock-in.
-It’s just good ol’ logging.
+Timber takes a different approach to logging, in that it automatically enriches and structures your
+logs without altering the essence of your original log messages. Giving you the best of
+both worlds: human readable logs *and* rich structured data.
+
+More importantly, it does so with absolutely no lock-in or risk of code debt. It's just good
+ol' logging! For example:
+
+1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
+   (see [How does it work?](#how-does-it-work) for an example).
+2. The `Timber::Logger` class extends `Logger`, and will never change the public API. If you opt
+   to stop using Timber, your old `Logger` can be swapped in seamlessly.
+3. Where you send your logs is entirely up to you, but we hope you'll check out
+   [timber.io](https://timber.io). We've built a beautiful, modern, and fast console for searching
+   and visualizing your logs. And because we wrote this library, the interface can make assumptions
+   about the structure of your data. Making the console really nice to use.
+
+
+## Why Timber?
 
 Timber’s philosophy is that application insight should be open and owned by you. It should not
 require a myriad of services to accomplish. And there is no better, or more complete, vehicle
-than logging to solve this:
+than logging:
 
 1. It’s a shared practice that has been around since the dawn of computers.
 2. It’s baked into every language, library, and framework. Even your own apps.
@@ -78,7 +94,7 @@ Into this:
 ```
 
 It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
-and any other event your framework logs. (for a full list see `Timber::Events`)
+and any other event your framework logs. (for a full list see [`Timber::Events`](lib/timber/events))
 
 
 ## Logging Custom Events
@@ -103,7 +119,7 @@ end
 Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 ```
 
-(for more examples, see the `Timber::Logger` docs)
+(for more examples, see [the `Timber::Logger` docs](lib/timber/logger.rb))
 
 No mention of Timber anywhere! In fact, this approach pushes things the opposite way. What if,
 as a result of structured logging, you could start decoupling other services from your application?
@@ -186,6 +202,19 @@ after you add your application.
 
 
 *Other transport methods coming soon!*
+
+
+#### Rails TaggedLogging?
+
+No probs! Use it as normal, Timber will even pull out the tags and include them in the `context`.
+
+```ruby
+config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+```
+
+**Warning**: Tags lack meaningful descriptions, they are a poor mans context. Not to worry though!
+Timber provides a simple system for adding custom context that you can optionally use. Checkout
+[the `Timber::CurrentContext` docs](lib/timber/current_context.rb) for examples.
 
 ---
 

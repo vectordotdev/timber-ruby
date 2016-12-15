@@ -15,7 +15,7 @@ module Timber
             remote_addr: request.ip,
             request_id: request_id(env)
           )
-          CurrentContext.instance.with(context) do
+          CurrentContext.with(context) do
             @app.call(env)
           end
         end

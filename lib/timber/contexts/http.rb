@@ -7,6 +7,8 @@ module Timber
     # @note This context should be installed automatically through probes,
     #   such as the {Probes::RackHTTPContext} probe.
     class HTTP < Context
+      @keyspace = :http
+
       attr_reader :method, :path, :remote_addr, :request_id
 
       def initialize(attributes)
@@ -14,10 +16,6 @@ module Timber
         @path = attributes[:path] || raise(ArgumentError.new(":path is required"))
         @remote_addr = attributes[:remote_addr]
         @request_id = attributes[:request_id]
-      end
-
-      def keyspace
-        :http
       end
 
       def as_json(_options = {})

@@ -16,15 +16,13 @@ module Timber
     #   end
     #
     class Organization < Context
+      @keyspace = :organization
+
       attr_reader :id, :name
 
       def initialize(attributes)
         @id = attributes[:id]
         @name = attributes[:name]
-      end
-
-      def keyspace
-        :organization
       end
 
       def as_json(_options = {})

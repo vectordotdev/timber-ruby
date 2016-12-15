@@ -29,7 +29,7 @@ describe Timber::Logger, :rails_23 => true do
         end
 
         around(:each) do |example|
-          Timber::CurrentContext.instance.with(http_context) do
+          Timber::CurrentContext.with(http_context) do
             example.run
           end
         end
@@ -73,6 +73,20 @@ describe Timber::Logger, :rails_23 => true do
       it "should log in the correct format" do
         logger.info("this is a test")
         expect(io.string).to eq("{\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"this is a test\"}\n")
+      end
+    end
+
+    if defined?(ActiveSupport::TaggedLogging)
+      context "with TaggedLogging", :rails_23 => false do
+        let(:logger) { ActiveSupport::TaggedLogging.new(Timber::Logger.new(io)) }
+
+        it "should format properly with events" do
+          message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
+          logger.tagged("tag") do
+            logger.info(message)
+          end
+          expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}},\"context\":{\"tags\":[\"tag\"]}}\n")
+        end
       end
     end
 

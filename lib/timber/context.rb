@@ -2,8 +2,14 @@ module Timber
   # Base class for all `Timber::Contexts::*` classes.
   # @private
   class Context
+    class << self
+      def keyspace
+        @keyspace || raise(NotImplementedError.new)
+      end
+    end
+
     def keyspace
-      raise NoImplementedError.new
+      self.class.keyspace
     end
 
     def as_json(options = {})
