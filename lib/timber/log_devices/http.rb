@@ -2,17 +2,11 @@ require "timber/log_devices/http/triggered_buffer"
 
 module Timber
   module LogDevices
-    # A log device that buffers and delivers log messages to the Timber API in batches.
-    # The payload is an array of msgpack formatter message delimited by new lines. Msgpack
-    # is an efficient way to represent JSON objects that save on space.
+    # A log device that buffers and delivers log messages over HTTPS to the Timber API in batches.
+    # The buffer and delivery strategy are very efficient and the log messages will be delivered in
+    # msgpack format.
     #
-    # Delivery has 2 triggers: a payload limit and a frequency, both defined by
-    # {PAYLOAD_LIMIT_BYTES} and {DELIVERY_FREQUENCY_SECONDS} respectively. If either are
-    # surpassed, a delivery will be attempted.
-    #
-    # In the event that the HTTP requests cannot empty the buffer fast enough, a buffer overflow
-    # will be triggered. This can be handled with the `:buffer_overflow_handler` option upon
-    # instantiation, allowing you to write the data to disk, etc. See {#new} for more details.
+    # See {#initialize} for options and more details.
     class HTTP
       API_URI = URI.parse("https://api.timber.io/http_frames")
       CONTENT_TYPE = "application/x-timber-msgpack-frame-1".freeze
@@ -32,13 +26,34 @@ module Timber
       BACKOFF_RATE_SECONDS = 3.freeze
 
 
-      # Instantiates a new HTTP log device.
+      # Instantiates a new HTTP log device that can be passed to {Timber::Logger#initialize}.
       #
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
       # @param [Hash] options the options to create a HTTP log device with.
-      # @option attributes [Symbol] :frequency_seconds (2) How often the client should
+      # @option attributes [Symbol] :payload_limit_bytes Determines the maximum size in bytes that
+      #   and HTTP payload can be. Please see {TriggereBuffer#initialize} for the default.
+      # @option attributes [Symbol] :buffer_limit_bytes Determines the maximum size of the total
+      #   buffer. This should be many times larger than the `:payload_limit_bytes`.
+      #   Please see {TriggereBuffer#initialize} for the default.
+      # @option attributes [Symbol] :buffer_overflow_handler (nil) When a single message exceeds
+      #   `:payload_limit_bytes` or the entire buffer exceeds `:buffer_limit_bytes`, the Proc
+      #   passed to this option will be called with the msg that would overflow the buffer. See
+      #   the examples on how to use this properly.
+      # @option attributes [Symbol] :delivery_frequency_seconds (2) How often the client should
       #   attempt to deliver logs to the Timber API. The HTTP client buffers logs between calls.
+      #
+      # @example Basic usage
+      #   Timber::Logger.new(Timber::LogDevices::HTTP.new("my_timber_api_key"))
+      #
+      # @example Handling buffer overflows
+      #   # Persist overflowed lines to a file
+      #   # Note: You could write these to any permanent storage.
+      #   overflow_log_path = "/path/to/my/overflow_log.log"
+      #   overflow_handler = Proc.new { |log_line_msg| File.write(overflow_log_path, log_line_ms) }
+      #   http_log_device = Timber::LogDevices::HTTP.new("my_timber_api_key",
+      #     buffer_overflow_handler: overflow_handler)
+      #   Timber::Logger.new(http_log_device)
       def initialize(api_key, options = {})
         @api_key = api_key
         @buffer = TriggeredBuffer.new(
@@ -48,7 +63,7 @@ module Timber
         )
         @delivery_interval_thread = Thread.new do
           loop do
-            sleep options[:frequency_seconds] || DELIVERY_FREQUENCY_SECONDS
+            sleep(options[:delivery_frequency_seconds] || DELIVERY_FREQUENCY_SECONDS)
             buffer_for_delivery = @buffer.reserve
             if buffer_for_delivery
               deliver(buffer_for_delivery)
@@ -57,6 +72,8 @@ module Timber
         end
       end
 
+      # Write a new log line message to the buffer, and deliver if the msg exceeds the
+      # payload limit.
       def write(msg)
         buffer_for_delivery = @buffer.write(msg)
         if buffer_for_delivery
@@ -65,6 +82,7 @@ module Timber
         true
       end
 
+      # Closes the log device, cleans up, and attempts one last delivery.
       def close
         @delivery_interval_thread.kill
         buffer_for_delivery = @buffer.reserve

@@ -4,12 +4,12 @@ describe Timber::LogDevices::HTTP do
   describe "#initialize" do
     it "should start a thread for delivery" do
       expect_any_instance_of(described_class).to receive(:deliver).at_least(1).times.and_return(true)
-      http = described_class.new("MYKEY", frequency_seconds: 0.1)
+      http = described_class.new("MYKEY", delivery_frequency_seconds: 0.1)
       thread = http.instance_variable_get(:@delivery_interval_thread)
       expect(thread).to be_alive
 
       http.write("my log message")
-      sleep 0.2 # too fast!
+      sleep 0.3 # too fast!
     end
   end
 

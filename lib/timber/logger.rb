@@ -143,7 +143,20 @@ module Timber
     #   logger.formatter = Timber::Logger::JSONFormatter.new
     def initialize(*args)
       super(*args)
-      self.formatter = HybridFormatter.new
+      if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
+        self.formatter = MsgPackFormatter.new
+      else
+        self.formatter = HybridFormatter.new
+      end
+    end
+
+    def formatter=(value)
+      if @dev.is_a?(Timber::LogDevices::HTTP)
+        raise ArgumentError.new("The formatter cannot be changed when using the " +
+          "Timber::LogDevices::HTTP log device. The MsgPackFormatter must be used for proper " +
+          "delivery.")
+      end
+      super
     end
 
     # Backwards compatibility with older ActiveSupport::Logger versions
