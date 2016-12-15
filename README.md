@@ -28,9 +28,8 @@ And it does so with absolutely no lock-in or risk of code debt. It's just good o
 For example:
 
 1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
-   (see [How does it work?](#how-does-it-work) for an example).
 2. The [`Timber::Logger`](lib/timber/events) class extends `Logger`, and will never change or
-   extend the public API. Allowing you to switch back to your previous `Logger` seamlessly.
+   extend the public API.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
    [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
    for the strutured data captured here.
