@@ -28,6 +28,8 @@ module Timber
         https.open_timeout = 10
       end
       DELIVERY_FREQUENCY_SECONDS = 2.freeze
+      RETRY_LIMIT = 3.freeze
+      BACKOFF_RATE_SECONDS = 3.freeze
 
 
       # Instantiates a new HTTP log device.
@@ -74,21 +76,25 @@ module Timber
       private
         def deliver(body)
           Thread.new do
-            request = Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
-              req['Authorization'] = authorization_payload
-              req['Connection'] = CONNECTION_HEADER
-              req['Content-Type'] = CONTENT_TYPE
-              req['User-Agent'] = USER_AGENT
-              req.body = body
-            end
+            RETRY_LIMIT.times do |try_index|
+              request = Net::HTTP::Post.new(API_URI.request_uri).tap do |req|
+                req['Authorization'] = authorization_payload
+                req['Connection'] = CONNECTION_HEADER
+                req['Content-Type'] = CONTENT_TYPE
+                req['User-Agent'] = USER_AGENT
+                req.body = body
+              end
 
-            HTTPS.request(request).tap do |res|
+              res = HTTPS.request(request)
               code = res.code.to_i
               if code < 200 || code >= 300
-                raise DeliveryError.new("Timber HTTP delivery failed - #{res.code}: #{res.body}")
+                Config.instance.logger.debug("Timber HTTP delivery failed - #{res.code}: #{res.body}")
+                sleep((try_index + 1) * BACKOFF_RATE_SECONDS)
+              else
+                @buffer.remove(body)
+                Config.instance.logger.debug("Timber HTTP delivery successful - #{code}")
+                break # exit the loop
               end
-              @buffer.remove(body)
-              Config.instance.logger.debug("Timber HTTP delivery successful - #{code}")
             end
           end
         end
