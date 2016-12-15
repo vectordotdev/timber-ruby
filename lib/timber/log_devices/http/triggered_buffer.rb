@@ -53,6 +53,12 @@ module Timber
           end
         end
 
+        def remove(buffer)
+          @monitor.synchronize do
+            @buffers.delete(buffer)
+          end
+        end
+
         private
           def total_bytesize
             @buffers.reduce(0) { |acc, buffer| acc + buffer.bytesize }

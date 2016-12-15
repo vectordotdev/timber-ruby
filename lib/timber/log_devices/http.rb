@@ -82,14 +82,14 @@ module Timber
               req.body = body
             end
 
-            HTTPS.request(request)
-            # HTTPS.request(request).tap do |res|
-            #   code = res.code.to_i
-            #   if code < 200 || code >= 300
-            #     raise DeliveryError.new("Bad response from Timber API - #{res.code}: #{res.body}")
-            #   end
-            #   Config.instance.logger.debug("Success! #{code}: #{res.body}")
-            # end
+            HTTPS.request(request).tap do |res|
+              code = res.code.to_i
+              if code < 200 || code >= 300
+                raise DeliveryError.new("Timber HTTP delivery failed - #{res.code}: #{res.body}")
+              end
+              @buffer.remove(body)
+              Config.instance.logger.debug("Timber HTTP delivery successful - #{code}")
+            end
           end
         end
 
