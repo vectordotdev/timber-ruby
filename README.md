@@ -31,7 +31,7 @@ For example:
 2. The [`Timber::Logger`](lib/timber/events) class extends `Logger`, and will never change or
    extend the public API.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
-   [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
+   [timber.io](https://timber.io). We've built a beautiful, modern, and *fast* console specifically
    for the strutured data captured here.
 
 
@@ -47,7 +47,7 @@ require a myriad of services to accomplish. And there is no better vehicle than 
 
 The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
 far! Timber solves this by properly structuring your logs, making them easy to search and
-visualize -- allowing you to sanely realize the power of your logs.
+visualize -- enabling you to sanely realize the power of your logs.
 
 
 ## How does it work?
