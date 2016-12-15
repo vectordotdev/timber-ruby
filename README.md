@@ -33,7 +33,7 @@ ol' loggin'™! For example:
    If you opt to stop using Timber, your old `Logger` can be swapped in seamlessly.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
    [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
-   for strutured data we're capturing.
+   for the strutured data we're capturing.
 
 
 ## Why Timber?
@@ -48,9 +48,8 @@ than logging:
 4. The data is open and entirely owned by you. Yay!
 
 The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
-far. Timber solves this by being application aware, properly structuring your logs, and
-optionally providing a [fast, modern, and beautiful console](https://timber.io) -- allowing you
-to easily, and sanely, realize the power of your logs.
+far! Timber solves this by properly structuring your logs, making them easy to search and
+visualize -- allowing you to sanely realize the power of your logs.
 
 
 ## How does it work?
