@@ -31,7 +31,7 @@ module Timber
 
           @monitor.synchronize do
             buffer = writable_buffer
-            if @buffers == [] || buffer.frozen?
+            if @buffers == [] || buffer.nil? || buffer.frozen?
               @buffers << msg
               nil
             elsif (buffer.bytesize + msg.bytesize) > @payload_limit_bytes
