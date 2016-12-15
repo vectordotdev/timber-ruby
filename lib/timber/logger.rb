@@ -81,22 +81,6 @@ module Timber
         end
     end
 
-    # Structures your log messages into JSON.
-    #
-    #   logger = Timber::Logger.new(STDOUT)
-    #   logger.formatter = Timber::JSONFormatter.new
-    #
-    # Example message:
-    #
-    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
-    #
-    class JSONFormatter < Formatter
-      def call(severity, time, progname, msg)
-        # use << for concatenation for performance reasons
-        build_log_entry(severity, time, progname, msg).to_json() << "\n"
-      end
-    end
-
     # Structures your log messages into Timber's hybrid format, which makes
     # it easy to read while also appending the appropriate metadata.
     #
@@ -118,6 +102,38 @@ module Timber
       end
     end
 
+    # Structures your log messages into JSON.
+    #
+    #   logger = Timber::Logger.new(STDOUT)
+    #   logger.formatter = Timber::JSONFormatter.new
+    #
+    # Example message:
+    #
+    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
+    #
+    class JSONFormatter < Formatter
+      def call(severity, time, progname, msg)
+        # use << for concatenation for performance reasons
+        build_log_entry(severity, time, progname, msg).to_json() << "\n"
+      end
+    end
+
+    # Structures your log messages into JSON.
+    #
+    #   logger = Timber::Logger.new(STDOUT)
+    #   logger.formatter = Timber::JSONFormatter.new
+    #
+    # Example message:
+    #
+    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
+    #
+    class MsgPackFormatter < Formatter
+      def call(severity, time, progname, msg)
+        # use << for concatenation for performance reasons
+        build_log_entry(severity, time, progname, msg).as_json.to_msgpack << "\n"
+      end
+    end
+
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
     # The only difference is that it default the formatter to {HybridFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
@@ -127,7 +143,20 @@ module Timber
     #   logger.formatter = Timber::Logger::JSONFormatter.new
     def initialize(*args)
       super(*args)
-      self.formatter = HybridFormatter.new
+      if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
+        self.formatter = MsgPackFormatter.new
+      else
+        self.formatter = HybridFormatter.new
+      end
+    end
+
+    def formatter=(value)
+      if @dev.is_a?(Timber::LogDevices::HTTP)
+        raise ArgumentError.new("The formatter cannot be changed when using the " +
+          "Timber::LogDevices::HTTP log device. The MsgPackFormatter must be used for proper " +
+          "delivery.")
+      end
+      super
     end
 
     # Backwards compatibility with older ActiveSupport::Logger versions

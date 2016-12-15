@@ -75,5 +75,13 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to eq("{\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"message\":\"this is a test\"}\n")
       end
     end
+
+    context "with the HTTP log device" do
+      let(:io) { Timber::LogDevices::HTTP.new("my_key") }
+
+      it "should use the msgpack formatter" do
+        expect(logger.formatter).to be_kind_of(Timber::Logger::MsgPackFormatter)
+      end
+    end
   end
 end
