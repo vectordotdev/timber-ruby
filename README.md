@@ -44,7 +44,7 @@ than logging:
 
 1. The log is immutable and comprehensive. [It is the truth](http://files.timber.io/images/log-is-the-truth.png) :)
 2. It’s a shared practice that has been around since the dawn of computers.
-3. It’s baked into every language, library, and framework. Even your own apps.
+3. It’s baked into every language, library, and framework. Even your own apps!
 4. The data is open and entirely owned by you. Yay!
 
 The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
