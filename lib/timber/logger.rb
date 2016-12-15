@@ -81,22 +81,6 @@ module Timber
         end
     end
 
-    # Structures your log messages into JSON.
-    #
-    #   logger = Timber::Logger.new(STDOUT)
-    #   logger.formatter = Timber::JSONFormatter.new
-    #
-    # Example message:
-    #
-    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
-    #
-    class JSONFormatter < Formatter
-      def call(severity, time, progname, msg)
-        # use << for concatenation for performance reasons
-        build_log_entry(severity, time, progname, msg).to_json() << "\n"
-      end
-    end
-
     # Structures your log messages into Timber's hybrid format, which makes
     # it easy to read while also appending the appropriate metadata.
     #
@@ -115,6 +99,38 @@ module Timber
         metadata = log_entry.to_json(:except => [:message])
         # use << for concatenation for performance reasons
         log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
+      end
+    end
+
+    # Structures your log messages into JSON.
+    #
+    #   logger = Timber::Logger.new(STDOUT)
+    #   logger.formatter = Timber::JSONFormatter.new
+    #
+    # Example message:
+    #
+    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
+    #
+    class JSONFormatter < Formatter
+      def call(severity, time, progname, msg)
+        # use << for concatenation for performance reasons
+        build_log_entry(severity, time, progname, msg).to_json() << "\n"
+      end
+    end
+
+    # Structures your log messages into JSON.
+    #
+    #   logger = Timber::Logger.new(STDOUT)
+    #   logger.formatter = Timber::JSONFormatter.new
+    #
+    # Example message:
+    #
+    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
+    #
+    class MsgPackFormatter < Formatter
+      def call(severity, time, progname, msg)
+        # use << for concatenation for performance reasons
+        build_log_entry(severity, time, progname, msg).as_json.to_msgpack << "\n"
       end
     end
 
