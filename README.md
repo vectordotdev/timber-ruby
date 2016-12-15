@@ -32,9 +32,8 @@ ol' logging! For example:
 2. The `Timber::Logger` class extends `Logger`, and will never change the public API. If you opt
    to stop using Timber, your old `Logger` can be swapped in seamlessly.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
-   [timber.io](https://timber.io). We've built a beautiful, modern, and fast console for searching
-   and visualizing your logs. And because we wrote this library, the interface can make assumptions
-   about the structure of your data. Making the console really nice to use.
+   [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
+   for strutured data we're capturing.
 
 
 ## Why Timber?
