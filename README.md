@@ -20,12 +20,12 @@
 
 ## What is Timber?
 
-Glad you asked! :) Timber takes a different approach to logging, in that it automatically
-enriches and structures your logs without altering the essence of your original log messages.
-Giving you the best of both worlds: human readable logs *and* rich structured data.
+Glad you asked! :) Timber automatically enriches and structures your logs without altering the
+original log message. Giving you the best of both worlds: human readable logs *and* rich
+structured data.
 
-And it does so with absolutely no lock-in or risk of code debt. It's just good ol' loggin'™!
-For example:
+And it does so inside of your application with absolutely no lock-in or risk of code debt.
+It's just good ol' loggin'™! For example:
 
 1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
 2. The [`Timber::Logger`](lib/timber/events) class extends `Logger`, and will never change or
