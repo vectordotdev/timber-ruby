@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Timber Technologies, Inc."]
   s.email       = ["hi@timber.io"]
-  s.homepage    = "http://timber.io"
-  s.summary     = "Logs you'll actually use."
+  s.homepage    = "https://github.com/timberio/timber-ruby"
+  s.summary     = "Instant log gratification."
 
   s.required_ruby_version     = '>= 1.9.0'
 

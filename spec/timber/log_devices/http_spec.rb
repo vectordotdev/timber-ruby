@@ -1,62 +1,85 @@
-# require "spec_helper"
+require "spec_helper"
 
-# describe Timber::LogDevices::HTTP do
-#   # We have to define our own at_exit method, because the mocks and
-#   # everything are stripped out before. Otherwise it tries to issue
-#   # a request :(
-#   before(:each) do
-#     described_class.class_eval do
-#       def at_exit; true; end
-#     end
-#   end
+describe Timber::LogDevices::HTTP do
+  describe "#initialize" do
+    it "should start a thread for delivery" do
+      expect_any_instance_of(described_class).to receive(:deliver).at_least(1).times.and_return(true)
+      http = described_class.new("MYKEY", delivery_frequency_seconds: 0.1)
+      thread = http.instance_variable_get(:@delivery_interval_thread)
+      expect(thread).to be_alive
 
-#   describe "#initialize" do
-#     it "should start a thread for delivery" do
-#       allow_any_instance_of(described_class).to receive(:at_exit).exactly(1).times.and_return(true)
-#       expect_any_instance_of(described_class).to receive(:deliver).exactly(2).times.and_return(true)
-#       http = described_class.new("MYKEY", frequency_seconds: 0.1)
-#       thread = http.instance_variable_get(:@delivery_thread)
-#       expect(thread).to be_alive
-#       sleep 0.25 # allow 2 iterations
-#       http.close
-#     end
-#   end
+      http.write("my log message")
+      sleep 0.3 # too fast!
+    end
+  end
 
-#   describe "#write" do
-#     let(:http) { described_class.new("MYKEY") }
-#     let(:buffer) { http.instance_variable_get(:@buffer) }
+  describe "#write" do
+    let(:http) { described_class.new("MYKEY") }
+    let(:buffer) { http.instance_variable_get(:@buffer) }
 
-#     after(:each) { http.close }
+    it "should buffer the messages" do
+      http.write("test log message")
+      expect(buffer.reserve).to eq("test log message")
+    end
 
-#     it "should buffer the messages" do
-#       http.write("test log message")
-#       expect(buffer.read).to eq("test log message")
-#     end
-#   end
+    context "with a low payload limit" do
+      let(:http) { described_class.new("MYKEY", :payload_limit_bytes => 20) }
 
-#   describe "#deliver" do
-#     let(:http) { described_class.new("MYKEY") }
-#     let(:buffer) { http.instance_variable_get(:@buffer) }
+      it "should attempt a delivery when the payload limit is exceeded" do
+        message = "a" * 19
+        http.write(message)
+        expect(http).to receive(:deliver).exactly(1).times.with(message)
+        http.write("my log message")
+      end
+    end
+  end
 
-#     after(:each) { http.close }
+  describe "#close" do
+    let(:http) { described_class.new("MYKEY") }
 
-#     it "should delivery properly and flush the buffer" do
-#       expect_any_instance_of(described_class).to receive(:at_exit).exactly(1).times.and_return(true)
-#       stub = stub_request(:post, "https://api.timber.io/http_frames").
-#         with(
-#           :body => "test log message",
-#           :headers => {'Authorization'=>'Basic TVlLRVk=', 'Connection'=>'keep-alive', 'Content-Type'=>'application/json', 'User-Agent'=>'Timber Ruby Gem/1.0.0'}
-#         ).
-#         to_return(:status => 200, :body => "", :headers => {})
+    it "should kill the delivery thread the messages" do
+      http.close
+      thread = http.instance_variable_get(:@delivery_interval_thread)
+      sleep 0.1 # too fast!
+      expect(thread).to_not be_alive
+    end
 
-#       http.write("test log message")
+    it "should attempt a delivery" do
+      message = "a" * 19
+      http.write(message)
+      expect(http).to receive(:deliver).exactly(1).times.with(message)
+      http.close
+    end
+  end
 
-#       expect(buffer).to_not be_empty
+  describe "#deliver" do
+    let(:http) { described_class.new("MYKEY") }
 
-#       http.send(:deliver)
+    after(:each) { http.close }
 
-#       expect(stub).to have_been_requested.times(1)
-#       expect(buffer).to be_empty
-#     end
-#   end
-# end
+    it "should delivery properly and flush the buffer" do
+      stub = stub_request(:post, "https://api.timber.io/http_frames").
+        with(
+          :body => "test log message",
+          :headers => {
+            'Authorization' => 'Basic TVlLRVk=',
+            'Connection' => 'keep-alive',
+            'Content-Type' => 'application/x-timber-msgpack-frame-1',
+            'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
+          }
+        ).
+        to_return(:status => 200, :body => "", :headers => {})
+
+      http.write("test log message")
+      buffer = http.instance_variable_get(:@buffer)
+      buffers = buffer.instance_variable_get(:@buffers)
+      expect(buffers.size).to eq(1)
+      body = buffer.reserve
+      thread = http.send(:deliver, body)
+      thread.join
+
+      expect(stub).to have_been_requested.times(1)
+      expect(buffers.size).to eq(0)
+    end
+  end
+end
