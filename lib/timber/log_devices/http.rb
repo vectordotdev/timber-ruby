@@ -94,9 +94,6 @@ module Timber
         end
         https.open_timeout = 10
       end
-
-      PAYLOAD_LIMIT_BYTES = 5_000_000 # 5mb
-      BUFFER_LIMIT_BYTES = 50_000_000 # 50mb
       DELIVERY_FREQUENCY_SECONDS = 2.freeze
 
 
