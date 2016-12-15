@@ -42,20 +42,20 @@ Timber’s philosophy is that application insight should be open and owned by yo
 require a myriad of services to accomplish. And there is no better, or more complete, vehicle
 than logging:
 
-1. It’s a shared practice that has been around since the dawn of computers.
-2. It’s baked into every language, library, and framework. Even your own apps.
-3. The data is open and entirely owned by you. Yay!
-4. [The truth is the log](http://files.timber.io/images/log-is-the-truth.png) :)
+1. The log is immutable and comprehensive. [It is the truth](http://files.timber.io/images/log-is-the-truth.png) :)
+2. It’s a shared practice that has been around since the dawn of computers.
+3. It’s baked into every language, library, and framework. Even your own apps.
+4. The data is open and entirely owned by you. Yay!
 
-The problem is that logs are unstructured, noisy, and hard to use. Timber solves this by being
-application aware, properly structuring your logs, and optionally providing a [fast, modern,
-and beautiful console](https://timber.io) -- allowing you to easily, and sanely, realize the
-power of your logs.
+The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
+far. Timber solves this by being application aware, properly structuring your logs, and
+optionally providing a [fast, modern, and beautiful console](https://timber.io) -- allowing you
+to easily, and sanely, realize the power of your logs.
 
 
 ## How does it work?
 
-Glad you asked! :) Timber automatically structures your logs by taking advantage of public APIs.
+Timber automatically structures your logs by taking advantage of public APIs.
 
 For example, by subscribing to `ActiveSupport::Notifications`, Timber can automatically turn this:
 
