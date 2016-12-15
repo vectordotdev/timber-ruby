@@ -29,8 +29,8 @@ ol' loggin'™! For example:
 
 1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
    (see [How does it work?](#how-does-it-work) for an example).
-2. The `Timber::Logger` class extends `Logger`, and will never change the public API. If you opt
-   to stop using Timber, your old `Logger` can be swapped in seamlessly.
+2. The `Timber::Logger` class extends `Logger`, and will never change or extend the public API.
+   If you opt to stop using Timber, your old `Logger` can be swapped in seamlessly.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
    [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
    for strutured data we're capturing.
