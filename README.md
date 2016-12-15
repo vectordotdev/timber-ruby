@@ -25,7 +25,7 @@ logs without altering the essence of your original log messages. Giving you the 
 both worlds: human readable logs *and* rich structured data.
 
 More importantly, it does so with absolutely no lock-in or risk of code debt. It's just good
-ol' logging! For example:
+ol' loggin'™! For example:
 
 1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
    (see [How does it work?](#how-does-it-work) for an example).
