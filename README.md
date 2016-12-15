@@ -20,32 +20,31 @@
 
 ## What is Timber?
 
-Timber takes a different approach to logging, in that it automatically enriches and structures your
-logs without altering the essence of your original log messages. Giving you the best of
-both worlds: human readable logs *and* rich structured data.
+Glad you asked! :) Timber takes a different approach to logging, in that it automatically
+enriches and structures your logs without altering the essence of your original log messages.
+Giving you the best of both worlds: human readable logs *and* rich structured data.
 
-More importantly, it does so with absolutely no lock-in or risk of code debt. It's just good
-ol' loggin'™! For example:
+And it does so with absolutely no lock-in or risk of code debt. It's just good ol' loggin'™!
+For example:
 
 1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
    (see [How does it work?](#how-does-it-work) for an example).
-2. The `Timber::Logger` class extends `Logger`, and will never change or extend the public API.
-   If you opt to stop using Timber, your old `Logger` can be swapped in seamlessly.
+2. The [`Timber::Logger`](lib/timber/events) class extends `Logger`, and will never change or
+   extend the public API. Allowing you to switch back to your previous `Logger` seamlessly.
 3. Where you send your logs is entirely up to you, but we hope you'll check out
    [timber.io](https://timber.io). We've built a beautiful, modern, and fast console specifically
-   for the strutured data we're capturing.
+   for the strutured data captured here.
 
 
 ## Why Timber?
 
 Timber’s philosophy is that application insight should be open and owned by you. It should not
-require a myriad of services to accomplish. And there is no better, or more complete, vehicle
-than logging:
+require a myriad of services to accomplish. And there is no better vehicle than logging:
 
-1. The log is immutable and comprehensive. [It is the truth](http://files.timber.io/images/log-is-the-truth.png) :)
+1. The log is immutable and complete. [It is the truth](http://files.timber.io/images/log-is-the-truth.png) :)
 2. It’s a shared practice that has been around since the dawn of computers.
 3. It’s baked into every language, library, and framework. Even your own apps!
-4. The data is open and entirely owned by you. Yay!
+4. The data is open, accessible, and entirely owned by you. Yay!
 
 The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
 far! Timber solves this by properly structuring your logs, making them easy to search and
@@ -97,7 +96,7 @@ and any other event your framework logs. (for a full list see [`Timber::Events`]
 
 ## Logging Custom Events
 
-> Another service? More code debt? :*(
+> Another service? More lock-in? :*(
 
 Nope! Logging custom events is Just Logging™. Check it out:
 
@@ -119,38 +118,7 @@ Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 
 (for more examples, see [the `Timber::Logger` docs](lib/timber/logger.rb))
 
-No mention of Timber anywhere! In fact, this approach pushes things the opposite way. What if,
-as a result of structured logging, you could start decoupling other services from your application?
-
-Before:
-
-```
-               |---[HTTP]---> sentry / bugsnag / etc
-My Application |---[HTTP]---> librato / graphite / etc
-               |---[HTTP]---> new relic / etc
-               |--[STDOUT]--> logs
-                                |---> Logging service
-                                |---> S3
-                                |---> RedShift
-```
-
-
-After:
-
-```
-                                                    |-- sentry / bugsnag / etc
-                                                    |-- librato / graphite / etc
-My Application |--[STDOUT]--> logs ---> Timber ---> |-- new relic / etc
-                               ^                    |-- S3
-                               |                    |-- RedShift
-                               |                                 ^
-                    fast, efficient, durable,                    |
-                     replayable, auditable,        change any of these without
-                          just logging                  touching your code
-                                                       *and* backfill them!
-```
-
-[Mind-blown!](http://i.giphy.com/EldfH1VJdbrwY.gif)
+No mention of Timber anywhere!
 
 
 ## The Timber Console / Pricing
