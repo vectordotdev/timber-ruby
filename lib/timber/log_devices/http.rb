@@ -8,7 +8,7 @@ module Timber
     #
     # See {#initialize} for options and more details.
     class HTTP
-      API_URI = URI.parse("https://api.timber.io/http_frames")
+      API_URI = URI.parse("https://logs.timber.io/frames")
       CONTENT_TYPE = "application/x-timber-msgpack-frame-1".freeze
       CONNECTION_HEADER = "keep-alive".freeze
       USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze

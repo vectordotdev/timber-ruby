@@ -52,9 +52,8 @@ visualize -- enabling you to sanely realize the power of your logs.
 
 ## How does it work?
 
-Timber automatically structures your logs by taking advantage of public APIs.
-
-For example, by subscribing to `ActiveSupport::Notifications`, Timber can automatically turn this:
+Timber takes advantage of public APIs. For example, by subscribing to
+`ActiveSupport::Notifications`, Timber can automatically turn this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
