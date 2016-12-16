@@ -31,7 +31,7 @@ Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
 
 Into this:
 
-```json
+```javascript
 {
   "dt": "2016-12-01T02:23:12.236543Z",
   "level": "info",
@@ -43,7 +43,7 @@ Into this:
       "remote_addr": "123.456.789.10",
       "request_id": "abcd1234"
     },
-    "user": {  # <---- http://i.giphy.com/EldfH1VJdbrwY.gif
+    "user": {  // <---- http://i.giphy.com/EldfH1VJdbrwY.gif
       "id": 2,
       "name": "Ben Johnson",
       "email": "ben@johnson.com"
