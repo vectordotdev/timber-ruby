@@ -8,7 +8,7 @@ module Timber
     #
     # See {#initialize} for options and more details.
     class HTTP
-      API_URI = URI.parse("https://logs.timber.io/frames")
+      API_URI = URI.parse(ENV["TIMBER_INGESTION_URL"] || "https://logs.timber.io/frames")
       CONTENT_TYPE = "application/x-timber-msgpack-frame-1".freeze
       CONNECTION_HEADER = "keep-alive".freeze
       USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
@@ -16,6 +16,7 @@ module Timber
         https.use_ssl = true
         https.read_timeout = 30
         https.ssl_timeout = 10
+        # Ruby 1.9.X doesn't have this setting.
         if https.respond_to?(:keep_alive_timeout=)
           https.keep_alive_timeout = 60
         end
@@ -106,11 +107,13 @@ module Timber
               res = HTTPS.request(request)
               code = res.code.to_i
               if code < 200 || code >= 300
-                Config.instance.logger.debug("Timber HTTP delivery failed - #{res.code}: #{res.body}")
-                sleep((try_index + 1) * BACKOFF_RATE_SECONDS)
+                try = try_index + 1
+                logger.debug("Timber HTTP delivery failed, try #{try} - #{res.code}: #{res.body}")
+                sleep(try * BACKOFF_RATE_SECONDS)
               else
                 @buffer.remove(body)
-                Config.instance.logger.debug("Timber HTTP delivery successful - #{code}")
+                logger.debug("Timber HTTP delivery successful - #{code}")
+                logger.debug("Timber new buffer size - #{@buffer.total_bytesize}")
                 break # exit the loop
               end
             end
@@ -119,6 +122,10 @@ module Timber
 
         def authorization_payload
           @authorization_payload ||= "Basic #{Base64.strict_encode64(@api_key).chomp}"
+        end
+
+        def logger
+          Config.instance.logger
         end
     end
   end

@@ -59,11 +59,11 @@ module Timber
           end
         end
 
-        private
-          def total_bytesize
-            @buffers.reduce(0) { |acc, buffer| acc + buffer.bytesize }
-          end
+        def total_bytesize
+          @buffers.reduce(0) { |acc, buffer| acc + buffer.bytesize }
+        end
 
+        private
           def writable_buffer
             @buffers.find { |buffer| !buffer.frozen? }
           end
