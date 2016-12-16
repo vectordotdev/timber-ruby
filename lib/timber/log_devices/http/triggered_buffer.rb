@@ -69,9 +69,14 @@ module Timber
           end
 
           def handle_overflow(msg)
+            logger.warn("Timber buffer overflow triggered")
             if @overflow_handler
               @overflow_handler.call(msg)
             end
+          end
+
+          def logger
+            Config.instance.logger
           end
       end
     end
