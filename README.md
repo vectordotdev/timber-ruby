@@ -31,7 +31,7 @@ Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
 
 Into this:
 
-```javascript
+```json
 {
   "dt": "2016-12-01T02:23:12.236543Z",
   "level": "info",
