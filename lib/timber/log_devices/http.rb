@@ -65,6 +65,15 @@ module Timber
         @delivery_interval_thread = Thread.new do
           loop do
             sleep(options[:delivery_frequency_seconds] || DELIVERY_FREQUENCY_SECONDS)
+
+            @last_messages_overflow_count = 0
+            messages_overflown_count = @buffer.messages_overflown_count
+            if messages_overflown_count >= @last_messages_overflow_count
+              difference = messages_overflown_count - @last_messages_overflow_count
+              @last_messages_overflow_count = messages_overflown_count
+              logger.warn("Timber HTTP buffer has overflown #{difference} times")
+            end
+
             buffer_for_delivery = @buffer.reserve
             if buffer_for_delivery
               deliver(buffer_for_delivery)

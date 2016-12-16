@@ -15,12 +15,15 @@ module Timber
         DEFAULT_PAYLOAD_LIMIT_BYTES = 5_000_000 # 5mb, the Timber API will not accept messages larger than this
         DEFAULT_LIMIT_BYTES = 50_000_000 # 50mb
 
+        attr_reader :messages_overflown_count
+
         def initialize(options = {})
           @buffers = []
           @monitor = Monitor.new
           @payload_limit_bytes = options[:payload_limit_bytes] || DEFAULT_PAYLOAD_LIMIT_BYTES
           @limit_bytes = options[:limit_bytes] || DEFAULT_LIMIT_BYTES
           @overflow_handler = options[:overflow_handler]
+          @messages_overflown_count = 0
         end
 
         def write(msg)
@@ -69,7 +72,7 @@ module Timber
           end
 
           def handle_overflow(msg)
-            logger.warn("Timber buffer overflow triggered")
+            @messages_overflown_count += 1
             if @overflow_handler
               @overflow_handler.call(msg)
             end
