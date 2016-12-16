@@ -58,9 +58,8 @@ Into this:
 }
 ```
 
-Notice we include data that isn't in the log message directly. It does the same for
-`http requests`, `sql queries`, `exceptions`, `template renderings`, and any other event
-your framework logs.
+It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
+and any other event your framework logs.
 
 (for a full list see [`Timber::Events`](lib/timber/events))
 
@@ -69,19 +68,13 @@ your framework logs.
 
 Glad you asked! :)
 
-1. It's application aware and enriches your logs with data you can't get otherwise. This
-   entire process is fully managed for you.
+1. It's application aware and enriches your logs with data you can't get otherwise.
 2. It defines a shared schema across all of our libraries. Meaning your log data, across all
-   applications, will be normalized.
+   applications, is normalized.
 3. It does not alter the original log message, giving you the best of both worlds: human
    readable logs *and* rich structured events.
-4. It's completely transparent with absolutely no vendor lock-in or risk of code debt. Timber
-   adheres exactly to the `Logger` API. Meaning Timber can be installed and removed without
-   any reprocusion.
-
-What really makes Timber unique is that at the end of the day it's just good ol' loggin'.
-No special API, no proprietary data format, the data is accessible and owned by you.
-[Woo!](http://i.giphy.com/7JYWGKgwxga5i.gif)
+4. It's completely transparent with absolutely no vendor lock-in or risk of code debt. It
+   does not introduce a special API, it's just good ol' loggin'.
 
 
 ## Logging Custom Events
@@ -112,8 +105,6 @@ No mention of Timber anywhere!
 
 
 ## The Timber Console / Pricing
-
-Like my mother always said:
 
 > What good is structured log data if you can't search and visualize it?
 
