@@ -12,7 +12,6 @@
 
 1. [What is timber?](#what-is-timber)
 2. [Why timber?](#why-timber)
-3. [How does it work?](#how-does-it-work)
 4. [Logging Custom Events](#logging-custom-events)
 5. [The Timber Console / Pricing](#the-timber-console-pricing)
 6. [Install](#install)
@@ -20,40 +19,11 @@
 
 ## What is Timber?
 
-Glad you asked! :) Timber automatically enriches and structures your logs without altering the
-original log message. Giving you the best of both worlds: human readable logs *and* rich
-structured data.
+[Timber](http://timber.io) is a different kind of logging platform; it goes beyond traditional
+logging by automatically enriching your logs with application level metadata, turning them
+into rich, structured events without altering the essence of logging.
 
-And it does so inside of your application with absolutely no lock-in or risk of code debt.
-It's just good ol' loggin'™! For example:
-
-1. The resulting log format, by deafult, is a simple, non-proprietary, JSON structure.
-2. The [`Timber::Logger`](lib/timber/events) class extends `Logger`, and will never change or
-   extend the public API.
-3. Where you send your logs is entirely up to you, but we hope you'll check out
-   [timber.io](https://timber.io). We've built a beautiful, modern, and *fast* console specifically
-   for the strutured data captured here.
-
-
-## Why Timber?
-
-Timber’s philosophy is that application insight should be open and owned by you. It should not
-require a myriad of services to accomplish. And there is no better vehicle than logging:
-
-1. The log is immutable and complete. [It is the truth](http://files.timber.io/images/log-is-the-truth.png) :)
-2. It’s a shared practice that has been around since the dawn of computers.
-3. It’s baked into every language, library, and framework. Even your own apps!
-4. The data is open, accessible, and entirely owned by you. Yay!
-
-The problem is that logs are unstructured, noisy, and hard to use. `grep` can only take you so
-far! Timber solves this by properly structuring your logs, making them easy to search and
-visualize -- enabling you to sanely realize the power of your logs.
-
-
-## How does it work?
-
-Timber takes advantage of public APIs. For example, by subscribing to
-`ActiveSupport::Notifications`, Timber can automatically turn this:
+For example, it turns this:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
@@ -73,7 +43,7 @@ Into this:
       "remote_addr": "123.456.789.10",
       "request_id": "abcd1234"
     },
-    "user": {
+    "user": {  # <---- http://i.giphy.com/EldfH1VJdbrwY.gif
       "id": 2,
       "name": "Ben Johnson",
       "email": "ben@johnson.com"
@@ -88,8 +58,30 @@ Into this:
 }
 ```
 
-It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
-and any other event your framework logs. (for a full list see [`Timber::Events`](lib/timber/events))
+Notice we include data that isn't in the log message directly. It does the same for
+`http requests`, `sql queries`, `exceptions`, `template renderings`, and any other event
+your framework logs.
+
+(for a full list see [`Timber::Events`](lib/timber/events))
+
+
+## Why Timber?
+
+Glad you asked! :)
+
+1. It's application aware and enriches your logs with data you can't get otherwise. This
+   entire process is fully managed for you.
+2. It defines a shared schema across all of our libraries. Meaning your log data, across all
+   applications, will be normalized.
+3. It does not alter the original log message, giving you the best of both worlds: human
+   readable logs *and* rich structured events.
+4. It's completely transparent with absolutely no vendor lock-in or risk of code debt. Timber
+   adheres exactly to the `Logger` API. Meaning Timber can be installed and removed without
+   any reprocusion.
+
+What really makes Timber unique is that at the end of the day it's just good ol' loggin'.
+No special API, no proprietary data format, the data is accessible and owned by you.
+[Woo!](http://i.giphy.com/7JYWGKgwxga5i.gif)
 
 
 ## Logging Custom Events
@@ -120,6 +112,20 @@ No mention of Timber anywhere!
 
 
 ## The Timber Console / Pricing
+
+Like my mother always said:
+
+> What good is structured log data if you can't search and visualize it?
+
+Enter [the Timber Console](https://timber.io). It's a modern, fast, and beautiful console for
+searching and visualizing your logs.
+
+A few example queries:
+
+  1. `context.user.email:ben@johnson.com` - Tail a specific user!
+  2. `context.http.request_id:1234` - View *all* logs for a given HTTP request!
+  3. `event.http_reponse.time_ms>3000` - Easily find outliers and have the proper context to resolve them!
+  4. `level:warn` - Log levels in your logs. Imagine that!
 
 > This is all gravy, but wouldn't the extra data get expensive?
 
