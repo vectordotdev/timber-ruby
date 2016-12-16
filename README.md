@@ -188,11 +188,7 @@ Timber provides a simple system for adding custom context that you can optionall
 
 ---
 
-That's it! Log to your heart's content.
-
-For documentation on logging structured events, and other features,
-checkout [the docs](http://thedocs.com/). For more information on Timber visit [timber.io](https://timber.io).
-
+I leave you with one final thought:
 
 <p align="center" style="background: #140f2a;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
