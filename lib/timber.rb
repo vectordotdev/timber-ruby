@@ -1,6 +1,5 @@
 # core classes
 require "json" # brings to_json to the core classes
-require "msgpack" # brings to_msgpack to the core classes
 
 # Base (must come first, order matters)
 require "timber/config"

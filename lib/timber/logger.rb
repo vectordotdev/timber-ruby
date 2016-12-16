@@ -1,4 +1,5 @@
 require "logger"
+require "msgpack"
 
 module Timber
   # The Timber Logger behaves exactly like `::Logger`, except that it supports a transparent API
