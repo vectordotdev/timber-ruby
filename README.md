@@ -13,7 +13,7 @@
 1. [What is timber?](#what-is-timber)
 2. [Why timber?](#why-timber)
 4. [Logging Custom Events](#logging-custom-events)
-5. [The Timber Console / Pricing](#the-timber-console-pricing)
+5. [The Timber Console / Pricing](#the-timber-console--pricing)
 6. [Install](#install)
 
 
