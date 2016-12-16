@@ -131,8 +131,18 @@ module Timber
     class MsgPackFormatter < Formatter
       def call(severity, time, progname, msg)
         # use << for concatenation for performance reasons
-        build_log_entry(severity, time, progname, msg).as_json.to_msgpack << "\n"
+        hash = build_log_entry(severity, time, progname, msg).as_json
+        to_msgpack(hash) << "\n"
       end
+
+      private
+        def to_msgpack(msg)
+          begin
+            msg.to_msgpack
+          rescue NoMethodError
+            JSON.parse(JSON.generate(msg)).to_msgpack
+          end
+        end
     end
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.

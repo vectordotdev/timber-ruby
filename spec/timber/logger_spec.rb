@@ -96,6 +96,16 @@ describe Timber::Logger, :rails_23 => true do
       it "should use the msgpack formatter" do
         expect(logger.formatter).to be_kind_of(Timber::Logger::MsgPackFormatter)
       end
+
+      it "should log properly with the msgpack format" do
+        event = Timber::Events::Custom.new(
+          type: :payment_rejected,
+          message: "Payment rejected",
+          data: {customer_id: "abcd1234", amount: 100}
+        )
+        expect(io).to receive(:write).exactly(1).times
+        logger.error(event)
+      end
     end
   end
 end

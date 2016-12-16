@@ -58,7 +58,7 @@ describe Timber::LogDevices::HTTP do
     after(:each) { http.close }
 
     it "should delivery properly and flush the buffer" do
-      stub = stub_request(:post, "https://api.timber.io/http_frames").
+      stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
           :body => "test log message",
           :headers => {
