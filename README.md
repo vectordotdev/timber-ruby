@@ -173,13 +173,7 @@ No probs! Use it as normal, Timber will even pull out the tags and include them 
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
 
-**Warning**: Tags lack meaningful descriptions, they are a poor mans context. Not to worry though!
-Timber provides a simple system for adding custom context that you can optionally use. Checkout
-[the `Timber::CurrentContext` docs](lib/timber/current_context.rb) for examples.
-
 ---
-
-I leave you with one final thought:
 
 <p align="center" style="background: #140f2a;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
