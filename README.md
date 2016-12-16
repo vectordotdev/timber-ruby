@@ -195,5 +195,5 @@ checkout [the docs](http://thedocs.com/). For more information on Timber visit [
 
 
 <p align="center" style="background: #140f2a;">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="469" /></a>
+<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
 </p>
