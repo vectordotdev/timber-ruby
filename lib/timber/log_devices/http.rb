@@ -23,7 +23,7 @@ module Timber
         https.open_timeout = 10
       end
       DELIVERY_FREQUENCY_SECONDS = 2.freeze
-      RETRY_LIMIT = 3.freeze
+      RETRY_LIMIT = 5.freeze
       BACKOFF_RATE_SECONDS = 3.freeze
 
 
@@ -68,7 +68,7 @@ module Timber
 
             @last_messages_overflow_count = 0
             messages_overflown_count = @buffer.messages_overflown_count
-            if messages_overflown_count >= @last_messages_overflow_count
+            if messages_overflown_count > @last_messages_overflow_count
               difference = messages_overflown_count - @last_messages_overflow_count
               @last_messages_overflow_count = messages_overflown_count
               logger.warn("Timber HTTP buffer has overflown #{difference} times")

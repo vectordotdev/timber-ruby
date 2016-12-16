@@ -89,7 +89,7 @@ Logger.warn "Payment rejected for customer abcd1234, reason: Card expired"
 
 # Structured hash
 Logger.warn message: "Payment rejected", type: :payment_rejected,
-  data: %{customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+  data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
 # Using a Struct
 PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
@@ -120,7 +120,7 @@ A few example queries:
 
 > This is all gravy, but wouldn't the extra data get expensive?
 
-If you opt use the [Timber Console](https://timber.io), we only charge for
+If you opt to use the [Timber Console](https://timber.io), we only charge for
 the size of the `message`, `dt`, and `event.custom` attributes. Everything else is
 stored at no cost to you. [Say wha?!](http://i.giphy.com/l0HlL2vlfpWI0meJi.gif). This ensures
 pricing remains predictable. We charge per GB sent to us and retained. No user limits,
