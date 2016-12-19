@@ -230,7 +230,7 @@ module Timber
         end
 
         def authorization_payload
-          @authorization_payload ||= "Basic #{Base64.strict_encode64(@api_key).chomp}"
+          @authorization_payload ||= "Basic #{Base64.urlsafe_encode64(@api_key).chomp}"
         end
 
         def logger
