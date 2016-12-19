@@ -26,10 +26,10 @@
 Using your logs shouldn't be a time consuming, frustrating process! If you were like us, it goes
 something like this:
 
-> How do I access my logs? Which provider should I use? Why is it so expensive?
-> Why is searching so difficult and time consuming? Should I structure my logs? Which format
-> should I use? Will they still be human readable? What if the structure changes? What about logs
-> from 3rd party libraries? Ahhh!!!
+> I need to centralize my logs, where should I send them? Which provider should I use?
+> Wow, this is expensive. Why is searching so difficult and time consuming?
+> Would structuring my logs help? Which format should I use? Will they still be human readable?
+> What if the structure changes? What about logs from 3rd party libraries? Ahhh!!!
 
 Timber solves this by providing a complete, managed, end-to-end logging solution that marries
 a beautiful, *fast*, console with libraries that automatically structure and enrich your logs.
