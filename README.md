@@ -149,6 +149,8 @@ For more details checkout out [timber.io](https://timber.io).
 
 ## Install
 
+**Timber is in beta testing. If interested, please email beta@timber.io**
+
 ### 1. Install the gem:
 
 ```ruby
