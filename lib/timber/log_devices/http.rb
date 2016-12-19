@@ -164,6 +164,7 @@ module Timber
           end
 
           req = Net::HTTP::Post.new(@timber_url.path)
+          req['Accept'] = "application/json"
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT

@@ -87,6 +87,7 @@ describe Timber::LogDevices::HTTP do
         with(
           :body => 'test log message',
           :headers => {
+            'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
             'Content-Type' => 'application/x-timber-msgpack-frame-1',
             'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
