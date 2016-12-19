@@ -1,8 +1,8 @@
 module Timber
   module LogDevices
-    # A log device that buffers and delivers log messages over HTTPS to the Timber API in batches.
-    # The buffer and delivery strategy are very efficient and the log messages will be delivered in
-    # msgpack format.
+    # A log device that buffers and delivers log messages over HTTPS to the Timber API.
+    # It uses batches, keep-alive connections, and messagepack to delivery logs with
+    # high-throughput and little overhead.
     #
     # See {#initialize} for options and more details.
     class HTTP
@@ -24,7 +24,7 @@ module Timber
 
           @lock.synchronize do
             @array << msg
-            @byteszie += msg.bytesize
+            @bytesize += msg.bytesize
           end
         end
 
@@ -75,41 +75,51 @@ module Timber
 
       # Instantiates a new HTTP log device that can be passed to {Timber::Logger#initialize}.
       #
+      # The class maintains a buffer which is flushed in batches to the Timber API. 2
+      # options control when the flush happens, `:batch_byte_size` and `:flush_interval`.
+      # If either of these are surpassed, the buffer will be flushed.
+      #
+      # By default, the buffer will apply back pressure log messages are generated faster than
+      # the client can delivery them. But you can drop messages instead by passing a
+      # {DroppingSizedQueue} via the `:request_queue` option.
+      #
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
       # @param [Hash] options the options to create a HTTP log device with.
-      # @option attributes [Symbol] :payload_limit_bytes Determines the maximum size in bytes that
-      #   and HTTP payload can be. Please see {TriggereBuffer#initialize} for the default.
-      # @option attributes [Symbol] :buffer_limit_bytes Determines the maximum size of the total
-      #   buffer. This should be many times larger than the `:payload_limit_bytes`.
-      #   Please see {TriggereBuffer#initialize} for the default.
-      # @option attributes [Symbol] :buffer_overflow_handler (nil) When a single message exceeds
-      #   `:payload_limit_bytes` or the entire buffer exceeds `:buffer_limit_bytes`, the Proc
-      #   passed to this option will be called with the msg that would overflow the buffer. See
-      #   the examples on how to use this properly.
-      # @option attributes [Symbol] :delivery_frequency_seconds (2) How often the client should
-      #   attempt to deliver logs to the Timber API. The HTTP client buffers logs between calls.
+      # @option attributes [Symbol] :batch_byte_size Determines the maximum size in bytes for
+      #   each HTTP payload. If the buffer exceeds this limit a delivery will be attempted.
+      # @option attributes [Symbol] :debug Whether to print debug output or not. This is also
+      #   inferred from ENV['debug']. Output will be sent to `Timber::Config.logger`.
+      # @option attributes [Symbol] :flush_interval (2) How often the client should
+      #   attempt to deliver logs to the Timber API. The HTTP client buffers logs and this
+      #   options represents how often that will happen, assuming `:batch_byte_size` is not met.
+      # @option attributes [Symbol] :requests_per_conn The number of requests to send over a
+      #   single persistent connection. After this number is met, the connection will be closed
+      #   and a new one will be opened.
+      # @option attributes [Symbol] :request_queue The request queue object that queues Net::HTTP
+      #   requests for delivery. By deafult this is a `SizedQueue` of size `3`. Meaning once
+      #   3 requests are placed on the queue for delivery, back pressure will be applied. IF
+      #   you'd prefer to drop messages instead, pass a {DroppingSizedQueue}. See examples for
+      #   an example.
+      # @option attributes [Symbol] :timber_url The Timber URL to delivery the log lines. The
+      #   default is set via {TIMBER_URL}.
       #
       # @example Basic usage
       #   Timber::Logger.new(Timber::LogDevices::HTTP.new("my_timber_api_key"))
       #
-      # @example Handling buffer overflows
-      #   # Persist overflowed lines to a file
-      #   # Note: You could write these to any permanent storage.
-      #   overflow_log_path = "/path/to/my/overflow_log.log"
-      #   overflow_handler = Proc.new { |log_line_msg| File.write(overflow_log_path, log_line_ms) }
+      # @example Dropping messages instead of applying back pressure
       #   http_log_device = Timber::LogDevices::HTTP.new("my_timber_api_key",
-      #     buffer_overflow_handler: overflow_handler)
+      #     request_queue: Timber::LogDevices::HTTP::DroppingSizedQueue.new(3))
       #   Timber::Logger.new(http_log_device)
       def initialize(api_key, options = {})
-        @debug = options[:debug] || ENV['debug']
         @api_key = api_key
+        @debug = options[:debug] || ENV['debug']
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
-        @batch_byte_size = opts[:batch_byte_size] || 3_000_000 # 3mb
-        @flush_interval = opts[:flush_interval] || 2 # 2 seconds
-        @requests_per_conn = opts[:requests_per_conn] || 1_000
+        @batch_byte_size = options[:batch_byte_size] || 3_000_000 # 3mb
+        @flush_interval = options[:flush_interval] || 2 # 2 seconds
+        @requests_per_conn = options[:requests_per_conn] || 1_000
         @msg_queue = LogMsgQueue.new(@batch_byte_size)
-        @request_queue = opts[:request_queue] || SizedQueue.new(3)
+        @request_queue = options[:request_queue] || SizedQueue.new(3)
 
         @outlet_thread = Thread.new { outlet }
         @flush_thread = Thread.new { intervaled_flush }
@@ -127,8 +137,8 @@ module Timber
 
       # Closes the log device, cleans up, and attempts one last delivery.
       def close
-        @outlet_thread.kill
         @flush_thread.kill
+        @outlet_thread.kill
         flush
       end
 
@@ -146,7 +156,7 @@ module Timber
             body << msg
           end
 
-          req = Net::HTTP::Post.new(@logplex_url.path)
+          req = Net::HTTP::Post.new(@timber_url.path)
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
@@ -156,9 +166,13 @@ module Timber
         end
 
         def intervaled_flush
+          # Wait specified time period before starting
+          sleep @flush_interval
           loop do
             begin
-              flush if interval_ready?
+              if intervaled_flush_ready?
+                flush
+              end
               sleep(0.1)
             rescue Exception => e
               logger.error("Timber intervaled flush failed: #{e.inspect}")
@@ -166,7 +180,7 @@ module Timber
           end
         end
 
-        def interval_flush_ready?
+        def intervaled_flush_ready?
           @last_flush.nil? || (Time.now.to_f - @last_flush.to_f).abs >= @flush_interval
         end
 
