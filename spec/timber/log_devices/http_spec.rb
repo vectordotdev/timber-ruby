@@ -2,13 +2,12 @@ require "spec_helper"
 
 describe Timber::LogDevices::HTTP do
   describe "#initialize" do
-    it "should start a intervaled flush thread and delivery" do
+    it "should initialize properly" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
-      expect(http).to receive(:flush).at_least(1).times
       thread = http.instance_variable_get(:@flush_thread)
       expect(thread).to be_alive
-      http.write("my log message")
-      sleep 0.5 # too fast!
+      thread = http.instance_variable_get(:@flush_thread)
+      expect(thread).to be_alive
     end
   end
 
@@ -54,34 +53,52 @@ describe Timber::LogDevices::HTTP do
     end
   end
 
-  # describe "#deliver" do
-  #   let(:http) { described_class.new("MYKEY") }
+  # Testing a private method because it helps break down our tests
+  describe "#flush" do
+    it "should add a request to the queue" do
+      http = described_class.new("MYKEY", threads: false)
+      http.write("This is a log message")
+      http.send(:flush)
+      request_queue = http.instance_variable_get(:@request_queue)
+      request = request_queue.deq
+      expect(request).to be_kind_of(Net::HTTP::Post)
+      expect(request.body).to eq("This is a log message")
 
-  #   after(:each) { http.close }
+      message_queue = http.instance_variable_get(:@msg_queue)
+      expect(message_queue.size).to eq(0)
+    end
+  end
 
-  #   it "should delivery properly and flush the buffer" do
-  #     stub = stub_request(:post, "https://logs.timber.io/frames").
-  #       with(
-  #         :body => "test log message",
-  #         :headers => {
-  #           'Authorization' => 'Basic TVlLRVk=',
-  #           'Connection' => 'keep-alive',
-  #           'Content-Type' => 'application/x-timber-msgpack-frame-1',
-  #           'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
-  #         }
-  #       ).
-  #       to_return(:status => 200, :body => "", :headers => {})
+  # Testing a private method because it helps break down our tests
+  describe "#intervaled_flush" do
+    it "should start a intervaled flush thread and flush on an interval" do
+      http = described_class.new("MYKEY", flush_interval: 0.1)
+      expect(http).to receive(:flush).exactly(1).times
+      sleep 0.15 # too fast!
+      mock = expect(http).to receive(:flush).exactly(1).times
+      sleep 0.15 # too fast!
+    end
+  end
 
-  #     http.write("test log message")
-  #     buffer = http.instance_variable_get(:@buffer)
-  #     buffers = buffer.instance_variable_get(:@buffers)
-  #     expect(buffers.size).to eq(1)
-  #     body = buffer.reserve
-  #     thread = http.send(:deliver, body)
-  #     thread.join
+  # Outlet
+  describe "#outlet" do
+    it "should start a intervaled flush thread and flush on an interval" do
+      stub = stub_request(:post, "https://logs.timber.io/frames").
+        with(
+          :body => 'test log message',
+          :headers => {
+            'Authorization' => 'Basic TVlLRVk=',
+            'Content-Type' => 'application/x-timber-msgpack-frame-1',
+            'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
+          }
+        ).
+        to_return(:status => 200, :body => "", :headers => {})
 
-  #     expect(stub).to have_been_requested.times(1)
-  #     expect(buffers.size).to eq(0)
-  #   end
-  # end
+      http = described_class.new("MYKEY", flush_interval: 0.1)
+      http.write("test log message")
+      sleep 0.2
+
+      expect(stub).to have_been_requested.times(1)
+    end
+  end
 end

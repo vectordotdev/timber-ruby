@@ -42,6 +42,10 @@ module Timber
             @bytesize >= @max_bytes
           end
         end
+
+        def size
+          @array.size
+        end
       end
 
       # Works like SizedQueue, but drops message instead of blocking. Pass one of these in
@@ -120,9 +124,12 @@ module Timber
         @requests_per_conn = options[:requests_per_conn] || 1_000
         @msg_queue = LogMsgQueue.new(@batch_byte_size)
         @request_queue = options[:request_queue] || SizedQueue.new(3)
+        @req_in_flight = 0
 
-        @outlet_thread = Thread.new { outlet }
-        @flush_thread = Thread.new { intervaled_flush }
+        if options[:threads] != false
+          @outlet_thread = Thread.new { outlet }
+          @flush_thread = Thread.new { intervaled_flush }
+        end
       end
 
       # Write a new log line message to the buffer, and deliver if the msg exceeds the
@@ -137,8 +144,8 @@ module Timber
 
       # Closes the log device, cleans up, and attempts one last delivery.
       def close
-        @flush_thread.kill
-        @outlet_thread.kill
+        @flush_thread.kill if @flush_thread
+        @outlet_thread.kill if @outlet_thread
         flush
       end
 
@@ -186,7 +193,7 @@ module Timber
 
         def outlet
           loop do
-            http = Net::HTTP.new(API_URI.host, API_URI.port)
+            http = Net::HTTP.new(@timber_url.host, @timber_url.port)
             http.set_debug_output(logger) if debug?
             http.use_ssl = true if @timber_url.scheme == 'https'
             http.read_timeout = 30
@@ -196,7 +203,7 @@ module Timber
             begin
               http.start do |conn|
                 num_reqs = 0
-                while num_reqs < @max_reqs_per_conn
+                while num_reqs < @requests_per_conn
                   #Blocks waiting for a request.
                   req = @request_queue.deq
                   @req_in_flight += 1
@@ -210,7 +217,7 @@ module Timber
                     @req_in_flight -= 1
                   end
                   num_reqs += 1
-                  logger.info("Time request successful: #{resp.code}") if debug?
+                  logger.info("Timber request successful: #{resp.code}") if debug?
                 end
               end
             rescue => e

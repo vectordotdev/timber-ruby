@@ -10,8 +10,12 @@
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
 
+**Timber is in beta testing. If interested, please email beta@timber.io**
+
+
 1. [What is timber?](#what-is-timber)
-2. [Why timber?](#why-timber)
+2. [How it works](#how-it-works)
+3. [Why timber?](#why-timber)
 4. [Logging Custom Events](#logging-custom-events)
 5. [The Timber Console / Pricing](#the-timber-console--pricing)
 6. [Install](#install)
@@ -19,11 +23,22 @@
 
 ## What is Timber?
 
-[Timber](http://timber.io) is a different kind of logging platform; it goes beyond traditional
-logging by automatically enriching your logs with application level metadata, turning them
-into rich, structured events without altering the essence of logging.
+Using your logs shouldn't be a time consuming, frustrating process! If you were like us, it goes
+something like this:
 
-For example, it turns this:
+> How do I access my logs? Which provider should I use? Why is it so expensive?
+> Why is searching so difficult and time consuming? Should I structure my logs? Which format
+> should I use? Will they still be human readable? What if the structure changes? What about logs
+> from 3rd party libraries? Ahhh!!!
+
+Timber solves this by providing a complete, managed, end-to-end logging solution that marries
+a beautiful, *fast*, console with libraries that automatically structure and enrich your logs.
+
+
+## How it works
+
+The Timber ruby library takes care of all of the log structuring madness. For example,
+it turns this Rails log line:
 
 ```
 Completed 200 OK in 117ms (Views: 85.2ms | ActiveRecord: 25.3ms)
@@ -58,8 +73,10 @@ Into this:
 }
 ```
 
-It does the same for `http requests`, `sql queries`, `exceptions`, `template renderings`,
-and any other event your framework logs.
+Notice we preserve the original log message. When viewing this event in the
+[Timber Console](https://timber.io), you'll see the simple, human readable line with the
+ability to view, and use, the attached structured data! Also, notice how rich the event is.
+Beecause we're inside your application, we can capture data beyond what's in the log line.
 
 (for a full list see [`Timber::Events`](lib/timber/events))
 
@@ -68,13 +85,14 @@ and any other event your framework logs.
 
 Glad you asked! :)
 
-1. It's application aware and enriches your logs with data you can't get otherwise.
-2. It defines a shared schema across all of our libraries. Meaning your log data, across all
-   applications, is normalized.
-3. It does not alter the original log message, giving you the best of both worlds: human
-   readable logs *and* rich structured events.
-4. It's completely transparent with absolutely no vendor lock-in or risk of code debt. It
-   does not introduce a special API, it's just good ol' loggin'.
+1. Human readable logs *and* rich structured data. You don't have to choose.
+2. Data beyond what's in the log line itself making your logs exceptionally useful.
+3. Normalized log data. Timber enforces a strict schema, meaning your log data, across all apps
+   and languages will be normalized.
+4. Absolutely no lock-in or risk of code debt. No fancy API, no proprietary data format locked
+   away in our servers, Timber is just good ol' loggin'.
+5. Fully managed, all the way from the log messages to the console you use. No fragile parsing
+   rules or complicated interfaces.
 
 
 ## Logging Custom Events
@@ -108,8 +126,8 @@ No mention of Timber anywhere!
 
 > What good is structured log data if you can't search and visualize it?
 
-Enter [the Timber Console](https://timber.io). It's a modern, fast, and beautiful console for
-searching and visualizing your logs.
+The [Timber Console](https://timber.io) is *fast*, modern, and beautiful console designed
+specifically for this library.
 
 A few example queries:
 
