@@ -108,4 +108,18 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
   end
+
+  describe described_class::MsgPackFormatter do
+    describe "#call" do
+      let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
+      it "should produce a message pack formatted message" do
+        formatter = described_class.new
+        result = formatter.call("INFO", time, nil, "this is a test message")
+        hash = {"level"=>"info", "dt"=>"2016-09-01T12:00:00.000000Z", "message"=>"this is a test message"}
+        expected = hash.to_msgpack + "\n"
+        expect(result).to eq(expected)
+      end
+    end
+  end
 end

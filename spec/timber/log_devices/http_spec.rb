@@ -85,19 +85,20 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
-          :body => 'test log message',
+          :body => "test log message 1test log message 2",
           :headers => {
             'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
-            'Content-Type' => 'application/x-timber-msgpack-frame-1',
+            'Content-Type' => 'application/x-timber-msgpack-frame-1; charset=ascii-8bit',
             'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
           }
         ).
         to_return(:status => 200, :body => "", :headers => {})
 
       http = described_class.new("MYKEY", flush_interval: 0.1)
-      http.write("test log message")
-      sleep 0.2
+      http.write("test log message 1")
+      http.write("test log message 2")
+      sleep 0.3
 
       expect(stub).to have_been_requested.times(1)
     end

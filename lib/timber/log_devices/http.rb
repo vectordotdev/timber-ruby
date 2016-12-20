@@ -70,7 +70,7 @@ module Timber
       end
 
       TIMBER_URL = "https://logs.timber.io/frames".freeze
-      CONTENT_TYPE = "application/x-timber-msgpack-frame-1".freeze
+      CONTENT_TYPE = "application/x-timber-msgpack-frame-1; charset=ascii-8bit".freeze
       USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
       DELIVERY_FREQUENCY_SECONDS = 2.freeze
       RETRY_LIMIT = 5.freeze

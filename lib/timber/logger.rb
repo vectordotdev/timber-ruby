@@ -140,7 +140,8 @@ module Timber
           begin
             msg.to_msgpack
           rescue NoMethodError
-            JSON.parse(JSON.generate(msg)).to_msgpack
+            json = JSON.generate(msg)
+            JSON.parse(json).to_msgpack
           end
         end
     end
