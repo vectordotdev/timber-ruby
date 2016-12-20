@@ -93,32 +93,8 @@ describe Timber::Logger, :rails_23 => true do
     context "with the HTTP log device" do
       let(:io) { Timber::LogDevices::HTTP.new("my_key") }
 
-      it "should use the msgpack formatter" do
-        expect(logger.formatter).to be_kind_of(Timber::Logger::MsgPackFormatter)
-      end
-
-      it "should log properly with the msgpack format" do
-        event = Timber::Events::Custom.new(
-          type: :payment_rejected,
-          message: "Payment rejected",
-          data: {customer_id: "abcd1234", amount: 100}
-        )
-        expect(io).to receive(:write).exactly(1).times
-        logger.error(event)
-      end
-    end
-  end
-
-  describe described_class::MsgPackFormatter do
-    describe "#call" do
-      let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
-
-      it "should produce a message pack formatted message" do
-        formatter = described_class.new
-        result = formatter.call("INFO", time, nil, "this is a test message")
-        hash = {"level"=>"info", "dt"=>"2016-09-01T12:00:00.000000Z", "message"=>"this is a test message"}
-        expected = hash.to_msgpack + "\n"
-        expect(result).to eq(expected)
+      it "should use the PassThroughFormatter" do
+        expect(logger.formatter).to be_kind_of(Timber::Logger::PassThroughFormatter)
       end
     end
   end

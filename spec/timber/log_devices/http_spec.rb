@@ -20,12 +20,11 @@ describe Timber::LogDevices::HTTP do
       expect(msg_queue.flush).to eq(["test log message"])
     end
 
-    context "with a low batch byte size" do
-      let(:http) { described_class.new("MYKEY", :batch_byte_size => 20) }
+    context "with a low batch size" do
+      let(:http) { described_class.new("MYKEY", :batch_size => 2) }
 
-      it "should attempt a delivery when the payload limit is exceeded" do
-        message = "a" * 19
-        http.write(message)
+      it "should attempt a delivery when the limit is exceeded" do
+        http.write("test")
         expect(http).to receive(:flush).exactly(1).times
         http.write("my log message")
       end
@@ -55,17 +54,29 @@ describe Timber::LogDevices::HTTP do
 
   # Testing a private method because it helps break down our tests
   describe "#flush" do
+    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
     it "should add a request to the queue" do
       http = described_class.new("MYKEY", threads: false)
-      http.write("This is a log message")
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry)
       http.send(:flush)
       request_queue = http.instance_variable_get(:@request_queue)
       request = request_queue.deq
       expect(request).to be_kind_of(Net::HTTP::Post)
-      expect(request.body).to eq("This is a log message")
+      expect(request.body).to eq("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".b)
 
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
+    end
+
+    it "should preserve formatting for mshpack payloads" do
+      http = described_class.new("MYKEY", threads: false)
+      http.write("This is a log message 1".to_msgpack)
+      http.write("This is a log message 2".to_msgpack)
+      http.send(:flush)
     end
   end
 
@@ -74,30 +85,34 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
       expect(http).to receive(:flush).exactly(1).times
-      sleep 0.15 # too fast!
+      sleep 0.12 # too fast!
       mock = expect(http).to receive(:flush).exactly(1).times
-      sleep 0.15 # too fast!
+      sleep 0.12 # too fast!
     end
   end
 
   # Outlet
   describe "#outlet" do
+    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
     it "should start a intervaled flush thread and flush on an interval" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
-          :body => "test log message 1test log message 2",
+          :body => "\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".b,
           :headers => {
             'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
-            'Content-Type' => 'application/x-timber-msgpack-frame-1; charset=ascii-8bit',
+            'Content-Type' => 'application/msgpack',
             'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
           }
         ).
         to_return(:status => 200, :body => "", :headers => {})
 
       http = described_class.new("MYKEY", flush_interval: 0.1)
-      http.write("test log message 1")
-      http.write("test log message 2")
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry)
       sleep 0.3
 
       expect(stub).to have_been_requested.times(1)

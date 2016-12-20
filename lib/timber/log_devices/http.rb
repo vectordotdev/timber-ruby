@@ -8,23 +8,15 @@ module Timber
     class HTTP
       # @private
       class LogMsgQueue
-        MAX_MSG_BYTES = 50_000 # 50kb
-
-        def initialize(max_bytes)
+        def initialize(max_size)
           @lock = Mutex.new
-          @max_bytes = max_bytes
+          @max_size = max_size
           @array = []
-          @bytesize = 0
         end
 
         def enqueue(msg)
-          if msg.bytesize > MAX_MSG_BYTES
-            raise ArgumentError.new("Log message exceeds the #{MAX_MSG_BYTES} bytes limit")
-          end
-
           @lock.synchronize do
             @array << msg
-            @bytesize += msg.bytesize
           end
         end
 
@@ -32,14 +24,13 @@ module Timber
           @lock.synchronize do
             old = @array
             @array = []
-            @bytesize = 0
             return old
           end
         end
 
         def full?
           @lock.synchronize do
-            @bytesize >= @max_bytes
+            size >= @max_size
           end
         end
 
@@ -70,7 +61,7 @@ module Timber
       end
 
       TIMBER_URL = "https://logs.timber.io/frames".freeze
-      CONTENT_TYPE = "application/x-timber-msgpack-frame-1; charset=ascii-8bit".freeze
+      CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
       DELIVERY_FREQUENCY_SECONDS = 2.freeze
       RETRY_LIMIT = 5.freeze
@@ -90,17 +81,17 @@ module Timber
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
       # @param [Hash] options the options to create a HTTP log device with.
-      # @option attributes [Symbol] :batch_byte_size Determines the maximum size in bytes for
-      #   each HTTP payload. If the buffer exceeds this limit a delivery will be attempted.
-      # @option attributes [Symbol] :debug Whether to print debug output or not. This is also
+      # @option attributes [Symbol] :batch_size (500) Determines the maximum of log lines in each HTTP
+      #   payload. If the queue exceeds this limit a HTTP request will be issued.
+      # @option attributes [Symbol] :debug (false) Whether to print debug output or not. This is also
       #   inferred from ENV['debug']. Output will be sent to `Timber::Config.logger`.
       # @option attributes [Symbol] :flush_interval (2) How often the client should
       #   attempt to deliver logs to the Timber API. The HTTP client buffers logs and this
       #   options represents how often that will happen, assuming `:batch_byte_size` is not met.
-      # @option attributes [Symbol] :requests_per_conn The number of requests to send over a
+      # @option attributes [Symbol] :requests_per_conn (1000) The number of requests to send over a
       #   single persistent connection. After this number is met, the connection will be closed
       #   and a new one will be opened.
-      # @option attributes [Symbol] :request_queue The request queue object that queues Net::HTTP
+      # @option attributes [Symbol] :request_queue (SizedQueue.new(3)) The request queue object that queues Net::HTTP
       #   requests for delivery. By deafult this is a `SizedQueue` of size `3`. Meaning once
       #   3 requests are placed on the queue for delivery, back pressure will be applied. IF
       #   you'd prefer to drop messages instead, pass a {DroppingSizedQueue}. See examples for
@@ -119,12 +110,12 @@ module Timber
         @api_key = api_key
         @debug = options[:debug] || ENV['debug']
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
-        @batch_byte_size = options[:batch_byte_size] || 3_000_000 # 3mb
+        @batch_size = options[:batch_size] || 500
         @flush_interval = options[:flush_interval] || 2 # 2 seconds
         @requests_per_conn = options[:requests_per_conn] || 1_000
-        @msg_queue = LogMsgQueue.new(@batch_byte_size)
+        @msg_queue = LogMsgQueue.new(@batch_size)
         @request_queue = options[:request_queue] || SizedQueue.new(3)
-        @req_in_flight = 0
+        @requests_in_flight = 0
 
         if options[:threads] != false
           @outlet_thread = Thread.new { outlet }
@@ -158,17 +149,12 @@ module Timber
           msgs = @msg_queue.flush
           return if msgs.empty?
 
-          body = ""
-          msgs.each do |msg|
-            body << msg
-          end
-
           req = Net::HTTP::Post.new(@timber_url.path)
           req['Accept'] = "application/json"
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
-          req.body = body
+          req.body = msgs.to_msgpack
           @request_queue.enq(req)
           @last_flush = Time.now
         end
@@ -205,9 +191,9 @@ module Timber
               http.start do |conn|
                 num_reqs = 0
                 while num_reqs < @requests_per_conn
-                  #Blocks waiting for a request.
+                  # Blocks waiting for a request.
                   req = @request_queue.deq
-                  @req_in_flight += 1
+                  @requests_in_flight += 1
                   resp = nil
                   begin
                     resp = conn.request(req)
@@ -215,7 +201,7 @@ module Timber
                     logger.error("Timber request error: #{e.message}") if debug?
                     next
                   ensure
-                    @req_in_flight -= 1
+                    @requests_in_flight -= 1
                   end
                   num_reqs += 1
                   logger.info("Timber request successful: #{resp.code}") if debug?

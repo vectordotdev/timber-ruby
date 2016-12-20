@@ -119,31 +119,14 @@ module Timber
       end
     end
 
-    # Structures your log messages into JSON.
-    #
-    #   logger = Timber::Logger.new(STDOUT)
-    #   logger.formatter = Timber::JSONFormatter.new
-    #
-    # Example message:
-    #
-    #   {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00","message":"My log message"}
-    #
-    class MsgPackFormatter < Formatter
+    # Passes through the LogEntry object. This is specifically used for the {Timber::LogDevices::HTTP}
+    # class. This allows the IO device to format it however it wants. This is neccessary for
+    # MessagePack because it requires a fixed array size before encoding. And since HTTP is
+    # sending data in batches, the encoding should happen there.
+    class PassThroughFormatter < Formatter
       def call(severity, time, progname, msg)
-        # use << for concatenation for performance reasons
-        hash = build_log_entry(severity, time, progname, msg).as_json
-        to_msgpack(hash) << "\n"
+        build_log_entry(severity, time, progname, msg)
       end
-
-      private
-        def to_msgpack(msg)
-          begin
-            msg.to_msgpack
-          rescue NoMethodError
-            json = JSON.generate(msg)
-            JSON.parse(json).to_msgpack
-          end
-        end
     end
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
@@ -156,7 +139,7 @@ module Timber
     def initialize(*args)
       super(*args)
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
-        self.formatter = MsgPackFormatter.new
+        self.formatter = PassThroughFormatter.new
       else
         self.formatter = HybridFormatter.new
       end
@@ -165,7 +148,7 @@ module Timber
     def formatter=(value)
       if @dev.is_a?(Timber::LogDevices::HTTP)
         raise ArgumentError.new("The formatter cannot be changed when using the " +
-          "Timber::LogDevices::HTTP log device. The MsgPackFormatter must be used for proper " +
+          "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
       end
       super
