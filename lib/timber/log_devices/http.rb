@@ -188,10 +188,12 @@ module Timber
             http.open_timeout = 10
 
             begin
+              logger.info("Starting Timber HTTP connection") if debug?
               http.start do |conn|
                 num_reqs = 0
                 while num_reqs < @requests_per_conn
                   # Blocks waiting for a request.
+                  logger.info("Waiting on next Timber request") if debug?
                   req = @request_queue.deq
                   @requests_in_flight += 1
                   resp = nil
@@ -210,6 +212,7 @@ module Timber
             rescue => e
               logger.error("Timber request error: #{e.message}") if debug?
             ensure
+              logger.info("Finishing Timber HTTP connection") if debug?
               http.finish if http.started?
             end
           end
