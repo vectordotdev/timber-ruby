@@ -66,7 +66,7 @@ describe Timber::LogDevices::HTTP do
       request_queue = http.instance_variable_get(:@request_queue)
       request = request_queue.deq
       expect(request).to be_kind_of(Net::HTTP::Post)
-      expect(request.body).to eq("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".b)
+      expect(request.body).to eq("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".force_encoding("ASCII-8BIT"))
 
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
@@ -98,7 +98,7 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
-          :body => "\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".b,
+          :body => "\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 2".force_encoding("ASCII-8BIT"),
           :headers => {
             'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
