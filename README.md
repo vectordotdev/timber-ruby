@@ -32,10 +32,10 @@ and often fruitless process. If you were like us, it went something like this:
 > Which format should I use? Will they still be human readable?
 > What if the structure changes? What about logs from 3rd party libraries? Ahhh!!!
 
-Timber solves all of these questions by providing a complete, managed, end-to-end logging solution
+Timber answers all of these questions by providing a complete, managed, end-to-end logging solution
 that marries a [beautiful, *fast*, console](https://timber.io) with libraries that automatically
 structure and enrich your logs. Timber doesn't just parse your logs and make the best of it, it
-improves the entire logging process, all the way to the log messages.
+improves the entire logging process, all the way to the messages logged.
 
 
 ## How it works
