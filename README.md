@@ -9,9 +9,9 @@
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
-
-**Timber is in beta testing. If interested, please email beta@timber.io**
-
+<p align="center">
+### **Timber is in beta testing. If interested, please email beta@timber.io**
+</p>
 
 1. [What is timber?](#what-is-timber)
 2. [How it works](#how-it-works)
@@ -23,16 +23,19 @@
 
 ## What is Timber?
 
-Using your logs shouldn't be a time consuming and frustrating process. If you were like us, it goes
-something like this:
+Accessing our application logs used to make us cringe. It was a time consuming, frustrating,
+and often fruitless process. If you were like us, it went something like this:
 
-> I need to access my logs, where should I send them? Which provider should I use?
-> Why is this so expensive? Why is searching so difficult? Would structuring my logs help?
-> Which format should I use? Will they still be human readable? What if the structure changes?
-> What about logs from 3rd party libraries? Why is this taking so much time and effort? Ahhh!!!
+> I need to access my logs; I should centralize them. Where should I send them?
+> Which provider should I use? Why is this so expensive? Wow, my logs are a mess.
+> Why can't I search based on attributes? Would structuring my logs help?
+> Which format should I use? Will they still be human readable?
+> What if the structure changes? What about logs from 3rd party libraries? Ahhh!!!
 
-Timber solves this by providing a complete, managed, end-to-end logging solution that marries
-a beautiful, *fast*, console with libraries that automatically structure and enrich your logs.
+Timber solves all of these questions by providing a complete, managed, end-to-end logging solution
+that marries a [beautiful, *fast*, console](https://timber.io) with libraries that automatically
+structure and enrich your logs. Timber doesn't just parse your logs and make the best of it, it
+improves the entire logging process, all the way to the log messages.
 
 
 ## How it works
