@@ -5,7 +5,7 @@ module Timber
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
         config.before_initialize do
-          Probes.insert!()
+          Probes.insert!
           Timber::Frameworks::Rails.insert_middlewares(config.app_middleware)
         end
       end
