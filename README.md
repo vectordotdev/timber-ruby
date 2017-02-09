@@ -162,6 +162,41 @@ gem 'timber'
 ```
 
 
+## Setup
+
+<details><summary><strong>Rails >= 3.0</strong></summary><p>
+
+```ruby
+# config/environments/production.rb (or staging, etc)
+config.logger = Timber::Logger.new(STDOUT)
+```
+
+Are you using Rails tagged logging? If so, use this instead:
+
+```ruby
+# config/environments/production.rb (or staging, etc)
+config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+```
+
+</p></details>
+
+<details><summary><strong>Other</strong></summary><p>
+
+1. *Insert* the Timber probes:
+
+  ```ruby
+  Timber::Probes.insert!(config.app_middleware)
+  ```
+
+2. *Instantiate* the Timber logger:
+
+  ```ruby
+  logger = Timber::Logger.new(STDOUT)
+  ```
+
+</p></details>
+
+
 ## Send your logs
 
 <details><summary><strong>Heroku (log drains)</strong></summary><p>
@@ -189,20 +224,23 @@ gem 'timber'
 
 <details><summary><strong>All other platforms (Network / HTTP)</strong></summary><p>
 
-1. *Add* the Timber logger in `config/environments/production.rb`:
+1. *Use* the Timber HTTP logger backend in `config/environments/production.rb`:
+
+  Above, when you instantiated your logger, simply replace `STDOUT` with the HTTP log device.
+  For example:
 
   ```ruby
   # config/environments/production.rb (or staging, etc)
-  log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_LOGS_KEY'])
-  config.logger = Timber::Logger.new(log_device)
+  network_log_device = Timber::LogDevices::Network.new(ENV['TIMBER_LOGS_KEY'])
+  config.logger = Timber::Logger.new(network_log_device)
   ```
+
+  * Note: we use the `Network` transport so that we can upgrade protocols in the future if we
+    deem it more efficient. For example, TCP. If you want to use strictly HTTP, simply replace
+    `Timber::LogDevices::Network` with `Timber::LogDevices::HTTP`.
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
    Afterwards simply assign it to the `TIMBER_LOGS_KEY` environment variable.
-
-* Note: we use the `Network` transport so that we can upgrade protocols in the future if we
-  deem it more efficient. For example, TCP. If you want to use strictly HTTP, simply replace
-  `Timber.Transports.Network` with `Timber.Transports.HTTP`.
 
 ---
 
