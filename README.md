@@ -47,7 +47,7 @@ To extend the above description, Timber...
 
 <details><summary><strong><a name="test">What events does Timber capture & structure for me?</a></strong></summary><p>
 
-Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:
+<a name="test2">Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:</a>
 
 1. [Controller Call Event](lib/timber/events/controller_call.rb)
 2. [Exception Event](lib/timber/events/exception.rb)
