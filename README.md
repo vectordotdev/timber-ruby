@@ -18,7 +18,7 @@
 ---
 
 Timber is a complete, fully-managed, *structured* logging system that you can setup in
-minutes, not days. It pairs libraries that automatically structure your logs (like this one),
+minutes. It pairs libraries that automatically structure your logs (like this one),
 with a [beautiful modern console]() designed specifically for this data.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
