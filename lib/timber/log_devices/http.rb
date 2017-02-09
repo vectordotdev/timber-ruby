@@ -1,7 +1,7 @@
 module Timber
   module LogDevices
-    # A log device that buffers and delivers log messages over HTTPS to the Timber API.
-    # It uses batches, keep-alive connections, and messagepack to delivery logs with
+    # A highly efficient log device that buffers and delivers log messages over HTTPS to
+    # the Timber API. It uses batches, keep-alive connections, and msgpack to deliver logs with
     # high-throughput and little overhead.
     #
     # See {#initialize} for options and more details.
@@ -61,7 +61,7 @@ module Timber
       TIMBER_URL = "https://logs.timber.io/frames".freeze
       ACCEPT = "application/json".freeze
       CONTENT_TYPE = "application/msgpack".freeze
-      USER_AGENT = "Timber Ruby Gem/#{Timber::VERSION}".freeze
+      USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
 
       # Instantiates a new HTTP log device that can be passed to {Timber::Logger#initialize}.
@@ -77,8 +77,10 @@ module Timber
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
       # @param [Hash] options the options to create a HTTP log device with.
-      # @option attributes [Symbol] :batch_size (500) Determines the maximum of log lines in each HTTP
-      #   payload. If the queue exceeds this limit a HTTP request will be issued.
+      # @option attributes [Symbol] :batch_size (1000) Determines the maximum of log lines in
+      #   each HTTP payload. If the queue exceeds this limit an HTTP request will be issued. Bigger
+      #   payloads mean higher throughput, but also use more memory. Timber will not accept
+      #   payloads larger than 1mb.
       # @option attributes [Symbol] :debug (false) Whether to print debug output or not. This is also
       #   inferred from ENV['debug']. Output will be sent to `Timber::Config.logger`.
       # @option attributes [Symbol] :flush_interval (1) How often the client should
@@ -107,7 +109,7 @@ module Timber
         @api_key = api_key
         @debug = options[:debug] || ENV['debug']
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
-        @batch_size = options[:batch_size] || 500
+        @batch_size = options[:batch_size] || 1_000
         @flush_interval = options[:flush_interval] || 1 # 1 second
         @requests_per_conn = options[:requests_per_conn] || 2_500
         @msg_queue = LogMsgQueue.new(@batch_size)
@@ -144,6 +146,7 @@ module Timber
         end
 
         def flush
+          @last_flush = Time.now
           msgs = @msg_queue.flush
           return if msgs.empty?
 
@@ -154,7 +157,6 @@ module Timber
           req['User-Agent'] = USER_AGENT
           req.body = msgs.to_msgpack
           @request_queue.enq(req)
-          @last_flush = Time.now
         end
 
         def intervaled_flush
@@ -191,8 +193,12 @@ module Timber
               http.start do |conn|
                 num_reqs = 0
                 while num_reqs < @requests_per_conn
+                  if debug?
+                    logger.debug("Waiting on next Timber request")
+                    logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
+                  end
+
                   # Blocks waiting for a request.
-                  logger.debug("Waiting on next Timber request") if debug?
                   req = @request_queue.deq
                   @requests_in_flight += 1
                   resp = nil

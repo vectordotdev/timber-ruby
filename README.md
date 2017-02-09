@@ -9,9 +9,9 @@
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
-<p align="center">
-### **Timber is in beta testing. If interested, please email beta@timber.io**
-</p>
+<h4 align="center">
+  <strong>Timber is in beta testing. If interested, please email beta@timber.io</strong>
+</h4>
 
 1. [What is timber?](#what-is-timber)
 2. [How it works](#how-it-works)
@@ -22,6 +22,51 @@
 
 
 ## What is Timber?
+
+Timber is an all-encompassing logging solution built specifically for applications.
+No complicated interfaces, parsing rules, or setup. Just simple, highly tuned ruby
+logging that actually saves you time and makes you more productive.
+
+## How is Timber different?
+
+Timber was built specifically for application developers, not sys-ops engineers.
+It's focused, and it knows about your application and all of the event it generates.
+This means Timber can make assumptions and polish the experience in ways other's can't.
+This translates into a simple,
+
+polish the experience in ways other's cant.
+
+Timber was built specifically for applications with a focus on making your logs highly useful
+with as little setup as possible.
+
+
+
+Timber's fundamental difference is that it structures your
+logs from within your application, instead of being reactionary and parsing them.
+
+
+
+
+Timber is different approach to logging. It's all encompassing logging solution built specifically for applications. It
+turns your application logs into rich structured events and provides a beautiful and fast
+console
+
+no complicated interfaces, no brittle parsing rules, just simple straight forward logging
+that saves you time and makes you more productive.
+
+Timber is an all encompassing logging solution that makes logs useful. Logs
+that save you time and make you more productive, not the other way around.
+
+
+Timber is an all encompassing approach to logging: from the data being logged to the application
+used to access your logs.
+
+Timber was created out of frustration. Logging is awfully antiquated and not well suites for
+modern distributes parallelized applications.
+
+timber believes the usefulness of logging starts with the data being logged, not parsing.
+
+and provide a design designed to maximize productivity with this data structure.
 
 Accessing our application logs used to make us cringe. It was a time consuming, frustrating,
 and often fruitless process. If you were like us, it went something like this:
