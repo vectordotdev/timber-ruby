@@ -17,15 +17,16 @@
 
 ---
 
-* **[What is Timber?](#what-is-timber)**
-* **[What does Timber structure for me?](#what-events-does-timber-structure-for-me)**
+* **[Overview](#overview)**
 * **[Usage](#usage)**
 * **[Installation](#installation)**
-* **[Setup](#installation)**
+* **[Setup](#setup)**
 * **[Send your logs](#send-your-logs)**
 
 
-## What is Timber?
+## Overview
+
+<details><summary><strong>What is Timber?</strong></summary><p>
 
 Logs are amazingly useful...when they're structured. And unless you're a logging company,
 designing, implementing, and maintaining a structured logging strategy can be a major time sink.
@@ -48,8 +49,9 @@ To learn more, checkout out [timber.io](https://timber.io) or the
 ["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
 blog post.
 
+</p></details>
 
-## What does Timber structure for me?
+<details><summary><strong>What events does Timber structure for me?</strong></summary><p>
 
 Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:
 
@@ -75,6 +77,7 @@ logs written with in a specific request ID? Context achieves that:
 5. [User Context](lib/timber/contexts/user.rb)
 6. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
 
+</p></details>
 
 ## Usage
 
@@ -90,16 +93,14 @@ logger.info("My log message")
 
 <details><summary><strong>Custom events</strong></summary><p>
 
-1. Log a hash (simplest)
-
-  The simplest way to send an event and kick the tires:
+1. Log a Hash (simplest)
 
   ```ruby
   Logger.warn message: "Payment rejected", type: :payment_rejected,
   data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
   ```
 
-2. Log a struct (recommended)
+2. Log a Struct (recommended)
 
   Defining structs for your important events just feels oh so good :) It creates a strong contract
   with down stream consumers and gives you compile time guarantees.
@@ -126,8 +127,6 @@ request ID. Not just the lines that contain the value.
 
 1. Add a Hash (simplest)
 
-  The simplest way to add context is:
-
   ```ruby
   Timber::CurrentContext.with({type: :build, data: {version: "1.0.0"}}) do
     logger.info("This message will include the wrapped context")
@@ -136,7 +135,7 @@ request ID. Not just the lines that contain the value.
 
   This adds context data keyspaced by `build` within Timber.
 
-2. Add a struct (recommended)
+2. Add a Struct (recommended)
 
   Just like events, we recommend defining your custom contexts. It makes a stronger contract
   with downstream consumers.
@@ -168,6 +167,7 @@ gem 'timber'
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
+
 config.logger = Timber::Logger.new(STDOUT)
 ```
 
@@ -175,6 +175,7 @@ Are you using Rails tagged logging? If so, use this instead:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
+
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
 
@@ -201,22 +202,13 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 
 <details><summary><strong>Heroku (log drains)</strong></summary><p>
 
-1. *Add* the Timber logger in `config/environments/production.rb`:
+The recommended strategy for Heroku is to setup a
+[log drain](https://devcenter.heroku.com/articles/log-drains)<sup>1</sup>. To get your Timber log drain URL:
 
-  ```ruby
-  # config/environments/production.rb (or staging, etc)
-  config.logger = Timber::Logger.new(STDOUT)
-  ```
+**--> [Add your app to Timber](https://app.timber.io)**
 
-2. *Add* the Heroku log drain:
-
-  The recommended strategy for Heroku is to setup a
-  [log drain](https://devcenter.heroku.com/articles/log-drains). To get your Timber log drain URL:
-
-  **--> [Add your app to Timber](https://app.timber.io)**
-
-  *:information_desk_person: Note: for high volume apps Heroku log drains will drop messages. This
-  is true for any Heroku app, in which case we recommend the Network method below.*
+1. For high volume apps Heroku log drains will drop messages. This is true for any Heroku app,
+   in which case we recommend the Network method below.*
 
 ---
 
@@ -224,20 +216,13 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 
 <details><summary><strong>All other platforms (Network / HTTP)</strong></summary><p>
 
-1. *Use* the Timber HTTP logger backend in `config/environments/production.rb`:
-
-  Above, when you instantiated your logger, simply replace `STDOUT` with the HTTP log device.
-  For example:
+1. *Use* the Timber Network logger backend in `config/environments/production.rb`:
 
   ```ruby
   # config/environments/production.rb (or staging, etc)
   network_log_device = Timber::LogDevices::Network.new(ENV['TIMBER_LOGS_KEY'])
-  config.logger = Timber::Logger.new(network_log_device)
+  config.logger = Timber::Logger.new(network_log_device) # <-- Use network_log_device instead of STDOUT
   ```
-
-  * Note: we use the `Network` transport so that we can upgrade protocols in the future if we
-    deem it more efficient. For example, TCP. If you want to use strictly HTTP, simply replace
-    `Timber::LogDevices::Network` with `Timber::LogDevices::HTTP`.
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
    Afterwards simply assign it to the `TIMBER_LOGS_KEY` environment variable.
