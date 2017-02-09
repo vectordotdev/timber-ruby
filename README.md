@@ -32,7 +32,7 @@ blog post.
 
 To extend the above description, Timber...
 
-1. Automatically structures your framework and 3rd party logs ([see below](#what-events-does-timber-structure-for-me)).
+1. Automatically structures your framework and 3rd party logs (see next question).
 2. Provides a [framework for logging custom events](#what-about-custom-events).
 3. Does not lock you in with a special API or closed data. Just better logging.
 4. Defines a [normalized log schema](https://github.com/timberio/log-event-json-schema) across *all* of your apps. Implemented by [our libraries](https://github.com/timberio).
@@ -45,7 +45,7 @@ To extend the above description, Timber...
 
 </p></details>
 
-<details><summary><strong>What events does Timber capture / structure for me?</strong></summary><p>
+<details><summary><strong><a name="test">What events does Timber capture & structure for me?</a></strong></summary><p>
 
 Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:
 
