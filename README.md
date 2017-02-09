@@ -17,22 +17,20 @@
 
 ---
 
-* **[Overview](#overview)**
-* **[Usage](#usage)**
-* **[Installation](#installation)**
-* **[Setup](#setup)**
-* **[Send your logs](#send-your-logs)**
+Timber is a fully-managed, end-to-end, *structured* logging strategy. It pairs a modern beautiful
+console with libraries that automatically structure your logs, allowing you to achieve high
+quality structured logging without the lengthy setup and overhead.
+
+To learn more, checkout out [timber.io](https://timber.io) or the
+["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
+blog post.
 
 
 ## Overview
 
 <details><summary><strong>What is Timber?</strong></summary><p>
 
-Logs are amazingly useful...when they're structured. And unless you're a logging company,
-designing, implementing, and maintaining a structured logging strategy can be a major time sink.
-
-Timber gives you this *today*, allowing you to spend time on your app, not logging. Specifically,
-Timber is a thoughtful, carefully crafted, fully-managed, *structured* logging strategy that...
+To extend the above description, Timber...
 
 1. Automatically structures your framework and 3rd party logs ([see below](#what-events-does-timber-structure-for-me)).
 2. Provides a [framework for logging custom events](#what-about-custom-events).
@@ -45,11 +43,12 @@ Timber is a thoughtful, carefully crafted, fully-managed, *structured* logging s
 9. Offers 11 9s of durability.
 10. ...and so much more!
 
-To learn more, checkout out [timber.io](https://timber.io) or the
-["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
-blog post.
+</p></details>
+
+<details><summary><strong>Example log line</strong></summary><p>
 
 </p></details>
+
 
 <details><summary><strong>What events does Timber structure for me?</strong></summary><p>
 
