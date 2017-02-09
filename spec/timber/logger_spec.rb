@@ -45,20 +45,20 @@ describe Timber::Logger, :rails_23 => true do
         message = {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
         expect(Timber::Events).to receive(:build).with(message).and_call_original
         logger.info(message)
-        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}\n")
+        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}}\n")
       end
 
       it "should log properly when an event is passed" do
         message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
         logger.info(message)
-        expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}}}\n")
+        expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}}}}\n")
       end
 
       it "should allow functions" do
         logger.info do
           {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
         end
-        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}\n")
+        expect(io.string).to eq("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}}\n")
       end
 
       it "should escape new lines" do
@@ -85,7 +85,7 @@ describe Timber::Logger, :rails_23 => true do
           logger.tagged("tag") do
             logger.info(message)
           end
-          expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}},\"context\":{\"tags\":[\"tag\"]}}\n")
+          expect(io.string).to eq("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}}},\"context\":{\"tags\":[\"tag\"]}}\n")
         end
       end
     end

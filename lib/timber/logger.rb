@@ -13,12 +13,15 @@ module Timber
   # @example Basic example (the original ::Logger interface remains untouched):
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
-  # @example Using a map
+  # @example Using a Hash
   #   # The :message, :type, and :data keys are required
+  #   # :type is the namespace used in timber for the :data
   #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
   #
   # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
+  #     # `#message` and `#type` are required, otherwise they will not be logged properly.
+  #     # `#type` is the namespace used in timber for the struct data
   #     def message; "Payment rejected for #{customer_id}"; end
   #     def type; :payment_rejected; end
   #   end
@@ -72,12 +75,12 @@ module Timber
       private
         def build_log_entry(severity, time, progname, msg)
           level = SEVERITY_MAP.fetch(severity)
-          context = CurrentContext.instance.snapshot
+          context_snapshot = CurrentContext.instance.snapshot
           event = Events.build(msg)
           if event
-            LogEntry.new(level, time, progname, event.message, context, event)
+            LogEntry.new(level, time, progname, event.message, context_snapshot, event)
           else
-            LogEntry.new(level, time, progname, msg, context, nil)
+            LogEntry.new(level, time, progname, msg, context_snapshot, nil)
           end
         end
     end
