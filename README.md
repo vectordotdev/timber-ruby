@@ -17,9 +17,9 @@
 
 ---
 
-Timber is a fully-managed, end-to-end, *structured* logging strategy. It pairs a modern beautiful
-console with libraries that automatically structure your logs, allowing you to realize
-[the benefits of structured logging]() without the lengthy setup and overhead.
+Timber is a complete, fully-managed, *structured* logging system that you can setup in
+minutes, not days. It pairs libraries that automatically structure your logs (like this one),
+with a [beautiful modern console]() designed specifically for this data.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
 ["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
@@ -28,7 +28,7 @@ blog post.
 
 ## Overview
 
-<details><summary><strong>What is Timber?</strong></summary><p>
+<details><summary><strong>What does Timber do?</strong></summary><p>
 
 To extend the above description, Timber...
 
@@ -45,11 +45,7 @@ To extend the above description, Timber...
 
 </p></details>
 
-<details><summary><strong>Example log line</strong></summary><p>
-
-</p></details>
-
-<details><summary><strong>What events does Timber structure for me?</strong></summary><p>
+<details><summary><strong>What events does Timber capture / structure for me?</strong></summary><p>
 
 Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:
 
@@ -74,6 +70,10 @@ logs written with in a specific request ID? Context achieves that:
 5. [Runtime Context](lib/timber/contexts/runtime.rb)
 5. [User Context](lib/timber/contexts/user.rb)
 6. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
+
+</p></details>
+
+<details><summary><strong>How does Timber captire these events?</strong></summary><p>
 
 </p></details>
 
