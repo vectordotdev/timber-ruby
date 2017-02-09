@@ -19,10 +19,10 @@
 
 Timber is a complete, fully-managed, *structured* logging system that you can setup in
 minutes. It pairs libraries that automatically structure your logs (like this one),
-with a [beautiful modern console]() designed specifically for this data.
+with a [beautiful modern console](https://timber.io) designed specifically for this data.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
-["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
+["why we built Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
 blog post.
 
 
@@ -45,9 +45,9 @@ To extend the above description, Timber...
 
 </p></details>
 
-<details><summary><strong><a name="test">What events does Timber capture & structure for me?</a></strong></summary><p>
+<details><summary><strong>What events does Timber capture & structure for me?</strong></summary><p>
 
-<a name="test2">Out of the box you get everything in the [`Timber.Events`](lib/timber/events) namespace:</a>
+Out of the box you get everything in the [`Timber::Events`](lib/timber/events) namespace:
 
 1. [Controller Call Event](lib/timber/events/controller_call.rb)
 2. [Exception Event](lib/timber/events/exception.rb)
@@ -59,9 +59,9 @@ To extend the above description, Timber...
 8. [Template Render Event](lib/timber/events/template_render.rb)
 9. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
 
-We also add context to every log, everything in the [`Timber.Contexts`](lib/timber/contexts)
-namespace. Context is like join data for your logs. Have you ever wished you could search for all
-logs written with in a specific request ID? Context achieves that:
+We also add context to every log, everything in the [`Timber::Contexts`](lib/timber/contexts)
+namespace. Context is structured data representing the current environment when the log line was
+written. It is included in every log line. Think of it like join data for your logs:
 
 1. [HTTP Context](lib/timber/contexts/http.rb)
 2. [Organization Context](lib/timber/contexts/organization.rb)
@@ -73,9 +73,6 @@ logs written with in a specific request ID? Context achieves that:
 
 </p></details>
 
-<details><summary><strong>How does Timber captire these events?</strong></summary><p>
-
-</p></details>
 
 ## Usage
 
@@ -119,9 +116,11 @@ logger.info("My log message")
 
 <details><summary><strong>Custom contexts</strong></summary><p>
 
-Context is additional data shared across log lines. Think of it like join data. For example, the
-`http.request_id` is included in the context, allowing you to view all log lines related to that
-request ID. Not just the lines that contain the value.
+Context is structured data representing the current environment when the log line was written.
+It is included in every log line. Think of it like join data for your logs. For example, the
+`http.request_id` field is included in the context, allowing you to find all log lines related
+to that request ID, if desired. This is in contrast to *only* showing log lines that have this
+value contained.
 
 1. Add a Hash (simplest)
 
@@ -131,7 +130,7 @@ request ID. Not just the lines that contain the value.
   end
   ```
 
-  This adds context data keyspaced by `build` within Timber.
+  This adds data to the context keyspaced by `build`.
 
 2. Add a Struct (recommended)
 
@@ -183,11 +182,27 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 
 1. *Insert* the Timber probes:
 
+  This should be executed *immediately after* you have required your dependencies.
+
   ```ruby
-  Timber::Probes.insert!(config.app_middleware)
+  Timber::Probes.insert!
+  ```
+
+2. *Add* the Rack middlewares:
+
+  This should be included where you build your `Rack` application. Usually `config.ru`:
+
+  ```ruby
+  # Most likely config.ru
+
+  Timber::RackMiddlewares.middlewares.each do |m|
+    use m
+  end
   ```
 
 2. *Instantiate* the Timber logger:
+
+  This should be *globally* available to your application:
 
   ```ruby
   logger = Timber::Logger.new(STDOUT)
