@@ -7,7 +7,7 @@ module Timber
         def self.included(klass)
           klass.class_eval do
             protected
-              if klass.method_defined?(:started_request_message)
+              if klass.private_instance_methods.include?(:started_request_message) || klass.method_defined?(:started_request_message)
                 def started_request_message(request)
                   http_request_event(request)
                 end
