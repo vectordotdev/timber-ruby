@@ -9,7 +9,7 @@ module Timber
   # Namespace for all probes.
   # @private
   module Probes
-    def self.insert!(middleware, insert_before)
+    def self.insert!
       ActionControllerLogSubscriber.insert!
       ActionDispatchDebugExceptions.insert!
       ActionViewLogSubscriber.insert!

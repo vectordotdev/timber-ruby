@@ -6,7 +6,7 @@ module Timber
         config.timber = Config.instance
         config.before_initialize do
           Probes.insert!()
-          Rails.insert_middlewares(config.app_middleware)
+          Timber::Frameworks::Rails.insert_middlewares(config.app_middleware)
         end
       end
 
@@ -15,7 +15,9 @@ module Timber
         return true if middleware.instance_variable_defined?(var_name) && middleware.instance_variable_get(var_name) == true
         # Rails uses a proxy :/, so we need to do this instance variable hack
         middleware.instance_variable_set(var_name, true)
-        middleware.insert_before ::Rails::Rack::Logger, Middleware
+        Timber::RackMiddlewares.middlewares.each do |m|
+          middleware.insert_before ::Rails::Rack::Logger, m
+        end
       end
     end
   end
