@@ -18,8 +18,8 @@
 ---
 
 Timber is a fully-managed, end-to-end, *structured* logging strategy. It pairs a modern beautiful
-console with libraries that automatically structure your logs, allowing you to achieve high
-quality structured logging without the lengthy setup and overhead.
+console with libraries that automatically structure your logs, allowing you to realize
+[the benefits of structured logging]() without the lengthy setup and overhead.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
 ["why we started Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
@@ -48,7 +48,6 @@ To extend the above description, Timber...
 <details><summary><strong>Example log line</strong></summary><p>
 
 </p></details>
-
 
 <details><summary><strong>What events does Timber structure for me?</strong></summary><p>
 
