@@ -21,6 +21,11 @@ module Timber
       @time = time.utc
       @progname = progname
       @message = message
+
+      context_snapshot = {} if context_snapshot.nil?
+      system_context = Contexts::System.new(pid: Process.pid)
+      context_snapshot[system_context.keyspace] = system_context.as_json
+
       @context_snapshot = context_snapshot
       @event = event
     end
@@ -51,7 +56,7 @@ module Timber
     end
 
     def to_json(options = {})
-      as_json(options).to_json
+      Util::Hash.compact(as_json(options)).to_json
     end
 
     def to_msgpack(*args)

@@ -51,8 +51,8 @@ describe Timber::Probes::ActionViewLogSubscriber do
           it "should log the controller call event" do
             allow_any_instance_of(Timber::Probes::ActionViewLogSubscriber::LogSubscriber).to receive(:logger).and_return(logger)
             dispatch_rails_request("/action_view_log_subscriber")
-            message = "  Rendered spec/support/rails/templates/template.html (0.0ms) @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/action_view_log_subscriber\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
-            expect(io.string).to eq(message)
+            expect(io.string).to start_with("  Rendered spec/support/rails/templates/template.html (0.0ms) @timber.io {\"level\":\"info\"")
+            expect(io.string).to include("\"event\":{\"server_side_app\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}}},")
           end
         end
       end

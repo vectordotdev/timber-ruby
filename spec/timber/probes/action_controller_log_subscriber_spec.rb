@@ -55,13 +55,12 @@ describe Timber::Probes::ActionControllerLogSubscriber do
             # Rails uses this to calculate the view runtime below
             allow(Benchmark).to receive(:ms).and_return(1).and_yield
             dispatch_rails_request("/log_subscriber")
-            message1 = <<-MSG
-              Processing by LogSubscriberController#index as HTML @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z","event":{"server_side_app":{"controller_call":{"controller":"LogSubscriberController","action":"index"}}},"context":{"http":{"method":"GET","path":"/log_subscriber","remote_addr":"123.456.789.10","request_id":"unique-request-id-1234"}}}
-            MSG
-            message2 = <<-MSG
-              Completed 200 OK in 0.0ms (Views: 1.0ms) @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z","event":{"server_side_app":{"http_response":{"status":200,"time_ms":0.0}}},"context":{"http":{"method":"GET","path":"/log_subscriber","remote_addr":"123.456.789.10","request_id":"unique-request-id-1234"}}}
-            MSG
-            expect(io.string).to eq(message1.strip + "\n" + message2.strip + "\n")
+            lines = io.string.split("\n")
+            expect(lines.length).to eq(2)
+            expect(lines[0]).to start_with('Processing by LogSubscriberController#index as HTML @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
+            expect(lines[0]).to include('"event":{"server_side_app":{"controller_call":{"controller":"LogSubscriberController","action":"index"}}}')
+            expect(lines[1]).to start_with('Completed 200 OK in 0.0ms (Views: 1.0ms) @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
+            expect(lines[1]).to include('"event":{"server_side_app":{"http_response":{"status":200,"time_ms":0.0}}}')
           end
         end
       end

@@ -11,7 +11,7 @@ module Timber
     end
 
     def to_json(options = {})
-      Util::Hash.compact(as_json).to_json(options)
+      as_json.to_json(options)
     end
 
     def to_msgpack(*args)

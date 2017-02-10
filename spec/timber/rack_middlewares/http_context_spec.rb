@@ -41,8 +41,7 @@ describe Timber::RackMiddlewares::HTTPContext do
       http_context = Thread.current[:_timber_context][:http]
 
       expect(http_context).to eq({:method=>"GET", :path=>"/rack_http", :remote_addr=>"123.456.789.10", :request_id=>"unique-request-id-1234"})
-      message = "Processing by RackHttpController#index as HTML @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"controller_call\":{\"controller\":\"RackHttpController\",\"action\":\"index\"}}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\nCompleted 200 OK in 0.0ms (Views: 1.0ms) @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"server_side_app\":{\"http_response\":{\"status\":200,\"time_ms\":0.0}}},\"context\":{\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}\n"
-      expect(io.string).to eq(message)
+      expect(io.string).to include("\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}")
     end
   end
 end
