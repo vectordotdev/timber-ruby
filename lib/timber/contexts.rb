@@ -1,6 +1,8 @@
 require "timber/contexts/custom"
 require "timber/contexts/http"
 require "timber/contexts/organization"
+require "timber/contexts/os_process"
+require "timber/contexts/runtime"
 require "timber/contexts/tags"
 require "timber/contexts/user"
 
