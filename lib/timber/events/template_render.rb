@@ -19,7 +19,7 @@ module Timber
       alias to_h to_hash
 
       def as_json(_options = {})
-        {:template_render => to_hash}
+        {:server_side_app => {:template_render => to_hash}}
       end
     end
   end

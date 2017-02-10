@@ -17,6 +17,7 @@ require "timber/log_devices"
 require "timber/log_entry"
 require "timber/logger"
 require "timber/probes"
+require "timber/rack_middlewares"
 
 # Load frameworks
 require "timber/frameworks"

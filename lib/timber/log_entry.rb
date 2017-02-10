@@ -4,21 +4,24 @@ module Timber
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
 
-    attr_reader :level, :time, :progname, :message, :context, :event
+    attr_reader :level, :time, :progname, :message, :context_snapshot, :event
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param severity [Integer] the log level / severity
     # @param time [Time] the exact time the log message was written
     # @param progname [String] the progname scope for the log message
-    # @param message [#to_json] structured data representing the log line event, this can
-    #   be anything that responds to #to_json
+    # @param message [String] Human readable log message.
+    # @param context_snapshot [Hash] structured data representing a snapshot of the context at
+    #   the given point in time.
+    # @param event [Timber.Event] structured data representing the log line event. This should be
+    #   an instance of `Timber.Event`.
     # @return [LogEntry] the resulting LogEntry object
-    def initialize(level, time, progname, message, context, event)
+    def initialize(level, time, progname, message, context_snapshot, event)
       @level = level
       @time = time.utc
       @progname = progname
       @message = message
-      @context = context
+      @context_snapshot = context_snapshot
       @event = event
     end
 
@@ -30,8 +33,8 @@ module Timber
         hash[:event] = event
       end
 
-      if !context.nil? && context.length > 0
-        hash[:context] = context
+      if !context_snapshot.nil? && context_snapshot.length > 0
+        hash[:context] = context_snapshot
       end
 
       if options[:only]

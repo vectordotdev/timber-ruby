@@ -67,8 +67,9 @@ module Timber
     #
     # @note Because context is included with every log line, it is recommended that you limit this
     #   to only neccessary data.
-    def add(*contexts)
-      contexts.each do |context|
+    def add(*objects)
+      objects.each do |object|
+        context = Contexts.build(object) # Normalizes objects into a Timber::Context descendant.
         key = context.keyspace
         json = context.as_json # Convert to json now so that we aren't doing it for every line
         if key == :custom

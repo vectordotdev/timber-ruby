@@ -1,12 +1,13 @@
 require "timber/events/controller_call"
 require "timber/events/custom"
 require "timber/events/exception"
-require "timber/events/http_request"
-require "timber/events/http_response"
+require "timber/events/http_server_request"
+require "timber/events/http_server_response"
 require "timber/events/sql_query"
 require "timber/events/template_render"
 
 module Timber
+  # Namespace for all Timber supported events.
   module Events
     # Protocol for casting objects into a `Timber::Event`.
     #

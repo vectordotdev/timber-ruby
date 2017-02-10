@@ -22,7 +22,7 @@ module Timber
       alias to_h to_hash
 
       def as_json(_options = {})
-        {:controller_call => to_hash}
+        {:server_side_app => {:controller_call => to_hash}}
       end
 
       def message

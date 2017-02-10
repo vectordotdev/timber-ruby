@@ -103,7 +103,7 @@ describe Timber::LogDevices::HTTP do
             'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
             'Content-Type' => 'application/msgpack',
-            'User-Agent' => "Timber Ruby Gem/#{Timber::VERSION}"
+            'User-Agent' => "Timber Ruby/#{Timber::VERSION} (HTTP)"
           }
         ).
         to_return(:status => 200, :body => "", :headers => {})

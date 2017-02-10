@@ -170,7 +170,7 @@ module Timber
               end
               sleep(0.1)
             rescue Exception => e
-              logger.error("Timber intervaled flush failed: #{e.inspect}")
+              logger.error("Timber intervaled flush failed: #{e.inspect}\n\n#{e.backtrace}")
             end
           end
         end

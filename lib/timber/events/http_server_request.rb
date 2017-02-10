@@ -32,7 +32,7 @@ module Timber
         hash = to_hash
         hash[:headers] = Util::Hash.compact(hash[:headers])
         hash = Util::Hash.compact(hash)
-        {:http_request => hash}
+        {:server_side_app => {:http_request => hash}}
       end
 
       def message
