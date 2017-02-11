@@ -217,6 +217,8 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 
 * Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app) for an example.
 
+---
+
 </p></details>
 
 <details><summary><strong>Other</strong></summary><p>
