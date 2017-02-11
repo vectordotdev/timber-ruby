@@ -207,19 +207,15 @@ gem 'timber'
 
 <details><summary><strong>Rails >= 3.0</strong></summary><p>
 
-```ruby
-# config/environments/production.rb (or staging, etc)
-
-config.logger = Timber::Logger.new(STDOUT)
-```
-
-Are you using Rails tagged logging? If so, use this instead:
+**Replace** any existing `config.logger=` calls with:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
 
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
+
+* Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app) for an example.
 
 </p></details>
 
@@ -281,6 +277,10 @@ The recommended strategy for Heroku is to setup a
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
    Afterwards simply assign it to the `TIMBER_LOGS_KEY` environment variable.
+
+---
+
+Need help? Head over to [] us on intercom or email [support@timber.io](mailto:support@timber.io)
 
 ---
 
