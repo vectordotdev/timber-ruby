@@ -18,9 +18,8 @@
 
 ---
 
-Timber is a complete, fully-managed, *structured* logging system that you can setup in
-minutes. It pairs libraries that automatically augment and structure your logs (like this one),
-with a [beautiful modern console](https://timber.io) designed specifically for this data.
+Timber is a complete, fully-managed, logging strategy that you can set up in minutes. It makes
+your application logs useful by taking a different, gentler, smarter approach to structured logging.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
 ["why we built Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
@@ -29,23 +28,32 @@ blog post.
 
 ## Overview
 
-<details><summary><strong>What does Timber do?</strong></summary><p>
+<details><summary><strong>How is Timber different?</strong></summary><p>
 
-To extend the above description, Timber...
+1. Timber structures your logs from within your application using libraries (like this one);
+   a fundamental difference from parsing that has [So. Many. Benefits.](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
+2. Timber does not alter the original log message. It structures your logs by *augmenting* them
+   with metadata. That is, it preserves the original log message and attaches structured data to
+   it. This means you get both: structured data *and* human readable logs.
+3. All log events adhere to a [normalized, shared, schema](https://github.com/timberio/log-event-json-schema).
+   Meaning you can interact with your logs consistently across apps of any language: queries,
+   graphs, alerts, and other downstream consumers. They all operate on the same schema.
+4. Timber poses no risk of lock-in or code-debt. There is no special client, no special API; Timber
+   adheres strictly to the default `::Logger` interface. On the surface, it's just logging.
+   And if you choose to stop using Timber, you can do so without having to alter your code.
+5. Timber manages the entire logging pipeline. From log creation (libraries like this one) to a
+   [beautiful modern console](https://timber.io) designed specifically for this data.
+   The whole process is designed to work in harmony.
+6. Lastly, Timber offers 6 months of retention by default, at sane prices. The data is encrypted
+   in-transit and at-rest, and we guarantee 11 9s of durability. :open_mouth:
+
+</p></details>
+
+<details><summary><strong>What does this Timber library do?</strong></summary><p>
 
 1. Automatically captures and structures your framework and 3rd party logs (see next question).
 2. Provides a [framework for logging custom structured events](#what-about-custom-events).
-3. Does not lock you in with a special API or closed data. Just better logging.
-4. Defines a [normalized log schema](https://github.com/timberio/log-event-json-schema) across
-   *all* of your apps. Implemented by [our libraries](https://github.com/timberio).
-5. Offers a [beautiful modern console](https://timber.io) designed specifically for this data.
-   Pre-configured and tuned out of the box.
-6. Gives you *6 months of retention*, by default.
-7. Does not charge you for the extra structured data we're encouraging here, only the core
-   log message.
-8. Encrypts your data in transit and at rest.
-9. Offers 11 9s of durability.
-10. ...and so much more!
+3. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
 
 </p></details>
 
@@ -59,7 +67,7 @@ Out of the box you get everything in the [`Timber::Events`](lib/timber/events) n
 4. [HTTP Client Response Event (resposne from net/http outgoing)](lib/timber/events/http_client_response.rb)
 5. [HTTP Server Request Event (incoming client request)](lib/timber/events/http_server_request.rb)
 6. [HTTP Server Response Event (response to incoming client request)](lib/timber/events/http_server_response.rb)
-7. [SQL Query Event](lib/timber/events/sql_query.ex)
+7. [SQL Query Event](lib/timber/events/sql_query.rb)
 8. [Template Render Event](lib/timber/events/template_render.rb)
 9. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
 
@@ -79,22 +87,19 @@ written. It is included in every log line. Think of it like join data for your l
 
 <details><summary><strong>What about my current log statements?</strong></summary><p>
 
-They'll continue to work as expected.
+They'll continue to work as expected. Timber adheres strictly to the default `::Logger` interface
+and will never deviate in *any* way.
 
-In fact, we encourage traditional log statements for non-meaningful events, debug statements, etc
-(see the "Basic Logging" example). Timber's mission isn't to make every log line structured. It's
-to make logging better by *adding* structure to the ones that matter. Timber still preserves
-the original human readable message.
+In fact, traditional log statements for non-meaningful events, debug statements, etc, are
+encouraged. In cases where the data is meaningful, consider [logging a custom event](#usage).
 
-It's also worth mentioning that Timber will *never* devitate from the public `::Logger`
-interface in *any* way. This ensures there is absolutely no risk of lock in or code debt.
-
+</p></details>
 
 ## Usage
 
 <details><summary><strong>Basic logging</strong></summary><p>
 
-Use the `Logger` as normal:
+Use `Logger` as normal:
 
 ```elixir
 logger.info("My log message")
@@ -106,11 +111,11 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
 
 <details><summary><strong>Custom events</strong></summary><p>
 
-1. Log a Hash (simplest)
+1. Log a structured Hash (simplest)
 
   ```ruby
   Logger.warn message: "Payment rejected", type: :payment_rejected,
-  data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+    data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
   ```
 
 2. Log a Struct (recommended)
@@ -126,9 +131,21 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
   Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
   ```
 
+* `:type` is how Timber classifies the event, it creates a namespace for the data you send.
 * For more advanced examples see [`Timber::Logger`](lib/timber.logger.rb).
-* Also, notice there are no special APIs, no risk of code-debt, and no lock-in. It's just better
-  logging.
+* Also, notice there is no mention of Timber in the above code. Just plain old logging.
+
+#### What about regular Hashes, JSON, or logfmt?
+
+Go for it! Timber will parse the data server side, but we *highly* recommend the above examples.
+Providing a `:type` allows timber to classify the event, create a namespace for the data you
+send, and make it easier to search, graph, alert, etc.
+
+```ruby
+logger.info({key: "value"})
+logger.info('{"key": "value"}')
+logger.info('key=value')
+```
 
 </p></details>
 
@@ -137,8 +154,8 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
 Context is structured data representing the current environment when the log line was written.
 It is included in every log line. Think of it like join data for your logs. For example, the
 `http.request_id` field is included in the context, allowing you to find all log lines related
-to that request ID, if desired. This is in contrast to *only* showing log lines that have this
-value contained.
+to that request ID, if desired. This is in contrast to *only* showing log lines that contain this
+value.
 
 1. Add a Hash (simplest)
 
