@@ -30,7 +30,7 @@ blog post.
 
 <details><summary><strong>How is Timber different?</strong></summary><p>
 
-1. Timber structures your logs from within your application using libraries (like this one);
+1. Timber structures your logs from *within* your application using libraries (like this one);
    a fundamental difference from parsing that has [So. Many. Benefits.](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
 2. Timber does not alter the original log message. It structures your logs by *augmenting* them
    with metadata. That is, it preserves the original log message and attaches structured data to
