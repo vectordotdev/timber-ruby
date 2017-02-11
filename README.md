@@ -207,7 +207,7 @@ gem 'timber'
 
 <details><summary><strong>Rails >= 3.0</strong></summary><p>
 
-**Replace** any existing `config.logger=` calls in `config/environments/production.rb`:
+*Replace* any existing `config.logger=` calls in `config/environments/production.rb`:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
@@ -215,7 +215,7 @@ gem 'timber'
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
 
-* Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app) for an example.
+* Prefer examples? Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app).
 
 ---
 
