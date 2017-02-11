@@ -216,12 +216,9 @@ config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 <details><summary><strong>Heroku (log drains)</strong></summary><p>
 
 The recommended strategy for Heroku is to setup a
-[log drain](https://devcenter.heroku.com/articles/log-drains)<sup>1</sup>. To get your Timber log drain URL:
+[log drain](https://devcenter.heroku.com/articles/log-drains). To get your Timber log drain URL:
 
 **--> [Add your app to Timber](https://app.timber.io)**
-
-1. For high volume apps Heroku log drains will drop messages. This is true for any Heroku app,
-   in which case we recommend the Network method below.*
 
 ---
 
