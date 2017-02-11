@@ -47,6 +47,8 @@ blog post.
 6. Lastly, Timber offers 6 months of retention by default, at sane prices. The data is encrypted
    in-transit and at-rest, and we guarantee 11 9s of durability. :open_mouth:
 
+---
+
 </p></details>
 
 <details><summary><strong>What does this Timber library do?</strong></summary><p>
@@ -54,6 +56,8 @@ blog post.
 1. Automatically captures and structures your framework and 3rd party logs (see next question).
 2. Provides a [framework for logging custom structured events](#what-about-custom-events).
 3. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
+
+---
 
 </p></details>
 
@@ -83,6 +87,8 @@ written. It is included in every log line. Think of it like join data for your l
 5. [User Context](lib/timber/contexts/user.rb)
 6. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
 
+---
+
 </p></details>
 
 <details><summary><strong>What about my current log statements?</strong></summary><p>
@@ -106,6 +112,8 @@ logger.info("My log message")
 ```
 
 Timber will never deviate from the public `::Logger` interface in *any* way.
+
+---
 
 </p></details>
 
@@ -146,6 +154,8 @@ logger.info({key: "value"})
 logger.info('{"key": "value"}')
 logger.info('key=value')
 ```
+
+---
 
 </p></details>
 
