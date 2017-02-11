@@ -13,12 +13,13 @@
 
 ---
 
-:point_right: **Timber is in beta testing, if interested in joining, please email us at [beta@timber.io](mailto:beta@timber.io)**
+:point_right: **Timber is in beta testing, if interested in joining, please email us at
+[beta@timber.io](mailto:beta@timber.io)**
 
 ---
 
 Timber is a complete, fully-managed, *structured* logging system that you can setup in
-minutes. It pairs libraries that automatically structure your logs (like this one),
+minutes. It pairs libraries that automatically augment and structure your logs (like this one),
 with a [beautiful modern console](https://timber.io) designed specifically for this data.
 
 To learn more, checkout out [timber.io](https://timber.io) or the
@@ -32,13 +33,16 @@ blog post.
 
 To extend the above description, Timber...
 
-1. Automatically structures your framework and 3rd party logs (see next question).
-2. Provides a [framework for logging custom events](#what-about-custom-events).
+1. Automatically captures and structures your framework and 3rd party logs (see next question).
+2. Provides a [framework for logging custom structured events](#what-about-custom-events).
 3. Does not lock you in with a special API or closed data. Just better logging.
-4. Defines a [normalized log schema](https://github.com/timberio/log-event-json-schema) across *all* of your apps. Implemented by [our libraries](https://github.com/timberio).
-5. Offers a [beautiful modern console](https://timber.io) designed specifically for this data. Pre-configured and tuned out of the box.
+4. Defines a [normalized log schema](https://github.com/timberio/log-event-json-schema) across
+   *all* of your apps. Implemented by [our libraries](https://github.com/timberio).
+5. Offers a [beautiful modern console](https://timber.io) designed specifically for this data.
+   Pre-configured and tuned out of the box.
 6. Gives you *6 months of retention*, by default.
-7. Does not charge you for the extra structured data we're encouraging here, only the core log message.
+7. Does not charge you for the extra structured data we're encouraging here, only the core
+   log message.
 8. Encrypts your data in transit and at rest.
 9. Offers 11 9s of durability.
 10. ...and so much more!
@@ -73,16 +77,30 @@ written. It is included in every log line. Think of it like join data for your l
 
 </p></details>
 
+<details><summary><strong>What about my current log statements?</strong></summary><p>
+
+They'll continue to work as expected.
+
+In fact, we encourage traditional log statements for non-meaningful events, debug statements, etc
+(see the "Basic Logging" example). Timber's mission isn't to make every log line structured. It's
+to make logging better by *adding* structure to the ones that matter. Timber still preserves
+the original human readable message.
+
+It's also worth mentioning that Timber will *never* devitate from the public `::Logger`
+interface in *any* way. This ensures there is absolutely no risk of lock in or code debt.
+
 
 ## Usage
 
 <details><summary><strong>Basic logging</strong></summary><p>
 
-No client, no special API, just use `Logger` as normal:
+Use the `Logger` as normal:
 
 ```elixir
 logger.info("My log message")
 ```
+
+Timber will never deviate from the public `::Logger` interface in *any* way.
 
 </p></details>
 
