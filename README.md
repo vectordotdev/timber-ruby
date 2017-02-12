@@ -215,7 +215,8 @@ gem 'timber'
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
 
-* Prefer examples? Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app).
+* Prefer examples? Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app),
+  you can see all changes by [search for "timber-change"](https://github.com/timberio/ruby-rails-example-app/search?utf8=%E2%9C%93&q=timber-change&type=Code).
 
 ---
 
@@ -278,13 +279,8 @@ The recommended strategy for Heroku is to setup a
   ```
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
-   Afterwards simply assign it to the `TIMBER_LOGS_KEY` environment variable.
 
----
-
-Need help? Head over to [] us on intercom or email [support@timber.io](mailto:support@timber.io)
-
----
+3. Assign your API key to the `TIMBER_LOGS_KEY` environment variable.
 
 </p></details>
 
