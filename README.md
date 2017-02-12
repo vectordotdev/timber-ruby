@@ -207,7 +207,7 @@ gem 'timber'
 
 <details><summary><strong>Rails >= 3.0</strong></summary><p>
 
-*Replace* any existing `config.logger=` calls in `config/environments/production.rb`:
+*Replace* any existing `config.logger=` calls in `config/environments/production.rb` with:
 
 ```ruby
 # config/environments/production.rb (or staging, etc)
