@@ -123,7 +123,7 @@ Use `Logger` as normal:
 ```elixir
 logger.info("My log message")
 
-# => My log message @timber.io {"level": "info", "context": {...}}
+# My log message @timber.io {"level": "info", "context": {...}}
 ```
 
 Timber will never deviate from the public `::Logger` interface in *any* way.
@@ -140,7 +140,7 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
   Logger.warn message: "Payment rejected", type: :payment_rejected,
     data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
-  # => Payment rejected @timber.io {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
+  # Payment rejected @timber.io {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
 
 2. Log a Struct (recommended)
@@ -155,7 +155,7 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
   end
   Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 
-  # => Payment rejected @timber.io {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
+  # Payment rejected @timber.io {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
 
 * `:type` is how Timber classifies the event, it creates a namespace for the data you send.
@@ -170,13 +170,13 @@ send, and make it easier to search, graph, alert, etc.
 
 ```ruby
 logger.info({key: "value"})
-# => {"key": "value"}
+# {"key": "value"}
 
 logger.info('{"key": "value"}')
-# => {"key": "value"}
+# {"key": "value"}
 
 logger.info('key=value')
-# => key=value
+# key=value
 ```
 
 ---
@@ -198,7 +198,7 @@ value.
     logger.info("My log message")
   end
 
-  # => My log message @timber.io {"level": "info", "context": {"build": {"version": "1.0.0"}}}
+  # My log message @timber.io {"level": "info", "context": {"build": {"version": "1.0.0"}}}
   ```
 
   This adds data to the context keyspaced by `build`.
@@ -217,7 +217,7 @@ value.
     logger.info("My log message")
   end
 
-  # => My log message @timber.io {"level": "info", "context": {"build": {"version": "1.0.0"}}}
+  # My log message @timber.io {"level": "info", "context": {"build": {"version": "1.0.0"}}}
   ```
 
 </p></details>
