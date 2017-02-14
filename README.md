@@ -1,4 +1,4 @@
-# :evergreen_tree: Timber - Master your Ruby apps with structured logging
+# Timber - Master your Ruby apps with structured logging
 
 <p align="center" style="background: #140f2a;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-header.gif" height="469" /></a>
