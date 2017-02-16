@@ -35,21 +35,18 @@ blog post.
 
 <details><summary><strong>What are the benefits of using Timber?</strong></summary><p>
 
-1. **Data quality.** The usefulness of your logs starts here. This is why we ship libraries like
-   this one; a fundamental difference from parsing. Timber maintains the entire process of
-   structuring your logs from *within* your application: from framework logs, to 3rd party logs,
-   to custom events. Moreover, Timber adds data that otherwise wouldn't be in the line; data you
-   can't obtain from parsing alone.
-2. **Human readability.** Structuring your logs usually means they become unreadable. Timber
-   *augments* your logs with structured data. Meaning we do not alter the original log message.
-   And in the Timber console, you'll see the humany-friendly message. Click the line, and you'll
-   get access to all of the structured data in a slide out panel. 😮
+1. **Data quality.** The usefulness of your logs starts here. This is why we ship libraries that
+   structure logs from *within* your application; a fundamental difference from parsing. Not only
+   is it much more stable, but we can include data you couldn't obtain otherwise.
+2. **Human readability.** Structuring your logs doesn't mean they have to be unreadable. Timber
+   *augments* your logs with structured data. Meaning we do not alter the original log message,
+   we simply attach metadata to it. And our console is specifically designed to give you access
+   to this data, without compromising readability. 😮
 3. **Reliable downstream consumption.** All log events adhere to a
    [normalized, shared, schema](https://github.com/timberio/log-event-json-schema) that follows
    [semantic versioning](http://semver.org/) and goes through a [standard release process](https://github.com/timberio/log-event-json-schema/releases).
-   This means you can rely on the structure of your logs and interact consistently with them
-   across apps of any language: queries, graphs, alerts, and other downstream consumers. No
-   surprises, less breakage, more reliability, happier developers. 😊
+   This means you can *rely* on the structure of your logs and interact consistently with them
+   across apps of any language: queries, graphs, alerts, and other downstream consumers.
 4. **Zero risk of code debt or lock-in.** Logging is a standard that has been around since the dawn
    of computers. It's built into every language, framework, and library. Timber adheres strictly
    to the default `Logger` interface. There are no special APIs, and no need to pepper your app
@@ -58,7 +55,6 @@ blog post.
 5. **Long term retention.** Timber is designed on modern big-data principles. As a result, we can
    offer 6+ months of retention at prices cheaper than alternatives offering <1 month.
    This allows you to unlock your logs for purposes beyond debugging.
-
 ---
 
 </p></details>
