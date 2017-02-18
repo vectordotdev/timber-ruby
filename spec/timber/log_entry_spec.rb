@@ -9,7 +9,7 @@ describe Timber::LogEntry, :rails_23 => true do
       context = {custom: Timber::Contexts::Custom.new(type: :context_type, data: {b: 1})}
       log_entry = described_class.new("INFO", time, nil, "log message", context, event)
       msgpack = log_entry.to_msgpack
-      expect(msgpack).to start_with("\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xABlog message".force_encoding("ASCII-8BIT"))
+      expect(msgpack).to start_with("\x86\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xABlog message\xA5event".force_encoding("ASCII-8BIT"))
     end
   end
 end

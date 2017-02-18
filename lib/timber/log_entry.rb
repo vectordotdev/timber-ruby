@@ -3,6 +3,7 @@ module Timber
   # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/1.2.2/schema.json".freeze
 
     attr_reader :level, :time, :progname, :message, :context_snapshot, :event
 
@@ -32,7 +33,7 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-      hash = {level: level, dt: formatted_dt, message: message}
+      hash = {:level => level, :dt => formatted_dt, :message => message}
 
       if !event.nil?
         hash[:event] = event
@@ -41,6 +42,8 @@ module Timber
       if !context_snapshot.nil? && context_snapshot.length > 0
         hash[:context] = context_snapshot
       end
+
+      hash[:"$schema"] = SCHEMA
 
       if options[:only]
         hash.select do |key, _value|
