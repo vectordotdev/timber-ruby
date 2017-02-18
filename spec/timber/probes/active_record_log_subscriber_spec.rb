@@ -36,12 +36,12 @@ describe Timber::Probes::ActiveRecordLogSubscriber do
 
           it "should log the sql query" do
             User.order("users.id DESC").all.collect # collect kicks the sql because it is lazily executed
-            message = "  \e[1m\e[36mUser Load (0.0ms)\e[0m  \e[1m\e[34mSELECT \"users\".* FROM \"users\" ORDER BY users.id DESC\e[0m @timber.io {\"level\":\"debug\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"SELECT \\\"users\\\".* FROM \\\"users\\\" ORDER BY users.id DESC\",\"time_ms\":0.0}}}\n"
+            message = "  \e[1m\e[36mUser Load (0.0ms)\e[0m  \e[1m\e[34mSELECT \"users\".* FROM \"users\" ORDER BY users.id DESC\e[0m @metadata {\"level\":\"debug\",\"dt\":\"2016-09-01T12:00:00.000000Z\",\"event\":{\"sql_query\":{\"sql\":\"SELECT \\\"users\\\".* FROM \\\"users\\\" ORDER BY users.id DESC\",\"time_ms\":0.0}}}\n"
             # Rails 4.X adds random spaces :/
             string = io.string.gsub("   ORDER BY", " ORDER BY")
             string = string.gsub("  ORDER BY", " ORDER BY")
             expect(string).to include("users.id DESC")
-            expect(string).to include("@timber.io")
+            expect(string).to include("@metadata")
             expect(string).to include("\"level\":\"debug\"")
             expect(string).to include("\"sql\":")
           end

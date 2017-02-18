@@ -57,9 +57,9 @@ describe Timber::Probes::ActionControllerLogSubscriber do
             dispatch_rails_request("/log_subscriber")
             lines = io.string.split("\n")
             expect(lines.length).to eq(2)
-            expect(lines[0]).to start_with('Processing by LogSubscriberController#index as HTML @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
+            expect(lines[0]).to start_with('Processing by LogSubscriberController#index as HTML @metadata {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
             expect(lines[0]).to include('"event":{"server_side_app":{"controller_call":{"controller":"LogSubscriberController","action":"index"}}}')
-            expect(lines[1]).to start_with('Completed 200 OK in 0.0ms (Views: 1.0ms) @timber.io {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
+            expect(lines[1]).to start_with('Completed 200 OK in 0.0ms (Views: 1.0ms) @metadata {"level":"info","dt":"2016-09-01T12:00:00.000000Z"')
             expect(lines[1]).to include('"event":{"server_side_app":{"http_response":{"status":200,"time_ms":0.0}}}')
           end
         end

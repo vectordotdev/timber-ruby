@@ -93,10 +93,10 @@ module Timber
     #
     # Example message:
     #
-    #   My log message @timber.io {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
+    #   My log message @metadata {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
     #
     class HybridFormatter < Formatter
-      METADATA_CALLOUT = "@timber.io".freeze
+      METADATA_CALLOUT = "@metadata".freeze
 
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
