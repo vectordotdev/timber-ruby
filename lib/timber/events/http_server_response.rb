@@ -9,7 +9,7 @@ module Timber
 
       def initialize(attributes)
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
-        @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
+        @time_ms = attributes[:time_ms].round(6) || raise(ArgumentError.new(":time_ms is required"))
         @additions = attributes[:additions]
       end
 
