@@ -297,6 +297,10 @@ gem 'timber'
 
 <details><summary><strong>Rails (all versions, including edge)</strong></summary><p>
 
+👉 Prefer examples? Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pulls/1)
+
+---
+
 *Replace* any existing `config.logger=` calls in `config/environments/production.rb` with:
 
 ```ruby
@@ -304,9 +308,6 @@ gem 'timber'
 
 config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
 ```
-
-* Prefer examples? Checkout our [Ruby / Rails example app](https://github.com/timberio/ruby-rails-example-app),
-  you can see all changes by [search for "timber-change"](https://github.com/timberio/ruby-rails-example-app/search?utf8=%E2%9C%93&q=timber-change&type=Code).
 
 ---
 
