@@ -9,7 +9,8 @@ module Timber
 
       def initialize(attributes)
         @sql = attributes[:sql] || raise(ArgumentError.new(":sql is required"))
-        @time_ms = attributes[:time_ms].round(6) || raise(ArgumentError.new(":time_ms is required"))
+        @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
+        @time_ms = @time_ms.round(6)
         @message = attributes[:message] || raise(ArgumentError.new(":message is required"))
       end
 

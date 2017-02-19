@@ -7,7 +7,8 @@ module Timber
       attr_reader :pid
 
       def initialize(attributes)
-        @pid = attributes[:pid]
+        @pid = attributes[:pid] || raise(ArgumentError.new(":pid is required"))
+        @pid = @pid.to_s
       end
 
       def as_json(_options = {})
