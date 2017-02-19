@@ -58,9 +58,9 @@ describe Timber::LogDevices::HTTP do
 
     it "should add a request to the queue" do
       http = described_class.new("MYKEY", threads: false)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil, [])
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
       http.write(log_entry)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil, [])
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry)
       http.send(:flush)
       request_queue = http.instance_variable_get(:@request_queue)
@@ -109,9 +109,9 @@ describe Timber::LogDevices::HTTP do
         to_return(:status => 200, :body => "", :headers => {})
 
       http = described_class.new("MYKEY", flush_interval: 0.1)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil, [])
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
       http.write(log_entry)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil, [])
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry)
       sleep 0.3
 

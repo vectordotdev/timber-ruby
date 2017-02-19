@@ -15,7 +15,7 @@ describe Timber::Logger, :rails_23 => true do
 
       it "should accept strings" do
         logger.info("this is a test")
-        expect(io.string).to start_with("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
+        expect(io.string).to start_with("this is a test @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
       end
 
       context "with a context" do
@@ -37,7 +37,7 @@ describe Timber::Logger, :rails_23 => true do
         it "should snapshot and include the context" do
           expect(Timber::CurrentContext.instance).to receive(:snapshot).and_call_original
           logger.info("this is a test")
-          expect(io.string).to start_with("this is a test @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
+          expect(io.string).to start_with("this is a test @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
           expect(io.string).to include("\"http\":{\"method\":\"POST\",\"path\":\"/checkout\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"abcd1234\"}")
         end
       end
@@ -46,28 +46,43 @@ describe Timber::Logger, :rails_23 => true do
         message = {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
         expect(Timber::Events).to receive(:build).with(message).and_call_original
         logger.info(message)
-        expect(io.string).to start_with("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
+        expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}")
       end
 
       it "should log properly when an event is passed" do
         message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
         logger.info(message)
-        expect(io.string).to start_with("select * from users @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
+        expect(io.string).to start_with("select * from users @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}}")
+      end
+
+      it "should allow :time_ms" do
+        logger.info(message: "event complete", time_ms: 54.5)
+        expect(io.string).to include("\"time_ms\":54.5")
+      end
+
+      it "should allow :tag" do
+        logger.info(message: "event complete", tag: "tag1")
+        expect(io.string).to include("\"tags\":[\"tag1\"]")
+      end
+
+      it "should allow :tags" do
+        logger.info(message: "event complete", tags: ["tag1", "tag2"])
+        expect(io.string).to include("\"tags\":[\"tag1\",\"tag2\"]")
       end
 
       it "should allow functions" do
         logger.info do
           {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
         end
-        expect(io.string).to start_with("payment rejected @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
+        expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}")
       end
 
       it "should escape new lines" do
         logger.info "first\nsecond"
-        expect(io.string).to start_with("first\\nsecond @timber.io")
+        expect(io.string).to start_with("first\\nsecond @metadata")
       end
     end
 

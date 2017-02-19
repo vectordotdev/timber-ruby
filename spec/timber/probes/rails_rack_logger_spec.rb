@@ -38,7 +38,7 @@ describe Timber::Probes::RailsRackLogger do
         allow(::Rails).to receive(:logger).and_return(logger) # Rails 3.2.X
         allow_any_instance_of(::Rails::Rack::Logger).to receive(:logger).and_return(logger)
         dispatch_rails_request("/rails_rack_logger")
-        expect(io.string).to start_with("Started GET \"/rails_rack_logger\" for 123.456.789.10 @timber.io {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
+        expect(io.string).to start_with("Started GET \"/rails_rack_logger\" for 123.456.789.10 @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"http_request\":{\"host\":\"example.org\",\"method\":\"GET\",\"path\":\"/rails_rack_logger\",\"port\":80,\"headers\":{\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}}}")
       end
     end
