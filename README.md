@@ -63,8 +63,9 @@ blog post.
 
 1. Captures and structures your framework and 3rd party logs. (see next question)
 2. Adds useful context to every log line. (see next question)
-3. Provides a [framework for logging custom structured events](#what-about-custom-events).
-4. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
+3. Allows you to easily add tags and timings to log.
+4. Provides a [framework for logging custom structured events](#what-about-custom-events).
+5. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
 
 ---
 
@@ -176,7 +177,7 @@ logger.info(message: "Task complete", tag: "my_task", time_ms: time_ms)
 # My log message @metadata {"level": "info", tags: ["my_task"], "time_ms": 54.2132, "context": {...}}
 ```
 
-* In the Timber console use the query: `tag:my_task time_ms>500`
+* In the Timber console use the query: `tags:my_task time_ms>500`
 * The Timber console will also display this value inline with your logs. No need to include it
   in the log message, but you certainly can if you'd prefer.
 
