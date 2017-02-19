@@ -294,7 +294,7 @@ gem 'timber'
 
 ## Setup
 
-<details><summary><strong>Rails</strong></summary><p>
+<details><summary><strong>Rails (all versions, including edge)</strong></summary><p>
 
 *Replace* any existing `config.logger=` calls in `config/environments/production.rb` with:
 
