@@ -134,6 +134,7 @@ Need a quick and easy way to identify a log? Use tags!:
 
 ```ruby
 logger.info(message: "My log message", tag: "tag")
+
 # My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
 ```
 
