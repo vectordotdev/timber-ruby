@@ -320,6 +320,6 @@ Checkout our [docs](https://timber.io/docs) for a comprehensive list of install 
 
 ---
 
-<p align="center" style="background: #140f2a;">
+<p align="center" style="background: #221f40;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
 </p>
