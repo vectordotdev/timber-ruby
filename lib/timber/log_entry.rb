@@ -3,8 +3,9 @@ module Timber
   # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/1.2.3/schema.json".freeze
 
-    attr_reader :level, :time, :progname, :message, :context_snapshot, :event
+    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param severity [Integer] the log level / severity
@@ -16,11 +17,12 @@ module Timber
     # @param event [Timber.Event] structured data representing the log line event. This should be
     #   an instance of `Timber.Event`.
     # @return [LogEntry] the resulting LogEntry object
-    def initialize(level, time, progname, message, context_snapshot, event)
+    def initialize(level, time, progname, message, context_snapshot, event, tags)
       @level = level
       @time = time.utc
       @progname = progname
       @message = message
+      @tags = tags
 
       context_snapshot = {} if context_snapshot.nil?
       system_context = Contexts::System.new(pid: Process.pid)
@@ -32,7 +34,7 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-      hash = {level: level, dt: formatted_dt, message: message}
+      hash = {:level => level, :dt => formatted_dt, :message => message, :tags => tags}
 
       if !event.nil?
         hash[:event] = event
@@ -42,7 +44,9 @@ module Timber
         hash[:context] = context_snapshot
       end
 
-      if options[:only]
+      hash[:"$schema"] = SCHEMA
+
+      hash = if options[:only]
         hash.select do |key, _value|
           options[:only].include?(key)
         end
@@ -53,10 +57,12 @@ module Timber
       else
         hash
       end
+
+      Util::Hash.compact(hash)
     end
 
     def to_json(options = {})
-      Util::Hash.compact(as_json(options)).to_json
+      as_json(options).to_json
     end
 
     def to_msgpack(*args)

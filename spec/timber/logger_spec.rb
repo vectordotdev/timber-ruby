@@ -43,7 +43,7 @@ describe Timber::Logger, :rails_23 => true do
       end
 
       it "should call and use Timber::Events.build" do
-        message = {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
+        message = {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
         expect(Timber::Events).to receive(:build).with(message).and_call_original
         logger.info(message)
         expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
@@ -54,12 +54,12 @@ describe Timber::Logger, :rails_23 => true do
         message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
         logger.info(message)
         expect(io.string).to start_with("select * from users @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
-        expect(io.string).to include("\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56}}}")
+        expect(io.string).to include("\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}}")
       end
 
       it "should allow functions" do
         logger.info do
-          {message: "payment rejected", type: :payment_rejected, data: {customer_id: "abcde1234", amount: 100}}
+          {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
         end
         expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}}")
@@ -89,7 +89,7 @@ describe Timber::Logger, :rails_23 => true do
           logger.tagged("tag") do
             logger.info(message)
           end
-          expect(io.string).to include("\"context\":{\"tags\":[\"tag\"]")
+          expect(io.string).to include("\"tags\":[\"tag\"]")
         end
       end
     end

@@ -10,6 +10,7 @@ module Timber
       def initialize(attributes)
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
         @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
+        @time_ms = @time_ms.round(6)
         @additions = attributes[:additions]
       end
 
@@ -19,7 +20,7 @@ module Timber
       alias to_h to_hash
 
       def as_json(_options = {})
-        {:server_side_app => {:http_response => to_hash}}
+        {:server_side_app => {:http_server_response => to_hash}}
       end
 
       def message

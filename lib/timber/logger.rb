@@ -14,9 +14,9 @@ module Timber
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
   # @example Using a Hash
-  #   # The :message, :type, and :data keys are required
+  #   # The :message key is required, the other additional key is your event type and data
   #   # :type is the namespace used in timber for the :data
-  #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
+  #   logger.info message: "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
   #
   # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
@@ -76,12 +76,23 @@ module Timber
         def build_log_entry(severity, time, progname, msg)
           level = SEVERITY_MAP.fetch(severity)
           context_snapshot = CurrentContext.instance.snapshot
+          tags = extract_active_support_tagged_logging_tags
+          tags += [msg.delete(:tag)] if msg.is_a?(Hash) && msg.key?(:tag)
+          tags += msg.delete(:tags) if msg.is_a?(Hash) && msg.key?(:tags)
           event = Events.build(msg)
+
           if event
-            LogEntry.new(level, time, progname, event.message, context_snapshot, event)
+            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags)
           else
-            LogEntry.new(level, time, progname, msg, context_snapshot, nil)
+            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags)
           end
+        end
+
+        # Because of all the crazy ways Rails has attempted this we need this crazy method.
+        def extract_active_support_tagged_logging_tags
+          Thread.current[:activesupport_tagged_logging_tags] ||
+            Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
+            []
         end
     end
 

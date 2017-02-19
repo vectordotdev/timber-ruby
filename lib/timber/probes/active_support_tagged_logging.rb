@@ -17,26 +17,6 @@ module Timber
                 super(severity, timestamp, progname, "#{tags_text}#{msg}")
               end
             end
-
-            def push_tags(*tags)
-              _timber_original_push_tags(*tags).tap do
-                if current_tags.size > 0
-                  context = Contexts::Tags.new(values: current_tags)
-                  CurrentContext.add(context)
-                end
-              end
-            end
-
-            def pop_tags(size = 1)
-              _timber_original_pop_tags(size).tap do
-                if current_tags.size == 0
-                  CurrentContext.remove(Contexts::Tags)
-                else
-                  context = Contexts::Tags.new(values: current_tags)
-                  CurrentContext.add(context)
-                end
-              end
-            end
           end
         end
       end
@@ -44,29 +24,6 @@ module Timber
       module LoggerMethods
         def self.included(klass)
           klass.class_eval do
-            alias_method :_timber_original_push_tags, :push_tags
-            alias_method :_timber_original_pop_tags, :pop_tags
-
-            def push_tags(*tags)
-              _timber_original_push_tags(*tags).tap do
-                if current_tags.size > 0
-                  context = Contexts::Tags.new(values: current_tags)
-                  CurrentContext.add(context)
-                end
-              end
-            end
-
-            def pop_tags(size = 1)
-              _timber_original_pop_tags(size).tap do
-                if current_tags.size == 0
-                  CurrentContext.remove(Contexts::Tags)
-                else
-                  context = Contexts::Tags.new(values: current_tags)
-                  CurrentContext.add(context)
-                end
-              end
-            end
-
             def add(severity, message = nil, progname = nil, &block)
               if message.nil?
                 if block_given?

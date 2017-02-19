@@ -116,7 +116,7 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 
 Use `Logger` as normal:
 
-```elixir
+```ruby
 logger.info("My log message")
 
 # My log message @metadata {"level": "info", "context": {...}}
@@ -128,16 +128,47 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
 
 </p></details>
 
+<details><summary><strong>Tagging logs</strong></summary><p>
+
+Need a quick and easy way to identify a log? Use tags!:
+
+```ruby
+logger.info(message: "My log message", tag: "tag")
+
+# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
+```
+
+Multiple tags:
+
+```ruby
+logger.info(message: "My log message", tags: ["tag1", "tag2"])
+
+# My log message @metadata {"level": "info", "tags": ["tag1", "tag2"], "context": {...}}
+```
+
+Using `ActiveSupport::TaggedLogging`? It works with that as well:
+
+```ruby
+logger.tagged("tag") do
+  logger.info(message: "My log message", tags: ["important", "slow"])
+end
+
+# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
+```
+
+</p></details>
+
 <details><summary><strong>Custom events</strong></summary><p>
 
 1. Log a structured Hash (simplest)
 
   ```ruby
-  Logger.warn message: "Payment rejected", type: :payment_rejected,
-    data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+  Logger.warn message: "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
   # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
+
+  * The hash can *only* have a `:message` and "event type" key, where `:payment_rejected` is the event type in the above example.
 
 2. Log a Struct (recommended)
 
@@ -190,7 +221,7 @@ value.
 1. Add a Hash (simplest)
 
   ```ruby
-  Timber::CurrentContext.with({type: :build, data: {version: "1.0.0"}}) do
+  Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
     logger.info("My log message")
   end
 
@@ -217,6 +248,7 @@ value.
   ```
 
 </p></details>
+
 
 
 ## Installation
@@ -320,6 +352,6 @@ Checkout our [docs](https://timber.io/docs) for a comprehensive list of install 
 
 ---
 
-<p align="center" style="background: #140f2a;">
+<p align="center" style="background: #221f40;">
 <a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
 </p>
