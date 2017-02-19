@@ -30,7 +30,7 @@ describe Timber::Events, :rails_23 => true do
     end
 
     it "should accept a properly structured hash" do
-      built_event = Timber::Events.build({type: :payment_rejected, message: "Payment rejected", data: {customer_id: "abcd1234", amount: 100}})
+      built_event = Timber::Events.build({message: "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100}})
       expect(built_event).to be_kind_of(Timber::Events::Custom)
       expect(built_event.type).to eq(:payment_rejected)
       expect(built_event.message).to eq("Payment rejected")

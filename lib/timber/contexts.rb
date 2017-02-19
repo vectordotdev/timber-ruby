@@ -12,21 +12,24 @@ module Timber
     # Protocol for casting objects into a `Timber::Context`.
     #
     # @example Casting a hash
-    #   Timber::Contexts.build({type: :build, data: {version: "1.0.0"}})
+    #   Timber::Contexts.build(deploy: {version: "1.0.0"})
     def self.build(obj)
       if obj.is_a?(::Timber::Context)
         obj
       elsif obj.respond_to?(:to_timber_context)
         obj.to_timber_context
-      elsif obj.is_a?(Hash) && obj.key?(:type) && obj.key?(:data)
+      elsif obj.is_a?(Hash) && obj.length == 1
+        type = obj.keys.first
+        data = obj.values.first
+
         Contexts::Custom.new(
-          type: obj[:type],
-          data: obj[:data]
+          type: type,
+          data: data
         )
       elsif obj.is_a?(Struct) && obj.respond_to?(:type)
-        Events::Custom.new(
+        Contexts::Custom.new(
           type: obj.type,
-          data: obj.respond_to?(:hash) ? obj.hash : obj.to_h # ruby 1.9.3 does not have to_h
+          data: obj.respond_to?(:to_h) ? obj.to_h : Timber::Util::Struct.to_hash(obj) # ruby 1.9.3 does not have to_h
         )
       else
         nil

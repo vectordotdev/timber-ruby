@@ -133,11 +133,12 @@ Timber will never deviate from the public `::Logger` interface in *any* way.
 1. Log a structured Hash (simplest)
 
   ```ruby
-  Logger.warn message: "Payment rejected", type: :payment_rejected,
-    data: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+  Logger.warn message: "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
   # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
+
+  * The hash can *only* have a `:message` and "event type" key, where `:payment_rejected` is the event type in the above example.
 
 2. Log a Struct (recommended)
 
@@ -190,7 +191,7 @@ value.
 1. Add a Hash (simplest)
 
   ```ruby
-  Timber::CurrentContext.with({type: :build, data: {version: "1.0.0"}}) do
+  Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
     logger.info("My log message")
   end
 
@@ -217,6 +218,7 @@ value.
   ```
 
 </p></details>
+
 
 
 ## Installation

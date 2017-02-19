@@ -14,9 +14,9 @@ module Timber
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
   # @example Using a Hash
-  #   # The :message, :type, and :data keys are required
+  #   # The :message key is required, the other additional key is your event type and data
   #   # :type is the namespace used in timber for the :data
-  #   logger.info message: "Payment rejected", type: :payment_rejected, data: {customer_id: customer_id, amount: 100}
+  #   logger.info message: "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
   #
   # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
