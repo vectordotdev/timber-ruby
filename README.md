@@ -160,7 +160,7 @@ end
 
 </p></details>
 
-<details><summary><strong>Timings & Durations</strong></summary><p>
+<details><summary><strong>Timings & Performance Tracking</strong></summary><p>
 
 Sometimes you need a quick way to add timings to log statements:
 
@@ -188,7 +188,8 @@ logger.info(message: "Task complete", time_ms: time_ms)
   # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
 
-  * The hash can *only* have a `:message` and "event type" key, where `:payment_rejected` is the event type in the above example.
+  * The hash can *only* have 2 keys: `:message` and "event type" key; `:payment_rejected` in this example.
+  * Timber will keyspace your event data by the event type key passed.
 
 2. Log a Struct (recommended)
 
