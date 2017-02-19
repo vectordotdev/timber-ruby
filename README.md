@@ -171,12 +171,12 @@ way to benchmark code execution:
 start = Time.now
 # ...my code to time...
 time_ms = (Time.now - start) * 1000
-logger.info(message: "Task complete", time_ms: time_ms)
+logger.info(message: "Task complete", tag: "my_task", time_ms: time_ms)
 
-# My log message @metadata {"level": "info", "time_ms": 54.2132, "context": {...}}
+# My log message @metadata {"level": "info", tags: ["my_task"], "time_ms": 54.2132, "context": {...}}
 ```
 
-* In the Timber console use the query: `time_ms>500`
+* In the Timber console use the query: `tag:my_task time_ms>500`
 * The Timber console will also display this value inline with your logs. No need to include it
   in the log message, but you certainly can if you'd prefer.
 
