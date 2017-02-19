@@ -3,7 +3,6 @@ require "timber/contexts/http"
 require "timber/contexts/organization"
 require "timber/contexts/runtime"
 require "timber/contexts/system"
-require "timber/contexts/tags"
 require "timber/contexts/user"
 
 module Timber

@@ -76,12 +76,22 @@ module Timber
         def build_log_entry(severity, time, progname, msg)
           level = SEVERITY_MAP.fetch(severity)
           context_snapshot = CurrentContext.instance.snapshot
+          tags = extract_active_support_tagged_logging_tags
+          tags += msg.delete(:tags) if msg.is_a?(Hash) && msg.key?(:tags)
           event = Events.build(msg)
+
           if event
-            LogEntry.new(level, time, progname, event.message, context_snapshot, event)
+            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags)
           else
-            LogEntry.new(level, time, progname, msg, context_snapshot, nil)
+            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags)
           end
+        end
+
+        # Because of all the crazy ways Rails has attempted this we need this crazy method.
+        def extract_active_support_tagged_logging_tags
+          Thread.current[:activesupport_tagged_logging_tags] ||
+            Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
+            []
         end
     end
 

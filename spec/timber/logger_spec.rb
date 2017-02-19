@@ -89,7 +89,7 @@ describe Timber::Logger, :rails_23 => true do
           logger.tagged("tag") do
             logger.info(message)
           end
-          expect(io.string).to include("\"context\":{\"tags\":[\"tag\"]")
+          expect(io.string).to include("\"tags\":[\"tag\"]")
         end
       end
     end
