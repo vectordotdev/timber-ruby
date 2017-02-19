@@ -116,7 +116,7 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 
 Use `Logger` as normal:
 
-```elixir
+```ruby
 logger.info("My log message")
 
 # My log message @metadata {"level": "info", "context": {...}}
@@ -125,6 +125,35 @@ logger.info("My log message")
 Timber will never deviate from the public `::Logger` interface in *any* way.
 
 ---
+
+</p></details>
+
+<details><summary><strong>Tagging logs</strong></summary><p>
+
+Need a quick and easy way to identify a log? Use tags!:
+
+```ruby
+logger.info(message: "My log message", tag: "tag")
+# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
+```
+
+Multiple tags:
+
+```ruby
+logger.info(message: "My log message", tags: ["tag1", "tag2"])
+
+# My log message @metadata {"level": "info", "tags": ["tag1", "tag2"], "context": {...}}
+```
+
+Using `ActiveSupport::TaggedLogging`? It works with that as well:
+
+```ruby
+logger.tagged("tag") do
+  logger.info(message: "My log message", tags: ["important", "slow"])
+end
+
+# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
+```
 
 </p></details>
 

@@ -77,6 +77,7 @@ module Timber
           level = SEVERITY_MAP.fetch(severity)
           context_snapshot = CurrentContext.instance.snapshot
           tags = extract_active_support_tagged_logging_tags
+          tags += [msg.delete(:tag)] if msg.is_a?(Hash) && msg.key?(:tag)
           tags += msg.delete(:tags) if msg.is_a?(Hash) && msg.key?(:tags)
           event = Events.build(msg)
 
