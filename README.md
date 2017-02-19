@@ -55,6 +55,7 @@ blog post.
 5. **Long term retention.** Timber is designed on modern big-data principles. As a result, we can
    offer 6+ months of retention at prices cheaper than alternatives offering <1 month.
    This allows you to unlock your logs for purposes beyond debugging.
+
 ---
 
 </p></details>
