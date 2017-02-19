@@ -297,7 +297,7 @@ gem 'timber'
 
 <details><summary><strong>Rails (all versions, including edge)</strong></summary><p>
 
-👉 Prefer examples? Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pulls/1)
+👉 **Prefer examples?** Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pulls/1)
 
 ---
 
