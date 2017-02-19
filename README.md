@@ -160,7 +160,7 @@ end
 
 </p></details>
 
-<details><summary><strong>Timings & Performance Tracking</strong></summary><p>
+<details><summary><strong>Timings & Durations</strong></summary><p>
 
 Sometimes you need a quick way to add timings to log statements:
 
@@ -169,6 +169,8 @@ start = Time.now
 # ...my code to time...
 time_ms = (Time.now - start) * 1000
 logger.info(message: "Task complete", time_ms: time_ms)
+
+# My log message @metadata {"level": "info", "time_ms": 54.2132, "context": {...}}
 ```
 
 * The `:time_ms` attribute is supported by Timber. If present, we will display it in the interface, etc.
