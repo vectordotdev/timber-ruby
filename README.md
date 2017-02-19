@@ -122,15 +122,15 @@ logger.info("My log message")
 # My log message @metadata {"level": "info", "context": {...}}
 ```
 
-Timber will never deviate from the public `::Logger` interface in *any* way.
+Timber will *never* deviate from the public `::Logger` interface in *any* way.
 
 ---
 
 </p></details>
 
-<details><summary><strong>Tagging logs</strong></summary><p>
+<details><summary><strong>Tagging</strong></summary><p>
 
-Need a quick and easy way to identify a log? Use tags!:
+Need a quick way to identify logs? Use tags!:
 
 ```ruby
 logger.info(message: "My log message", tag: "tag")
@@ -156,7 +156,27 @@ end
 # My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
 ```
 
+---
+
 </p></details>
+
+<details><summary><strong>Timings & Durations</strong></summary><p>
+
+Sometimes you need a quick way to add timings to log statements:
+
+```ruby
+start = Time.now
+# ...my code to time...
+time_ms = (Time.now - start) * 1000
+logger.info(message: "Task complete", time_ms: time_ms)
+```
+
+* The `:time_ms` attribute is supported by Timber. If present, we will display it in the interface, etc.
+
+---
+
+</p></details>
+
 
 <details><summary><strong>Custom events</strong></summary><p>
 

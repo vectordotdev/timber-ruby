@@ -76,15 +76,23 @@ module Timber
         def build_log_entry(severity, time, progname, msg)
           level = SEVERITY_MAP.fetch(severity)
           context_snapshot = CurrentContext.instance.snapshot
+
           tags = extract_active_support_tagged_logging_tags
-          tags += [msg.delete(:tag)] if msg.is_a?(Hash) && msg.key?(:tag)
-          tags += msg.delete(:tags) if msg.is_a?(Hash) && msg.key?(:tags)
+          time_ms = nil
+          if msg.is_a?(Hash)
+            tags << msg.delete(:tag) if msg.key?(:tag)
+            tags += msg.delete(:tags) if msg.key?(:tags)
+            time_ms = msg.delete(:time_ms) if msg.key?(:time_ms)
+
+            msg = msg[:message] if msg.length == 1
+          end
+
           event = Events.build(msg)
 
           if event
-            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags)
+            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags: tags, time_ms: time_ms)
           else
-            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags)
+            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags: tags, time_ms: time_ms)
           end
         end
 

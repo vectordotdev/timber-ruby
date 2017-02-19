@@ -5,7 +5,7 @@ module Timber
     DT_PRECISION = 6.freeze
     SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/1.2.3/schema.json".freeze
 
-    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time
+    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param severity [Integer] the log level / severity
@@ -17,12 +17,13 @@ module Timber
     # @param event [Timber.Event] structured data representing the log line event. This should be
     #   an instance of `Timber.Event`.
     # @return [LogEntry] the resulting LogEntry object
-    def initialize(level, time, progname, message, context_snapshot, event, tags)
+    def initialize(level, time, progname, message, context_snapshot, event, options = {})
       @level = level
       @time = time.utc
       @progname = progname
       @message = message
-      @tags = tags
+      @tags = options[:tags]
+      @time_ms = options[:time_ms]
 
       context_snapshot = {} if context_snapshot.nil?
       system_context = Contexts::System.new(pid: Process.pid)
@@ -34,7 +35,8 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-      hash = {:level => level, :dt => formatted_dt, :message => message, :tags => tags}
+      hash = {:level => level, :dt => formatted_dt, :message => message, :tags => tags,
+        :time_ms => time_ms}
 
       if !event.nil?
         hash[:event] = event

@@ -57,6 +57,21 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to include("\"event\":{\"server_side_app\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}}")
       end
 
+      it "should allow :time_ms" do
+        logger.info(message: "event complete", time_ms: 54.5)
+        expect(io.string).to include("\"time_ms\":54.5")
+      end
+
+      it "should allow :tag" do
+        logger.info(message: "event complete", tag: "tag1")
+        expect(io.string).to include("\"tags\":[\"tag1\"]")
+      end
+
+      it "should allow :tags" do
+        logger.info(message: "event complete", tags: ["tag1", "tag2"])
+        expect(io.string).to include("\"tags\":[\"tag1\",\"tag2\"]")
+      end
+
       it "should allow functions" do
         logger.info do
           {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
