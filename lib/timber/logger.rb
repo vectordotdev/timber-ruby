@@ -82,6 +82,7 @@ module Timber
           if msg.is_a?(Hash)
             tags << msg.delete(:tag) if msg.key?(:tag)
             tags += msg.delete(:tags) if msg.key?(:tags)
+            tags.uniq!
             time_ms = msg.delete(:time_ms) if msg.key?(:time_ms)
 
             msg = msg[:message] if msg.length == 1
