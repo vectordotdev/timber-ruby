@@ -132,7 +132,10 @@ Timber will *never* deviate from the public `::Logger` interface in *any* way.
 
 <details><summary><strong>Tagging logs</strong></summary><p>
 
-Need a quick way to identify logs? Use tags!:
+Tags provide a quick way to identify logs. They work just like any tagging system.
+In the context of logging, they prevent obstructing the log message to
+accomplish the same thing, while also being a step down from creating a classified custom
+event. If the event is meaningful in any way, we recommend creating a custom event.
 
 ```ruby
 logger.info(message: "My log message", tag: "tag")
