@@ -19,15 +19,16 @@ module Timber
     class User < Context
       @keyspace = :user
 
-      attr_reader :id, :name
+      attr_reader :id, :name, :email
 
       def initialize(attributes)
         @id = attributes[:id]
         @name = attributes[:name]
+        @email = attributes[:email]
       end
 
       def as_json(_options = {})
-        {id: Timber::Object.try(id, :to_s), name: name}
+        {id: Timber::Util::Object.try(id, :to_s), name: name, email: email}
       end
     end
   end

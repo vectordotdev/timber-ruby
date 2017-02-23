@@ -18,7 +18,7 @@ module Timber
       end
 
       def as_json(_options = {})
-        {Timber::Object.try(type, :to_sym) => data}
+        {Timber::Util::Object.try(type, :to_sym) => data}
       end
     end
   end

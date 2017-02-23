@@ -9,14 +9,16 @@ module Timber
         def sql(event)
           super(event)
 
-          payload = event.payload
-          event = Events::SQLQuery.new(
-            sql: payload[:sql],
-            time_ms: event.duration,
-            message: @message
-          )
+          if @message
+            payload = event.payload
+            event = Events::SQLQuery.new(
+              sql: payload[:sql],
+              time_ms: event.duration,
+              message: @message
+            )
 
-          logger.debug event
+            logger.debug event
+          end
         end
 
         private

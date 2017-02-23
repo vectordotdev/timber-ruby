@@ -26,7 +26,7 @@ module Timber
       end
 
       def to_hash
-        {Timber::Object.try(type, :to_sym) => data}
+        {Timber::Util::Object.try(type, :to_sym) => data}
       end
       alias to_h to_hash
 
