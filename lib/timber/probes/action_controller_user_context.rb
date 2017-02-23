@@ -6,7 +6,11 @@ module Timber
       module AroundFilter
         def self.included(klass)
           klass.class_eval do
-            around_filter :_timber_capture_user_context
+            if klass.respond_to?(:around_action)
+              around_action :_timber_capture_user_context
+            else
+              around_filter :_timber_capture_user_context
+            end
 
             private
               def _timber_capture_user_context
