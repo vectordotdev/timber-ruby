@@ -8,14 +8,27 @@ module Timber
     # Note: Timber will attempt to automatically add this if you add a #current_user
     # method to your controllers. Most authentication solutions do this for you automatically.
     #
-    # Example:
-    #
+    # @example Basic example
     #   user_context = Timber::Contexts::User.new(id: "abc1234", name: "Ben Johnson")
     #   Timber::CurrentContext.with(user_context) do
     #     # Logging will automatically include this context
     #     logger.info("This is a log message")
     #   end
     #
+    # @example Rails example
+    #   class ApplicationController < ActionController::Base
+    #     around_filter :capture_user_context
+    #     private
+    #       def capture_user_context
+    #         if current_user
+    #           user_context = Timber::Contexts::User.new(id: current_user.id,
+    #             name: current_user.name, email: current_user.email)
+    #           Timber::CurrentContext.with(user_context) { yield }
+    #         else
+    #           yield
+    #         end
+    #       end
+    #   end
     class User < Context
       @keyspace = :user
 
