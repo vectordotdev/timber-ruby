@@ -27,7 +27,7 @@ module Timber
       end
 
       def as_json(_options = {})
-        {id: id, name: name}
+        {id: Timber::Object.try(id, :to_s), name: name}
       end
     end
   end
