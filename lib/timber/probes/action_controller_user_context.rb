@@ -39,7 +39,7 @@ module Timber
 
       def insert!
         return true if ActionController::Base.include?(AroundFilter)
-        ActionController::Base.include(AroundFilter)
+        ActionController::Base.send(:include, AroundFilter)
       end
     end
   end
