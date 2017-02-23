@@ -25,6 +25,8 @@ module Timber
                   Timber::CurrentContext.with(user_context) do
                     yield
                   end
+                else
+                  yield
                 end
               end
           end
