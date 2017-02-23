@@ -2,7 +2,7 @@ require "rails"
 
 # Defualt the rails logger to nothing, each test shoould be
 # responsible for setting up the logger
-logger = ::Logger.new(nil)
+logger = ::Logger.new(STDOUT)
 Rails.logger = logger
 
 class RailsApp < Rails::Application

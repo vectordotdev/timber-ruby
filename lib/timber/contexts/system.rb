@@ -12,7 +12,7 @@ module Timber
       end
 
       def as_json(_options = {})
-        {pid: Timber::Object.try(pid, :to_s)}
+        {pid: Timber::Util::Object.try(pid, :to_s)}
       end
     end
   end

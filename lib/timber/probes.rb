@@ -1,4 +1,5 @@
 require "timber/probes/action_controller_log_subscriber"
+require "timber/probes/action_controller_user_context"
 require "timber/probes/action_dispatch_debug_exceptions"
 require "timber/probes/action_view_log_subscriber"
 require "timber/probes/active_record_log_subscriber"
@@ -11,6 +12,7 @@ module Timber
   module Probes
     def self.insert!
       ActionControllerLogSubscriber.insert!
+      ActionControllerUserContext.insert!
       ActionDispatchDebugExceptions.insert!
       ActionViewLogSubscriber.insert!
       ActiveRecordLogSubscriber.insert!
