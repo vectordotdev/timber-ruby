@@ -39,7 +39,7 @@ module Timber
         :time_ms => time_ms}
 
       if !event.nil?
-        hash[:event] = event
+        hash[:event] = event.as_json
       end
 
       if !context_snapshot.nil? && context_snapshot.length > 0
@@ -60,7 +60,7 @@ module Timber
         hash
       end
 
-      Util::Hash.compact(hash)
+      Util::Hash.deep_compact(hash)
     end
 
     def to_json(options = {})

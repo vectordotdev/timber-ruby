@@ -29,10 +29,7 @@ module Timber
       alias to_h to_hash
 
       def as_json(_options = {})
-        hash = to_hash
-        hash[:headers] = Util::Hash.compact(hash[:headers])
-        hash = Util::Hash.compact(hash)
-        {:server_side_app => {:http_request => hash}}
+        {:server_side_app => {:http_request => to_hash}}
       end
 
       def message
