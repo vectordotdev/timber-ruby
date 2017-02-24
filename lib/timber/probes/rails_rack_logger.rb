@@ -23,7 +23,7 @@ module Timber
               def http_request_event(request)
                 # No idea why rails 3.X returns a "/" :/
                 referrer = request.referer == "/" ? nil : request.referer
-                Events::HTTPRequest.new(
+                Events::HTTPServerRequest.new(
                   host: request.host,
                   method: request.request_method,
                   path: request.filtered_path,
@@ -33,6 +33,7 @@ module Timber
                   remote_addr: request.ip,
                   referrer: referrer,
                   request_id: request_id(request.env),
+                  scheme: request.schema,
                   user_agent: request.user_agent
                 )
               end
