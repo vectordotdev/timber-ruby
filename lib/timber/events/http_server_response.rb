@@ -4,7 +4,7 @@ module Timber
     #
     # @note This event should be installed automatically through probes,
     #   such as the {Probes::ActionControllerLogSubscriber} probe.
-    class HTTPResponse < Timber::Event
+    class HTTPServerResponse < Timber::Event
       attr_reader :status, :time_ms, :additions
 
       def initialize(attributes)

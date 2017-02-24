@@ -4,9 +4,9 @@ module Timber
     #
     # @note This event should be installed automatically through probes,
     #   such as the {Probes::ActionControllerLogSubscriber} probe.
-    class HTTPRequest < Timber::Event
+    class HTTPServerRequest < Timber::Event
       attr_reader :host, :method, :path, :port, :query_params, :content_type,
-        :remote_addr, :referrer, :request_id, :user_agent
+        :remote_addr, :referrer, :request_id, :scheme, :user_agent
 
       def initialize(attributes)
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
@@ -18,13 +18,14 @@ module Timber
         @remote_addr = attributes[:remote_addr]
         @referrer = attributes[:referrer]
         @request_id = attributes[:request_id]
+        @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
         @user_agent = attributes[:user_agent]
       end
 
       def to_hash
         {host: host, method: method, path: path, port: port, query_params: query_params,
           headers: {content_type: content_type, remote_addr: remote_addr, referrer: referrer,
-            request_id: request_id, user_agent: user_agent}}
+            request_id: request_id, scheme: scheme, user_agent: user_agent}}
       end
       alias to_h to_hash
 

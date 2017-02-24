@@ -33,7 +33,7 @@ module Timber
               status = extract_status(exception_class_name)
             end
 
-            Events::HTTPResponse.new(
+            Events::HTTPServerResponse.new(
               status: status,
               time_ms: event.duration,
               additions: additions
