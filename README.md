@@ -18,17 +18,10 @@
 
 ---
 
-Still logging raw text? Timber is a complete *structured* logging solution that you can setup in
-minutes. It goes beyond traditional log management by focusing on data quality and modern
-developer standards.
+Still logging raw text? Timber solves logging so you don't have to. It's a complete *structured*
+logging solution that you can setup in minutes.
 
-High quality logs, [a modern UX-first interface](https://timber.io), simple setup,
-zero-maintenance, 6-month retention, and sane prices are just a few of the benefits Timber
-offers.
-
-To learn more, checkout out [timber.io](https://timber.io) or the
-["why we built Timber"](http://moss-ibex2.cloudvent.net/blog/why-were-building-timber/)
-blog post.
+To learn more, checkout out [timber.io](https://timber.io).
 
 
 ## Installation
