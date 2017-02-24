@@ -306,6 +306,18 @@ value.
 
 ## Jibber-Jabber
 
+<details><summary><strong>What specifically does the Timber library do?</strong></summary><p>
+
+1. Captures and structures your framework and 3rd party logs. (see next question)
+2. Adds useful context to every log line. (see next question)
+3. Allows you to easily add tags and timings to log. (see [Usage](#usage))
+4. Provides a framework for logging custom structured events. (see [Usage](#usage))
+5. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
+
+---
+
+</p></details>
+
 <details><summary><strong>What are the benefits of using Timber?</strong></summary><p>
 
 1. **Data quality.** The usefulness of your logs starts here. This is why we ship libraries that
@@ -328,18 +340,6 @@ value.
 5. **Long term retention.** Timber is designed on modern big-data principles. As a result, we can
    offer 6+ months of retention at prices cheaper than alternatives offering <1 month.
    This allows you to unlock your logs for purposes beyond debugging.
-
----
-
-</p></details>
-
-<details><summary><strong>What specifically does the Timber library do?</strong></summary><p>
-
-1. Captures and structures your framework and 3rd party logs. (see next question)
-2. Adds useful context to every log line. (see next question)
-3. Allows you to easily add tags and timings to log. (see [Usage](#usage))
-4. Provides a framework for logging custom structured events. (see [Usage](#usage))
-5. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
 
 ---
 
