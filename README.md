@@ -305,7 +305,8 @@ value.
   ```ruby
   # config/environments/production.rb
 
-  # !!! Be sure to replace any existing config.logger = calls !!!
+  # config.log_formatter = ::Logger::Formatter.new # <-- REMOVE ME
+  # config.logger = ActiveSupport::TaggedLogging.new(logger) # <-- REMOVE ME
 
   config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
   ```
