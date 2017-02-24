@@ -290,33 +290,30 @@ value.
 
 ## Installation
 
-```ruby
-# Gemfile
-gem 'timber'
-```
+1. *Add* the `timber` gem in `Gemfile`:
 
+  ```ruby
+  # Gemfile
 
-## Setup
+  gem 'timber'
+  ```
 
-<details><summary><strong>Rails (all versions, including edge)</strong></summary><p>
+2. *Install* the `Timber::Logger` in `config/environments/production.rb`:
+
+  ```ruby
+  # config/environments/production.rb
+
+  # !!! Be sure to replace any existing config.logger = calls !!!
+
+  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+  ```
 
 👉 **Prefer examples?** Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
 
----
 
-*Replace* any existing `config.logger=` calls in `config/environments/production.rb` with:
+<details><summary><strong>Not using Rails?</strong></summary><p>
 
-```ruby
-# config/environments/production.rb
-
-config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
-```
-
----
-
-</p></details>
-
-<details><summary><strong>Other</strong></summary><p>
+No problem! You can easily install Timber following these steps:
 
 1. *Insert* the Timber probes:
 
