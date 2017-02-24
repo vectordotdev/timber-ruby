@@ -1,6 +1,8 @@
 # core classes
 require "json" # brings to_json to the core classes
 
+require "timber/overrides/rails_stdout_logging"
+
 # Base (must come first, order matters)
 require "timber/config"
 require "timber/context"

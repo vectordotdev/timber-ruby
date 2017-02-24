@@ -60,6 +60,7 @@ module Timber
   #   Logger.info PymentRejectedEvent.new("abcd1234", 100)
   #
   class Logger < ::Logger
+
     # @private
     class Formatter
       # Formatters get the formatted level from the logger.
@@ -161,11 +162,19 @@ module Timber
     #   logger.formatter = Timber::Logger::JSONFormatter.new
     def initialize(*args)
       super(*args)
+
+      # Ensure we sync STDOUT to avoid buffering
+      if args.size == 1 and args.first.respond_to?(:"sync=")
+        args.first.sync = true
+      end
+
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
       else
         self.formatter = HybridFormatter.new
       end
+
+      self.level = environment_level
     end
 
     def formatter=(value)
@@ -174,7 +183,13 @@ module Timber
           "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
       end
-      super
+
+      if !value.is_a?(Timber::Logger::Formatter)
+        # silently discard this value since rails calls this during initialization :/
+        nil
+      else
+        super
+      end
     end
 
     # Backwards compatibility with older ActiveSupport::Logger versions
@@ -185,5 +200,11 @@ module Timber
         end                                      # end
       EOT
     end
+
+    private
+      def environment_level
+        level = ([ENV['LOG_LEVEL'].to_s.upcase, "DEBUG"] & %w[DEBUG INFO WARN ERROR FATAL UNKNOWN]).compact.first
+        self.class.const_get(level)
+      end
   end
 end

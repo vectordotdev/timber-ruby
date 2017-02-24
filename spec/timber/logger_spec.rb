@@ -117,4 +117,19 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
   end
+
+  describe "#formatter=" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should not allow non Timber::Logger::Formatter formatters" do
+      logger.formatter = ::Logger::Formatter.new
+      expect(logger.formatter).to be_kind_of(::Timber::Logger::HybridFormatter)
+    end
+
+    it "should allow Timber::Logger::Formatter formatters" do
+      logger.formatter = ::Timber::Logger::JSONFormatter.new
+      expect(logger.formatter).to be_kind_of(::Timber::Logger::JSONFormatter)
+    end
+  end
 end
