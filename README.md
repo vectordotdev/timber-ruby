@@ -55,7 +55,7 @@ Checkout our the [Timber install example pull request](https://github.com/timber
 
 </p></details>
 
-<details><summary><strong>Not using Rails?</strong></summary><p>
+<details style="margin-bottom: 100px"><summary><strong>Not using Rails?</strong></summary><p>
 
 No problem! You can easily install Timber following these steps:
 
@@ -91,7 +91,7 @@ No problem! You can easily install Timber following these steps:
 
 </p></details>
 
-<div style="height: 50px"></div>
+<div style="margin-bottom: 50px"></div>
 
 
 ## Send your logs (choose one)
