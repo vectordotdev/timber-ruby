@@ -10,14 +10,6 @@
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
-
----
-
-👉 **Timber is in beta testing, if interested in joining, please email us at
-[beta@timber.io](mailto:beta@timber.io)**
-
----
-
 Still logging raw text? Timber solves logging so you don't have to. It's a complete *structured*
 logging solution that you can setup in minutes.
 
