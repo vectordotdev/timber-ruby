@@ -92,7 +92,7 @@ No problem! You can easily install Timber following these steps:
 </p></details>
 
 
-## Send your logs
+## Send your logs (choose one)
 
 <details><summary><strong>Heroku (log drains)</strong></summary><p>
 
