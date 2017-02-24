@@ -44,8 +44,6 @@ module Timber
       end
 
       def insert!
-        ActiveSupport.on_load(:action_controller) do
-          include AroundFilter
         return true if ActionController::Base.include?(AroundFilter)
         ActionController::Base.send(:include, AroundFilter)
       end
