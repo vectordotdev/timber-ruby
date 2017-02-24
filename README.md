@@ -1,7 +1,7 @@
 # 🌲 Timber - Master your Ruby apps with structured logging
 
 <p align="center" style="background: #140f2a;">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-header.gif" height="469" /></a>
+<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/readme-interface.gif" height="469" /></a>
 </p>
 
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
