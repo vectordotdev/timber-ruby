@@ -91,6 +91,8 @@ No problem! You can easily install Timber following these steps:
 
 </p></details>
 
+<div style="height: 50px"></div>
+
 
 ## Send your logs (choose one)
 
