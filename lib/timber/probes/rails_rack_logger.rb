@@ -33,7 +33,7 @@ module Timber
                   remote_addr: request.ip,
                   referrer: referrer,
                   request_id: request_id(request.env),
-                  scheme: request.schema,
+                  scheme: request.scheme,
                   user_agent: request.user_agent
                 )
               end
