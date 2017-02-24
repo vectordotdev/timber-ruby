@@ -185,11 +185,11 @@ module Timber
       end
 
       if !value.is_a?(Timber::Logger::Formatter)
-        raise ArgumentError.new("The formatter must be a descendant of Timber::Logger::Formatter." +
-          "This ensures your logs are formatted properly for the Timber service.")
+        # silently discard this value since rails calls this during initialization :/
+        nil
+      else
+        super
       end
-
-      super
     end
 
     # Backwards compatibility with older ActiveSupport::Logger versions

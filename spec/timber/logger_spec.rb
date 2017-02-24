@@ -123,7 +123,8 @@ describe Timber::Logger, :rails_23 => true do
     let(:logger) { Timber::Logger.new(io) }
 
     it "should not allow non Timber::Logger::Formatter formatters" do
-      expect { logger.formatter = ::Logger::Formatter.new }.to raise_error(ArgumentError)
+      logger.formatter = ::Logger::Formatter.new
+      expect(logger.formatter).to be_kind_of(::Timber::Logger::HybridFormatter)
     end
 
     it "should allow Timber::Logger::Formatter formatters" do
