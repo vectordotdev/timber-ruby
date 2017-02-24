@@ -290,6 +290,8 @@ value.
 
 ## Installation
 
+👉 **Prefer examples?** Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
+
 1. *Add* the `timber` gem in `Gemfile`:
 
   ```ruby
@@ -307,8 +309,6 @@ value.
 
   config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
   ```
-
-👉 **Prefer examples?** Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
 
 
 <details><summary><strong>Not using Rails?</strong></summary><p>
