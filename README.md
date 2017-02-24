@@ -45,6 +45,8 @@ To learn more, checkout out [timber.io](https://timber.io).
   config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT)) # <-- ADD ME
   ```
 
+---
+
 <details><summary><strong>Prefer to see an example pull request?</strong></summary><p>
 
 Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
