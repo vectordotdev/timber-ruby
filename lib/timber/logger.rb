@@ -183,6 +183,12 @@ module Timber
           "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
       end
+
+      if !value.is_a?(Timber::Logger::Formatter)
+        raise ArgumentError.new("The formatter must be a descendant of Timber::Logger::Formatter." +
+          "This ensures your logs are formatted properly for the Timber service.")
+      end
+
       super
     end
 
