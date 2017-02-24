@@ -33,8 +33,6 @@ blog post.
 
 ## Installation
 
-👉 **Prefer examples?** Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
-
 1. *Add* the `timber` gem in `Gemfile`:
 
   ```ruby
@@ -54,6 +52,13 @@ blog post.
   config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT)) # <-- ADD ME
   ```
 
+<details><summary><strong>Prefer to see an example pull request?</strong></summary><p>
+
+Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
+
+---
+
+</p></details>
 
 <details><summary><strong>Not using Rails?</strong></summary><p>
 
@@ -86,6 +91,8 @@ No problem! You can easily install Timber following these steps:
   ```ruby
   logger = Timber::Logger.new(STDOUT)
   ```
+
+---
 
 </p></details>
 
