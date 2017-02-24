@@ -308,7 +308,7 @@ value.
   # config.log_formatter = ::Logger::Formatter.new # <-------------- REMOVE ME
   # config.logger = ActiveSupport::TaggedLogging.new(logger) # <---- REMOVE ME
 
-  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT))
+  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT)) # <-- ADD ME
   ```
 
 
