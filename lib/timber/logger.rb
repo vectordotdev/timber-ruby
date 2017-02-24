@@ -197,7 +197,7 @@ module Timber
     end
 
     private
-      def self.environment_level
+      def environment_level
         ([ENV['LOG_LEVEL'].to_s.upcase, "DEBUG"] & %w[DEBUG INFO WARN ERROR FATAL UNKNOWN]).compact.first
       end
   end
