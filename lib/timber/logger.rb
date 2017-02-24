@@ -59,8 +59,7 @@ module Timber
   #
   #   Logger.info PymentRejectedEvent.new("abcd1234", 100)
   #
-  class Logger < defined?(::ActiveSupport::Logger) ? ::ActiveSupport::Logger : ::Logger
-    include ::LoggerSilence if defined?(::LoggerSilence)
+  class Logger < ::Logger
 
     # @private
     class Formatter
