@@ -97,7 +97,7 @@ The recommended strategy for Heroku is to setup a
 
 </p></details>
 
-<details><summary><strong>All other platforms (Network / HTTP)</strong></summary><p>
+<details><summary><strong>Or, all other platforms (Network / HTTP)</strong></summary><p>
 
 1. *Specify* the Timber Network logger backend in `config/environments/production.rb`:
 
@@ -116,7 +116,7 @@ The recommended strategy for Heroku is to setup a
 
 </p></details>
 
-<details><summary><strong>Advanced setup (syslog, file tailing agent, etc)</strong></summary><p>
+<details><summary><strong>Or, advanced setup (syslog, file tailing agent, etc)</strong></summary><p>
 
 Checkout our [docs](https://timber.io/docs) for a comprehensive list of install instructions.
 
