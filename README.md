@@ -84,12 +84,6 @@ No problem! You can easily install Timber following these steps:
 </p></details>
 
 
-
-
-
-
-
-
 ## Send your logs (choose one)
 
 <details><summary><strong>Heroku (log drains)</strong></summary><p>
@@ -113,7 +107,7 @@ The recommended strategy for Heroku is to setup a
   # config/environments/production.rb (or staging, etc)
 
   network_log_device = Timber::LogDevices::Network.new(ENV['TIMBER_LOGS_KEY'])
-  config.logger = Timber::Logger.new(network_log_device) # <-- Use network_log_device instead of STDOUT
+  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(network_log_device))
   ```
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
