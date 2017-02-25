@@ -180,8 +180,7 @@ end
 
 <details><summary><strong>Timing events</strong></summary><p>
 
-Timings allow you to easily capture one-off timings in your code; a simple
-way to benchmark code execution:
+Timings provid a simple way to time code execution:
 
 ```ruby
 start = Time.now
