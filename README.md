@@ -178,7 +178,7 @@ end
 
 </p></details>
 
-<details><summary><strong>Timings</strong></summary><p>
+<details><summary><strong>Timing events</strong></summary><p>
 
 Timings allow you to easily capture one-off timings in your code; a simple
 way to benchmark code execution:
