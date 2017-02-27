@@ -17,5 +17,9 @@ module Timber
     def to_msgpack(*args)
       as_json.to_msgpack(*args)
     end
+
+    def to_s
+      message
+    end
   end
 end
