@@ -24,12 +24,12 @@ module Timber
                 # No idea why rails 3.X returns a "/" :/
                 referrer = request.referer == "/" ? nil : request.referer
                 Events::HTTPServerRequest.new(
+                  content_type: request.content_type,
                   host: request.host,
                   method: request.request_method,
                   path: request.filtered_path,
                   port: request.port,
-                  query_params: request.GET,
-                  content_type: request.content_type,
+                  query_string: request.query_string,
                   remote_addr: request.ip,
                   referrer: referrer,
                   request_id: request_id(request.env),
