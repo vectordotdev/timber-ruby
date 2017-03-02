@@ -10,7 +10,13 @@ module Timber
       def initialize(attributes)
         @name = attributes[:name] || raise(ArgumentError.new(":name is required"))
         @exception_message = attributes[:exception_message] || raise(ArgumentError.new(":exception_message is required"))
-        @backtrace = attributes[:backtrace]
+
+        backtrace = attributes[:backtrace]
+        if backtrace.nil? || backtrace == []
+          raise(ArgumentError.new(":backtrace is required"))
+        end
+
+        @backtrace = backtrace.collect { |line| parse_backtrace_line(line) }
       end
 
       def to_hash
@@ -23,13 +29,16 @@ module Timber
       end
 
       def message
-        message = "#{name} (#{exception_message}):"
-        if backtrace.is_a?(Array) && backtrace.length > 0
-          message << "\n\n"
-          message << backtrace.join("\n")
-        end
-        message
+        "#{name} (#{exception_message})"
       end
+
+      private
+        def parse_backtrace_line(line)
+          # using split for performance reasons
+          file, line, function_part = line.split(":", 3)
+          _prefix, function = function_part.split("`", 2)
+          {file: file, line: line.to_i, function: function.chomp("'")}
+        end
     end
   end
 end
