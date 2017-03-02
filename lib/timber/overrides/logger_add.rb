@@ -21,9 +21,6 @@ module Timber
               if self.is_a?(::Timber::Logger)
                 _timber_original_add(severity, message, progname)
               else
-                if message.message.nil?
-                  STDOUT.write message.inspect
-                end
                 _timber_original_add(severity, message.message, progname)
               end
             else
