@@ -99,15 +99,15 @@ The recommended strategy for Heroku is to setup a
 
 <details><summary><strong>Or, all other platforms (Network / HTTP)</strong></summary><p>
 
-1. *Specify* the Timber Network logger backend in `config/environments/production.rb`:
+1. *Specify* the Timber HTTP logger backend in `config/environments/production.rb`:
 
   Replace any existing `config.logger =` calls with:
 
   ```ruby
   # config/environments/production.rb (or staging, etc)
 
-  network_log_device = Timber::LogDevices::Network.new(ENV['TIMBER_LOGS_KEY'])
-  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(network_log_device))
+  http_log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_LOGS_KEY'])
+  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(http_log_device))
   ```
 
 2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
