@@ -83,7 +83,7 @@ module Timber
         if key == :custom
           # Custom contexts are merged into the space
           hash[key] ||= {}
-          hash[key].merge(json)
+          hash[key].merge!(json)
         else
           hash[key] = json
         end
