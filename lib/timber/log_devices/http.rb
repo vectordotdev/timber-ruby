@@ -59,7 +59,6 @@ module Timber
       end
 
       TIMBER_URL = "https://logs.timber.io/frames".freeze
-      ACCEPT = "application/json".freeze
       CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
@@ -151,7 +150,6 @@ module Timber
           return if msgs.empty?
 
           req = Net::HTTP::Post.new(@timber_url.path)
-          #req['Accept'] = ACCEPT
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
