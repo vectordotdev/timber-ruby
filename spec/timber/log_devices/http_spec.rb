@@ -100,7 +100,6 @@ describe Timber::LogDevices::HTTP do
         with(
           :body => start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81\xA6system".force_encoding("ASCII-8BIT")),
           :headers => {
-            'Accept' => 'application/json',
             'Authorization' => 'Basic TVlLRVk=',
             'Content-Type' => 'application/msgpack',
             'User-Agent' => "Timber Ruby/#{Timber::VERSION} (HTTP)"
