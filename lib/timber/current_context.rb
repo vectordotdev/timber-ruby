@@ -23,13 +23,17 @@ module Timber
         instance.add(*args)
       end
 
+      def hash(*args)
+        instance.hash(*args)
+      end
+
       # Convenience method for {#remove}. See {#remove} for full details and examples.
       def remove(*args)
         instance.remove(*args)
       end
 
-      def hash(*args)
-        instance.hash(*args)
+      def reset(*args)
+        instance.reset(*args)
       end
     end
 
@@ -56,18 +60,11 @@ module Timber
     #
     # @example Adding multiple contexts
     #   Timber::CurrentContext.with(context1, context2) { ... }
-    def with(*contexts)
-      add(*contexts)
+    def with(*objects)
+      add(*objects)
       yield
     ensure
-      contexts.each do |context|
-        if context.keyspace == :custom
-          # Custom contexts are merged and should be removed the same
-          hash[context.keyspace].delete(context.type)
-        else
-          remove(context)
-        end
-      end
+      remove(*objects)
     end
 
     # Adds contexts but does not remove them. See {#with} for automatic maintenance and {#remove}
@@ -83,18 +80,10 @@ module Timber
         if key == :custom
           # Custom contexts are merged into the space
           hash[key] ||= {}
-          hash[key].merge(json)
+          hash[key].merge!(json)
         else
           hash[key] = json
         end
-      end
-    end
-
-    # Removes a context. This must be a {Timber::Context} type. See {Timber::Contexts} for a list.
-    # If you wish to remove by key, or some other way, use {#hash} and modify the hash accordingly.
-    def remove(*contexts)
-      contexts.each do |context|
-        hash.delete(context.keyspace)
       end
     end
 
@@ -102,6 +91,34 @@ module Timber
     # for hash maintenance.
     def hash
       Thread.current[THREAD_NAMESPACE] ||= {}
+    end
+
+    # Removes a context. If you wish to remove by key, or some other way, use {#hash} and
+    # modify the hash accordingly.
+    def remove(*objects)
+      objects.each do |object|
+        if object.is_a?(Symbol)
+          hash.delete(object)
+        else
+          context = Contexts.build(object)
+
+          if context.keyspace == :custom
+            # Custom contexts are merged and should be removed the same
+            hash[context.keyspace].delete(context.type)
+            if hash[context.keyspace] == {}
+              hash.delete(context.keyspace)
+            end
+          else
+            hash.delete(context.keyspace)
+          end
+        end
+      end
+    end
+
+    # Resets the context to be blank. Use this carefully! This will remove *any* context,
+    # include context that is automatically included with Timber.
+    def reset
+      hash.clear
     end
 
     # Snapshots the current context so that you get a moment in time representation of the context,
