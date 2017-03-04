@@ -1,4 +1,4 @@
-module Timber
+  module Timber
   module Probes
     class ActionViewLogSubscriber < Probe
       # The log subscriber that replaces the default `ActionView::LogSubscriber`.
@@ -38,23 +38,30 @@ module Timber
         end
 
         def render_collection(event)
-          info do
-            identifier = event.payload[:identifier] || "templates"
-            full_name = from_rails_root(identifier)
-            message = "  Rendered collection of #{full_name}" \
-              " #{render_count(event.payload)} (#{event.duration.round(1)}ms)"
+          if respond_to?(:render_count, true)
+            info do
+              identifier = event.payload[:identifier] || "templates"
+              full_name = from_rails_root(identifier)
+              message = "  Rendered collection of #{full_name}" \
+                " #{render_count(event.payload)} (#{event.duration.round(1)}ms)"
 
-            Events::TemplateRender.new(
-              name: full_name,
-              time_ms: event.duration,
-              message: message
-            )
+              Events::TemplateRender.new(
+                name: full_name,
+                time_ms: event.duration,
+                message: message
+              )
+            end
+          else
+            # Older versions of rails delegate this method to #render_template
+            render_template(event)
           end
         end
 
         private
           def log_rendering_start(payload)
-            # Rails, you silly. We don't need to template rendering messages :)
+            # Consolidates 2 template rendering events into 1. We don't need 2 events for
+            # rendering a template. If you disagree, please feel free to open a PR and we
+            # can make this an option.
           end
       end
     end
