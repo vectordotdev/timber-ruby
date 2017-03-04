@@ -9,7 +9,7 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
     logger
   end
 
-  describe "#insert!"
+  describe "#insert!" do
     around(:each) do |example|
       class ExceptionController < ActionController::Base
         layout nil
