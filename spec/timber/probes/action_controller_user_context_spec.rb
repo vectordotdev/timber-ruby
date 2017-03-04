@@ -1,15 +1,15 @@
 require "spec_helper"
 
 describe Timber::Probes::ActionControllerUserContext do
-  describe described_class::AroundFilter do
-    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
-    let(:io) { StringIO.new }
-    let(:logger) do
-      logger = Timber::Logger.new(io)
-      logger.level = ::Logger::WARN
-      logger
-    end
+  let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+  let(:io) { StringIO.new }
+  let(:logger) do
+    logger = Timber::Logger.new(io)
+    logger.level = ::Logger::WARN
+    logger
+  end
 
+  describe "#insert!" do
     around(:each) do |example|
       class UserContextController < ActionController::Base
         layout nil
@@ -45,11 +45,9 @@ describe Timber::Probes::ActionControllerUserContext do
       ::ActionController::Base.logger = old_logger
     end
 
-    describe "#index" do
-      it "should capture the user context" do
-        dispatch_rails_request("/user_context")
-        expect(io.string).to include("\"user\":{\"id\":\"1\",\"name\":\"Ben Johnson\",\"email\":\"hi@timber.io\"}")
-      end
+    it "should capture the user context" do
+      dispatch_rails_request("/user_context")
+      expect(io.string).to include("\"user\":{\"id\":\"1\",\"name\":\"Ben Johnson\",\"email\":\"hi@timber.io\"}")
     end
   end
 end

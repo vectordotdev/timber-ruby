@@ -151,7 +151,7 @@ module Timber
           return if msgs.empty?
 
           req = Net::HTTP::Post.new(@timber_url.path)
-          req['Accept'] = ACCEPT
+          #req['Accept'] = ACCEPT
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
