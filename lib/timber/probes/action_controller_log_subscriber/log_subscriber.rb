@@ -33,8 +33,6 @@ module Timber
               status = extract_status(exception_class_name)
             end
 
-            raise payload.inspect
-
             Events::HTTPServerResponse.new(
               status: status,
               time_ms: event.duration,
