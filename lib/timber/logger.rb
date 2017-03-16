@@ -16,7 +16,7 @@ module Timber
   # @example Using a Hash
   #   # The :message key is required, the other additional key is your event type and data
   #   # :type is the namespace used in timber for the :data
-  #   logger.info message: "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
+  #   logger.info "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
   #
   # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
@@ -150,6 +150,11 @@ module Timber
     class PassThroughFormatter < Formatter
       def call(severity, time, progname, msg)
         build_log_entry(severity, time, progname, msg)
+      end
+    end
+
+    class << self
+      def new_from_config
       end
     end
 

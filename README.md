@@ -1,4 +1,4 @@
-# 🌲 Timber - Master your Ruby apps with structured logging
+# 🌲 Timber - Log Better. Solve Problems Faster.
 
 <p align="center" style="background: #140f2a;">
 <a href="http://files.timber.io/images/readme-interface-5.gif"><img src="http://files.timber.io/images/readme-interface-5.gif" width="100%" /></a>
@@ -16,14 +16,13 @@
 
 ## Overview
 
-Timber is structured logging solution, giving you _complete_ insight into your applications
-without the need for agents, or special APIs. It's just better logging, like it always
-should have been. 😄
+Timber improves your logs so you can solve issues faster. There are no agents, special APIs, or
+locked away data; just better logging.
 
 Timber works by automatically by turning your raw text logs into rich structured events. It
 pairs with the [Timber Console](https://app.timber.io) to maximize your productivity, allowing
-you to _quickly_ find what you need so that you get back to focusing on your core competencies.
-Never feel lost again, _always_ have the data you need.
+you to _quickly_ find what you need so that you get back to doing what you do.
+With Timber you'll _always_ have the data you need to resolve issues.
 
 To provide an example, Timber turns this:
 
@@ -34,7 +33,7 @@ Sent 200 in 45.ms
 Into this:
 
 ```
-Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"user": {"id": 1}, "http": {"method": "GET", "host": "timber.io", "path": "/path"}}, "event": {"http_response": {"status": 200, "time_ms": 45.2}}}
+Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"user": {"id": 1}, "http": {"method": "GET", "host": "timber.io", "path": "/path", "request_id": "abcd1234"}}, "event": {"http_response": {"status": 200, "time_ms": 45.2}}}
 ```
 
 Allowing you to run queries like:
@@ -48,7 +47,7 @@ Allowing you to run queries like:
 
 ## Installation
 
-1. *Add* the `timber` gem in `Gemfile`:
+1. In `Gemfile`, add the `timber` gem:
 
   ```ruby
   # Gemfile
@@ -56,102 +55,7 @@ Allowing you to run queries like:
   gem 'timber'
   ```
 
-2. *Install* the `Timber::Logger` in `config/environments/production.rb`:
-
-  ```ruby
-  # config/environments/production.rb
-
-  # Remove *any* existing `config.logger =` and `config.log_formatter` calls!
-  # config.log_formatter = ... # <--------------------------------- REMOVE ME
-  # config.logger = ... # <---------------------------------------- REMOVE ME
-
-  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(STDOUT)) # <-- ADD ME
-  ```
-
----
-
-<details><summary><strong>Prefer to see an example pull request?</strong></summary><p>
-
-Checkout our the [Timber install example pull request](https://github.com/timberio/ruby-rails-example-app/pull/1/files)
-
----
-
-</p></details>
-
-<details><summary><strong>Not using Rails?</strong></summary><p>
-
-No problem! You can easily install Timber following these steps:
-
-1. *Insert* the Timber probes:
-
-  This should be executed *immediately after* you have required your dependencies.
-
-  ```ruby
-  Timber::Probes.insert!
-  ```
-
-2. *Add* the Rack middlewares:
-
-  This should be included where you build your `Rack` application. Usually `config.ru`:
-
-  ```ruby
-  # Most likely config.ru
-
-  Timber::RackMiddlewares.middlewares.each do |m|
-    use m
-  end
-  ```
-
-2. *Instantiate* the Timber logger:
-
-  This should be *globally* available to your application:
-
-  ```ruby
-  logger = Timber::Logger.new(STDOUT)
-  ```
-
----
-
-</p></details>
-
-
-## Send your logs (choose one)
-
-<details><summary><strong>Heroku (log drains)</strong></summary><p>
-
-The recommended strategy for Heroku is to setup a
-[log drain](https://devcenter.heroku.com/articles/log-drains). To get your Timber log drain URL:
-
-👉 **[Add your app to Timber](https://app.timber.io)**
-
----
-
-</p></details>
-
-<details><summary><strong>Or, all other platforms (Network / HTTP)</strong></summary><p>
-
-1. *Specify* the Timber HTTP logger backend in `config/environments/production.rb`:
-
-  Replace any existing `config.logger =` calls with:
-
-  ```ruby
-  # config/environments/production.rb (or staging, etc)
-
-  http_log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_LOGS_KEY'])
-  config.logger = ActiveSupport::TaggedLogging.new(Timber::Logger.new(http_log_device))
-  ```
-
-2. Obtain your Timber API :key: by **[adding your app in Timber](https://app.timber.io)**.
-
-3. Assign your API key to the `TIMBER_LOGS_KEY` environment variable.
-
-</p></details>
-
-<details><summary><strong>Or, advanced setup (syslog, file tailing agent, etc)</strong></summary><p>
-
-Checkout our [docs](https://timber.io/docs) for a comprehensive list of install instructions.
-
-</p></details>
+2. In your `shell`, run `bundle exec timber install`
 
 
 ## Usage
@@ -174,13 +78,10 @@ Timber will *never* deviate from the public `::Logger` interface in *any* way.
 
 <details><summary><strong>Tagging logs</strong></summary><p>
 
-Tags provide a quick way to identify logs. They work just like any tagging system.
-In the context of logging, they prevent obstructing the log message to
-accomplish the same thing, while also being a step down from creating a classified custom
-event. If the event is meaningful in any way, we recommend creating a custom event.
+Tags provide a quick way to categorize logs and make them easier to search:
 
 ```ruby
-logger.info(message: "My log message", tag: "tag")
+logger.info("My log message", tag: "tag")
 
 # My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
 ```
@@ -188,7 +89,7 @@ logger.info(message: "My log message", tag: "tag")
 Multiple tags:
 
 ```ruby
-logger.info(message: "My log message", tags: ["tag1", "tag2"])
+logger.info("My log message", tags: ["tag1", "tag2"])
 
 # My log message @metadata {"level": "info", "tags": ["tag1", "tag2"], "context": {...}}
 ```
@@ -197,7 +98,7 @@ Using `ActiveSupport::TaggedLogging`? It works with that as well:
 
 ```ruby
 logger.tagged("tag") do
-  logger.info(message: "My log message", tags: ["important", "slow"])
+  logger.info("My log message", tags: ["important", "slow"])
 end
 
 # My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
@@ -217,7 +118,7 @@ Timings provid a simple way to time code execution:
 start = Time.now
 # ...my code to time...
 time_ms = (Time.now - start) * 1000
-logger.info(message: "Task complete", tag: "my_task", time_ms: time_ms)
+logger.info("Task complete", tag: "my_task", time_ms: time_ms)
 
 # My log message @metadata {"level": "info", tags: ["my_task"], "time_ms": 54.2132, "context": {...}}
 ```
@@ -240,7 +141,7 @@ or changing a user's password. You have 2 options to do this:
 1. Log a structured Hash (simplest)
 
   ```ruby
-  Logger.warn message: "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+  Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
   # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
   ```
@@ -330,70 +231,13 @@ value.
 
 ## Jibber-Jabber
 
-<details><summary><strong>What specifically does the Timber library do?</strong></summary><p>
+<details><summary><strong>Which log events does Timber structure for me?</strong></summary><p>
 
-1. Captures and structures your framework and 3rd party logs. (see next question)
-2. Adds useful context to every log line. (see next question)
-3. Allows you to easily add tags and timings to log. (see [Usage](#usage))
-4. Provides a framework for logging custom structured events. (see [Usage](#usage))
-5. Offers transport strategies to [send your logs](#send-your-logs) to the Timber service.
-
----
-
-</p></details>
-
-<details><summary><strong>What are the benefits of using Timber?</strong></summary><p>
-
-1. **Data quality.** The usefulness of your logs starts here. This is why we ship libraries that
-   structure logs from *within* your application; a fundamental difference from parsing. Not only
-   is it much more stable, but we can include data you couldn't obtain otherwise.
-2. **Human readability.** Structuring your logs doesn't mean they have to be unreadable. Timber
-   *augments* your logs with structured data. Meaning we do not alter the original log message,
-   we simply attach metadata to it. And our console is specifically designed to give you access
-   to this data, without compromising readability. 😮
-3. **Reliable downstream consumption.** All log events adhere to a
-   [normalized, shared, schema](https://github.com/timberio/log-event-json-schema) that follows
-   [semantic versioning](http://semver.org/) and goes through a [standard release process](https://github.com/timberio/log-event-json-schema/releases).
-   This means you can *rely* on the structure of your logs and interact consistently with them
-   across apps of any language: queries, graphs, alerts, and other downstream consumers.
-4. **Zero risk of code debt or lock-in.** Logging is a standard that has been around since the dawn
-   of computers. It's built into every language, framework, and library. Timber adheres strictly
-   to the default `Logger` interface. There are no special APIs, and no need to pepper your app
-   with Timber specific code. It's just better logging. If you choose to stop using Timber, you
-   can do so without consequence.
-5. **Long term retention.** Timber is designed on modern big-data principles. As a result, we can
-   offer 6+ months of retention at prices cheaper than alternatives offering <1 month.
-   This allows you to unlock your logs for purposes beyond debugging.
-
----
-
-</p></details>
-
-<details><summary><strong>What events does Timber capture & structure for me?</strong></summary><p>
-
-Out of the box you get everything in the [`Timber::Events`](lib/timber/events) namespace:
-
-1. [Controller Call Event](lib/timber/events/controller_call.rb)
-2. [Exception Event](lib/timber/events/exception.rb)
-3. [HTTP Client Request Event (net/http outgoing)](lib/timber/events/http_client_request.rb)
-4. [HTTP Client Response Event (resposne from net/http outgoing)](lib/timber/events/http_client_response.rb)
-5. [HTTP Server Request Event (incoming client request)](lib/timber/events/http_server_request.rb)
-6. [HTTP Server Response Event (response to incoming client request)](lib/timber/events/http_server_response.rb)
-7. [SQL Query Event](lib/timber/events/sql_query.rb)
-8. [Template Render Event](lib/timber/events/template_render.rb)
-9. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
+Out of the box you get everything in the [`Timber::Events`](lib/timber/events) namespace.
 
 We also add context to every log, everything in the [`Timber::Contexts`](lib/timber/contexts)
-namespace. Context is structured data representing the current environment when the log line was
-written. It is included in every log line. Think of it like join data for your logs:
-
-1. [HTTP Context](lib/timber/contexts/http.rb)
-2. [Organization Context](lib/timber/contexts/organization.rb)
-3. [Process Context](lib/timber/contexts/process.rb)
-4. [Server Context](lib/timber/contexts/server.rb)
-5. [Runtime Context](lib/timber/contexts/runtime.rb)
-5. [User Context](lib/timber/contexts/user.rb)
-6. ...more coming soon, [file an issue](https://github.com/timberio/timber-ruby/issues) to request.
+namespace. Context is structured data representing the current environment when the log line
+was written. It is included in every log line. Think of it like join data for your logs.
 
 ---
 
@@ -401,17 +245,36 @@ written. It is included in every log line. Think of it like join data for your l
 
 <details><summary><strong>What about my current log statements?</strong></summary><p>
 
-They'll continue to work as expected. Timber adheres strictly to the default `::Logger` interface
-and will never deviate in *any* way.
+They'll continue to work as expected. Timber adheres to the default `Logger` interface.
+Your previous logger calls will work as they always do.
 
 In fact, traditional log statements for non-meaningful events, debug statements, etc, are
 encouraged. In cases where the data is meaningful, consider [logging a custom event](#usage).
 
 </p></details>
 
+<details><summary><strong>How is Timber different?</strong></summary><p>
+
+1. **No lock-in**. Timber is just _better_ logging. There are no agents or special APIs. This means
+   no risk of vendor lock-in, code debt, or performance issues.
+2. **Data quality.** Instead of relying on parsing alone, Timber ships libraries that structure
+   and augment your logs from _within_ your application. Improving your log data at the source.
+3. **Human readability.** Structuring your logs doesn't have to mean losing readability. Instead,
+   Timber _augments_ your logs. For example: `log message @metadata {...}`. And when you view
+   your logs in the [Timber console](https://app.timber.io), you'll see the human friendly messages
+   with the ability to view the associated metadata.
+4. **Sane prices, long retention**. Logging is notoriously expensive with low retention. Timber
+   is affordable and offers _6 months_ of retention by default.
+5. **Normalized schema.** Have multiple apps? All of Timber's libraries adhere to our
+   [JSON schema](https://github.com/timberio/log-event-json-schema). This means queries, alerts,
+   and graphs for your ruby app can also be applied to your elixir app (for example).
+
+---
+
+</p></details>
 
 ---
 
 <p align="center" style="background: #221f40;">
-<a href="http://github.com/timberio/timber-ruby"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
+<a href="http://github.com/timberio/timber-elixir"><img src="http://files.timber.io/images/ruby-library-readme-log-truth.png" height="947" /></a>
 </p>

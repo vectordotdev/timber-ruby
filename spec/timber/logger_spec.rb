@@ -58,17 +58,17 @@ describe Timber::Logger, :rails_23 => true do
       end
 
       it "should allow :time_ms" do
-        logger.info(message: "event complete", time_ms: 54.5)
+        logger.info("event complete", time_ms: 54.5)
         expect(io.string).to include("\"time_ms\":54.5")
       end
 
       it "should allow :tag" do
-        logger.info(message: "event complete", tag: "tag1")
+        logger.info("event complete", tag: "tag1")
         expect(io.string).to include("\"tags\":[\"tag1\"]")
       end
 
       it "should allow :tags" do
-        logger.info(message: "event complete", tags: ["tag1", "tag2"])
+        logger.info("event complete", tags: ["tag1", "tag2"])
         expect(io.string).to include("\"tags\":[\"tag1\",\"tag2\"]")
       end
 
@@ -130,6 +130,16 @@ describe Timber::Logger, :rails_23 => true do
     it "should allow Timber::Logger::Formatter formatters" do
       logger.formatter = ::Timber::Logger::JSONFormatter.new
       expect(logger.formatter).to be_kind_of(::Timber::Logger::JSONFormatter)
+    end
+  end
+
+  describe "#info" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should allow messages with options" do
+      logger.info("message")
+      expect(io.string).to eq("message")
     end
   end
 end
