@@ -1,9 +1,5 @@
 # 🌲 Timber - Log Better. Solve Problems Faster.
 
-<p align="center" style="background: #140f2a;">
-<a href="http://files.timber.io/images/readme-interface-5.gif"><img src="http://files.timber.io/images/readme-interface-5.gif" width="100%" /></a>
-</p>
-
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
 [![Coverage Status](https://coveralls.io/repos/github/timberio/timber-ruby/badge.svg?branch=master)](https://coveralls.io/github/timberio/timber-ruby?branch=master)
@@ -138,41 +134,34 @@ Custom events can be used to structure information about events that are central
 to your line of business like receiving credit card payments, saving a draft of a post,
 or changing a user's password. You have 2 options to do this:
 
-1. Log a structured Hash (simplest)
+1. Log a structured Hash
 
-  ```ruby
-  Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+    ```ruby
+    Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
-  # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
-  ```
+    # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
+    ```
 
-  * The hash can *only* have 2 keys: `:message` and "event type" key; `:payment_rejected` in this example.
-  * Timber will keyspace your event data by the event type key passed.
+2. Or, log a Struct
 
-2. Log a Struct (recommended)
+    Defining structs for your important events just feels oh so good :) It creates a strong contract
+    with down stream consumers and gives you compile time guarantees.
 
-  Defining structs for your important events just feels oh so good :) It creates a strong contract
-  with down stream consumers and gives you compile time guarantees.
+    ```ruby
+    PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
+      def message; "Payment rejected for #{customer_id}"; end
+      def type; :payment_rejected; end
+    end
+    Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
 
-  ```ruby
-  PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
-    def message; "Payment rejected for #{customer_id}"; end
-    def type; :payment_rejected; end
-  end
-  Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
-
-  # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
-  ```
+    # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
+    ```
 
 * In the Timber console use queries like: `payment_rejected.customer_id:xiaus1934` or `payment_rejected.amount>100`
-* For more advanced examples see [`Timber::Logger`](lib/timber.logger.rb).
-* Also, notice there is no mention of Timber in the above code. Just plain old logging.
 
 #### What about regular Hashes, JSON, or logfmt?
 
-Go for it! Timber will parse the data server side, but we *highly* recommend the above examples.
-Providing a `:type` allows timber to classify the event, create a namespace for the data you
-send, and make it easier to search, graph, alert, etc.
+Go for it!
 
 ```ruby
 logger.info({key: "value"})
@@ -191,40 +180,31 @@ logger.info('key=value')
 
 <details><summary><strong>Custom contexts</strong></summary><p>
 
-Context is structured data representing the current environment when the log line was written.
-It is included in every log line. Think of it like join data for your logs. For example, the
-`http.request_id` field is included in the context, allowing you to find all log lines related
-to that request ID, if desired. This is in contrast to *only* showing log lines that contain this
-value.
+Context is additional data shared across log lines. Think of it like log join data.
 
-1. Add a Hash (simplest)
+1. Add a Hash
 
-  ```ruby
-  Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
-    logger.info("My log message")
-  end
+    ```ruby
+    Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
+      logger.info("My log message")
+    end
 
-  # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
-  ```
+    # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
+    ```
 
-  This adds data to the context keyspaced by `build`.
+2. Or, add a Struct
 
-2. Add a Struct (recommended)
+    ```ruby
+    BuildContext = Struct.new(:version) do
+      def type; :build; end
+    end
+    build_context = BuildContext.new("1.0.0")
+    Timber::CurrentContext.with(build_context) do
+      logger.info("My log message")
+    end
 
-  Just like events, we recommend defining your custom contexts. It makes a stronger contract
-  with downstream consumers.
-
-  ```ruby
-  BuildContext = Struct.new(:version) do
-    def type; :build; end
-  end
-  build_context = BuildContext.new("1.0.0")
-  Timber::CurrentContext.with(build_context) do
-    logger.info("My log message")
-  end
-
-  # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
-  ```
+    # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
+    ```
 
 </p></details>
 
