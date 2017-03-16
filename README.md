@@ -49,11 +49,11 @@ Allowing you to run queries like:
 
 1. In `Gemfile`, add the `timber` gem:
 
-  ```ruby
-  # Gemfile
+    ```ruby
+    # Gemfile
 
-  gem 'timber'
-  ```
+    gem 'timber'
+    ```
 
 2. In your `shell`, run `bundle exec timber install`
 
