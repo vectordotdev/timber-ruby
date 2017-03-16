@@ -7,7 +7,8 @@
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
 * [Timber website](https://timber.io)
-* [Library documentation](https://hex.pm/packages/timber)
+* [Timber docs](https://timber.io/docs)
+* [Library docs](https://hex.pm/packages/timber)
 * [Support](mailto:support@timber.io)
 
 ## Overview
