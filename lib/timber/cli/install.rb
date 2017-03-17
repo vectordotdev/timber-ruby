@@ -100,7 +100,8 @@ module Timber
 
         private
           def create_initializer(log_device, app)
-            body = "config.timber.log_device = Timber::LogDevices::HTTP.new(\"#{app.api_key}\")\n\n" \
+            body = "config = Timber::Config.instance\n" \
+              "config.log_device = Timber::LogDevices::HTTP.new(\"#{app.api_key}\")\n\n" \
               "# More config options can be found at: https://timber.io/docs/ruby/configuration/\n" \
               "#\n" \
               "# Question? Need help?\n" \
