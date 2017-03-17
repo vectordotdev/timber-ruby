@@ -35,9 +35,10 @@ describe Timber::Probes::ActionDispatchDebugExceptions do
     it "should set the context" do
       mock_class
       dispatch_rails_request("/exception")
+
       # Because constantly updating the line numbers sucks :/
       expect(io.string).to include("RuntimeError (boom) @metadata")
-      expect(io.string).to include("\"event\":{\"server_side_app\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[{\"file\":\"lib/timber/probes/action_controller_user_context.rb\",\"line\":33,\"function\":\"_timber_capture_user_context\"},")
+      expect(io.string).to include("\"event\":{\"server_side_app\":{\"exception\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[{\"file\":\"lib/timber/probes/action_controller_user_context.rb\",\"line\":42,\"function\":\"_timber_capture_user_context\"},{\"file\":\"lib/timber/rack_middlewares/http_context.rb\",\"line\":18,\"function\":\"block in call\"},{\"file\":\"lib/timber/current_context.rb\",\"line\":65,\"function\":\"with\"},{\"file\":\"lib/timber/current_context.rb\",\"line\":18,\"function\":\"with\"},{\"file\":\"lib/timber/rack_middlewares/http_context.rb\",\"line\":17,\"function\":\"call\"}]}}}")
     end
 
     def mock_class
