@@ -11,17 +11,17 @@ module Timber
         initializer(:timber_logger, before: :initialize_logger) do
           # The environment files have already been loaded. Timber configuration
           # could have been set in there and it should be respected.
-          Rails.apply_logger
+          Rails.apply_logger(config)
         end
 
         config.after_initialize do
-          Rails.apply_logger
+          Rails.apply_logger(config)
           Probes.insert!
           Rails.insert_middlewares(config.app_middleware)
         end
       end
 
-      def self.apply_logger
+      def self.apply_logger(config)
         log_device = Config.instance.log_device
         logger = ::ActiveSupport::TaggedLogging.new(Logger.new(log_device))
         ::Rails.logger = config.logger = logger
