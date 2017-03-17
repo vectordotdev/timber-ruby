@@ -25,7 +25,11 @@ module Timber
 
       def self.apply_logger(config)
         log_device = Config.instance.log_device
-        logger = ::ActiveSupport::TaggedLogging.new(Logger.new(log_device))
+        logger = if defined?(::ActiveSupport::TaggedLogging)
+          ::ActiveSupport::TaggedLogging.new(Logger.new(log_device))
+        else
+          Logger.new(log_device)
+        end
         ::Rails.logger = config.logger = logger
       end
 

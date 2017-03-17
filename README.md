@@ -70,87 +70,20 @@ Timber will *never* deviate from the public `::Logger` interface in *any* way.
 
 </p></details>
 
-<details><summary><strong>Tagging logs</strong></summary><p>
-
-Tags provide a quick way to categorize logs and make them easier to search:
-
-```ruby
-logger.info("My log message", tag: "tag")
-
-# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
-```
-
-Multiple tags:
-
-```ruby
-logger.info("My log message", tags: ["tag1", "tag2"])
-
-# My log message @metadata {"level": "info", "tags": ["tag1", "tag2"], "context": {...}}
-```
-
-Using `ActiveSupport::TaggedLogging`? It works with that as well:
-
-```ruby
-logger.tagged("tag") do
-  logger.info("My log message", tags: ["important", "slow"])
-end
-
-# My log message @metadata {"level": "info", "tags": ["tag"], "context": {...}}
-```
-
-* In the Timber console use the query: `tags:tag`.
-
----
-
-</p></details>
-
-<details><summary><strong>Timing events</strong></summary><p>
-
-```ruby
-start = Time.now
-# ...my code to time...
-time_ms = (Time.now - start) * 1000
-logger.info("Task complete", tag: "my_task", time_ms: time_ms)
-
-# My log message @metadata {"level": "info", tags: ["my_task"], "time_ms": 54.2132, "context": {...}}
-```
-
-* In the Timber console use the query: `tags:my_task time_ms>500`
-
----
-
-</p></details>
-
-
 <details><summary><strong>Custom events</strong></summary><p>
 
 Custom events allow you to extend beyond events already defined in
 the [`Timber::Events`](lib/timber/events) namespace.
 
-1. Log a Hash
-
     ```ruby
-    # Notice the :payment_rejected root key. If you supply a single root key, Timber will
-    # automatically classify it as that event type.
     Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
     # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
     ```
 
-2. Or, log a Struct
+*Notice the `:payment_rejected` root key. Timber will classify this event as such.*
 
-    Defining structs for your important events just feels oh so good :) It creates a strong contract
-    with down stream consumers and gives you compile time guarantees.
-
-    ```ruby
-    PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
-      def message; "Payment rejected for #{customer_id}"; end
-      def type; :payment_rejected; end
-    end
-    Logger.warn PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
-
-    # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
-    ```
+* In the [Timber console](https://app.timber.io) use the query: `type:payment_rejected` or `payment_rejected.amount:>100`.
 
 ---
 
@@ -162,8 +95,6 @@ Context is additional data shared across log lines. Think of it like log join da
 Custom contexts allow you to extend beyond contexts already defined in
 the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
-1. Add a Hash
-
     ```ruby
     Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
       logger.info("My log message")
@@ -172,19 +103,10 @@ the [`Timber::Contexts`](lib/timber/contexts) namespace.
     # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
     ```
 
-2. Or, add a Struct
+*Notice the `:build` root key. Timber will classify this context as such.*
 
-    ```ruby
-    BuildContext = Struct.new(:version) do
-      def type; :build; end
-    end
-    build_context = BuildContext.new("1.0.0")
-    Timber::CurrentContext.with(build_context) do
-      logger.info("My log message")
-    end
+* In the [Timber console](https://app.timber.io) use queries like: `build.version:1.0.0`
 
-    # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
-    ```
 
 </p></details>
 
