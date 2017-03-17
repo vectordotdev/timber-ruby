@@ -102,8 +102,10 @@ module Timber
           def create_initializer(log_device, app)
             body = "config.timber.log_device = Timber::LogDevices::HTTP.new(\"#{app.api_key}\")\n\n" \
               "# More config options can be found at: https://timber.io/docs/ruby/configuration/\n" \
+              "#\n" \
               "# Question? Need help?\n" \
-              "Contact us: support@timber.io"
+              "# * Docs: https://timber.io/docs\n" \
+              "# * Support: support@timber.io" \
 
             FileUtils.mkdir_p(File.join(Dir.pwd, "config", "initializers"))
             File.write(File.join(Dir.pwd, "config/initializers/timber.rb"), body)
