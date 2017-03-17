@@ -2,6 +2,7 @@
 require "json" # brings to_json to the core classes
 
 require "timber/overrides/logger_add"
+require "timber/overrides/lograge"
 require "timber/overrides/rails_stdout_logging"
 
 # Base (must come first, order matters)

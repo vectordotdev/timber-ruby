@@ -23,6 +23,17 @@ module Timber
       @api_key ||= ENV["TIMBER_API_KEY"]
     end
 
+    def current_user_method_name
+      @current_user_method_name ||= "current_user"
+    end
+
+    # Set a debug_logger to view internal Timber library log message.
+    # Useful for debugging. Defaults to `nil`. If set, debug messages will be
+    # written to this logger.
+    def debug_logger
+      @debug_logger
+    end
+
     # The target device that logs are written to. Must respond to #write and #close.
     #
     # Configure this with an environment variable. `TIMBER_LOG_DEVICE`, must be
@@ -35,13 +46,6 @@ module Timber
         when "http"
           Timber::LogDevices::HTTP.new(api_key)
         end
-    end
-
-    # Set a debug_logger to view internal Timber library log message.
-    # Useful for debugging. Defaults to `nil`. If set, debug messages will be
-    # written to this logger.
-    def debug_logger
-      @debug_logger
     end
   end
 end

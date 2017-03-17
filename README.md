@@ -14,15 +14,11 @@
 
 ## Overview
 
-Timber improves your logs so you can solve issues faster. There are no agents, special APIs, or
-locked away data; just better logging.
+Timber turns your raw text logs into rich events that can be consumed by the
+[Timber.io service](https://timber.io). There are no agents and no special APIs;
+just better logging.
 
-Timber works by automatically by turning your raw text logs into rich structured events. It
-pairs with the [Timber Console](https://app.timber.io) to maximize your productivity, allowing
-you to _quickly_ find what you need so that you get back to doing what you do.
-With Timber you'll _always_ have the data you need to resolve issues.
-
-To provide an example, Timber turns this:
+For example, Timber turns this:
 
 ```
 Sent 200 in 45.ms
@@ -31,7 +27,7 @@ Sent 200 in 45.ms
 Into this:
 
 ```
-Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"user": {"id": 1}, "http": {"method": "GET", "host": "timber.io", "path": "/path", "request_id": "abcd1234"}}, "event": {"http_response": {"status": 200, "time_ms": 45.2}}}
+Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"user": {"id": 1, "name": "Ben Johnson"}, "http": {"method": "GET", "host": "timber.io", "path": "/path", "request_id": "abcd1234"}}, "event": {"http_response": {"status": 200, "time_ms": 45.2}}}
 ```
 
 Allowing you to run queries like:
@@ -48,12 +44,12 @@ Allowing you to run queries like:
 1. In `Gemfile`, add the `timber` gem:
 
     ```ruby
-    # Gemfile
-
     gem 'timber'
     ```
 
-2. In your `shell`, run `bundle exec timber install`
+2. In your `shell`, run `bundle install`
+
+3. In your `shell`, run `bundle exec timber install`
 
 
 ## Usage
@@ -110,8 +106,6 @@ end
 
 <details><summary><strong>Timing events</strong></summary><p>
 
-Timings provid a simple way to time code execution:
-
 ```ruby
 start = Time.now
 # ...my code to time...
@@ -122,8 +116,6 @@ logger.info("Task complete", tag: "my_task", time_ms: time_ms)
 ```
 
 * In the Timber console use the query: `tags:my_task time_ms>500`
-* The Timber console will also display this value inline with your logs. No need to include it
-  in the log message, but you certainly can if you'd prefer.
 
 ---
 
@@ -132,13 +124,14 @@ logger.info("Task complete", tag: "my_task", time_ms: time_ms)
 
 <details><summary><strong>Custom events</strong></summary><p>
 
-Custom events can be used to structure information about events that are central
-to your line of business like receiving credit card payments, saving a draft of a post,
-or changing a user's password. You have 2 options to do this:
+Custom events allow you to extend beyond events already defined in
+the [`Timber::Events`](lib/timber/events) namespace.
 
-1. Log a structured Hash
+1. Log a Hash
 
     ```ruby
+    # Notice the :payment_rejected root key. If you supply a single root key, Timber will
+    # automatically classify it as that event type.
     Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
     # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
@@ -159,23 +152,6 @@ or changing a user's password. You have 2 options to do this:
     # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
     ```
 
-* In the Timber console use queries like: `payment_rejected.customer_id:xiaus1934` or `payment_rejected.amount>100`
-
-#### What about regular Hashes, JSON, or logfmt?
-
-Go for it!
-
-```ruby
-logger.info({key: "value"})
-# {"key": "value"} @metadata {"level": "info", "context": {...}}
-
-logger.info('{"key": "value"}')
-# {"key": "value"} @metadata {"level": "info", "context": {...}}
-
-logger.info('key=value')
-# key=value @metadata {"level": "info", "context": {...}}
-```
-
 ---
 
 </p></details>
@@ -183,6 +159,8 @@ logger.info('key=value')
 <details><summary><strong>Custom contexts</strong></summary><p>
 
 Context is additional data shared across log lines. Think of it like log join data.
+Custom contexts allow you to extend beyond contexts already defined in
+the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
 1. Add a Hash
 
