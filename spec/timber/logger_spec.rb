@@ -137,9 +137,35 @@ describe Timber::Logger, :rails_23 => true do
     let(:io) { StringIO.new }
     let(:logger) { Timber::Logger.new(io) }
 
-    it "should allow messages with options" do
+    it "should allow default usage" do
       logger.info("message")
-      expect(io.string).to eq("message")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"info"')
+    end
+
+    it "should allow messages with options" do
+      logger.info("message", tag: "tag")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"info"')
+      expect(io.string).to include('"tags":["tag"]')
+    end
+  end
+
+  describe "#error" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should allow default usage" do
+      logger.error("message")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"error"')
+    end
+
+    it "should allow messages with options" do
+      logger.error("message", tag: "tag")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"error"')
+      expect(io.string).to include('"tags":["tag"]')
     end
   end
 end

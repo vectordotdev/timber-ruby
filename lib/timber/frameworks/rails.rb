@@ -6,18 +6,20 @@ module Timber
         config.timber = Config.instance
 
         # We add this before initialize_logger to avoid initializing the default
-        # rails logger at all. This logger attempts to log to a file which can cause
-        # issues on some systems.
+        # rails logger. In older rails versions, :initialize_logger attempts to
+        # log to a file which can raise permissions errors on some systems.
         initializer(:timber_logger, before: :initialize_logger) do
-          # The environment files have already been loaded. Timber configuration
-          # could have been set in there and it should be respected.
           Rails.apply_logger(config)
         end
 
-        config.after_initialize do
+        # We setup timber after :load_config_initializers because clients can customize
+        # timber in config/initializers/timber.rb. This enssure their configuration is
+        # respected.
+        initializer(:timber_setup, after: :load_config_initializers) do
+          # Re-apply the logger to respect any configuration set
           Rails.apply_logger(config)
-          Probes.insert!
           Rails.insert_middlewares(config.app_middleware)
+          Probes.insert!
         end
       end
 
