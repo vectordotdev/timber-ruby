@@ -16,7 +16,7 @@ module Timber
   # @example Using a Hash
   #   # The :message key is required, the other additional key is your event type and data
   #   # :type is the namespace used in timber for the :data
-  #   logger.info message: "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
+  #   logger.info "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
   #
   # @example Using a Struct (a simple, more structured way, to define events)
   #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
@@ -81,9 +81,12 @@ module Timber
           tags = extract_active_support_tagged_logging_tags
           time_ms = nil
           if msg.is_a?(Hash)
-            tags << msg.delete(:tag) if msg.key?(:tag)
-            tags += msg.delete(:tags) if msg.key?(:tags)
-            tags.uniq!
+            if msg.key?(:tag) || msg.key?(:tags)
+              tags = tags.clone
+              tags << msg.delete(:tag) if msg.key?(:tag)
+              tags += msg.delete(:tags) if msg.key?(:tags)
+              tags.uniq!
+            end
             time_ms = msg.delete(:time_ms) if msg.key?(:time_ms)
 
             msg = msg[:message] if msg.length == 1
@@ -153,6 +156,11 @@ module Timber
       end
     end
 
+    class << self
+      def new_from_config
+      end
+    end
+
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
     # The only difference is that it default the formatter to {HybridFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
@@ -192,9 +200,28 @@ module Timber
       end
     end
 
+    def add(severity, message, progname, options = {}, &block)
+      if message.nil?
+        if block_given?
+          message = yield
+        else
+          message = progname
+          progname = @progname
+        end
+      end
+
+      message = options.merge(message: message)
+
+      super(severity, message, progname, &block)
+    end
+
     # Backwards compatibility with older ActiveSupport::Logger versions
     Logger::Severity.constants.each do |severity|
       class_eval(<<-EOT, __FILE__, __LINE__ + 1)
+        def #{severity.downcase}(progname = nil, options = {}, &block)
+          add(#{severity}, nil, progname, options, &block)
+        end
+
         def #{severity.downcase}?                # def debug?
           Logger::#{severity} >= level           #   DEBUG >= level
         end                                      # end

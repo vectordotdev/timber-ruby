@@ -4,10 +4,33 @@ module Timber
       # Installs Timber into your Rails app automatically.
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
-        config.before_initialize do
-          Probes.insert!
-          Timber::Frameworks::Rails.insert_middlewares(config.app_middleware)
+
+        # We add this before initialize_logger to avoid initializing the default
+        # rails logger. In older rails versions, :initialize_logger attempts to
+        # log to a file which can raise permissions errors on some systems.
+        initializer(:timber_logger, before: :initialize_logger) do
+          Rails.apply_logger(config)
         end
+
+        # We setup timber after :load_config_initializers because clients can customize
+        # timber in config/initializers/timber.rb. This enssure their configuration is
+        # respected.
+        initializer(:timber_setup, after: :load_config_initializers) do
+          # Re-apply the logger to respect any configuration set
+          Rails.apply_logger(config)
+          Rails.insert_middlewares(config.app_middleware)
+          Probes.insert!
+        end
+      end
+
+      def self.apply_logger(config)
+        log_device = Config.instance.log_device
+        logger = if defined?(::ActiveSupport::TaggedLogging)
+          ::ActiveSupport::TaggedLogging.new(Logger.new(log_device))
+        else
+          Logger.new(log_device)
+        end
+        ::Rails.logger = config.logger = logger
       end
 
       def self.insert_middlewares(middleware)
@@ -15,7 +38,7 @@ module Timber
         return true if middleware.instance_variable_defined?(var_name) && middleware.instance_variable_get(var_name) == true
         # Rails uses a proxy :/, so we need to do this instance variable hack
         middleware.instance_variable_set(var_name, true)
-        Timber::RackMiddlewares.middlewares.each do |m|
+        RackMiddlewares.middlewares.each do |m|
           middleware.insert_before ::Rails::Rack::Logger, m
         end
       end

@@ -80,8 +80,6 @@ module Timber
       #   each HTTP payload. If the queue exceeds this limit an HTTP request will be issued. Bigger
       #   payloads mean higher throughput, but also use more memory. Timber will not accept
       #   payloads larger than 1mb.
-      # @option attributes [Symbol] :debug (false) Whether to print debug output or not. This is also
-      #   inferred from ENV['debug']. Output will be sent to `Timber::Config.logger`.
       # @option attributes [Symbol] :flush_interval (1) How often the client should
       #   attempt to deliver logs to the Timber API in fractional seconds. The HTTP client buffers
       #   logs and this options represents how often that will happen, assuming `:batch_byte_size`
@@ -106,7 +104,6 @@ module Timber
       #   Timber::Logger.new(http_log_device)
       def initialize(api_key, options = {})
         @api_key = api_key
-        @debug = options[:debug] || ENV['debug']
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
         @batch_size = options[:batch_size] || 1_000
         @flush_interval = options[:flush_interval] || 1 # 1 second
@@ -126,7 +123,7 @@ module Timber
       def write(msg)
         @msg_queue.enqueue(msg)
         if @msg_queue.full?
-          logger.debug("Flushing timber buffer via write") if debug?
+          debug_logger.debug("Flushing timber buffer via write") if debug_logger
           flush
         end
         true
@@ -140,8 +137,8 @@ module Timber
       end
 
       private
-        def debug?
-          !@debug.nil?
+        def debug_logger
+          Timber::Config.instance.debug_logger
         end
 
         def flush
@@ -163,7 +160,7 @@ module Timber
           loop do
             begin
               if intervaled_flush_ready?
-                logger.debug("Flushing timber buffer via the interval") if debug?
+                debug_logger.debug("Flushing timber buffer via the interval") if debug_logger
                 flush
               end
               sleep(0.1)
@@ -180,20 +177,20 @@ module Timber
         def outlet
           loop do
             http = Net::HTTP.new(@timber_url.host, @timber_url.port)
-            http.set_debug_output(logger) if debug?
+            http.set_debug_output(debug_logger) if debug_logger
             http.use_ssl = true if @timber_url.scheme == 'https'
             http.read_timeout = 30
             http.ssl_timeout = 10
             http.open_timeout = 10
 
             begin
-              logger.info("Starting Timber HTTP connection") if debug?
+              debug_logger.info("Starting Timber HTTP connection") if debug_logger
               http.start do |conn|
                 num_reqs = 0
                 while num_reqs < @requests_per_conn
-                  if debug?
-                    logger.debug("Waiting on next Timber request")
-                    logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
+                  if debug_logger
+                    debug_logger.debug("Waiting on next Timber request")
+                    debug_logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
                   end
 
                   # Blocks waiting for a request.
@@ -203,19 +200,19 @@ module Timber
                   begin
                     resp = conn.request(req)
                   rescue => e
-                    logger.error("Timber request error: #{e.message}") if debug?
+                    debug_logger.error("Timber request error: #{e.message}") if debug_logger
                     next
                   ensure
                     @requests_in_flight -= 1
                   end
                   num_reqs += 1
-                  logger.debug("Timber request successful: #{resp.code}") if debug?
+                  debug_logger.debug("Timber request successful: #{resp.code}") if debug_logger
                 end
               end
             rescue => e
-              logger.error("Timber request error: #{e.message}") if debug?
+              debug_logger.error("Timber request error: #{e.message}") if debug_logger
             ensure
-              logger.debug("Finishing Timber HTTP connection") if debug?
+              debug_logger.debug("Finishing Timber HTTP connection") if debug_logger
               http.finish if http.started?
             end
           end
@@ -223,10 +220,6 @@ module Timber
 
         def authorization_payload
           @authorization_payload ||= "Basic #{Base64.urlsafe_encode64(@api_key).chomp}"
-        end
-
-        def logger
-          Config.instance.logger
         end
     end
   end
