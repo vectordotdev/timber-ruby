@@ -2,16 +2,19 @@ module Timber
   class CLI
     module IOHelper
       def ask(message)
-        write message
+        write message + " "
         gets
       end
 
       def ask_yes_no(message)
-        case ask(message + " (y/n) ")
+        case ask(message + " (y/n)")
         when "y", "Y"
           :yes
         when "n", "N"
           :no
+        else
+          puts "Woops! That's not a valid input. Please try again."
+          ask_yes_no(message)
         end
       end
 

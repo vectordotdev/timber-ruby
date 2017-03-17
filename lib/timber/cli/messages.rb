@@ -9,6 +9,7 @@ module Timber
       SUPPORT_EMAIL = "support@timber.io"
       TWITTER_HANDLE = "@timberdotio"
       WEBSITE_URL = "https://timber.io"
+      MAX_LENGTH = 80.freeze
 
       def edit_app_url(app)
         "#{APP_URL}"
@@ -23,13 +24,35 @@ Framework: #{app.framework_type}"
 Platform:  #{app.platform_type}"
 MESSAGE
 message.rstrip
-end
+      end
+
+      def bad_experience_message
+message = <<-MESSAGE
+Bummer! That is certainly not the experience we were going for.
+
+Could you tell us why you a bad experience?
+
+(this will be sent directly to the Timber engineering team)
+MESSAGE
+message.rstrip
+      end
 
       def contact
 message = <<-MESSAGE
 Website:       #{WEBSITE_URL}
 Documentation: #{DOCS_URL}
 Support:       #{SUPPORT_EMAIL}
+MESSAGE
+message.rstrip
+      end
+
+      def http_environment_variables(api_key)
+message = <<-MESSAGE
+Great! Add these environment variables:
+
+    export TIMBER_LOG_DEVICE="http"
+    export TIMBER_API_KEY="#{api_key}"
+
 MESSAGE
 message.rstrip
       end
@@ -48,6 +71,7 @@ Done! Commit these changes and deploy. 🚀
 MESSAGE
 message.rstrip
 end
+
       def header
 message = <<-MESSAGE
 🌲 Timber.io Ruby Installer
@@ -67,6 +91,30 @@ Now we need to send your logs to the Timber service.
 Please run this command in a separate terminal and return back here when complete:
 
     heroku drains:add #{app.heroku_drain_url}
+
+Note: Your Heroku app must be generating logs for this to work.
+MESSAGE
+message.rstrip
+      end
+
+      def no_api_key_provided
+message = <<-MESSAGE
+Woops! You didn't provide an API key. You can do so via:
+
+    bundle exec timber install my-api-key
+
+#{obtain_key_instructions}
+MESSAGE
+message.rstrip
+      end
+
+      def obtain_key_instructions
+message = <<-MESSAGE
+Don't have a key? Head over to:
+
+    https://app.timber.io
+
+Once there, create an application. Your API key will be displayed afterwards.
 MESSAGE
 message.rstrip
       end
@@ -76,7 +124,8 @@ message.rstrip
       end
 
       def spinner(iteration)
-        case (iteration % 3)
+        rem = iteration % 3
+        case rem
         when 0
           "/"
         when 1
@@ -90,12 +139,21 @@ message.rstrip
         "✓ Success!"
       end
 
-      def task_complete
-        success
+      def task_complete(message)
+        remainder = MAX_LENGTH - message.length - success.length
+
+        dots = "." * remainder
+        "\r#{message}#{dots}#{success}"
       end
 
       def task_start(message)
-        "\r#{message}......"
+        remainder = MAX_LENGTH - message.length - success.length
+
+        "\r#{message}" + ("." * remainder)
+      end
+
+      def we_love_you_too
+        "💖  We love you too! Let's get to loggin' 🌲"
       end
     end
   end

@@ -1,5 +1,7 @@
 require "base64"
+require "json"
 require "net/https"
+require "securerandom"
 require "uri"
 
 module Timber
@@ -8,38 +10,70 @@ module Timber
       class APIKeyInvalidError < StandardError
         def message
           "Uh oh! The API key supplied is invalid. Please ensure that you copied the" \
-            " key properly.\n\n" \
-            "Don't have a key? Head over to:\n" \
-            "https://app.timber.io\n\n" \
-            "Once there, create an application. Your API key will be displayed afterwards."
+            " key properly.\n\n#{Messages.obtain_key_instructions}"
         end
       end
 
       class NoAPIKeyError < StandardError
         def message
-          "Uh oh! You didn't supply an API key.\n\n" \
-            "Don't have a key? Head over to:\n" \
-            "https://app.timber.io\n\n" \
-            "Once there, create an application. Your API key will be displayed afterwards."
+          "Uh oh! You didn't supply an API key.\n\n#{Messages.obtain_key_instructions}"
         end
       end
 
       TIMBER_API_URI = URI.parse('https://api.timber.io')
-
-      attr_reader :api_key
+      APPLICATION_PATH = "/installer/application".freeze
+      EVENT_PATH = "/installer/events".freeze
+      HAS_LOGS_PATH = "/installer/has_logs".freeze
+      USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
       def initialize(api_key)
         @api_key = api_key
+        @session_id = SecureRandom.uuid
       end
 
-      def get!(path)
-        req = Net::HTTP::Get.new(path)
-        issue!(req)
+      def application!
+        get!(APPLICATION_PATH)
+      end
+
+      def event!(name, data = {})
+        post!(EVENT_PATH, event: {name: name, data: data})
+      end
+
+      def wait_for_logs(iteration = 0, &block)
+        if block_given?
+          yield iteration
+        end
+
+        sleep 0.5
+
+        res = get!(HAS_LOGS_PATH)
+
+        case res.code
+        when "202"
+          wait_for_logs(iteration + 1, &block)
+
+        when "204"
+          true
+        end
       end
 
       private
+        def get!(path)
+          req = Net::HTTP::Get.new(path)
+          issue!(req)
+        end
+
+        def post!(path, body)
+          req = Net::HTTP::Post.new(path)
+          req.body = body.to_json
+          req['Content-Type'] = "application/json"
+          issue!(req)
+        end
+
         def issue!(req)
           req['Authorization'] = "Basic #{encoded_api_key}"
+          req['User-Agent'] = USER_AGENT
+          req['X-Installer-Session-Id'] = @session_id
           res = http.start do |http|
             http.request(req)
           end
@@ -63,7 +97,7 @@ module Timber
         end
 
         def encoded_api_key
-          Base64.urlsafe_encode64(api_key).chomp
+          Base64.urlsafe_encode64(@api_key).chomp
         end
     end
   end

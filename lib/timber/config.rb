@@ -20,7 +20,7 @@ module Timber
     attr_writer :api_key, :log_device, :logger
 
     def api_key
-      @api_key ||= ENV["TIMBER_LOG_DEVICE"]
+      @api_key ||= ENV["TIMBER_API_KEY"]
     end
 
     # The target device that logs are written to. Must respond to #write and #close.

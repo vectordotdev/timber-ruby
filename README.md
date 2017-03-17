@@ -11,6 +11,7 @@
 * [Library docs](https://hex.pm/packages/timber)
 * [Support](mailto:support@timber.io)
 
+
 ## Overview
 
 Timber improves your logs so you can solve issues faster. There are no agents, special APIs, or
