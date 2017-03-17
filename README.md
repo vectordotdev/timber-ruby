@@ -44,7 +44,7 @@ Allowing you to run queries like:
 1. In `Gemfile`, add the `timber` gem:
 
     ```ruby
-    gem 'timber'
+    gem 'timber', '~> 1.0'
     ```
 
 2. In your `shell`, run `bundle install`
@@ -61,7 +61,7 @@ Use `Logger` as normal:
 ```ruby
 logger.info("My log message")
 
-# My log message @metadata {"level": "info", "context": {...}}
+# => My log message @metadata {"level": "info", "context": {...}}
 ```
 
 Timber will *never* deviate from the public `::Logger` interface in *any* way.
@@ -75,14 +75,13 @@ Timber will *never* deviate from the public `::Logger` interface in *any* way.
 Custom events allow you to extend beyond events already defined in
 the [`Timber::Events`](lib/timber/events) namespace.
 
-    ```ruby
-    Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+```ruby
+Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
-    # Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
-    ```
+# => Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
+```
 
-*Notice the `:payment_rejected` root key. Timber will classify this event as such.*
-
+* Notice the `:payment_rejected` root key. Timber will classify this event as such.
 * In the [Timber console](https://app.timber.io) use the query: `type:payment_rejected` or `payment_rejected.amount:>100`.
 
 ---
@@ -95,18 +94,16 @@ Context is additional data shared across log lines. Think of it like log join da
 Custom contexts allow you to extend beyond contexts already defined in
 the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
-    ```ruby
-    Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
-      logger.info("My log message")
-    end
+```ruby
+Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
+  logger.info("My log message")
+end
 
-    # My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
-    ```
+# => My log message @metadata {"level": "info", "context": {"build": {"version": "1.0.0"}}}
+```
 
-*Notice the `:build` root key. Timber will classify this context as such.*
-
+* Notice the `:build` root key. Timber will classify this context as such.
 * In the [Timber console](https://app.timber.io) use queries like: `build.version:1.0.0`
-
 
 </p></details>
 
