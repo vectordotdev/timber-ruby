@@ -115,6 +115,8 @@ Don't have a key? Head over to:
     https://app.timber.io
 
 Once there, create an application. Your API key will be displayed afterwards.
+For more detailed instructions, checkout our docs page:
+https://timber.io/docs/app/obtain-api-key/
 MESSAGE
 message.rstrip
       end
