@@ -1,36 +1,41 @@
 module Timber
   module Events
-    # The HTTP server response event tracks outgoing HTTP responses that you send
-    # to clients.
+    # The HTTP client response event tracks responses for *outgoing* HTTP *requests*.
+    # This gives you structured insight into communication with external services.
     #
     # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionControllerLogSubscriber} probe.
-    class HTTPServerResponse < Timber::Event
-      attr_reader :body, :headers, :request_id, :status, :time_ms, :additions
+    #   such as the {Probes::NetHTTP} probe.
+    class HTTPClientResponse < Timber::Event
+      attr_reader :body, :headers, :request_id, :service_name, :status, :time_ms
 
       def initialize(attributes)
         @body = Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @request_id = attributes[:request_id]
+        @service_name = attributes[:service_name]
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
         @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
         @time_ms = @time_ms.round(6)
-        @additions = attributes[:additions]
       end
 
       def to_hash
-        {body: body, headers: headers, request_id: request_id, status: status, time_ms: time_ms}
+        {body: body, headers: headers, request_id: request_id, service_name: service_name,
+          status: status, time_ms: time_ms}
       end
       alias to_h to_hash
 
       def as_json(_options = {})
-        {:server_side_app => {:http_server_response => to_hash}}
+        {:server_side_app => {:http_client_response => to_hash}}
       end
 
       def message
-        message = "Completed #{status} #{status_description} in #{time_ms}ms"
-        message << " (#{additions.join(" | ".freeze)})" unless additions.empty?
-        message
+        message = "Outgoing HTTP response"
+
+        if service_name
+          message << " from #{service_name}"
+        end
+
+        message << " #{status_description} in #{time_ms}ms"
       end
 
       def status_description
