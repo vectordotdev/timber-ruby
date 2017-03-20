@@ -1,7 +1,10 @@
 module Timber
   module Probes
-    # Responsible for automatically tracking the http request events for applications
-    # that use `Rack`.
+    # Responsible for automatically tracking the http request events for Rails applications.
+    #
+    # Note, we modify the existing class because it is coupled with ActiveSupport instrumentation
+    # for some reason.
+    # See: https://github.com/rails/rails/blob/80e66cc4d90bf8c15d1a5f6e3152e90147f00772/railties/lib/rails/rack/logger.rb#L34
     class RailsRackLogger < Probe
       module InstanceMethods
         def self.included(klass)
@@ -30,18 +33,12 @@ module Timber
                   path: request.filtered_path,
                   port: request.port,
                   query_string: request.query_string,
-                  remote_addr: request.ip,
+                  remote_addr: request.remote_ip, # we insert this middleware after ActionDispatch::RemoteIp
                   referrer: referrer,
-                  request_id: request_id(request.env),
+                  request_id: request.request_id, # we insert this middleware after ActionDispatch::RequestId
                   scheme: request.scheme,
                   user_agent: request.user_agent
                 )
-              end
-
-              def request_id(env)
-                env["X-Request-ID"] ||
-                  env["X-Request-Id"] ||
-                  env["action_dispatch.request_id"]
               end
           end
         end

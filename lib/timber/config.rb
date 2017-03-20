@@ -47,5 +47,9 @@ module Timber
           Timber::LogDevices::HTTP.new(api_key)
         end
     end
+
+    def logger
+      @logger ||= ::Logger.new(log_device)
+    end
   end
 end

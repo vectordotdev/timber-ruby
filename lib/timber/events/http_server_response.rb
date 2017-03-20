@@ -5,7 +5,7 @@ module Timber
     # @note This event should be installed automatically through probes,
     #   such as the {Probes::ActionControllerLogSubscriber} probe.
     class HTTPServerResponse < Timber::Event
-      attr_reader :status, :time_ms, :additions
+      attr_reader :headers, :status, :time_ms
 
       def initialize(attributes)
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
@@ -15,7 +15,7 @@ module Timber
       end
 
       def to_hash
-        {status: status, time_ms: time_ms}
+        {headers: headers, status: status, time_ms: time_ms}
       end
       alias to_h to_hash
 

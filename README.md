@@ -15,7 +15,7 @@
 ## Overview
 
 Timber automatically turns your raw text logs into rich JSON events that can be consumed by the
-[Timber.io service](https://timber.io). Improving log data quality at the core, so you can cut
+[Timber.io service](https://timber.io). Improving log data quality at the source, so you can cut
 out the noise and solve problems faster.
 
 For example, Timber turns this:

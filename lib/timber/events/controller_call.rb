@@ -7,17 +7,17 @@ module Timber
     # @note This event should be installed automatically through probes,
     #   such as the {Probes::ActionControllerLogSubscriber} probe.
     class ControllerCall < Timber::Event
-      attr_reader :controller, :action, :params, :format
+      attr_reader :controller, :action, :params_json, :format
 
       def initialize(attributes)
         @controller = attributes[:controller] || raise(ArgumentError.new(":controller is required"))
         @action = attributes[:action] || raise(ArgumentError.new(":action is required"))
-        @params = attributes[:params]
+        @params_json = attributes[:params] && attributes[:params].to_json
         @format = attributes[:format]
       end
 
       def to_hash
-        {controller: controller, action: action}
+        {controller: controller, action: action, params_json: params_json}
       end
       alias to_h to_hash
 

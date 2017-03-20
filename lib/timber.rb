@@ -1,11 +1,8 @@
 # core classes
 require "json" # brings to_json to the core classes
 
-require "timber/overrides/logger_add"
-require "timber/overrides/lograge"
-require "timber/overrides/rails_stdout_logging"
-
 # Base (must come first, order matters)
+require "timber/overrides"
 require "timber/config"
 require "timber/context"
 require "timber/event"
@@ -25,3 +22,6 @@ require "timber/rack_middlewares"
 
 # Load frameworks
 require "timber/frameworks"
+
+module Timber
+end

@@ -1,3 +1,5 @@
+require "timber/rack_middlewares/request"
+
 require "timber/rack_middlewares/http_context"
 
 module Timber
