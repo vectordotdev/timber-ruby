@@ -5,12 +5,17 @@ cache: bundler
 
 rvm:
   - 2.2
-  - 2.3
+  - "2.3.0"
   - 2.4
   - jruby
 
 gemfile:
-  - "gemfiles/rails-4.2.gemfile"
+  - gemfiles/rails-3.0.gemfile
+  - gemfiles/rails-3.1.gemfile
+  - gemfiles/rails-3.2.gemfile
+  - gemfiles/rails-4.0.gemfile
+  - gemfiles/rails-4.1.gemfile
+  - gemfiles/rails-4.2.gemfile
 
 env:
   global: "RAILS_ENV=test"
