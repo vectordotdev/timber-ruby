@@ -23,4 +23,7 @@ gemfile:
 env:
   global: "RAILS_ENV=test"
 
+
+before_script: "bundle install"
+
 script: "bundle exec rspec"
