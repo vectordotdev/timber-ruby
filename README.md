@@ -144,8 +144,9 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 
 <details><summary><strong>How is Timber different?</strong></summary><p>
 
-1. **It's just _better_ logging**. There are no agents, special APIs, or proprietary data
-   sets that you can't access. And absolutely no lock-in. It's just clean log data that you own.
+1. **It's just _better_ logging**. Nothing beats well structured raw data. And that's exactly
+   what Timber aims to provide. There are no agents, special APIs, or proprietary data
+   sets that you can't access.
 2. **Improved log data quality.** Instead of relying on parsing alone, Timber ships libraries that
    structure and augment your logs from _within_ your application. Improving your log data at the
    source.
