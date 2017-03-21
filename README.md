@@ -2,7 +2,6 @@
 
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
 [![CircleCI](https://circleci.com/gh/timberio/timber-ruby.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/timberio/timber-ruby/tree/master)
-[![Coverage Status](https://coveralls.io/repos/github/timberio/timber-ruby/badge.svg?branch=master)](https://coveralls.io/github/timberio/timber-ruby?branch=master)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
@@ -15,7 +14,7 @@
 ## Overview
 
 Timber automatically turns your raw text logs into rich JSON events that can be consumed by the
-[Timber.io service](https://timber.io). Improving log data quality at the core, so you can cut
+[Timber.io service](https://timber.io). Improving log data quality at the source, so you can cut
 out the noise and solve problems faster.
 
 For example, Timber turns this:
@@ -144,8 +143,9 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 
 <details><summary><strong>How is Timber different?</strong></summary><p>
 
-1. **It's just _better_ logging**. There are no agents, special APIs, or proprietary data
-   sets that you can't access. And absolutely no lock-in. It's just clean log data that you own.
+1. **It's just _better_ logging**. Nothing beats well structured raw data. And that's exactly
+   what Timber aims to provide. There are no agents, special APIs, or proprietary data
+   sets that you can't access.
 2. **Improved log data quality.** Instead of relying on parsing alone, Timber ships libraries that
    structure and augment your logs from _within_ your application. Improving your log data at the
    source.

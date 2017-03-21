@@ -18,28 +18,24 @@ module Timber
         initializer(:timber_setup, after: :load_config_initializers) do
           # Re-apply the logger to respect any configuration set
           Rails.apply_logger(config)
-          Rails.insert_middlewares(config.app_middleware)
-          Probes.insert!
+          Config.instance.delegate_logger_to { ::Rails.logger }
+          Rails.configure_middlewares(config.app_middleware)
+          Integrations.integrate!
         end
       end
 
       def self.apply_logger(config)
-        log_device = Config.instance.log_device
-        logger = if defined?(::ActiveSupport::TaggedLogging)
-          ::ActiveSupport::TaggedLogging.new(Logger.new(log_device))
-        else
-          Logger.new(log_device)
-        end
-        ::Rails.logger = config.logger = logger
+        ::Rails.logger = config.logger = Config.instance.logger
       end
 
-      def self.insert_middlewares(middleware)
+      def self.configure_middlewares(middleware)
         var_name = :"@_timber_middlewares_inserted"
         return true if middleware.instance_variable_defined?(var_name) && middleware.instance_variable_get(var_name) == true
+
         # Rails uses a proxy :/, so we need to do this instance variable hack
         middleware.instance_variable_set(var_name, true)
-        RackMiddlewares.middlewares.each do |m|
-          middleware.insert_before ::Rails::Rack::Logger, m
+        Integrations::Rack.middlewares.each do |middleware_class|
+          middleware.use middleware_class
         end
       end
     end

@@ -1,21 +1,24 @@
 module Timber
   module Events
-    # The HTTP response event tracks outgoing HTTP request responses.
+    # The HTTP server response event tracks outgoing HTTP responses that you send
+    # to clients.
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionControllerLogSubscriber} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class HTTPServerResponse < Timber::Event
-      attr_reader :status, :time_ms, :additions
+      attr_reader :body, :headers, :request_id, :status, :time_ms
 
       def initialize(attributes)
+        @body = Util::HTTPEvent.normalize_body(attributes[:body])
+        @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
+        @request_id = attributes[:request_id]
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
         @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
         @time_ms = @time_ms.round(6)
-        @additions = attributes[:additions]
       end
 
       def to_hash
-        {status: status, time_ms: time_ms}
+        {body: body, headers: headers, request_id: request_id, status: status, time_ms: time_ms}
       end
       alias to_h to_hash
 
@@ -24,9 +27,7 @@ module Timber
       end
 
       def message
-        message = "Completed #{status} #{status_description} in #{time_ms}ms"
-        message << " (#{additions.join(" | ".freeze)})" unless additions.empty?
-        message
+        "Completed #{status} #{status_description} in #{time_ms}ms"
       end
 
       def status_description

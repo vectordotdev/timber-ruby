@@ -4,8 +4,8 @@ module Timber
     #
     #   Processing by PagesController#home as HTML
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionControllerLogSubscriber} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class ControllerCall < Timber::Event
       attr_reader :controller, :action, :params, :format
 
@@ -17,7 +17,7 @@ module Timber
       end
 
       def to_hash
-        {controller: controller, action: action}
+        {controller: controller, action: action, params_json: params_json}
       end
       alias to_h to_hash
 
@@ -35,6 +35,15 @@ module Timber
         end
         message
       end
+
+      private
+        def params_json
+          @params_json ||= if params.nil? || params == {}
+            nil
+          else
+            params.to_json
+          end
+        end
     end
   end
 end

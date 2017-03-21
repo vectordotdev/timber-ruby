@@ -18,6 +18,32 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency("msgpack", "~> 1.0")
-  s.add_development_dependency("appraisal", "~> 2.1")
+  s.add_dependency('msgpack', '~> 1.0')
+
+  s.add_development_dependency('rails_stdout_logging')
+  s.add_development_dependency('rake')
+  s.add_development_dependency('rspec', '~> 3.4')
+  s.add_development_dependency('rspec-its')
+  s.add_development_dependency('timecop')
+
+  if RUBY_PLATFORM == "java"
+    s.add_development_dependency('activerecord-jdbcsqlite3-adapter')
+  else
+    s.add_development_dependency('sqlite3')
+  end
+
+  if RUBY_VERSION
+    ruby_version = Gem::Version.new(RUBY_VERSION)
+
+    if ruby_version < Gem::Version.new("2.0.0")
+      s.add_development_dependency('public_suffix', '~> 1.4.6')
+      s.add_development_dependency('term-ansicolor', '~> 1.3.2')
+      s.add_development_dependency('tins', '~> 1.5.0')
+      s.add_development_dependency('webmock', '~> 2.2.0')
+    else
+      s.add_development_dependency('webmock', '~> 2.3')
+    end
+  else
+    s.add_development_dependency('webmock', '~> 2.3')
+  end
 end

@@ -11,6 +11,7 @@ require "timber/cli/messages"
 require "timber/cli/install"
 
 module Timber
+  # @private
   class CLI
     AVAILABLE_COMMANDS = %w(install).freeze
 

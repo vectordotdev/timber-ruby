@@ -1,23 +1,19 @@
 # Testing
 
-Testing Timber uses [`appraisal`](https://github.com/thoughtbot/appraisal). This allows us to
-test across multiple versions and combinations of libraries.
-
 To get started:
 
 ```shell
 bundle install
-bundle exec appraisal install
 ```
 
-To see all appraisal commands:
+Be sure to install specific Gemfile dependencies:
 
-```shell
-appraisal --help
+```
+BUNDLE_GEMFILE=gemfiles/rails-4.2.gemfile bundle install
 ```
 
-You can run tests with:
+You can run tests like this:
 
 ```shell
-appraisal rails-3.2.X rspec
+BUNDLE_GEMFILE=gemfiles/rails-4.2.gemfile bundle exec rake spec
 ```

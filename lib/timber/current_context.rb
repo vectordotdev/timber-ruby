@@ -56,7 +56,7 @@ module Timber
     #     # ... anything logged here will include the context ...
     #   end
     #   # Be sure to checkout Timber::Contexts! These are officially supported and many of these
-    #   # will be automatically included via Timber::Probes
+    #   # will be automatically included via Timber::Integrations
     #
     # @example Adding multiple contexts
     #   Timber::CurrentContext.with(context1, context2) { ... }

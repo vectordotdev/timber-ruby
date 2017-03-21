@@ -69,7 +69,7 @@ module Timber
         "INFO" => :info,
         "WARN" => :warn,
         "ERROR" => :error,
-        "FATAL" => :datal,
+        "FATAL" => :fatal,
         "UNKNOWN" => :unknown
       }
 
@@ -107,6 +107,15 @@ module Timber
             Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
             []
         end
+    end
+
+    # For use in development and test environments where you do not want metadata
+    # included in the log lines.
+    class SimpleFormatter < Formatter
+      # This method is invoked when a log event occurs
+      def call(severity, timestamp, progname, msg)
+        "#{String === msg ? msg : msg.inspect}\n"
+      end
     end
 
     # Structures your log messages into Timber's hybrid format, which makes
@@ -183,43 +192,32 @@ module Timber
       end
 
       self.level = environment_level
+
+      @initialized = true
     end
 
     def formatter=(value)
-      if @dev.is_a?(Timber::LogDevices::HTTP)
+      if @initialized && @logdev && @logdev.dev.is_a?(Timber::LogDevices::HTTP) && !value.is_a?(PassThroughFormatter)
         raise ArgumentError.new("The formatter cannot be changed when using the " +
           "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
       end
 
-      if !value.is_a?(Timber::Logger::Formatter)
-        # silently discard this value since rails calls this during initialization :/
-        nil
-      else
-        super
-      end
-    end
-
-    def add(severity, message, progname, options = {}, &block)
-      if message.nil?
-        if block_given?
-          message = yield
-        else
-          message = progname
-          progname = @progname
-        end
-      end
-
-      message = options.merge(message: message)
-
-      super(severity, message, progname, &block)
+      super
     end
 
     # Backwards compatibility with older ActiveSupport::Logger versions
     Logger::Severity.constants.each do |severity|
       class_eval(<<-EOT, __FILE__, __LINE__ + 1)
-        def #{severity.downcase}(progname = nil, options = {}, &block)
-          add(#{severity}, nil, progname, options, &block)
+        def #{severity.downcase}(*args, &block)
+          progname = args.first
+          options = args.last
+
+          if args.length == 2 and options.is_a?(Hash) && options != {}
+            progname = options.merge(message: progname)
+          end
+
+          add(#{severity}, nil, progname, &block)
         end
 
         def #{severity.downcase}?                # def debug?
