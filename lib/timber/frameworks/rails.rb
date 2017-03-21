@@ -9,7 +9,6 @@ module Timber
         # rails logger. In older rails versions, :initialize_logger attempts to
         # log to a file which can raise permissions errors on some systems.
         initializer(:timber_logger, before: :initialize_logger) do
-          puts "\n\ninitializing1\n\n"
           Rails.apply_logger(config)
         end
 
@@ -17,7 +16,6 @@ module Timber
         # timber in config/initializers/timber.rb. This enssure their configuration is
         # respected.
         initializer(:timber_setup, after: :load_config_initializers) do
-          puts "\n\ninitializing2\n\n"
           # Re-apply the logger to respect any configuration set
           Rails.apply_logger(config)
           Config.instance.delegate_logger_to { ::Rails.logger }
