@@ -3,7 +3,6 @@ require 'rubygems'
 require 'bundler/setup'
 
 # Testing
-require 'pry'
 require 'rspec'
 require 'rspec/its'
 require 'rspec/mocks'
