@@ -25,6 +25,7 @@ module Timber
           case color
           when :red then 31
           when :green then 32
+          when :yellow then 33
           else 0
           end
 

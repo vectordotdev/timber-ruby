@@ -81,7 +81,11 @@ module Timber
             puts ""
             puts Messages.separator
             puts ""
-            puts Messages.finish
+            puts Messages.free_data
+            puts ""
+            puts Messages.separator
+            puts ""
+            puts colorize(Messages.commit_and_deploy_reminder, :green)
 
             api.event!(:success)
 
@@ -124,6 +128,8 @@ module Timber
 
           def collect_feedback(api)
             puts ""
+            puts Messages.separator
+            puts ""
             rating = ask("How would rate this install experience? 1 (bad) - 5 (perfect)")
             case rating
             when "4", "5"
@@ -143,6 +149,8 @@ module Timber
               puts ""
               puts "Thank you! We take feedback seriously and will work to improve this."
             end
+
+            puts ""
           end
       end
     end

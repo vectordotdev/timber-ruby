@@ -37,6 +37,13 @@ MESSAGE
 message.rstrip
       end
 
+      def commit_and_deploy_reminder
+message = <<-MESSAGE
+Last step! Commit these changes and deploy. 🚀
+MESSAGE
+message.rstrip
+end
+
       def contact
 message = <<-MESSAGE
 Website:       #{WEBSITE_URL}
@@ -57,9 +64,9 @@ MESSAGE
 message.rstrip
       end
 
-      def finish
+      def free_data
 message = <<-MESSAGE
-Done! Commit these changes and deploy. 🚀
+Get free data on Timeber!
 
 * Timber URL: https://app.timber.io
 * Get ✨ 250mb✨ for tweeting your experience to #{TWITTER_HANDLE}
