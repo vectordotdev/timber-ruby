@@ -28,5 +28,16 @@ Gem::Specification.new do |s|
   s.add_development_dependency('simplecov')
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('timecop')
-  s.add_development_dependency('webmock')
+
+  if RUBY_VERSION
+    ruby_version = Gem::Version.new(RUBY_VERSION)
+
+    if ruby_version < Gem::Version.new("2.0.0")
+      s.add_development_dependency('webmock', '~> 2.2.0')
+    else
+      s.add_development_dependency('webmock', '~> 2.3')
+    end
+  else
+    s.add_development_dependency('webmock', '~> 2.3')
+  end
 end
