@@ -10,11 +10,12 @@ rvm:
 gemfile:
   - "gemfiles/rails-4.2.gemfile"
 
-
 env:
   global: "RAILS_ENV=test"
-
 
 before_script: "bundle install"
 
 script: "bundle exec rspec"
+
+matrix:
+  fast_finish: true
