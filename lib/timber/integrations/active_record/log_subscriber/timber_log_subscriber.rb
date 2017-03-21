@@ -8,7 +8,7 @@ module Timber
         # default behavior / log messages.
         #
         # @private
-        class TimberLogSubscriber < ::ActiveRecord::LogSubscriber #:nodoc:
+        class TimberLogSubscriber < ::ActiveRecord::LogSubscriber
           def sql(event)
             super(event)
 

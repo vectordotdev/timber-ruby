@@ -17,7 +17,7 @@ describe Timber::Integrations::ActiveRecord::LogSubscriber do
     end
 
     it "should not log if the level is not sufficient" do
-      User.order("users.id DESC").all.collect # collect kicks the sql because it is lazily executed
+      ActiveRecord::Base.connection.execute("select * from users")
       expect(io.string).to eq("")
     end
 
@@ -30,11 +30,11 @@ describe Timber::Integrations::ActiveRecord::LogSubscriber do
       end
 
       it "should log the sql query" do
-        User.order("users.id DESC").all.collect # collect kicks the sql because it is lazily executed
+        ActiveRecord::Base.connection.execute("select * from users")
         # Rails 4.X adds random spaces :/
         string = io.string.gsub("   ORDER BY", " ORDER BY")
         string = string.gsub("  ORDER BY", " ORDER BY")
-        expect(string).to include("users.id DESC")
+        expect(string).to include("select * from users")
         expect(string).to include("@metadata")
         expect(string).to include("\"level\":\"debug\"")
         expect(string).to include("\"event\":{\"server_side_app\":{\"sql_query\"")

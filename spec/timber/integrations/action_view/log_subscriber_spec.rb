@@ -108,6 +108,6 @@ describe Timber::Integrations::ActionView::LogSubscriber do
 
   # Remove blank lines since Rails does this to space out requests in the logs
   def clean_lines(lines)
-    lines.select { |line| !line.start_with?(" @metadat") }
+    lines.select { |line| !line.start_with?(" @metadata") }
   end
 end
