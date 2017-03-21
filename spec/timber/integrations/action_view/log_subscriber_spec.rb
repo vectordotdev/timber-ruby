@@ -51,7 +51,7 @@ describe Timber::Integrations::ActionView::LogSubscriber do
         it "should log a template render event once" do
           dispatch_rails_request("/action_view_log_subscriber")
           lines = clean_lines(io.string.split("\n"))
-          expect(lines[2]).to start_with("  Rendered spec/support/rails/templates/template.html (0.0ms) @metadata {\"level\":\"info\"")
+          expect(lines[2].strip).to start_with("Rendered spec/support/rails/templates/template.html (0.0ms) @metadata {\"level\":\"info\"")
           expect(lines[2]).to include("\"event\":{\"server_side_app\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}}},")
         end
       end
@@ -77,7 +77,7 @@ describe Timber::Integrations::ActionView::LogSubscriber do
           log_subscriber = described_class.new
           allow(log_subscriber).to receive(:logger).and_return(logger)
           log_subscriber.render_template(event)
-          expect(io.string).to start_with("  Rendered path/to/template.html (2.0ms) @metadata")
+          expect(io.string.strip).to start_with("Rendered path/to/template.html (2.0ms) @metadata")
         end
       end
 
@@ -86,7 +86,7 @@ describe Timber::Integrations::ActionView::LogSubscriber do
           log_subscriber = described_class.new
           allow(log_subscriber).to receive(:logger).and_return(logger)
           log_subscriber.render_partial(event)
-          expect(io.string).to start_with("  Rendered path/to/template.html (2.0ms) @metadata")
+          expect(io.string.strip).to start_with("Rendered path/to/template.html (2.0ms) @metadata")
         end
       end
 
@@ -97,9 +97,9 @@ describe Timber::Integrations::ActionView::LogSubscriber do
           log_subscriber.render_collection(event)
 
           if log_subscriber.respond_to?(:render_count, true)
-            expect(io.string).to start_with("  Rendered collection of path/to/template.html [ times] (2.0ms) @metadata ")
+            expect(io.string.strip).to start_with("Rendered collection of path/to/template.html [ times] (2.0ms) @metadata ")
           else
-            expect(io.string).to start_with("  Rendered path/to/template.html (2.0ms) @metadata")
+            expect(io.string.strip).to start_with("Rendered path/to/template.html (2.0ms) @metadata")
           end
         end
       end
