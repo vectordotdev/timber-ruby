@@ -69,7 +69,7 @@ module Timber
         "INFO" => :info,
         "WARN" => :warn,
         "ERROR" => :error,
-        "FATAL" => :datal,
+        "FATAL" => :fatal,
         "UNKNOWN" => :unknown
       }
 

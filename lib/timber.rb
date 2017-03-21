@@ -6,7 +6,7 @@ require "timber/overrides"
 require "timber/config"
 require "timber/context"
 require "timber/event"
-require "timber/probe"
+require "timber/integrator"
 require "timber/util"
 require "timber/version"
 
@@ -17,8 +17,7 @@ require "timber/events"
 require "timber/log_devices"
 require "timber/log_entry"
 require "timber/logger"
-require "timber/probes"
-require "timber/rack_middlewares"
+require "timber/integrations"
 
 # Load frameworks
 require "timber/frameworks"

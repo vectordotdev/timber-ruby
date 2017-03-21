@@ -2,8 +2,8 @@ module Timber
   module Events
     # The exception event is used to track exceptions.
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionDispatchDebugExceptions} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActionDispatch::DebugExceptions} integration.
     class Exception < Timber::Event
       attr_reader :name, :exception_message, :backtrace
 
@@ -16,7 +16,8 @@ module Timber
           raise(ArgumentError.new(":backtrace is required"))
         end
 
-        @backtrace = backtrace.collect { |line| parse_backtrace_line(line) }
+        # 10 items max
+        @backtrace = backtrace[0..9].collect { |line| parse_backtrace_line(line) }
       end
 
       def to_hash

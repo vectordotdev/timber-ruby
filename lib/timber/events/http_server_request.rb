@@ -1,25 +1,28 @@
 module Timber
   module Events
-    # The HTTP request event tracks incoming HTTP requests.
+    # The HTTP server request event tracks incoming HTTP requests to your HTTP server.
+    # Such as unicorn, webrick, puma, etc.
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionControllerLogSubscriber} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class HTTPServerRequest < Timber::Event
-      attr_reader :headers, :host, :method, :path, :port, :query_string, :request_id, :scheme
+      attr_reader :body, :headers, :host, :method, :path, :port, :query_string, :request_id,
+        :scheme
 
       def initialize(attributes)
-        @headers = attributes[:headers]
+        @body = Util::HTTPEvent.normalize_body(attributes[:body])
+        @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
-        @method = attributes[:method] || raise(ArgumentError.new(":method is required"))
+        @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
         @path = attributes[:path] || raise(ArgumentError.new(":path is required"))
         @port = attributes[:port]
-        @query_string = attributes[:query_string]
-        @request_id = attributes[:request_id]
+        @query_string = Util::HTTPEvent.normalize_query_string(attributes[:query_string])
         @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
+        @request_id = attributes[:request_id]
       end
 
       def to_hash
-        {headers: headers, host: host, method: method, path: path, port: port,
+        {body: body, headers: headers, host: host, method: method, path: path, port: port,
           query_string: query_string, request_id: request_id, scheme: scheme}
       end
       alias to_h to_hash

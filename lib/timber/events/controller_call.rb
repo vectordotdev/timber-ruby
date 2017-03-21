@@ -4,15 +4,15 @@ module Timber
     #
     #   Processing by PagesController#home as HTML
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActionControllerLogSubscriber} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class ControllerCall < Timber::Event
-      attr_reader :controller, :action, :params_json, :format
+      attr_reader :controller, :action, :params, :format
 
       def initialize(attributes)
         @controller = attributes[:controller] || raise(ArgumentError.new(":controller is required"))
         @action = attributes[:action] || raise(ArgumentError.new(":action is required"))
-        @params_json = attributes[:params] && attributes[:params].to_json
+        @params = attributes[:params]
         @format = attributes[:format]
       end
 
@@ -35,6 +35,15 @@ module Timber
         end
         message
       end
+
+      private
+        def params_json
+          @params_json ||= if params.nil? || params == {}
+            nil
+          else
+            params.to_json
+          end
+        end
     end
   end
 end

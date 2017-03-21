@@ -2,8 +2,8 @@ module Timber
   module Events
     # The SQL query event tracks sql queries to your database.
     #
-    # @note This event should be installed automatically through probes,
-    #   such as the {Probes::ActiveRecordLogSubscriber} probe.
+    # @note This event should be installed automatically through integrations,
+    #   such as the {Integrations::ActiveRecord::LogSubscriber} integration.
     class SQLQuery < Timber::Event
       attr_reader :sql, :time_ms, :message
 
