@@ -12,7 +12,6 @@ gemfiles/*.lock
 /.bundle
 /.yardoc
 /doc
-/gemfiles
 /log
 /tmp
 /pkg
