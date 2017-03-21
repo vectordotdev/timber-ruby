@@ -4,7 +4,8 @@ language: ruby
 cache: bundler
 
 rvm:
-  - "2.2.0"
+  - 2.2
+  - jruby
 
 gemfile:
   - "gemfiles/rails-4.2.gemfile"
