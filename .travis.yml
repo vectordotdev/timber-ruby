@@ -22,7 +22,7 @@ env:
 before_script:
 - echo $BUNDLE_GEMFILE
 - bundle install
-script: bundle exec rake spec_with_coveralls
+script: bundle exec rake spec
 matrix:
   fast_finish: true
   exclude:
