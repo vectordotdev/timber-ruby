@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency('msgpack', '~> 1.0')
 
-  s.add_development_dependency('coveralls')
   s.add_development_dependency('rails_stdout_logging')
   s.add_development_dependency('rake')
   s.add_development_dependency('rspec', '~> 3.4')
@@ -31,6 +30,7 @@ Gem::Specification.new do |s|
   if RUBY_PLATFORM == "java"
     s.add_development_dependency('activerecord-jdbcsqlite3-adapter')
   else
+    s.add_development_dependency('coveralls')
     s.add_development_dependency('sqlite3')
   end
 
