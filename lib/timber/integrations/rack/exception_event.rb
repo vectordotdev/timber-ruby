@@ -11,7 +11,6 @@ module Timber
           begin
             status, headers, body = @app.call(env)
           rescue Exception => exception
-            puts "\n\n\n\nexception!\n\n\n"
             Config.instance.logger.fatal do
               Events::Exception.new(
                 name: exception.class.name,

@@ -119,17 +119,17 @@ describe Timber::Logger, :rails_23 => true do
   end
 
   describe "#formatter=" do
-    let(:io) { StringIO.new }
-    let(:logger) { Timber::Logger.new(io) }
-
-    it "should not allow non Timber::Logger::Formatter formatters" do
-      logger.formatter = ::Logger::Formatter.new
-      expect(logger.formatter).to be_kind_of(::Timber::Logger::HybridFormatter)
+    it "should not allow changing the formatter when the device is HTTP" do
+      http_device = Timber::LogDevices::HTTP.new("api_key")
+      logger = Timber::Logger.new(http_device)
+      expect { logger.formatter = ::Logger::Formatter.new }.to raise_error(ArgumentError)
     end
 
-    it "should allow Timber::Logger::Formatter formatters" do
-      logger.formatter = ::Timber::Logger::JSONFormatter.new
-      expect(logger.formatter).to be_kind_of(::Timber::Logger::JSONFormatter)
+    it "should set the formatter" do
+      logger = Timber::Logger.new(STDOUT)
+      formatter = ::Logger::Formatter.new
+      logger.formatter = formatter
+      expect(logger.formatter).to eq(formatter)
     end
   end
 

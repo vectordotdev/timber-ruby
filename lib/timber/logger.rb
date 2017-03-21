@@ -195,7 +195,7 @@ module Timber
     end
 
     def formatter=(value)
-      if @dev.is_a?(Timber::LogDevices::HTTP)
+      if @logdev && @logdev.dev.is_a?(Timber::LogDevices::HTTP) && !value.is_a?(PassThroughFormatter)
         raise ArgumentError.new("The formatter cannot be changed when using the " +
           "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
