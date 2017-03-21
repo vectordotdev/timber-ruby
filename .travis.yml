@@ -3,7 +3,7 @@ language: ruby
 cache: bundler
 rvm:
 - 1.9.3
-- 2.2
+- 2.2.2
 - 2.3.0
 - 2.4
 - jruby-19mode
