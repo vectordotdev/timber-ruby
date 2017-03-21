@@ -15,13 +15,32 @@ module Timber
   # environment variable. If that is not set, a reasonable default will be chosen. Each
   # method documents this.
   class Config
+    FORM_URL_ENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded".freeze
+    JSON_CONTENT_TYPE = "application/json".freeze
+
     include Singleton
 
-    attr_writer :api_key, :debug_logger, :log_device, :log_formatter, :logger
+    attr_writer :api_key, :capture_http_bodies, :debug_logger, :log_device, :log_formatter, :logger
+
+    def initialize
+      @capture_http_bodies = true
+      @capture_http_body_content_types = [FORM_URL_ENCODED_CONTENT_TYPE, JSON_CONTENT_TYPE]
+    end
 
     # Your Timber API key. Defaults to the `TIMBER_API_KEY` environment variable.
     def api_key
       @api_key ||= ENV["TIMBER_API_KEY"]
+    end
+
+    # Enables and disables the capturing of HTTP bodies in `Events::HTTPServerRequest`,
+    # `HTTPClientRequest`, and `HTTPClientRespone`.
+    def capture_http_bodies?
+      @capture_http_bodies == true
+    end
+
+    # Limits HTTP body capturing to the listed content types. This must be an array.
+    def capture_http_body_content_types
+      @capture_http_body_content_types ||= []
     end
 
     # Set a debug_logger to view internal Timber library log message.
@@ -75,6 +94,10 @@ module Timber
       end
     end
 
+    # This is the logger Timber writes to. It should be set to your global
+    # logger to keep the logging destination consitent. Please see `delegate_logger_to`
+    # to  delegate this call to another method. This is set to `Rails.logger`
+    # for rails.
     def logger
       if @delegate_logger_to
         @delegate_logger_to.call
