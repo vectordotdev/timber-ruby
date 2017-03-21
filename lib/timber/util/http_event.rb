@@ -2,7 +2,6 @@ module Timber
   module Util
     module HTTPEvent
       BODY_LIMIT = 5_000.freeze
-      JSON_CONTENT_TYPE = "application/json".freeze
       QUERY_STRING_LIMIT = 5_000.freeze
 
       extend self
@@ -43,28 +42,12 @@ module Timber
         method.is_a?(::String) ? method.upcase : method
       end
 
-      def normalize_params(params)
-        if params.is_a?(::Hash)
-          params.each_with_object({}) do |(k, v), h|
-            h[k] = case v
-            when ::String
-              v[0..]
-          end
-        else
-          nil
-        end
-      end
-
       def normalize_query_string(query_string)
         if !query_string.nil?
           query_string = query_string.to_s
         end
 
-        if query_string.length > QUERY_STRING_LIMIT
-          query_string.truncate(QUERY_STRING_LIMIT)
-        else
-          query_string
-        end
+        query_string[0..(QUERY_STRING_LIMIT - 1)]
       end
     end
   end
