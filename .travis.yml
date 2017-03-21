@@ -25,6 +25,8 @@ before_script:
 script: bundle exec rspec
 matrix:
   fast_finish: true
+  exclude:
+    - rvm: "1.9.3"
   include:
     - rvm: "1.9.3"
       gemfile: "gemfiles/rails-3.0.gemfile"
