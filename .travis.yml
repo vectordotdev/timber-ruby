@@ -19,6 +19,7 @@ gemfile:
   - "gemfiles/rails-5.0.X.gemfile"
   - "gemfiles/rails-edge.gemfile"
 
+
 env:
   global: "RAILS_ENV=test"
 
