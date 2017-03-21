@@ -26,7 +26,7 @@ module Timber
                 # Rails > 3.2 uses a logger method. Muting logs is accomplished by
                 # passing a dummy logger instance with a nil log device.
                 def logger
-                  @logger ||= LOGGER
+                  LOGGER
                 end
             end
           end
