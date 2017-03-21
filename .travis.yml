@@ -33,4 +33,4 @@ script: "bundle exec rspec"
 matrix:
   fast_finish: true
   allow_failures:
-  - rvm: 2.4
+  - rvm: 2.4.0
