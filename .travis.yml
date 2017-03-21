@@ -1,21 +1,35 @@
 sudo: false
 
+branches:
+  only:
+    - "master"
+    - "develop"
+
 language: ruby
 cache: bundler
 
 rvm:
-  - 2.2
-  - jruby
+  - "2.0.0"
+  - "2.1.8"
+  - "2.2.4"
+  - "2.3.0"
+  - "jruby-19mode"
 
 gemfile:
+  - "gemfiles/capistrano2.gemfile"
+  - "gemfiles/capistrano3.gemfile"
+  - "gemfiles/no_dependencies.gemfile"
+  - "gemfiles/padrino.gemfile"
+  - "gemfiles/rails-3.2.gemfile"
+  - "gemfiles/rails-4.0.gemfile"
+  - "gemfiles/rails-4.1.gemfile"
   - "gemfiles/rails-4.2.gemfile"
-
-env:
-  global: "RAILS_ENV=test"
-
-before_script: "bundle install"
-
-script: "bundle exec rspec"
+  - "gemfiles/rails-5.0.gemfile"
+  - "gemfiles/resque.gemfile"
+  - "gemfiles/sequel.gemfile"
+  - "gemfiles/sequel-435.gemfile"
+  - "gemfiles/sinatra.gemfile"
+  - "gemfiles/grape.gemfile"
 
 matrix:
   fast_finish: true
