@@ -7,16 +7,17 @@ rvm:
   - 2.2
   - jruby
 
-env:
-  global:
-    - RAILS_ENV=test
-  matrix:
-    - BUNDLE_GEMFILE=$PWD/gemfiles/rails-4.2.gemfile
+gemfile:
+  - "gemfiles/rails-4.2.gemfile"
 
-matrix:
-  fast_finish: true
+env:
+  global: "RAILS_ENV=test"
 
 before_script:
+  - "echo $BUNDLE_GEMFILE"
   - "bundle install"
 
 script: "bundle exec rspec"
+
+matrix:
+  fast_finish: true
