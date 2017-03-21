@@ -37,6 +37,8 @@ matrix:
   allow_failures:
   - rvm: 2.4.0
   - rvm: jruby
+    gemfile: gemfiles/rails-5.0.gemfile
+  - rvm: jruby
     gemfile: gemfiles/rails-edge.gemfile
 notifications:
   email: false
