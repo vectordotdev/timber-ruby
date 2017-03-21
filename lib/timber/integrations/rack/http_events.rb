@@ -10,7 +10,7 @@ module Timber
         def call(env)
           start = Time.now
           request = Util::Request.new(env)
-          body = Config.instance.capture_http_bodies? ? requst.body_content : nil
+          body = Config.instance.capture_http_bodies? ? request.body_content : nil
 
           Config.instance.logger.info do
             Events::HTTPServerRequest.new(
