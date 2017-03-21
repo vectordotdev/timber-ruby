@@ -36,6 +36,8 @@ matrix:
       gemfile: "gemfiles/rails-3.2.gemfile"
   allow_failures:
   - rvm: 2.4.0
+  - rvm: jruby
+    gemfile: gemfiles/rails-edge.gemfile
 notifications:
   email: false
   slack:
