@@ -4,30 +4,30 @@ machine:
 
 dependencies:
   override:
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal generate
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-2.3.X bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.0.X bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.1.X bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.2.X bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 bundle install
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal generate
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-2.3.X bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.0.X bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.1.X bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.2.X bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 bundle install
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal install
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 bundle install
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal install
 
 test:
   override:
-    - RAILS_23=true PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-2.3.X rspec --tag rails_23
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.0.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.1.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.2.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.0.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.1.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.2.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-5.0.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-edge rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.0.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.1.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.2.X rspec
-    - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-5.0.X rspec
+    # - RAILS_23=true PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-2.3.X rspec --tag rails_23
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.0.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.1.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-1.9.3-p448/bin:$PATH rvm-exec 1.9.3 appraisal rails-3.2.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.0.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.1.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-4.2.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-5.0.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.2.6/bin:$PATH rvm-exec 2.2.6 appraisal rails-edge rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.0.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.1.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-4.2.X rspec
+    # - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-5.0.X rspec
     - PATH=/home/ubuntu/.rvm/gems/ruby-2.3.3/bin:$PATH rvm-exec 2.3.3 appraisal rails-edge rspec
