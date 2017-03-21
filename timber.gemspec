@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
     if ruby_version < Gem::Version.new("2.0.0")
       s.add_development_dependency('public_suffix', '~> 1.4.6')
       s.add_development_dependency('term-ansicolor', '~> 1.3.2')
-      s.add_development_dependency('tins', '~> 1.9.0')
+      s.add_development_dependency('tins', '~> 1.5.0')
       s.add_development_dependency('webmock', '~> 2.2.0')
     else
       s.add_development_dependency('webmock', '~> 2.3')
