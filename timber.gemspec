@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
 
   if RUBY_PLATFORM == "java"
     s.add_development_dependency('activerecord-jdbcsqlite3-adapter')
-    s.add_development_dependency('mime-types', '2.6.2')
   else
     s.add_development_dependency('coveralls')
     s.add_development_dependency('sqlite3')
