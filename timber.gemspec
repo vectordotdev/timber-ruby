@@ -19,5 +19,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("msgpack", "~> 1.0")
-  s.add_development_dependency("appraisal", "~> 2.1")
+
+  s.add_development_dependency('coveralls')
+  s.add_development_dependency('rails_stdout_logging')
+  s.add_development_dependency('rake')
+  s.add_development_dependency('rspec', '~> 3.4')
+  s.add_development_dependency('rspec-its')
+  s.add_development_dependency('simplecov')
+  s.add_development_dependency('sqlite3')
+  s.add_development_dependency('timecop')
+  s.add_development_dependency('webmock')
 end

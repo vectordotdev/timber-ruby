@@ -4,20 +4,12 @@ language: ruby
 cache: bundler
 
 rvm:
-  - "1.9.3"
   - "2.2.6"
   - "2.3.3"
+  - "2.4.0"
 
 gemfile:
-  - "gemfiles/rails_2.3.X.gemfile"
-  - "gemfiles/rails_3.0.X.gemfile"
-  - "gemfiles/rails_3.1.X.gemfile"
-  - "gemfiles/rails_3.2.X.gemfile"
-  - "gemfiles/rails-4.0.X.gemfile"
-  - "gemfiles/rails-4.1.X.gemfile"
-  - "gemfiles/rails-4.2.X.gemfile"
-  - "gemfiles/rails-5.0.X.gemfile"
-  - "gemfiles/rails-edge.gemfile"
+  - "gemfiles/rails-4.2.gemfile"
 
 
 env:
