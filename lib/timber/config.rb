@@ -17,7 +17,7 @@ module Timber
   class Config
     include Singleton
 
-    attr_writer :api_key, :log_device, :log_formatter, :logger
+    attr_writer :api_key, :debug_logger, :log_device, :log_formatter, :logger
 
     # Your Timber API key. Defaults to the `TIMBER_API_KEY` environment variable.
     def api_key
