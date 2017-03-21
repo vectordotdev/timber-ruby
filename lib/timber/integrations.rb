@@ -11,9 +11,12 @@ module Timber
   # @private
   module Integrations
     def self.integrate!
+      puts "\n\nintegrating!\n\n"
+
       ActionController::LogSubscriber.integrate!
       ActionDispatch::DebugExceptions.integrate!
       ActionView::LogSubscriber.integrate!
+      puts "\n\ncalled actions view integration!\n\n"
       ActiveRecord::LogSubscriber.integrate!
       ActiveSupport::TaggedLogging.integrate!
       Rails::RackLogger.integrate!
