@@ -1,9 +1,3 @@
-require "rails"
-require "action_controller"
-require "action_view"
-require "active_record"
-require "active_support"
-
 module Timber
   module Frameworks
     module Rails
@@ -24,7 +18,7 @@ module Timber
           else
             ::Logger.new(STDOUT)
           end
-          Rails.set_logger(logger)
+          ::Rails.logger = Config.instance.logger = logger
         end
       end
 
