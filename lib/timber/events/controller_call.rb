@@ -12,7 +12,7 @@ module Timber
       def initialize(attributes)
         @controller = attributes[:controller] || raise(ArgumentError.new(":controller is required"))
         @action = attributes[:action] || raise(ArgumentError.new(":action is required"))
-        @params = attributes[:params]
+        @params = sanitize_params(attributes[:params])
         @format = attributes[:format]
       end
 
@@ -42,6 +42,22 @@ module Timber
             nil
           else
             params.to_json
+          end
+        end
+
+        def sanitize_params(params)
+          if params.is_a?(::Hash)
+            params.each_with_object({}) do |(k, v), h|
+              k = k.to_s.downcase
+              case k
+              when PASSWORD_NAME
+                h[k] = SANITIZED_VALUE
+              else
+                h[k] = value
+              end
+            end
+          else
+            params
           end
         end
     end

@@ -19,7 +19,10 @@ module Timber
         @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
         @request_id = attributes[:request_id]
 
-        @body = Util::HTTPEvent.normalize_body(@headers["content-type"], attributes[:body])
+        # This is disabled for now. The ControllerCall event records the parsed params.
+        # This should be sufficient for body inspection. If we come across a case where
+        # it is not we can consider re-enabling this.
+        # @body = Util::HTTPEvent.normalize_body(attributes[:body])
       end
 
       def to_hash

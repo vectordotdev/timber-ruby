@@ -1,8 +1,11 @@
 module Timber
   module Util
     module HTTPEvent
-      BODY_LIMIT = 5_000.freeze
+      AUTHORIZATION_HEADER = 'authorization'.freeze
+      BODY_LIMIT = 2_000.freeze
+      PASSWORD_NAME = 'password'.freeze
       QUERY_STRING_LIMIT = 5_000.freeze
+      SANITIZED_VALUE = '[sanitized]'.freeze
 
       extend self
 
@@ -31,7 +34,13 @@ module Timber
       def normalize_headers(headers)
         if headers.is_a?(::Hash)
           headers.each_with_object({}) do |(k, v), h|
-            h[k.to_s.downcase] = v
+            k = k.to_s.downcase
+            case k
+            when AUTHORIZATION_HEADER
+              h[k] = SANITIZED_VALUE
+            else
+              h[k] = v
+            end
           end
         else
           headers
