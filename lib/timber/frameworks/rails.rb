@@ -1,3 +1,5 @@
+require "action_controller"
+
 module Timber
   module Frameworks
     module Rails
