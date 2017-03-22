@@ -44,7 +44,7 @@ Allowing you to run queries like:
 1. In `Gemfile`, add the `timber` gem:
 
     ```ruby
-    gem 'timber', '~> 1.0'
+    gem 'timber', '~> 2.0'
     ```
 
 2. In your `shell`, run `bundle install`
