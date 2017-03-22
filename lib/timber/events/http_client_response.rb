@@ -9,13 +9,14 @@ module Timber
       attr_reader :body, :headers, :request_id, :service_name, :status, :time_ms
 
       def initialize(attributes)
-        @body = Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @request_id = attributes[:request_id]
         @service_name = attributes[:service_name]
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
         @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
         @time_ms = @time_ms.round(6)
+
+        @body = Util::HTTPEvent.normalize_body(@headers["content-type"], attributes[:body])
       end
 
       def to_hash

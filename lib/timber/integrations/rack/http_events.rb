@@ -10,10 +10,11 @@ module Timber
         def call(env)
           start = Time.now
           request = Util::Request.new(env)
+          body = Config.instance.capture_http_bodies? ? request.body_content : nil
 
           Config.instance.logger.info do
             Events::HTTPServerRequest.new(
-              body: request.body_content,
+              body: body,
               headers: request.headers,
               host: request.host,
               method: request.request_method,
@@ -30,7 +31,6 @@ module Timber
           Config.instance.logger.info do
             time_ms = (Time.now - start) * 1000.0
             Events::HTTPServerResponse.new(
-              body: body,
               headers: headers,
               request_id: request.request_id,
               status: status,

@@ -10,7 +10,6 @@ module Timber
         :scheme
 
       def initialize(attributes)
-        @body = Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
@@ -19,6 +18,8 @@ module Timber
         @query_string = Util::HTTPEvent.normalize_query_string(attributes[:query_string])
         @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
         @request_id = attributes[:request_id]
+
+        @body = Util::HTTPEvent.normalize_body(@headers["content-type"], attributes[:body])
       end
 
       def to_hash

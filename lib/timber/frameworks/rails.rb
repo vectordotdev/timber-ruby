@@ -5,27 +5,33 @@ module Timber
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
 
-        # We add this before initialize_logger to avoid initializing the default
-        # rails logger. In older rails versions, :initialize_logger attempts to
-        # log to a file which can raise permissions errors on some systems.
         initializer(:timber_logger, before: :initialize_logger) do
-          Rails.apply_logger(config)
-        end
-
-        # We setup timber after :load_config_initializers because clients can customize
-        # timber in config/initializers/timber.rb. This enssure their configuration is
-        # respected.
-        initializer(:timber_setup, after: :load_config_initializers) do
-          # Re-apply the logger to respect any configuration set
-          Rails.apply_logger(config)
-          Config.instance.delegate_logger_to { ::Rails.logger }
           Rails.configure_middlewares(config.app_middleware)
           Integrations.integrate!
+
+          # We set a default logger because Rails tries to write to a file by default.
+          # This causes errors on paltforms with a readon only file system (Heroku)
+          # Moreover, the Timber logger gets configured properly later in an initiailizer.
+          # This is a hold over until we reach that file in the initialization process.
+          logger = if defined?(::ActiveSupport::Logger)
+            ::ActiveSupport::Logger.new(STDOUT)
+          else
+            ::Logger.new(STDOUT)
+          end
+          ::Rails.logger = Config.instance.logger = logger
         end
       end
 
-      def self.apply_logger(config)
-        ::Rails.logger = config.logger = Config.instance.logger
+      def self.set_logger(logger)
+        if defined?(::ActiveSupport::TaggedLogging) && !logger.is_a?(::ActiveSupport::TaggedLogging)
+          logger = ::ActiveSupport::TaggedLogging.new(logger)
+        end
+
+        Config.instance.logger = logger
+        ::ActionController::Base.logger = logger
+        ::ActionView::Base.logger = logger if ::ActionView::Base.respond_to?(:logger=)
+        ::ActiveRecord::Base.logger = logger
+        ::Rails.logger = logger
       end
 
       def self.configure_middlewares(middleware)

@@ -112,6 +112,7 @@ module Timber
     # For use in development and test environments where you do not want metadata
     # included in the log lines.
     class SimpleFormatter < Formatter
+
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
         "#{String === msg ? msg : msg.inspect}\n"

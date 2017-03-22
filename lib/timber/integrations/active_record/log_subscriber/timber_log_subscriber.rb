@@ -10,7 +10,7 @@ module Timber
         # @private
         class TimberLogSubscriber < ::ActiveRecord::LogSubscriber
           def sql(event)
-            super(event)
+            r = super(event)
 
             if @message
               payload = event.payload
@@ -21,7 +21,11 @@ module Timber
               )
 
               logger.debug event
+
+              @message = nil
             end
+
+            r
           end
 
           private

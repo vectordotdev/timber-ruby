@@ -10,7 +10,6 @@ module Timber
         :scheme, :service_name
 
       def initialize(attributes)
-        @body = Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
@@ -20,12 +19,14 @@ module Timber
         @request_id = attributes[:request_id]
         @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
         @service_name = attributes[:service_name]
+
+        @body = Util::HTTPEvent.normalize_body(@headers["content-type"], attributes[:body])
       end
 
       def to_hash
-        {body: body, headers: headers, host: host, method: method, path: path, port: port,
-          query_string: query_string, request_id: request_id, scheme: scheme,
-          service_name: service_name}
+        {headers: headers, host: host, method: method, parsed_body_json: parsed_body_json,
+          path: path, port: port, query_string: query_string, request_id: request_id,
+          scheme: scheme, service_name: service_name}
       end
       alias to_h to_hash
 
