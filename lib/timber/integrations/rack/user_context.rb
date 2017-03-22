@@ -8,13 +8,9 @@ module Timber
         end
 
         def call(env)
-          user = get_user(env)
-          if user
-            context = Contexts::User.new(
-              id: user_id(user),
-              name: user_name(user),
-              email: user_email(user)
-            )
+          user_hash = get_user_hash(env)
+          if user_hash
+            context = Contexts::User.new(user_hash)
             CurrentContext.with(context) do
               @app.call(env)
             end
@@ -24,12 +20,29 @@ module Timber
         end
 
         private
-          def get_user(env)
+          def get_user_hash(env)
             if env['warden']
-              env['warden'].user
+              get_user_hash_from_object(env['warden'].user)
+            elsif env['omniauth.auth']
+              auth_hash = env['omniauth.auth']
+              info = auth_hash['info']
+
+              {
+                id: auth_hash['uid'],
+                name: info['name'],
+                email: info['email']
+              }
             else
               nil
             end
+          end
+
+          def get_user_hash_from_object(user)
+            {
+              id: user_id(user),
+              name: user_name(user),
+              email: user_email(user)
+            }
           end
 
           def user_id(user)
