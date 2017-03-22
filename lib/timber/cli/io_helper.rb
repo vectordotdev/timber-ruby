@@ -23,6 +23,7 @@ module Timber
 
         code =
           case color
+          when :blue then 34
           when :red then 31
           when :green then 32
           when :yellow then 33

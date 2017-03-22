@@ -3,6 +3,8 @@
 module Timber
   class CLI
     module Messages
+      include IOHelper
+
       extend self
 
       APP_URL = "https://app.timber.io"
@@ -41,7 +43,12 @@ message.rstrip
 
       def commit_and_deploy_reminder
 message = <<-MESSAGE
-Last step! Commit these changes and deploy. 🚀
+Last step!
+
+    #{colorize("git add config/initializers/timber.rb", :blue)}
+    #{colorize("git commit -am 'Install Timber'", :blue)}
+
+    #{colorize("push and deploy", :blue)} 🚀
 MESSAGE
 message.rstrip
 end
@@ -75,7 +82,7 @@ Get free data on Timeber!
 * Get ✨ 50mb✨ for following #{TWITTER_HANDLE} on twitter
 
 (Your account will be credited within 2-3 business days.
- If you do not notice a credit please contact us: #{@support_email})
+ If you do not notice a credit please contact us: #{SUPPORT_EMAIL})
 MESSAGE
 message.rstrip
 end
@@ -94,11 +101,11 @@ message.rstrip
 
       def heroku_install(app)
 message = <<-MESSAGE
-Now we need to send your logs to the Timber service.
+Now we need to send your logs from Heroku to Timber.
 
-Please run this command in a separate terminal and return back here when complete:
+Please run this command in a separate terminal, return back when complete:
 
-    heroku drains:add #{app.heroku_drain_url}
+    #{colorize("heroku drains:add #{app.heroku_drain_url}", :blue)}
 
 Note: Your Heroku app must be generating logs for this to work.
 MESSAGE
@@ -107,24 +114,29 @@ message.rstrip
 
       def no_api_key_provided
 message = <<-MESSAGE
-Woops! You didn't provide an API key. You can do so via:
+Hey there! Welcome to Timber. In order to proceed, you'll need an API key.
+If you already have one, you can run this installer like:
 
-    bundle exec timber install my-api-key
+    #{colorize("bundle exec timber install my-api-key", :blue)}
 
 #{obtain_key_instructions}
 MESSAGE
-message.rstrip
+        message.rstrip
       end
 
       def obtain_key_instructions
 message = <<-MESSAGE
 Don't have a key? Head over to:
 
-    https://app.timber.io
+    #{colorize("https://app.timber.io", :blue)}
 
 Once there, create an application. Your API key will be displayed afterwards.
 For more detailed instructions, checkout our docs page:
+
 https://timber.io/docs/app/obtain-api-key/
+
+If you're confused, don't hesitate to contact us: #{SUPPORT_EMAIL}
+
 MESSAGE
 message.rstrip
       end

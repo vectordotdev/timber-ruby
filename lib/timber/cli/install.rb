@@ -9,7 +9,6 @@ module Timber
         include IOHelper
 
         def run(api_key)
-          puts ""
           puts colorize(Messages.header, :green)
           puts colorize(Messages.separator, :green)
           puts colorize(Messages.contact, :green)
@@ -17,7 +16,7 @@ module Timber
           puts ""
 
           if !api_key
-            puts colorize(Messages.no_api_key_provided, :red)
+            puts Messages.no_api_key_provided
             return
           end
 
@@ -28,6 +27,7 @@ module Timber
           app = Application.new(api)
 
           puts Messages.application_details(app)
+          puts ""
 
           case ask_yes_no("Are the above details correct?")
           when :yes
@@ -81,7 +81,7 @@ module Timber
             puts ""
             puts Messages.separator
             puts ""
-            puts colorize(Messages.commit_and_deploy_reminder, :green)
+            puts Messages.commit_and_deploy_reminder
 
             api.event!(:success)
 
