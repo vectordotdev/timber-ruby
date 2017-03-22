@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Timber
   class CLI
     module Messages
@@ -11,19 +13,19 @@ module Timber
       WEBSITE_URL = "https://timber.io"
       MAX_LENGTH = 80.freeze
 
-      def edit_app_url(app)
-        "#{APP_URL}"
-      end
-
       def application_details(app)
-message = <<-MESSAGE
-Woot! Your API 🔑 is valid. Here are you application details:"
+        message = <<-MESSAGE
+Woot! Your API 🔑  is valid. Here are you application details:
 
-Name:      #{app.name}"
-Framework: #{app.framework_type}"
-Platform:  #{app.platform_type}"
+Name:      #{app.name} (#{app.environment})
+Framework: #{app.framework_type}
+Platform:  #{app.platform_type}
 MESSAGE
 message.rstrip
+      end
+
+      def edit_app_url(app)
+        "#{APP_URL}"
       end
 
       def bad_experience_message
@@ -55,9 +57,8 @@ message.rstrip
 
       def http_environment_variables(api_key)
 message = <<-MESSAGE
-Great! Add these environment variables:
+Great! Add this variable to your environment:
 
-    export TIMBER_LOG_DEVICE="http"
     export TIMBER_API_KEY="#{api_key}"
 
 MESSAGE

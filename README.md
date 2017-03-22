@@ -7,7 +7,7 @@
 
 * [Timber website](https://timber.io)
 * [Timber docs](https://timber.io/docs)
-* [Library docs](https://hex.pm/packages/timber)
+* [Library docs](http://www.rubydoc.info/github/timberio/timber-ruby)
 * [Support](mailto:support@timber.io)
 
 

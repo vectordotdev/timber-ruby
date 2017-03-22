@@ -103,7 +103,7 @@ module Timber
       #     request_queue: Timber::LogDevices::HTTP::DroppingSizedQueue.new(3))
       #   Timber::Logger.new(http_log_device)
       def initialize(api_key, options = {})
-        @api_key = api_key
+        @api_key = api_key || raise(ArgumentError.new("The api_key parameter cannot be blank"))
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
         @batch_size = options[:batch_size] || 1_000
         @flush_interval = options[:flush_interval] || 1 # 1 second

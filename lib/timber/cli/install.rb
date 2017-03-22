@@ -27,16 +27,13 @@ module Timber
 
           app = Application.new(api)
 
-          puts "Woot! Your API 🔑  is valid. Here are you application details:"
-          puts ""
-          puts "Name:      #{app.name} (#{app.environment})"
-          puts "Framework: #{app.framework_type}"
-          puts "Platform:  #{app.platform_type}"
-          puts ""
+          puts Messages.application_details(app)
 
           case ask_yes_no("Are the above details correct?")
           when :yes
             if app.heroku?
+              create_initializer(:stdout)
+
               puts ""
               puts Messages.separator
               puts ""
@@ -55,17 +52,16 @@ module Timber
 
               case ask("Enter your choice: (1/2) ")
               when "1"
+                create_initializer(:http, :api_key_code => "ENV['TIMBER_API_KEY']")
+
                 puts ""
                 puts Messages.http_environment_variables(app.api_key)
                 puts ""
 
               when "2"
+                create_initializer(:http, :api_key_code => "'#{app.api_key}'")
+
                 puts ""
-                write Messages.task_start("Creating config/initializers/timber.rb")
-
-                create_initializer("http", app)
-
-                puts colorize(Messages.task_complete("Creating config/initializers/timber.rb"), :green)
               end
 
               send_test_messages(api_key)
@@ -103,17 +99,50 @@ module Timber
         end
 
         private
-          def create_initializer(log_device, app)
-            body = "config = Timber::Config.instance\n" \
-              "config.log_device = Timber::LogDevices::HTTP.new(\"#{app.api_key}\")\n\n" \
-              "# More config options can be found at: https://timber.io/docs/ruby/configuration/\n" \
-              "#\n" \
-              "# Question? Need help?\n" \
-              "# * Docs: https://timber.io/docs\n" \
-              "# * Support: support@timber.io" \
+          def create_initializer(log_device_type, options = {})
+            puts ""
+            write Messages.task_start("Creating config/initializers/timber.rb")
+
+            logger_code = \
+              case log_device_type
+              when :http
+                api_key_code = options[:api_key_code] || raise(ArgumentError.new("the :api_key_code option is required"))
+                "log_device = Timber::LogDevices::HTTP.new(#{api_key_code})\n" +
+                  "Timber::Logger.new(log_device)"
+
+              when :stdout
+                "Timber::Logger.new(STDOUT)"
+              end
+
+            body = <<-BODY
+# Timber.io Ruby Library
+#
+# ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^
+# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
+# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
+# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
+#
+# Library:       http://github.com/timberio/timber-ruby
+# Docs:          http://www.rubydoc.info/github/timberio/timber-ruby
+# Configuration: http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config
+# Support:       support@timber.io
+
+logger = case Rails.env
+when "development", "test"
+  logger = Timber::Logger.new(STDOUT)
+  logger.formatter = Timber::Logger::SimpleFormatter.new
+  logger
+else
+  #{logger_code}
+end
+
+Timber::Frameworks::Rails.set_logger(logger)
+BODY
 
             FileUtils.mkdir_p(File.join(Dir.pwd, "config", "initializers"))
             File.write(File.join(Dir.pwd, "config/initializers/timber.rb"), body)
+
+            puts colorize(Messages.task_complete("Creating config/initializers/timber.rb"), :green)
           end
 
           def send_test_messages(api_key)
