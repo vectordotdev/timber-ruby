@@ -9,7 +9,11 @@ module Timber
         # rails logger. In older rails versions, :initialize_logger attempts to
         # log to a file which can raise permissions errors on some systems.
         initializer(:timber_logger, before: :initialize_logger) do
-          logger = ::ActiveSupport::Logger.new(STDOUT)
+          logger = if defined?(::ActiveSupport::Logger)
+            ::ActiveSupport::Logger.new(STDOUT)
+          else
+            ::Logger.new(STDOUT)
+          end
           Rails.set_logger(logger)
         end
 
