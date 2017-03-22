@@ -7,6 +7,8 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class ControllerCall < Timber::Event
+      PASSWORD_NAME = 'password'.freeze
+
       attr_reader :controller, :action, :params, :format
 
       def initialize(attributes)
@@ -53,7 +55,7 @@ module Timber
               when PASSWORD_NAME
                 h[k] = SANITIZED_VALUE
               else
-                h[k] = value
+                h[k] = v
               end
             end
           else

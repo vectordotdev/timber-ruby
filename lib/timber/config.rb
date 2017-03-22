@@ -27,6 +27,7 @@ module Timber
     def initialize
       @capture_http_bodies = true
       @capture_http_body_content_types = [FORM_URL_ENCODED_CONTENT_TYPE, JSON_CONTENT_TYPE]
+      @http_body_limit = 2000
     end
 
     # Enables and disables the capturing of HTTP bodies in `Events::HTTPServerRequest`,
@@ -47,6 +48,12 @@ module Timber
       @debug_logger
     end
 
+    # Truncates captured HTTP bodies to this specified limit. The default is `2000`.
+    # If you want to capture more data, you can raise this to a maximum of `5000`,
+    # or lower this to be more efficient with data.
+    def http_body_limit
+      @http_body_limit
+    end
 
     # This is the logger Timber writes to. It should be set to your global
     # logger to keep the logging destination consitent. Please see `delegate_logger_to`

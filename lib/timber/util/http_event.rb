@@ -2,8 +2,6 @@ module Timber
   module Util
     module HTTPEvent
       AUTHORIZATION_HEADER = 'authorization'.freeze
-      BODY_LIMIT = 2_000.freeze
-      PASSWORD_NAME = 'password'.freeze
       QUERY_STRING_LIMIT = 5_000.freeze
       SANITIZED_VALUE = '[sanitized]'.freeze
 
@@ -23,7 +21,7 @@ module Timber
             body = body.body.to_s
           end
 
-          body[0..(BODY_LIMIT - 1)]
+          body[0..(Config.instance.http_body_limit - 1)]
         else
           # Drop the body if it is not a format we want to capture.
           # This gives users more control to avoid loggin files, etc.
