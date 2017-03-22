@@ -122,10 +122,9 @@ module Timber
 # /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
 # /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
 #
-# Library:       http://github.com/timberio/timber-ruby
-# Docs:          http://www.rubydoc.info/github/timberio/timber-ruby
-# Configuration: http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config
-# Support:       support@timber.io
+# Library:  http://github.com/timberio/timber-ruby
+# Docs:     http://www.rubydoc.info/github/timberio/timber-ruby
+# Support:  support@timber.io
 
 logger = case Rails.env
 when "development", "test"
