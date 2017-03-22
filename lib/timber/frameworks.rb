@@ -1,14 +1,9 @@
 require "logger"
 
-# Attempt to require Rails. We can not list it as a gem
-# dependency because we want to support multiple frameworks.
+# Attempt to require the Rails framework file.
 begin
-  require("rails")
-rescue LoadError
-end
-
-if defined?(::Rails) && defined?(::Rails::Railtie)
   require 'timber/frameworks/rails'
+rescue Exception
 end
 
 module Timber
