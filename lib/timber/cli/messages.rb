@@ -66,7 +66,7 @@ message.rstrip
 message = <<-MESSAGE
 Great! Add this variable to your environment:
 
-    #{colorize('export TIMBER_API_KEY="#{api_key}"', :blue)}
+    #{colorize("export TIMBER_API_KEY=\"#{api_key}\"", :blue)}
 
 MESSAGE
 message.rstrip
