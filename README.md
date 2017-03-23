@@ -54,10 +54,16 @@ Allowing you to run queries in the [Timber console](https://app.timber.io) like:
 
 ## Configuration
 
-All configuration options can be seen in the [`Timber::Config docs`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
+All configuration options can be seen in the
+[`Timber::Config docs`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
 
-1. `config.timber.format`
-  * `default` - Original, default, unchanged log messages.
+Here's a few popular options:
+
+1. `config.timber.format =`
+  * `:default` - This is the default. It's the original, default, unchanged log messages.
+  * `:lograge` - Works exactly like [lograge](https://github.com/roidrage/lograge), except Timber's
+    additional context and metadata is also appended. Lograge++.
+
 
 
 ## Usage
