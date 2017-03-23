@@ -17,29 +17,14 @@ module Timber
   class Config
     class NoLoggerError < StandardError; end
 
-    FORM_URL_ENCODED_CONTENT_TYPE = "application/x-www-form-urlencoded".freeze
-    JSON_CONTENT_TYPE = "application/json".freeze
-
     include Singleton
 
-    attr_writer :capture_http_bodies, :debug_logger, :log_formatter, :logger
+    attr_writer :debug_logger, :http_body_limit, :logger
 
     def initialize
-      @capture_http_bodies = true
-      @capture_http_body_content_types = [FORM_URL_ENCODED_CONTENT_TYPE, JSON_CONTENT_TYPE]
       @http_body_limit = 2000
     end
 
-    # Enables and disables the capturing of HTTP bodies in `Events::HTTPServerRequest`,
-    # `HTTPClientRequest`, and `HTTPClientRespone`.
-    def capture_http_bodies?
-      @capture_http_bodies == true
-    end
-
-    # Limits HTTP body capturing to the listed content types. This must be an array.
-    def capture_http_body_content_types
-      @capture_http_body_content_types ||= []
-    end
 
     # Set a debug_logger to view internal Timber library log message.
     # Useful for debugging. Defaults to `nil`. If set, debug messages will be

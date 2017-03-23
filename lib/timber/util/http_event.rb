@@ -15,18 +15,12 @@ module Timber
         end
       end
 
-      def normalize_body(content_type, body)
-        if Config.instance.capture_http_body_content_types.include?(content_type)
-          if body.respond_to?(:body)
-            body = body.body.to_s
-          end
-
-          body[0..(Config.instance.http_body_limit - 1)]
-        else
-          # Drop the body if it is not a format we want to capture.
-          # This gives users more control to avoid loggin files, etc.
-          nil
+      def normalize_body(body)
+        if body.respond_to?(:body)
+          body = body.body.to_s
         end
+
+        body[0..(Config.instance.http_body_limit - 1)]
       end
 
       def normalize_headers(headers)
