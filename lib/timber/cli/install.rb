@@ -116,7 +116,7 @@ module Timber
               when :http
                 api_key_code = options[:api_key_code] || raise(ArgumentError.new("the :api_key_code option is required"))
                 "log_device = Timber::LogDevices::HTTP.new(#{api_key_code})\n" +
-                  "Timber::Logger.new(log_device)"
+                  "  Timber::Logger.new(log_device)"
 
               when :stdout
                 "Timber::Logger.new(STDOUT)"
