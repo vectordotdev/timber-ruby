@@ -17,7 +17,7 @@ module Timber
 
       def application_details(app)
         message = <<-MESSAGE
-Woot! Your API 🔑  is valid. Here are you application details:
+Woot! Your API 🔑  is valid:
 
 Name:      #{app.name} (#{app.environment})
 Framework: #{app.framework_type}
@@ -66,7 +66,7 @@ message.rstrip
 message = <<-MESSAGE
 Great! Add this variable to your environment:
 
-    export TIMBER_API_KEY="#{api_key}"
+    #{colorize('export TIMBER_API_KEY="#{api_key}"', :blue)}
 
 MESSAGE
 message.rstrip
@@ -80,9 +80,6 @@ Get free data on Timeber!
 * Get ✨ 250mb✨ for tweeting your experience to #{TWITTER_HANDLE}
 * Get ✨ 100mb✨ for starring our repo: #{REPO_URL}
 * Get ✨ 50mb✨ for following #{TWITTER_HANDLE} on twitter
-
-(Your account will be credited within 2-3 business days.
- If you do not notice a credit please contact us: #{SUPPORT_EMAIL})
 MESSAGE
 message.rstrip
 end
@@ -101,13 +98,10 @@ message.rstrip
 
       def heroku_install(app)
 message = <<-MESSAGE
-Now we need to send your logs from Heroku to Timber.
-
-Please run this command in a separate terminal, return back when complete:
+To send logs from Heroku please run this command in a separate window:
 
     #{colorize("heroku drains:add #{app.heroku_drain_url}", :blue)}
 
-Note: Your Heroku app must be generating logs for this to work.
 MESSAGE
 message.rstrip
       end

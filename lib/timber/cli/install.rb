@@ -40,6 +40,8 @@ module Timber
               puts Messages.heroku_install(app)
               puts ""
 
+              ask_yes_no("Did you run that ^ command?")
+
             else
               puts ""
               puts Messages.separator
@@ -56,16 +58,18 @@ module Timber
 
                 puts ""
                 puts Messages.http_environment_variables(app.api_key)
-                puts ""
 
               when "2"
                 create_initializer(:http, :api_key_code => "'#{app.api_key}'")
 
-                puts ""
               end
+
+              puts ""
 
               send_test_messages(api_key)
             end
+
+            puts ""
 
             api.wait_for_logs do |iteration|
               write Messages.task_start("Waiting for logs")
