@@ -28,11 +28,11 @@ module Timber
           # 3. Disable metadata so that the logger is essentially transparent until further
           #    configuration in initializers/timber.rb. This allows them to essentially "turn on"
           #    timber for production, staging, etc.
-          log_device = ::Rails.logger.instance_variable_get(:@logdev).dev
+          log_device = ::Rails.logger.instance_variable_get(:@logdev).try(:dev)
           logger = Logger.new(log_device)
           logger.formatter = Logger::SimpleFormatter.new
           logger.level = ::Rails.logger.level
-          Rails.set_logger(logger)
+          ::Rails.logger = config.logger = logger
 
           Rails.configure_middlewares(config.app_middleware)
           Integrations.integrate!
