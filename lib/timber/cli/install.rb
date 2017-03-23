@@ -94,8 +94,6 @@ module Timber
             puts ""
             puts Messages.free_data
             puts ""
-            puts Messages.console_url(app)
-            puts ""
 
           when :no
             puts ""

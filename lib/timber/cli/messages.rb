@@ -56,7 +56,7 @@ end
       def console_url(app)
 message = <<-MESSAGE
 Your console URL: https://app.timber.io/organizations/timber/apps/#{app.slug}/console
-                  (copied to clipboard)
+MESSAGE
       end
 
       def contact
@@ -80,11 +80,11 @@ message.rstrip
 
       def free_data
 message = <<-MESSAGE
-Get free data!
+As a welcome gift, we've credited your account with ✨ 50mb✨. Get more:
 
 * Get ✨ 250mb✨ for tweeting your experience to #{TWITTER_HANDLE}
 * Get ✨ 100mb✨ for starring our repo: #{REPO_URL}
-* Get ✨ 50mb✨ for following #{TWITTER_HANDLE} on twitter
+* Get ✨ 100mb✨ for following #{TWITTER_HANDLE} on twitter
 MESSAGE
 message.rstrip
 end
