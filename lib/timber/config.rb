@@ -1,19 +1,15 @@
 require "singleton"
 
 module Timber
-  # Interface for settings and reading Timber configuration.
+  # Interface for setting and reading Timber configuration.
   #
-  # You can override any configuration supplied here by simply setting it:
+  # For Rails apps this is installed into `config.timber`. See examples below.
   #
-  #     # Rails
-  #     config.timber.api_key = "my api key"
-  #
-  #     # Everything else
-  #     Timber::Config.instance.api_key = "my api key"
-  #
-  # If a value is not explicity set, the environment is checked for it's associated
-  # environment variable. If that is not set, a reasonable default will be chosen. Each
-  # method documents this.
+  # @example Rails example
+  #   config.timber.append_metadata = false
+  # @example Everything else
+  #   config = Timber::Config.instance
+  #   config.append_metdata = false
   class Config
     class NoLoggerError < StandardError; end
 
@@ -29,7 +25,12 @@ module Timber
       @http_body_limit = 2000
     end
 
-    # The environment your app is running in. Defaults to RACK_ENV and RAILS_ENV.
+    # The environment your app is running in. Defaults to `RACK_ENV` and `RAILS_ENV`.
+    #
+    # @example Rails
+    #   config.timber.environment = "staging"
+    # @example Everything else
+    #   Timber::Config.instance.environment = "staging"
     def environment
       @environment ||= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
     end
@@ -37,6 +38,11 @@ module Timber
     # Set a debug_logger to view internal Timber library log message.
     # Useful for debugging. Defaults to `nil`. If set, debug messages will be
     # written to this logger.
+    #
+    # @example Rails
+    #   config.timber.debug_logger = ::Logger.new(STDOUT)
+    # @example Everything else
+    #   Timber::Config.instance.debug_logger = ::Logger.new(STDOUT)
     def debug_logger
       @debug_logger
     end
@@ -44,6 +50,11 @@ module Timber
     # Truncates captured HTTP bodies to this specified limit. The default is `2000`.
     # If you want to capture more data, you can raise this to a maximum of `5000`,
     # or lower this to be more efficient with data.
+    #
+    # @example Rails
+    #   config.timber.http_body_limit = 500
+    # @example Everything else
+    #   Timber::Config.instance.http_body_limit = 500
     def http_body_limit
       @http_body_limit
     end
@@ -54,6 +65,10 @@ module Timber
     #
     #     log message @metadata {...}
     #
+    # @example Rails
+    #   config.timber.append_metadata = false
+    # @example Everything else
+    #   Timber::Config.instance.append_metadata = false
     def append_metadata?
       if defined?(@append_metadata)
         return @append_metadata == true
@@ -62,10 +77,16 @@ module Timber
       production? || staging?
     end
 
-    # This is the logger Timber writes to. It should be set to your global
-    # logger to keep the logging destination consitent. Please see `delegate_logger_to`
-    # to  delegate this call to another method. This is set to `Rails.logger`
-    # for rails.
+    # This is the logger Timber writes to. All of the Timber integrations write to
+    # this logger. It should be set to your global logger to keep the logging destination consitent.
+    #
+    # For Rails this is set automatically to `Rails.logger`.
+    #
+    # @example Rails
+    #   Rails.logger = Timber::Logger.new(STDOUT)
+    #   config.timber.logger = Rails.logger
+    # @example Everything else
+    #   Timber::Config.instance.logger = Timber::Logger.new(STDOUT)
     def logger
       @logger || Logger.new(STDOUT)
     end

@@ -54,6 +54,8 @@ Allowing you to run queries in the [Timber console](https://app.timber.io) like:
 
 ## Configuration
 
+All configuration options can be seen in the [`Timber::Config docs`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
+
 1. `config.timber.format`
   * `default` - Original, default, unchanged log messages.
 
