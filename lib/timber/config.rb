@@ -17,14 +17,22 @@ module Timber
   class Config
     class NoLoggerError < StandardError; end
 
+    PRODUCTION_NAME = "production".freeze
+    STAGING_NAME = "staging".freeze
+
     include Singleton
 
-    attr_writer :debug_logger, :http_body_limit, :logger
+    attr_writer :append_metadata, :debug_logger, :http_body_limit, :logger
 
+    # @private
     def initialize
       @http_body_limit = 2000
     end
 
+    # The environment your app is running in. Defaults to RACK_ENV and RAILS_ENV.
+    def environment
+      @environment ||= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
+    end
 
     # Set a debug_logger to view internal Timber library log message.
     # Useful for debugging. Defaults to `nil`. If set, debug messages will be
@@ -40,12 +48,35 @@ module Timber
       @http_body_limit
     end
 
+    # Should the logger append the Timber metadata. This is automatically turned on
+    # for production and staging environments. Other environments should be set manually.
+    # If set to `true` log messages will look like:
+    #
+    #     log message @metadata {...}
+    #
+    def append_metadata?
+      if defined?(@append_metadata)
+        @append_metadata == true
+      end
+
+      production? || staging?
+    end
+
     # This is the logger Timber writes to. It should be set to your global
     # logger to keep the logging destination consitent. Please see `delegate_logger_to`
     # to  delegate this call to another method. This is set to `Rails.logger`
     # for rails.
     def logger
-      @logger || raise(NoLoggerError.new)
+      @logger || Logger.new(STDOUT)
     end
+
+    private
+      def production?
+        environment == PRODUCTION_NAME
+      end
+
+      def staging?
+        environment == STAGING_NAME
+      end
   end
 end

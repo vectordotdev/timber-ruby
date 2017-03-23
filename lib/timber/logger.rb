@@ -119,24 +119,26 @@ module Timber
       end
     end
 
-    # Structures your log messages into Timber's hybrid format, which makes
-    # it easy to read while also appending the appropriate metadata.
+    # Structures your log messages as strings and appends metadata if
+    # `Timber::Config.instance.append_metadata?` is true.
     #
-    #   logger = Timber::Logger.new(STDOUT)
-    #   logger.formatter = Timber::JSONFormatter.new
-    #
-    # Example message:
+    # Example message with metdata:
     #
     #   My log message @metadata {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
     #
-    class HybridFormatter < Formatter
+    class StringFormatter < Formatter
       METADATA_CALLOUT = "@metadata".freeze
 
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
-        metadata = log_entry.to_json(:except => [:message])
-        # use << for concatenation for performance reasons
-        log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
+
+        if Config.instance.append_metadata?
+          metadata = log_entry.to_json(:except => [:message])
+          # use << for concatenation for performance reasons
+          log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
+        else
+          log_entry.message + "\n"
+        end
       end
     end
 
@@ -190,7 +192,7 @@ module Timber
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
       else
-        self.formatter = HybridFormatter.new
+        self.formatter = StringFormatter.new
       end
 
       self.level = environment_level

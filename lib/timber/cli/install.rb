@@ -32,7 +32,7 @@ module Timber
           case ask_yes_no("Are the above details correct?")
           when :yes
             if app.heroku?
-              create_initializer(:stdout)
+              update_environment_config("production", :stdout)
 
               puts ""
               puts Messages.separator
@@ -55,7 +55,7 @@ module Timber
 
               case ask("Enter your choice: (1/2) ")
               when "1"
-                create_initializer(:http, :api_key_code => "ENV['TIMBER_API_KEY']")
+                update_environment_config("production", :http, :api_key_code => "ENV['TIMBER_API_KEY']")
 
                 puts ""
                 puts Messages.http_environment_variables(app.api_key)
@@ -65,7 +65,7 @@ module Timber
                 puts ""
 
               when "2"
-                create_initializer(:http, :api_key_code => "'#{app.api_key}'")
+                update_environment_config("production", :http, :api_key_code => "'#{app.api_key}'")
 
               end
 
@@ -107,53 +107,48 @@ module Timber
         end
 
         private
-          def create_initializer(log_device_type, options = {})
+          def update_environment_config(name, log_device_type, options = {})
+            path = File.join("config", "environments", "#{name}.rb")
+
             puts ""
-            write Messages.task_start("Creating config/initializers/timber.rb")
+            task_message = "Configuring Timber in #{path}"
+            write Messages.task_start(task_message)
 
             logger_code = \
               case log_device_type
               when :http
                 api_key_code = options[:api_key_code] || raise(ArgumentError.new("the :api_key_code option is required"))
-                "log_device = Timber::LogDevices::HTTP.new(#{api_key_code})\n" +
-                  "  Timber::Logger.new(log_device)"
+
+                logger_code = defined?(::ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
+
+                code = <<-CODE
+  # Install the Timber.io logger, send logs over HTTP
+  log_device = Timber::LogDevices::HTTP.new(#{api_key_code})
+  logger = Timber::Logger.new(log_device)
+  logger.level = config.log_level
+  config.logger = #{logger_code}
+CODE
+                code.rstrip
 
               when :stdout
-                "Timber::Logger.new(STDOUT)"
+                code = <<-CODE
+  # Install the Timber.io logger, send logs to STDOUT
+  logger = Timber::Logger.new(STDOUT)
+  logger.level = config.log_level
+  config.logger = #{logger_code}
+CODE
+                code.rstrip
               end
 
-            body = <<-BODY
-# Timber.io Ruby Library
-#
-#  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^
-# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
-# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
-# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\
-#
-# Library:  http://github.com/timberio/timber-ruby
-# Docs:     http://www.rubydoc.info/github/timberio/timber-ruby
-# Support:  support@timber.io
 
-logger = case Rails.env
-when "development"
-  # Write logs to STDOUT in a simple message only format
-  Timber::Logger.new(STDOUT).tap do |logger|
-    logger.formatter = Timber::Logger::SimpleFormatter.new
-  end
-when "production", "staging"
-  #{logger_code}
-end
+            current_contents = File.read(path)
 
-if logger
-  logger.level = Rails.application.config.log_level
-  Timber::Frameworks::Rails.set_logger(logger)
-end
-BODY
+            if !current_contents.include?("Timber::Logger.new")
+              new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
+              File.write(path, new_contents)
+            end
 
-            FileUtils.mkdir_p(File.join(Dir.pwd, "config", "initializers"))
-            File.write(File.join(Dir.pwd, "config/initializers/timber.rb"), body)
-
-            puts colorize(Messages.task_complete("Creating config/initializers/timber.rb"), :green)
+            puts colorize(Messages.task_complete(task_message), :green)
           end
 
           def send_test_messages(api_key)

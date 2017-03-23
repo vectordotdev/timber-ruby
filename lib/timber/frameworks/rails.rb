@@ -1,51 +1,49 @@
 module Timber
   module Frameworks
+    # Module for Rails specific code, such as the Railtie and any methods that assist
+    # with Rails setup.
     module Rails
       # Installs Timber into your Rails app automatically.
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
 
-        initializer(:timber_silence_logger_complaints, before: :initialize_logger) do
-          # We set a default logger because Rails tries to write to a file by default.
-          # This causes errors on platforms with a read only file system (Heroku).
-          # See this commit: https://github.com/heroku/rails_stdout_logging/commit/13d092650118bcfeb30f383d3274cee46cbf7b8f
-          # Moreover, the Timber logger gets configured properly later in an initiailizer.
-          # This is a hold over until we reach that file in the initialization process.
-          is_heroku = !ENV['DYNO'].nil?
-          if is_heroku
-            logger = defined?(::ActiveSupport::Logger) ?
-              ::ActiveSupport::Logger.new(STDOUT) : ::Logger.new(STDOUT)
-            ::Rails.logger = config.logger = logger
-          end
-        end
-
         # Initialize Timber immediately after the logger in case anything uses the logger
         # during the initialization process.
-        initializer(:timber, after: :initialize_logger) do
-          # The goals here:
-          # 1. Respect the default log device that rails sets in :initialize_logger
-          # 2. Replace the logger with Timber::Logger so that users get our logger API
-          # 3. Disable metadata so that the logger is essentially transparent until further
-          #    configuration in initializers/timber.rb. This allows them to essentially "turn on"
-          #    timber for production, staging, etc.
-          log_device = ::Rails.logger.instance_variable_get(:@logdev).try(:dev)
-          logger = Logger.new(log_device)
-          logger.formatter = Logger::SimpleFormatter.new
-          logger.level = ::Rails.logger.level
-          ::Rails.logger = config.logger = logger
+        initializer(:timber, group: :all, after: :initialize_logger) do
+          logger = Rails.ensure_timber_logger(::Rails.logger)
+          Rails.set_logger(logger)
 
           Rails.configure_middlewares(config.app_middleware)
           Integrations.integrate!
         end
       end
 
+      # This builds a new Timber::Logger from an existing logger. This allows us to transparentl
+      # switch users onto the Timber::Logger since we support a more useful logging API.
+      def self.ensure_timber_logger(existing_logger)
+        if existing_logger.is_a?(Logger)
+          return existing_logger
+        end
+
+        log_device = existing_logger.instance_variable_get(:@logdev).try(:dev)
+        logger = Logger.new(log_device)
+        logger.level = existing_logger.try(:level) || Logger::DEBUG
+        if defined?(::ActiveSupport::TaggedLogging)
+          logger = ::ActiveSupport::TaggedLogging.new(logger)
+        end
+        logger
+      end
+
+      # Sets the Rails logger. Rails
       def self.set_logger(logger)
         if defined?(::ActiveSupport::TaggedLogging) && !logger.is_a?(::ActiveSupport::TaggedLogging)
           logger = ::ActiveSupport::TaggedLogging.new(logger)
         end
 
         Config.instance.logger = logger
+        ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base)
         ::ActionController::Base.logger = logger
+        ::ActionMailer::Base.logger = logger if ::ActionMailer::Base.respond_to?(:logger=)
         ::ActionView::Base.logger = logger if ::ActionView::Base.respond_to?(:logger=)
         ::ActiveRecord::Base.logger = logger
         ::Rails.logger = logger

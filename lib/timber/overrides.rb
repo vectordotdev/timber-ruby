@@ -1,5 +1,4 @@
 require "timber/overrides/lograge"
-require "timber/overrides/rails_server"
 require "timber/overrides/rails_stdout_logging"
 
 module Timber
