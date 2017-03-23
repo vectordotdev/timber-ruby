@@ -10,8 +10,8 @@ describe Timber::Logger, :rails_23 => true do
       Timecop.freeze(time) { example.run }
     end
 
-    context "with the :hybrid format" do
-      before(:each) { logger.formatter = Timber::Logger::HybridFormatter.new }
+    context "with the StringFormatter" do
+      before(:each) { logger.formatter = Timber::Logger::StringFormatter.new }
 
       it "should accept strings" do
         logger.info("this is a test")

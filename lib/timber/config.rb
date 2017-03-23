@@ -56,7 +56,7 @@ module Timber
     #
     def append_metadata?
       if defined?(@append_metadata)
-        @append_metadata == true
+        return @append_metadata == true
       end
 
       production? || staging?

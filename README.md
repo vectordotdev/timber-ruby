@@ -52,6 +52,12 @@ Allowing you to run queries in the [Timber console](https://app.timber.io) like:
 3. In your `shell`, run `bundle exec timber install`
 
 
+## Configuration
+
+1. `config.timber.format`
+  * `default` - Original, default, unchanged log messages.
+
+
 ## Usage
 
 <details><summary><strong>Basic logging</strong></summary><p>
