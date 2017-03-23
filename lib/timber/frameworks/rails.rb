@@ -41,11 +41,17 @@ module Timber
         end
 
         Config.instance.logger = logger
+
+        # Set the various Rails framework loggers. We *have* to do this because Rails
+        # internally sets these with an ActiveSupport.onload(:active_record) { } callback.
+        # We don't have an opportunity to intercept this since the :initialize_logger
+        # initializer loads these modules. Moreover, earlier version of rails don't do this
+        # at all, hence the defined? checks. Yay for being implicit.
         ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base)
-        ::ActionController::Base.logger = logger
-        ::ActionMailer::Base.logger = logger if ::ActionMailer::Base.respond_to?(:logger=)
-        ::ActionView::Base.logger = logger if ::ActionView::Base.respond_to?(:logger=)
-        ::ActiveRecord::Base.logger = logger
+        ::ActionController::Base.logger = logger if defined?(::ActionController::Base)
+        ::ActionMailer::Base.logger = logger if defined?(::ActionMailer::Base) && ::ActionMailer::Base.respond_to?(:logger=)
+        ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
+        ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base)
         ::Rails.logger = logger
       end
 
