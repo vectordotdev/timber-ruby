@@ -43,7 +43,7 @@ message.rstrip
 
       def commit_and_deploy_reminder
 message = <<-MESSAGE
-Last step!
+Last step! Commit and deploy:
 
     #{colorize("git add config/initializers/timber.rb", :blue)}
     #{colorize("git commit -am 'Install Timber'", :blue)}
@@ -52,6 +52,12 @@ Last step!
 MESSAGE
 message.rstrip
 end
+
+      def console_url(app)
+message = <<-MESSAGE
+Your console URL: https://app.timber.io/organizations/timber/apps/#{app.slug}/console
+                  (copied to clipboard)
+      end
 
       def contact
 message = <<-MESSAGE
@@ -74,9 +80,8 @@ message.rstrip
 
       def free_data
 message = <<-MESSAGE
-Get free data on Timeber!
+Get free data!
 
-* Timber URL: https://app.timber.io
 * Get ✨ 250mb✨ for tweeting your experience to #{TWITTER_HANDLE}
 * Get ✨ 100mb✨ for starring our repo: #{REPO_URL}
 * Get ✨ 50mb✨ for following #{TWITTER_HANDLE} on twitter
@@ -169,7 +174,7 @@ message.rstrip
       end
 
       def we_love_you_too
-        "💖  We love you too! Let's get to loggin' 🌲"
+        "Thanks! We 💖 you too!"
       end
     end
   end

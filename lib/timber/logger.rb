@@ -166,10 +166,11 @@ module Timber
       end
     end
 
-    class << self
-      def new_from_config
-      end
-    end
+    # These are rails modules that change the logger behavior. We have to
+    # include these if they are present or the logger will not function properly
+    # in a rails environment.
+    include ::ActiveSupport::LoggerThreadSafeLevel if defined?(::ActiveSupport::LoggerThreadSafeLevel)
+    include ::LoggerSilence if defined?(::LoggerSilence)
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
     # The only difference is that it default the formatter to {HybridFormatter}. Using
@@ -193,6 +194,8 @@ module Timber
       end
 
       self.level = environment_level
+
+      after_initialize if respond_to? :after_initialize
 
       @initialized = true
     end

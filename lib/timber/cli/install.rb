@@ -83,15 +83,19 @@ module Timber
             puts ""
             puts Messages.separator
             puts ""
-            puts Messages.free_data
-            puts ""
-            puts Messages.separator
-            puts ""
             puts Messages.commit_and_deploy_reminder
 
             api.event!(:success)
 
             collect_feedback(api)
+
+            puts ""
+            puts Messages.separator
+            puts ""
+            puts Messages.free_data
+            puts ""
+            puts Messages.console_url(app)
+            puts ""
 
           when :no
             puts ""
@@ -133,15 +137,19 @@ module Timber
 # Support:  support@timber.io
 
 logger = case Rails.env
-when "development", "test"
-  logger = Timber::Logger.new(STDOUT)
-  logger.formatter = Timber::Logger::SimpleFormatter.new
-  logger
-else
+when "development"
+  # Write logs to STDOUT in a simple message only format
+  Timber::Logger.new(STDOUT).tap do |logger|
+    logger.formatter = Timber::Logger::SimpleFormatter.new
+  end
+when "production", "staging"
   #{logger_code}
 end
 
-Timber::Frameworks::Rails.set_logger(logger)
+if logger
+  logger.level = Rails.application.config.log_level
+  Timber::Frameworks::Rails.set_logger(logger)
+end
 BODY
 
             FileUtils.mkdir_p(File.join(Dir.pwd, "config", "initializers"))
@@ -183,8 +191,6 @@ BODY
               puts ""
               puts "Thank you! We take feedback seriously and will work to improve this."
             end
-
-            puts ""
           end
       end
     end
