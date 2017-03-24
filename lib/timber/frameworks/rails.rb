@@ -47,11 +47,11 @@ module Timber
         # We don't have an opportunity to intercept this since the :initialize_logger
         # initializer loads these modules. Moreover, earlier version of rails don't do this
         # at all, hence the defined? checks. Yay for being implicit.
-        ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base)
-        ::ActionController::Base.logger = logger if defined?(::ActionController::Base)
+        ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base) && ::ActionCable::Server::Base.respond_to?(:logger=)
+        ::ActionController::Base.logger = logger if defined?(::ActionController::Base) && ::ActionController::Base.respond_to?(:logger=)
         ::ActionMailer::Base.logger = logger if defined?(::ActionMailer::Base) && ::ActionMailer::Base.respond_to?(:logger=)
         ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
-        ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base)
+        ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base) && ::ActiveRecord::Base.respond_to?(:logger=)
         ::Rails.logger = logger
       end
 
