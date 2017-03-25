@@ -16,7 +16,7 @@
 Timber for Ruby is an optional upgrade you can install for Ruby apps on the
 [Timber.io logging platform](https://timber.io). It turns your once raw text logs into
 [rich JSON events that contain critical event and context data](https://timber.io/docs/ruby/events-and-context).
-These events conform to the [Timber normalized JSON schema](https://timber.io/docs/app/basic/events-and-context)
+These events conform to the [Timber normalized JSON schema](https://timber.io/docs/app/basics/events-and-context)
 and improve the quality of your logs; allowing you to filter out the noise and solve
 problems faster.
 
