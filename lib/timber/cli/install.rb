@@ -114,19 +114,19 @@ module Timber
             task_message = "Configuring Timber in #{path}"
             write Messages.task_start(task_message)
 
+            init_logger_code = defined?(::ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
+
             logger_code = \
               case log_device_type
               when :http
                 api_key_code = options[:api_key_code] || raise(ArgumentError.new("the :api_key_code option is required"))
-
-                logger_code = defined?(::ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
 
                 code = <<-CODE
   # Install the Timber.io logger, send logs over HTTP
   log_device = Timber::LogDevices::HTTP.new(#{api_key_code})
   logger = Timber::Logger.new(log_device)
   logger.level = config.log_level
-  config.logger = #{logger_code}
+  config.logger = #{init_logger_code}
 CODE
                 code.rstrip
 
@@ -135,7 +135,7 @@ CODE
   # Install the Timber.io logger, send logs to STDOUT
   logger = Timber::Logger.new(STDOUT)
   logger.level = config.log_level
-  config.logger = #{logger_code}
+  config.logger = #{init_logger_code}
 CODE
                 code.rstrip
               end
