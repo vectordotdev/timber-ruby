@@ -45,8 +45,7 @@ message.rstrip
 message = <<-MESSAGE
 Last step! Commit and deploy:
 
-    #{colorize("git add config/initializers/timber.rb", :blue)}
-    #{colorize("git commit -am 'Install Timber'", :blue)}
+    #{colorize("git commit -m 'Install Timber' config/environments/production.rb", :blue)}
 
     #{colorize("push and deploy", :blue)} 🚀
 MESSAGE
