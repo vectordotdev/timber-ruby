@@ -31,7 +31,11 @@ module Timber
             when AUTHORIZATION_HEADER
               h[k] = SANITIZED_VALUE
             else
-              h[k] = v
+              if Config.instance.header_sanitizer && !(v = Config.instance.header_sanitizer.call(k)).nil?
+                h[k] = v
+              else
+                h[k] = v
+              end
             end
           end
         else
@@ -48,7 +52,7 @@ module Timber
           query_string = query_string.to_s
         end
 
-        query_string[0..(QUERY_STRING_LIMIT - 1)]
+        query_string && query_string[0..(QUERY_STRING_LIMIT - 1)]
       end
     end
   end
