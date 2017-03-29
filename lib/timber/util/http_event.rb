@@ -31,8 +31,8 @@ module Timber
             when AUTHORIZATION_HEADER
               h[k] = SANITIZED_VALUE
             else
-              if Config.instance.header_sanitizer && !(v = Config.instance.header_sanitizer.call(k)).nil?
-                h[k] = v
+              if Config.instance.header_filters && Config.instance.header_filters.include?(k)
+                h[k] = SANITIZED_VALUE
               else
                 h[k] = v
               end

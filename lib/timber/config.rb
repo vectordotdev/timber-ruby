@@ -18,10 +18,11 @@ module Timber
 
     include Singleton
 
-    attr_writer :append_metadata, :debug_logger, :header_sanitizer, :http_body_limit, :logger
+    attr_writer :append_metadata, :debug_logger, :header_filters, :http_body_limit, :logger
 
     # @private
     def initialize
+      @header_filters = []
       @http_body_limit = 2000
     end
 
@@ -48,22 +49,14 @@ module Timber
       @environment ||= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
     end
 
-    # This is a custom lambda / Proc that can be used to filter HTTP headers being captured
-    # by Timber. By default, Timber sanitizes the `Authorization` header only. If any headers
-    # beyond this have sensitive data, you should add a proc to sanitize these. We allow
-    # you to return values so that you can have complete control over what's being logged.
-    # Examples are below:
+    # This is a list of header keys that should be filtered. Note, all headers are
+    # normalized to down-case. So please _only_ pass down-cased headers.
     #
     # @example Rails
     #   # config/environments/production.rb
-    #   config.timber.header_sanitizer = Proc.new do |key, value|
-    #     case key
-    #     when 'api-key'
-    #       '[filtered]'
-    #     end
-    #   end
-    def header_sanitizer
-      @header_sanitizer
+    #   config.timber.filter_headers += ['api-key']
+    def header_filters
+      @header_filters
     end
 
     # Truncates captured HTTP bodies to this specified limit. The default is `2000`.
