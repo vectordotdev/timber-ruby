@@ -15,9 +15,10 @@
 
 Timber for Ruby is an optional upgrade you can install for Ruby apps on the
 [Timber.io logging platform](https://timber.io). Instead of completely replacing your log messages,
-Timber augments your logs with critical metadata. Turning them into
+Timber efficiently augments your logs with critical metadata. Turning them into
 [rich events with context](https://timber.io/docs/ruby/events-and-context). This preserves the
-readability of your logs while still improving the quality of your log data.
+readability of your logs while still adding the critical context needed to properly analyze your
+logs.
 
 
 ## How it works

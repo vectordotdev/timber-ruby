@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake', '>= 0')
   s.add_development_dependency('rspec', '~> 3.4')
   s.add_development_dependency('rspec-its', '>= 0')
+  s.add_development_dependency('benchmark-memory', '>= 0')
   s.add_development_dependency('timecop', '>= 0')
 
   if RUBY_PLATFORM == "java"
