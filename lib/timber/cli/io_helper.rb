@@ -1,20 +1,26 @@
 module Timber
   class CLI
     module IOHelper
-      def ask(message)
+      def ask(message, api)
+        api.event!(:waiting_for_input, prompt: message)
+
         write message + " "
-        gets
+        input = gets
+
+        api.event!(:received_input, prompt: message, value: input)
+
+        input
       end
 
-      def ask_yes_no(message)
-        case ask(message + " (y/n)")
+      def ask_yes_no(message, api)
+        case ask(message + " (y/n)", api)
         when "y", "Y"
           :yes
         when "n", "N"
           :no
         else
           puts "Woops! That's not a valid input. Please try again."
-          ask_yes_no(message)
+          ask_yes_no(message, api)
         end
       end
 

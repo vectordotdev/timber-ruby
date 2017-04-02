@@ -44,6 +44,13 @@ module Timber
           yield iteration
         end
 
+        case iteration
+        when 0
+          event!(:waiting_for_logs)
+        when 30
+          event!(:excessively_waiting_for_logs)
+        end
+
         sleep 0.5
 
         res = get!(HAS_LOGS_PATH)

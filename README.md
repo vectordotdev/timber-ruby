@@ -61,21 +61,6 @@ For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/r
 3. In your `shell`, run `bundle exec timber install`
 
 
-## Configuration
-
-All configuration options can be seen in the
-[`Timber::Config docs`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
-Here are a few popular options:
-
-1. `config.timber.format =`
-
-    * `:default` - This is the default. It's the original, default, unchanged log messages.
-
-    * `:lograge` - Works exactly like [lograge](https://github.com/roidrage/lograge), except Timber's
-      additional context and metadata is also appended. Lograge++.
-
-
-
 ## Usage
 
 <details><summary><strong>Basic logging</strong></summary><p>

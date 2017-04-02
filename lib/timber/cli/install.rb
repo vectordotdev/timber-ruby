@@ -29,10 +29,10 @@ module Timber
           puts Messages.application_details(app)
           puts ""
 
-          case ask_yes_no("Are the above details correct?")
+          case ask_yes_no("Are the above details correct?", api)
           when :yes
             if app.heroku?
-              update_environment_config("production", :stdout)
+              update_environment_config("production", :stdout, api)
 
               puts ""
               puts Messages.separator
@@ -40,7 +40,7 @@ module Timber
               puts Messages.heroku_install(app)
               puts ""
 
-              ask_yes_no("Ready to proceed?")
+              ask_yes_no("Ready to proceed?", api)
               puts ""
 
             else
@@ -53,19 +53,19 @@ module Timber
               puts "2) Configuring in my app"
               puts ""
 
-              case ask("Enter your choice: (1/2) ")
+              case ask("Enter your choice: (1/2) ", api)
               when "1"
-                update_environment_config("production", :http, :api_key_code => "ENV['TIMBER_API_KEY']")
+                update_environment_config("production", :http, api, :api_key_code => "ENV['TIMBER_API_KEY']")
 
                 puts ""
                 puts Messages.http_environment_variables(app.api_key)
                 puts ""
 
-                ask_yes_no("Ready to proceed?")
+                ask_yes_no("Ready to proceed?", api)
                 puts ""
 
               when "2"
-                update_environment_config("production", :http, :api_key_code => "'#{app.api_key}'")
+                update_environment_config("production", :http, api, :api_key_code => "'#{app.api_key}'")
 
               end
 
@@ -107,7 +107,7 @@ module Timber
         end
 
         private
-          def update_environment_config(name, log_device_type, options = {})
+          def update_environment_config(name, log_device_type, api, options = {})
             path = File.join("config", "environments", "#{name}.rb")
 
             puts ""
@@ -146,6 +146,7 @@ CODE
             if !current_contents.include?("Timber::Logger.new")
               new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
               File.write(path, new_contents)
+              api.event!(:file_written, path: path)
             end
 
             puts colorize(Messages.task_complete(task_message), :green)
@@ -156,7 +157,9 @@ CODE
 
             http_device = LogDevices::HTTP.new(api_key)
             logger = Logger.new(http_device)
-            logger.info("test")
+            logger.info("Welcome to Timber!")
+            logger.info("This is a test log to ensure the pipes are working")
+            logger.info("Be sure to commit and deploy your app to start seeing real logs")
 
             puts colorize(Messages.task_complete("Sending test logs"), :green)
           end
@@ -165,7 +168,9 @@ CODE
             puts ""
             puts Messages.separator
             puts ""
-            rating = ask("How would rate this install experience? 1 (bad) - 5 (perfect)")
+
+            rating = ask("How would rate this install experience? 1 (bad) - 5 (perfect)", api)
+
             case rating
             when "4", "5"
               api.event!(:feedback, rating: rating.to_i)
@@ -177,7 +182,7 @@ CODE
               puts Messages.bad_experience_message
               puts ""
 
-              comments = ask("Type your comments (enter sends)")
+              comments = ask("Type your comments (enter sends)", api)
 
               api.event!(:feedback, rating: rating.to_i, comments: comments)
 

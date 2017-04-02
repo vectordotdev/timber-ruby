@@ -64,7 +64,9 @@ end
 iterations = 1_000
 
 puts "############################################################"
+puts ""
 puts "Testing Without Timber (#{iterations} iterations)"
+puts ""
 puts "############################################################"
 puts
 
@@ -76,7 +78,7 @@ Benchmark.bmbm do |x|
   x.report("Without Timber") { iterations.times { dispatch_rails_request("/") } }
 end
 
-puts ""
+puts "\n"
 puts "Memory profiling via benchmark-memory:"
 puts
 
@@ -84,9 +86,11 @@ Benchmark.memory do |x|
   x.report("Without Timber") { iterations.times { dispatch_rails_request("/") } }
 end
 
-puts "\n\n\n"
+puts "\n\n\n\n"
 puts "############################################################"
+puts ""
 puts "Testing With Timber (#{iterations} iterations)"
+puts ""
 puts "############################################################"
 puts ""
 
@@ -109,7 +113,7 @@ Benchmark.bmbm do |x|
   x.report("With Timber")  { iterations.times { dispatch_rails_request("/") } }
 end
 
-puts ""
+puts "\n"
 puts "Memory profiling via benchmark-memory:"
 puts ""
 
