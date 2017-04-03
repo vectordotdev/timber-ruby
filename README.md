@@ -73,8 +73,6 @@ logger.info("My log message")
 # => My log message @metadata {"level": "info", "context": {...}}
 ```
 
-Timber will *never* deviate from the public `::Logger` interface in *any* way.
-
 ---
 
 </p></details>
@@ -85,7 +83,7 @@ Custom events allow you to extend beyond events already defined in
 the [`Timber::Events`](lib/timber/events) namespace.
 
 ```ruby
-Logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
+logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
 # => Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
 ```
@@ -105,7 +103,7 @@ Custom contexts allow you to extend beyond contexts already defined in
 the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
 ```ruby
-Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
+Timber.with_context(build: {version: "1.0.0"}) do
   logger.info("My log message")
 end
 

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "spec_helper"
 
 describe Timber::Events::HTTPServerRequest, :rails_23 => true do
