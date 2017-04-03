@@ -3,8 +3,7 @@ module Timber
     # Custom contexts allow you to add application specific context not covered elsewhere.
     #
     # @example Adding a context
-    #   custom_context = Timber::Contexts::Custom.new(type: :keyspace, data: %{my: "data"})
-    #   Timber::CurrentContext.with(custom_context) do
+    #   logger.with_context(build: {version: "1.0.0"}) do
     #     # ... anything logged here will have the context ...
     #   end
     class Custom < Context

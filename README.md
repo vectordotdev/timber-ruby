@@ -103,7 +103,7 @@ Custom contexts allow you to extend beyond contexts already defined in
 the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
 ```ruby
-Timber.with_context(build: {version: "1.0.0"}) do
+logger.with_context(build: {version: "1.0.0"}) do
   logger.info("My log message")
 end
 

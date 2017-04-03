@@ -212,6 +212,12 @@ module Timber
       super
     end
 
+    # Convenience method for adding context. Please see {{Timber::CurrentContext.with}} for
+    # a more detailed description and examples.
+    def with_context(context, &block)
+      Timber::CurrentContext.with(context, &block)
+    end
+
     # Backwards compatibility with older ActiveSupport::Logger versions
     Logger::Severity.constants.each do |severity|
       class_eval(<<-EOT, __FILE__, __LINE__ + 1)

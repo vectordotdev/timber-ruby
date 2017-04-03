@@ -10,7 +10,7 @@ module Timber
     # Example:
     #
     #   organization_context = Timber::Contexts::Organization.new(id: "abc1234", name: "Timber Inc")
-    #   Timber::CurrentContext.with(organization_context) do
+    #   logger.with_context(organization_context) do
     #     # Logging will automatically include this context
     #     logger.info("This is a log message")
     #   end

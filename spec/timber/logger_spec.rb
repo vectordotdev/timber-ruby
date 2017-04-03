@@ -133,6 +133,27 @@ describe Timber::Logger, :rails_23 => true do
     end
   end
 
+  describe "#with_context" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should add context" do
+      expect(Timber::CurrentContext.hash).to eq({})
+
+      logger.with_context(build: {version: "1.0.0"}) do
+        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+
+        logger.with_context({testing: {key: "value"}}) do
+          expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
+        end
+
+        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+      end
+
+      expect(Timber::CurrentContext.hash).to eq({})
+    end
+  end
+
   describe "#info" do
     let(:io) { StringIO.new }
     let(:logger) { Timber::Logger.new(io) }
