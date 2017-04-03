@@ -13,7 +13,7 @@ module Timber
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
-        @path = attributes[:path] || raise(ArgumentError.new(":path is required"))
+        @path = attributes[:path]
         @port = attributes[:port]
         @query_string = Util::HTTPEvent.normalize_query_string(attributes[:query_string])
         @request_id = attributes[:request_id]

@@ -11,8 +11,8 @@ describe Timber::Events::HTTPServerRequest, :rails_23 => true do
       end
 
       it "should sanitize headers when a config option is set" do
-        custom_context = described_class.new(:headers => {'Api-Key' => 'abcde'}, :host => 'my.host.com', :method => 'GET', :path => '/path', :scheme => 'https')
-        expect(custom_context.headers).to eq({'api-key' => '[sanitized]'})
+        event = described_class.new(:headers => {'Api-Key' => 'abcde'}, :host => 'my.host.com', :method => 'GET', :path => '/path', :scheme => 'https')
+        expect(event.headers).to eq({'api-key' => '[sanitized]'})
       end
     end
   end

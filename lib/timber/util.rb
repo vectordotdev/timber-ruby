@@ -3,6 +3,7 @@ require "timber/util/hash"
 require "timber/util/http_event"
 require "timber/util/object"
 require "timber/util/request"
+require "timber/util/string"
 require "timber/util/struct"
 
 module Timber
