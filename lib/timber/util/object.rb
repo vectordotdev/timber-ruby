@@ -3,11 +3,11 @@ module Timber
     # @private
     module Object
       # @private
-      def self.try(object, method)
+      def self.try(object, method, *args)
         if object == nil
           nil
         else
-          object.send(method) rescue object
+          object.send(method, *args) rescue object
         end
       end
     end

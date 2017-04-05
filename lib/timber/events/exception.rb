@@ -37,8 +37,9 @@ module Timber
         def parse_backtrace_line(line)
           # using split for performance reasons
           file, line, function_part = line.split(":", 3)
-          _prefix, function = function_part.split("`", 2)
-          {file: file, line: line.to_i, function: function.chomp("'")}
+          _prefix, function_pre = function_part.split("`", 2)
+          function = Util::Object.try(function_pre, :chomp, "'")
+          {file: file, line: line.to_i, function: function}
         end
     end
   end
