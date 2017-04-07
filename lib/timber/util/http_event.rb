@@ -37,7 +37,7 @@ module Timber
                 # Force the header into a valid UTF-8 string, otherwise we will encounter
                 # encoding issues when we convert this data to json. Moreoever, if the
                 # data is already valid UTF-8 we don't pay a penalty.
-                h[k] = Timber::Util::String.normalize_to_utf8(v)
+                h[k] = v && Timber::Util::String.normalize_to_utf8(v)
               end
             end
           end
