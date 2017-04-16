@@ -26,7 +26,7 @@ module Timber
       alias to_h to_hash
 
       def as_json(_options = {})
-        {:server_side_app => {:exception => to_hash}}
+        {:exception => to_hash}
       end
 
       def message
