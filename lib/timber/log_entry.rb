@@ -1,3 +1,5 @@
+require 'socket'
+
 module Timber
   # Represents a new log entry into the log. This is an intermediary class between
   # `Logger` and the log device that you set it up with.
@@ -26,7 +28,9 @@ module Timber
       @time_ms = options[:time_ms]
 
       context_snapshot = {} if context_snapshot.nil?
-      system_context = Contexts::System.new(pid: Process.pid)
+      hostname = Socket.gethostname
+      pid = Process.pid
+      system_context = Contexts::System.new(hostname: hostname, pid: pid)
       context_snapshot[system_context.keyspace] = system_context.as_json
 
       @context_snapshot = context_snapshot
