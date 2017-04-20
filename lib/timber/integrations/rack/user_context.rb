@@ -50,16 +50,21 @@ module Timber
             if env['warden']
               debug { "#{self.class.name} - Warden object present #{env['warden'].inspect}" }
               user = env['warden'].user
-              debug { "#{self.class.name} - Warden user object #{env['warden'].user.inspect}" }
-              id = try_user_id(user)
-              name = try_user_name(user)
-              email = try_user_email(user)
+              if user
+                debug { "#{self.class.name} - Warden user object #{env['warden'].user.inspect}" }
+                id = try_user_id(user)
+                name = try_user_name(user)
+                email = try_user_email(user)
 
-              if id || name || email
-                debug { "#{self.class.name} - At least one warden user attribute was present" }
-                {id: id, name: name, email: email}
+                if id || name || email
+                  debug { "#{self.class.name} - At least one warden user attribute was present" }
+                  {id: id, name: name, email: email}
+                else
+                  debug { "#{self.class.name} - No warden user attributes were present" }
+                  nil
+                end
               else
-                debug { "#{self.class.name} - No warden user attributes were present" }
+                debug { "#{self.class.name} - Warden user object not present, not logged in" }
                 nil
               end
             else
