@@ -13,8 +13,14 @@ module Timber
           logger = Rails.ensure_timber_logger(::Rails.logger)
           Rails.set_logger(logger)
 
-          Rails.configure_middlewares(config.app_middleware)
           Integrations.integrate!
+        end
+
+        # Ensures that we insert the middlewares last. We need to insert these last
+        # because initializers, such as Omniauth, insert middleware. If we are not
+        # after these initializers we will not capture user context, for example.
+        initializer(:timber_middlewares, before: :build_middleware_stack) do
+          Rails.configure_middlewares(config.app_middleware)
         end
       end
 
