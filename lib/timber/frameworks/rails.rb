@@ -19,7 +19,7 @@ module Timber
         # Ensures that we insert the middlewares last. We need to insert these last
         # because initializers, such as Omniauth, insert middleware. If we are not
         # after these initializers we will not capture user context, for example.
-        initializer(:timber_middlewares, after: :load_config_initializers) do
+        initializer(:timber_middlewares, after: :engines_blank_point) do
           Rails.configure_middlewares(config.app_middleware)
         end
       end
