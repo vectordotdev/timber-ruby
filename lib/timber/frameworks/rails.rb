@@ -1,5 +1,3 @@
-require "devise/rails"
-
 module Timber
   module Frameworks
     # Module for Rails specific code, such as the Railtie and any methods that assist
