@@ -18,7 +18,11 @@ module Timber
             attr_accessor :timber_operations
 
             alias old_merge_into merge_into
-            alias old_plus +
+
+            begin
+              alias old_plus +
+            rescue NameError
+            end
 
             def +(*args)
               result = old_plus(*args)
