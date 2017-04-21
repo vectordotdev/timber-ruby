@@ -1,3 +1,5 @@
+require "devise/rails"
+
 module Timber
   module Frameworks
     # Module for Rails specific code, such as the Railtie and any methods that assist
@@ -9,7 +11,7 @@ module Timber
 
         # Initialize Timber immediately after the logger in case anything uses the logger
         # during the initialization process.
-        initializer(:timber, group: :all, after: :initialize_logger) do
+        initializer(:timber, after: :initialize_logger) do
           logger = Rails.ensure_timber_logger(::Rails.logger)
           Rails.set_logger(logger)
 
@@ -19,8 +21,27 @@ module Timber
         # Ensures that we insert the middlewares last. We need to insert these last
         # because initializers, such as Omniauth, insert middleware. If we are not
         # after these initializers we will not capture user context, for example.
-        initializer(:timber_middlewares, after: :engines_blank_point) do
-          Rails.configure_middlewares(config.app_middleware)
+        initializer(:timber_middlewares, after: :load_config_initializers, before: :build_middleware_stack) do
+          timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
+            [:use, [middleware_class], nil]
+          end
+
+          config.app_middleware.instance_variable_set(:@timber_operations, timber_operations)
+
+          # Because of the crazy way Rails sorts it's initializers, it is
+          # impossible for Timber to be inserted after Devise's omnitauth
+          # middlewares.
+          # See: https://github.com/plataformatec/devise/blob/master/lib/devise/rails.rb#L22
+          # As such, we take a brute force approach here, ensuring we are inserted last
+          # no matter what. This ensures that we come after authentication so that we can
+          # properly set the user context.
+          config.app_middleware.instance_eval do
+            def merge_into(*args)
+              @operations -= @timber_operations
+              @operations += @timber_operations
+              super
+            end
+          end
         end
       end
 
@@ -59,17 +80,6 @@ module Timber
         ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
         ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base) && ::ActiveRecord::Base.respond_to?(:logger=)
         ::Rails.logger = logger
-      end
-
-      def self.configure_middlewares(middleware)
-        var_name = :"@_timber_middlewares_inserted"
-        return true if middleware.instance_variable_defined?(var_name) && middleware.instance_variable_get(var_name) == true
-
-        # Rails uses a proxy :/, so we need to do this instance variable hack
-        middleware.instance_variable_set(var_name, true)
-        Integrations::Rack.middlewares.each do |middleware_class|
-          middleware.use middleware_class
-        end
       end
     end
   end
