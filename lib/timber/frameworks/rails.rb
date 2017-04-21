@@ -31,7 +31,6 @@ module Timber
                 @operations -= timber_operations
                 @operations += timber_operations
               end
-              puts "\n\n" + timber_operations.inspect
               old_merge_into(*args)
             end
           end
