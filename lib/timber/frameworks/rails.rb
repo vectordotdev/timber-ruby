@@ -19,6 +19,7 @@ module Timber
 
             alias old_merge_into merge_into
 
+            # This method does not exist for older versions of rails
             begin
               alias old_plus +
             rescue NameError
@@ -54,12 +55,7 @@ module Timber
           Rails.set_logger(logger)
 
           Integrations.integrate!
-        end
 
-        # Ensures that we insert the middlewares last. We need to insert these last
-        # because initializers, such as Omniauth, insert middleware. If we are not
-        # after these initializers we will not capture user context, for example.
-        initializer(:timber_middlewares, after: :load_config_initializers, before: :build_middleware_stack) do
           timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
             [:use, [middleware_class], nil]
           end
