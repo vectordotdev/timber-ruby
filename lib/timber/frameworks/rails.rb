@@ -3,6 +3,34 @@ module Timber
     # Module for Rails specific code, such as the Railtie and any methods that assist
     # with Rails setup.
     module Rails
+      module MiddlewareStackProxyFix
+        def self.included(klass)
+          klass.class_eval do
+            attr_accessor :timber_operations
+
+            alias old_merge_into merge_into
+            alias old_plus +
+
+            def +(*args)
+              result = old_plus(*args)
+              result.timber_operations = timber_operations
+              result
+            end
+
+            def merge_into(*args)
+              if timber_operations
+                @operations -= timber_operations
+                @operations += timber_operations
+              end
+              puts "\n\n" + timber_operations.inspect
+              old_merge_into(*args)
+            end
+          end
+        end
+      end
+
+      ::Rails::Configuration::MiddlewareStackProxy.send(:include, MiddlewareStackProxyFix)
+
       # Installs Timber into your Rails app automatically.
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
@@ -24,7 +52,7 @@ module Timber
             [:use, [middleware_class], nil]
           end
 
-          config.app_middleware.instance_variable_set(:@timber_operations, timber_operations)
+          config.app_middleware.timber_operations = timber_operations
 
           # Because of the crazy way Rails sorts it's initializers, it is
           # impossible for Timber to be inserted after Devise's omnitauth
@@ -33,13 +61,14 @@ module Timber
           # As such, we take a brute force approach here, ensuring we are inserted last
           # no matter what. This ensures that we come after authentication so that we can
           # properly set the user context.
-          config.app_middleware.instance_eval do
-            def merge_into(*args)
-              @operations -= @timber_operations
-              @operations += @timber_operations
-              super
-            end
-          end
+          # config.app_middleware.instance_eval do
+          #   def merge_into(*args)
+          #     raise "WTF"
+          #     @operations -= @timber_operations
+          #     @operations += @timber_operations
+          #     super
+          #   end
+          # end
         end
       end
 
