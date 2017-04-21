@@ -3,6 +3,15 @@ module Timber
     # Module for Rails specific code, such as the Railtie and any methods that assist
     # with Rails setup.
     module Rails
+      # Because of the crazy way Rails sorts it's initializers, it is
+      # impossible for Timber to be inserted after Devise's omnitauth
+      # middlewares.
+      # See: https://github.com/plataformatec/devise/blob/master/lib/devise/rails.rb#L22
+      # As such, we take a brute force approach here, ensuring we are inserted last
+      # no matter what. This ensures that we come after authentication so that we can
+      # properly set the user context.
+      #
+      # @private
       module MiddlewareStackProxyFix
         def self.included(klass)
           klass.class_eval do
@@ -53,22 +62,6 @@ module Timber
           end
 
           config.app_middleware.timber_operations = timber_operations
-
-          # Because of the crazy way Rails sorts it's initializers, it is
-          # impossible for Timber to be inserted after Devise's omnitauth
-          # middlewares.
-          # See: https://github.com/plataformatec/devise/blob/master/lib/devise/rails.rb#L22
-          # As such, we take a brute force approach here, ensuring we are inserted last
-          # no matter what. This ensures that we come after authentication so that we can
-          # properly set the user context.
-          # config.app_middleware.instance_eval do
-          #   def merge_into(*args)
-          #     raise "WTF"
-          #     @operations -= @timber_operations
-          #     @operations += @timber_operations
-          #     super
-          #   end
-          # end
         end
       end
 
