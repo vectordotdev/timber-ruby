@@ -23,7 +23,11 @@ module Timber
       @level = level
       @time = time.utc
       @progname = progname
-      @message = message
+
+      # If the message is not a string we call inspect to ensure it is a string.
+      # This follows the default behavior set by ::Logger
+      # See: https://github.com/ruby/ruby/blob/trunk/lib/logger.rb#L615
+      @message = message.is_a?(String) ? message : message.inspect
       @tags = options[:tags]
       @time_ms = options[:time_ms]
 
