@@ -23,7 +23,7 @@ module Timber
       @level = level
       @time = time.utc
       @progname = progname
-      @message = message
+      @message = message.is_a?(String) ? message : message.to_s
       @tags = options[:tags]
       @time_ms = options[:time_ms]
 

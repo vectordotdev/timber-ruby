@@ -18,6 +18,11 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to start_with("this is a test @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
       end
 
+      it "should non-strings" do
+        logger.info(true)
+        expect(io.string).to start_with("true @metadata")
+      end
+
       context "with a context" do
         let(:http_context) do
           Timber::Contexts::HTTP.new(
@@ -169,6 +174,11 @@ describe Timber::Logger, :rails_23 => true do
       expect(io.string).to start_with("message @metadata")
       expect(io.string).to include('"level":"info"')
       expect(io.string).to include('"tags":["tag"]')
+    end
+
+    it "should accept non-string messages" do
+      logger.info(true)
+      expect(io.string).to start_with("true @metadata")
     end
   end
 
