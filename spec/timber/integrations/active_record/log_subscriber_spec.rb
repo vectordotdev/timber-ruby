@@ -38,7 +38,7 @@ if defined?(::ActiveRecord)
           expect(string).to include("select * from users")
           expect(string).to include("@metadata")
           expect(string).to include("\"level\":\"debug\"")
-          expect(string).to include("\"event\":{\"server_side_app\":{\"sql_query\"")
+          expect(string).to include("\"event\":{\"sql_query\"")
         end
       end
     end

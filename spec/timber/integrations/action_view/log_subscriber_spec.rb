@@ -53,7 +53,7 @@ if defined?(::ActionView)
             dispatch_rails_request("/action_view_log_subscriber")
             lines = clean_lines(io.string.split("\n"))
             expect(lines[2].strip).to start_with("Rendered spec/support/rails/templates/template.html (0.0ms) @metadata {\"level\":\"info\"")
-            expect(lines[2]).to include("\"event\":{\"server_side_app\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}}},")
+            expect(lines[2]).to include("\"event\":{\"template_render\":{\"name\":\"spec/support/rails/templates/template.html\",\"time_ms\":0.0}},")
           end
         end
       end
