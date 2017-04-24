@@ -3,7 +3,6 @@ module Timber
     module HTTPEvent
       AUTHORIZATION_HEADER = 'authorization'.freeze
       QUERY_STRING_LIMIT = 5_000.freeze
-      SANITIZED_VALUE = '[sanitized]'.freeze
 
       extend self
 
@@ -25,22 +24,15 @@ module Timber
 
       def normalize_headers(headers)
         if headers.is_a?(::Hash)
-          headers.each_with_object({}) do |(k, v), h|
-            k = k.to_s.downcase
-            case k
-            when AUTHORIZATION_HEADER
-              h[k] = SANITIZED_VALUE
-            else
-              if Config.instance.header_filters && Config.instance.header_filters.include?(k)
-                h[k] = SANITIZED_VALUE
-              else
-                # Force the header into a valid UTF-8 string, otherwise we will encounter
-                # encoding issues when we convert this data to json. Moreoever, if the
-                # data is already valid UTF-8 we don't pay a penalty.
-                h[k] = v && Timber::Util::String.normalize_to_utf8(v)
-              end
-            end
+          h = headers.each_with_object({}) do |(k, v), h|
+            # Force the header into a valid UTF-8 string, otherwise we will encounter
+            # encoding issues when we convert this data to json. Moreoever, if the
+            # data is already valid UTF-8 we don't pay a penalty.
+            h[k] = v && Timber::Util::String.normalize_to_utf8(v)
           end
+
+          keys_to_sanitize = [AUTHORIZATION_HEADER] + (Config.instance.header_filters || [])
+          Util::Hash.sanitize(h, keys_to_sanitize)
         else
           headers
         end

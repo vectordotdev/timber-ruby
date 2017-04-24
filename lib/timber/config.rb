@@ -29,12 +29,43 @@ module Timber
     # This is useful for debugging. This Sets a debug_logger to view internal Timber library
     # log messages. The default is `nil`. Meaning log to nothing.
     #
+    # See `debug_to_file` and `debug_to_stdout` for convenience methods that handle creating
+    # and setting the logger.
+    #
     # @example Rails
     #   config.timber.debug_logger = ::Logger.new(STDOUT)
     # @example Everything else
     #   Timber::Config.instance.debug_logger = ::Logger.new(STDOUT)
     def debug_logger
       @debug_logger
+    end
+
+    # A convenience method for writing debug messages to a file.
+    #
+    # @example Rails
+    #   config.timber.debug_to_file("#{Rails.root}/log/timber.log")
+    # @example Everything else
+    #   Timber::Config.instance.debug_to_file("log/timber.log")
+    def debug_to_file(file_path)
+      unless File.exist? File.dirname path
+        FileUtils.mkdir_p File.dirname path
+      end
+      file = File.open file_path, "a"
+      file.binmode
+      file.sync = config.autoflush_log
+      file_logger = ::Logger.new(file)
+      self.debug_logger = file_logger
+    end
+
+    # A convenience method for writing debug messages to a file.
+    #
+    # @example Rails
+    #   config.timber.debug_to_file("#{Rails.root}/log/timber.log")
+    # @example Everything else
+    #   Timber::Config.instance.debug_to_file("log/timber.log")
+    def debug_to_stdout
+      stdout_logger = ::Logger.new(STDOUT)
+      self.debug_logger = stdout_logger
     end
 
     # The environment your app is running in. Defaults to `RACK_ENV` and `RAILS_ENV`.

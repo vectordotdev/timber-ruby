@@ -1,3 +1,5 @@
+require 'socket'
+
 module Timber
   # Represents a new log entry into the log. This is an intermediary class between
   # `Logger` and the log device that you set it up with.
@@ -21,12 +23,18 @@ module Timber
       @level = level
       @time = time.utc
       @progname = progname
-      @message = message
+
+      # If the message is not a string we call inspect to ensure it is a string.
+      # This follows the default behavior set by ::Logger
+      # See: https://github.com/ruby/ruby/blob/trunk/lib/logger.rb#L615
+      @message = message.is_a?(String) ? message : message.inspect
       @tags = options[:tags]
       @time_ms = options[:time_ms]
 
       context_snapshot = {} if context_snapshot.nil?
-      system_context = Contexts::System.new(pid: Process.pid)
+      hostname = Socket.gethostname
+      pid = Process.pid
+      system_context = Contexts::System.new(hostname: hostname, pid: pid)
       context_snapshot[system_context.keyspace] = system_context.as_json
 
       @context_snapshot = context_snapshot

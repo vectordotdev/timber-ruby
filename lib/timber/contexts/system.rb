@@ -4,15 +4,16 @@ module Timber
     class System < Context
       @keyspace = :system
 
-      attr_reader :pid
+      attr_reader :hostname, :pid
 
       def initialize(attributes)
-        @pid = attributes[:pid] || raise(ArgumentError.new(":pid is required"))
+        @hostname = attributes[:hostname]
+        @pid = attributes[:pid]
         @pid = @pid.to_s
       end
 
       def as_json(_options = {})
-        {pid: Timber::Util::Object.try(pid, :to_s)}
+        {hostname: hostname, pid: Timber::Util::Object.try(pid, :to_s)}
       end
     end
   end

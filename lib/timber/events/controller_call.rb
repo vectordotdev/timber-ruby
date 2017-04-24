@@ -49,15 +49,7 @@ module Timber
 
         def sanitize_params(params)
           if params.is_a?(::Hash)
-            params.each_with_object({}) do |(k, v), h|
-              k = k.to_s.downcase
-              case k
-              when PASSWORD_NAME
-                h[k] = SANITIZED_VALUE
-              else
-                h[k] = v
-              end
-            end
+            Util::Hash.sanitize(params, [PASSWORD_NAME])
           else
             params
           end
