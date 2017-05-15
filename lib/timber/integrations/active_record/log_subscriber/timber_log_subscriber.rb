@@ -1,5 +1,7 @@
-# We require base because #logger usses ActiveRecord::Base.logger.
-require "active_record/base"
+# We require all of ActiveRecord because #logger usses ActiveRecord::Base.
+# We can't require active_record/base directly because ActiveRecord does not require
+# files properly.
+require "active_record"
 require "active_record/log_subscriber"
 
 module Timber
