@@ -7,7 +7,6 @@ module Timber
       # @private
       class LogSubscriber < Integrator
         def initialize
-          require "active_record/log_subscriber"
           require "timber/integrations/active_record/log_subscriber/timber_log_subscriber"
         rescue LoadError => e
           raise RequirementNotMetError.new(e.message)
