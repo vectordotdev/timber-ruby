@@ -127,9 +127,9 @@ module Timber
         @msg_queue.enqueue(msg)
 
         # Lazily start flush threads to ensure threads are alive after forking processes.
-        # If the threads are started during instantiation they will not be copied with
+        # If the threads are started during instantiation they will not be copied when
         # the current process is forked. This is the case with various web servers,
-        # namely phusion passenger.
+        # such as phusion passenger.
         ensure_flush_threads_are_started
 
         if @msg_queue.full?
