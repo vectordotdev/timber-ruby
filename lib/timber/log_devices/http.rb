@@ -84,8 +84,9 @@ module Timber
       #   payloads mean higher throughput, but also use more memory. Timber will not accept
       #   payloads larger than 1mb.
       # @option attributes [Symbol] :flush_continuously (true) This should only be disabled under
-      #   special circumstsances (like test suites). Setting this to `false` disabled the
-      #   continuous flushing of log message. As a resuly, flushing must be handled externally.
+      #   special circumstsances (like test suites). Setting this to `false` disables the
+      #   continuous flushing of log message. As a result, flushing must be handled externally
+      #   via the #flush method.
       # @option attributes [Symbol] :flush_interval (1) How often the client should
       #   attempt to deliver logs to the Timber API in fractional seconds. The HTTP client buffers
       #   logs and this options represents how often that will happen, assuming `:batch_byte_size`
