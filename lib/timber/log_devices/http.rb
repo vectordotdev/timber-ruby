@@ -130,15 +130,7 @@ module Timber
         # If the threads are started during instantiation they will not be copied with
         # the current process is forked. This is the case with various web servers,
         # namely phusion passenger.
-        if @flush_continuously
-          if @outlet_thread.nil? || !@outlet_thread.alive?
-            @outlet_thread = Thread.new { outlet }
-          end
-
-          if @flush_thread.nil? || !@flush_thread.alive?
-            @flush_thread = Thread.new { intervaled_flush }
-          end
-        end
+        ensure_flush_threads_are_started
 
         if @msg_queue.full?
           debug_logger.debug("Flushing timber buffer via write") if debug_logger
