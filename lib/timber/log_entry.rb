@@ -5,7 +5,7 @@ module Timber
   # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
-    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/2.0.1/schema.json".freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v2.0.4/schema.json".freeze
 
     attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 

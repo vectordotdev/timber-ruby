@@ -146,6 +146,19 @@ module Timber
         true
       end
 
+      def flush
+        @last_flush = Time.now
+        msgs = @msg_queue.flush
+        return if msgs.empty?
+
+        req = Net::HTTP::Post.new(@timber_url.path)
+        req['Authorization'] = authorization_payload
+        req['Content-Type'] = CONTENT_TYPE
+        req['User-Agent'] = USER_AGENT
+        req.body = msgs.to_msgpack
+        @request_queue.enq(req)
+      end
+
       # Closes the log device, cleans up, and attempts one last delivery.
       def close
         @flush_thread.kill if @flush_thread
@@ -172,19 +185,6 @@ module Timber
               @flush_thread = Thread.new { intervaled_flush }
             end
           end
-        end
-
-        def flush
-          @last_flush = Time.now
-          msgs = @msg_queue.flush
-          return if msgs.empty?
-
-          req = Net::HTTP::Post.new(@timber_url.path)
-          req['Authorization'] = authorization_payload
-          req['Content-Type'] = CONTENT_TYPE
-          req['User-Agent'] = USER_AGENT
-          req.body = msgs.to_msgpack
-          @request_queue.enq(req)
         end
 
         def intervaled_flush
