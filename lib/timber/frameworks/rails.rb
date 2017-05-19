@@ -48,12 +48,8 @@ module Timber
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
 
-        # Initialize Timber immediately after the logger in case anything uses the logger
-        # during the initialization process.
         initializer(:timber, after: :initialize_logger) do
-          logger = Rails.ensure_timber_logger(::Rails.logger)
-          Rails.set_logger(logger)
-
+          Timber::Config.instance.logger = Proc.new { ::Rails.logger }
           Integrations.integrate!
 
           timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
@@ -62,43 +58,6 @@ module Timber
 
           config.app_middleware.timber_operations = timber_operations
         end
-      end
-
-      # This builds a new Timber::Logger from an existing logger. This allows us to transparentl
-      # switch users onto the Timber::Logger since we support a more useful logging API.
-      def self.ensure_timber_logger(existing_logger)
-        if existing_logger.is_a?(Logger)
-          return existing_logger
-        end
-
-        log_device = existing_logger.instance_variable_get(:@logdev).try(:dev)
-        logger = Logger.new(log_device)
-        logger.level = existing_logger.try(:level) || Logger::DEBUG
-        if defined?(::ActiveSupport::TaggedLogging)
-          logger = ::ActiveSupport::TaggedLogging.new(logger)
-        end
-        logger
-      end
-
-      # Sets the Rails logger. Rails
-      def self.set_logger(logger)
-        if defined?(::ActiveSupport::TaggedLogging) && !logger.is_a?(::ActiveSupport::TaggedLogging)
-          logger = ::ActiveSupport::TaggedLogging.new(logger)
-        end
-
-        Config.instance.logger = logger
-
-        # Set the various Rails framework loggers. We *have* to do this because Rails
-        # internally sets these with an ActiveSupport.onload(:active_record) { } callback.
-        # We don't have an opportunity to intercept this since the :initialize_logger
-        # initializer loads these modules. Moreover, earlier version of rails don't do this
-        # at all, hence the defined? checks. Yay for being implicit.
-        ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base) && ::ActionCable::Server::Base.respond_to?(:logger=)
-        ::ActionController::Base.logger = logger if defined?(::ActionController::Base) && ::ActionController::Base.respond_to?(:logger=)
-        ::ActionMailer::Base.logger = logger if defined?(::ActionMailer::Base) && ::ActionMailer::Base.respond_to?(:logger=)
-        ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
-        ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base) && ::ActiveRecord::Base.respond_to?(:logger=)
-        ::Rails.logger = logger
       end
     end
   end
