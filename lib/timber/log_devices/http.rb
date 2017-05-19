@@ -61,7 +61,7 @@ module Timber
         end
       end
 
-      TIMBER_URL = "https://logs-staging.timber.io/frames".freeze
+      TIMBER_URL = "https://logs.timber.io/frames".freeze
       CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
