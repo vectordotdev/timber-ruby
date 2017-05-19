@@ -68,8 +68,10 @@ module Timber
       # switch users onto the Timber::Logger since we support a more useful logging API.
       def self.ensure_timber_logger(existing_logger)
         if existing_logger.is_a?(Logger)
+          puts "is a logger"
           return existing_logger
         end
+        puts "is not a logger"
 
         log_device = existing_logger.instance_variable_get(:@logdev).try(:dev)
         logger = Logger.new(log_device)

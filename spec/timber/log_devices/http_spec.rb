@@ -1,13 +1,18 @@
 require "spec_helper"
 
+# Note: these tests access instance variables and private methods as a means of
+# not muddying the public API. This object should expose a simple buffer like
+# API, tests should not alter that.
 describe Timber::LogDevices::HTTP do
   describe "#initialize" do
     it "should initialize properly" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
+
+      # Ensure that threads have not started
       thread = http.instance_variable_get(:@flush_thread)
-      expect(thread).to be_alive
-      thread = http.instance_variable_get(:@flush_thread)
-      expect(thread).to be_alive
+      expect(thread).to be_nil
+      thread = http.instance_variable_get(:@outlet_thread)
+      expect(thread).to be_nil
     end
   end
 
@@ -18,6 +23,15 @@ describe Timber::LogDevices::HTTP do
     it "should buffer the messages" do
       http.write("test log message")
       expect(msg_queue.flush).to eq(["test log message"])
+    end
+
+    it "should start the flush threads" do
+      http.write("test log message")
+
+      thread = http.instance_variable_get(:@flush_thread)
+      expect(thread).to be_alive
+      thread = http.instance_variable_get(:@outlet_thread)
+      expect(thread).to be_alive
     end
 
     context "with a low batch size" do
@@ -35,6 +49,7 @@ describe Timber::LogDevices::HTTP do
     let(:http) { described_class.new("MYKEY") }
 
     it "should kill the threads" do
+      http.send(:ensure_flush_threads_are_started)
       http.close
       thread = http.instance_variable_get(:@flush_thread)
       sleep 0.1 # too fast!
@@ -57,7 +72,7 @@ describe Timber::LogDevices::HTTP do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
     it "should add a request to the queue" do
-      http = described_class.new("MYKEY", threads: false)
+      http = described_class.new("MYKEY", flush_continuously: false)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
       http.write(log_entry)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
@@ -73,7 +88,7 @@ describe Timber::LogDevices::HTTP do
     end
 
     it "should preserve formatting for mshpack payloads" do
-      http = described_class.new("MYKEY", threads: false)
+      http = described_class.new("MYKEY", flush_continuously: false)
       http.write("This is a log message 1".to_msgpack)
       http.write("This is a log message 2".to_msgpack)
       http.send(:flush)
@@ -84,9 +99,10 @@ describe Timber::LogDevices::HTTP do
   describe "#intervaled_flush" do
     it "should start a intervaled flush thread and flush on an interval" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
+      http.send(:ensure_flush_threads_are_started)
       expect(http).to receive(:flush).exactly(1).times
       sleep 0.12 # too fast!
-      mock = expect(http).to receive(:flush).exactly(1).times
+      expect(http).to receive(:flush).exactly(1).times
       sleep 0.12 # too fast!
     end
   end

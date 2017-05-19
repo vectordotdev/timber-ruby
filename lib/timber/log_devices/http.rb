@@ -80,6 +80,9 @@ module Timber
       #   each HTTP payload. If the queue exceeds this limit an HTTP request will be issued. Bigger
       #   payloads mean higher throughput, but also use more memory. Timber will not accept
       #   payloads larger than 1mb.
+      # @option attributes [Symbol] :flush_continuously (true) This should only be disabled under
+      #   special circumstsances (like test suites). Setting this to `false` disabled the
+      #   continuous flushing of log message. As a resuly, flushing must be handled externally.
       # @option attributes [Symbol] :flush_interval (1) How often the client should
       #   attempt to deliver logs to the Timber API in fractional seconds. The HTTP client buffers
       #   logs and this options represents how often that will happen, assuming `:batch_byte_size`
@@ -106,22 +109,33 @@ module Timber
         @api_key = api_key || raise(ArgumentError.new("The api_key parameter cannot be blank"))
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
         @batch_size = options[:batch_size] || 1_000
+        @flush_continuously = options[:flush_continuously] != false
         @flush_interval = options[:flush_interval] || 1 # 1 second
         @requests_per_conn = options[:requests_per_conn] || 2_500
         @msg_queue = LogMsgQueue.new(@batch_size)
         @request_queue = options[:request_queue] || SizedQueue.new(3)
         @requests_in_flight = 0
-
-        if options[:threads] != false
-          @outlet_thread = Thread.new { outlet }
-          @flush_thread = Thread.new { intervaled_flush }
-        end
       end
 
       # Write a new log line message to the buffer, and deliver if the msg exceeds the
       # payload limit.
       def write(msg)
         @msg_queue.enqueue(msg)
+
+        # Lazily start flush threads to ensure threads are alive after forking processes.
+        # If the threads are started during instantiation they will not be copied with
+        # the current process is forked. This is the case with various web servers,
+        # namely phusion passenger.
+        if @flush_continuously
+          if @outlet_thread.nil? || !@outlet_thread.alive?
+            @outlet_thread = Thread.new { outlet }
+          end
+
+          if @flush_thread.nil? || !@flush_thread.alive?
+            @flush_thread = Thread.new { intervaled_flush }
+          end
+        end
+
         if @msg_queue.full?
           debug_logger.debug("Flushing timber buffer via write") if debug_logger
           flush
@@ -139,6 +153,22 @@ module Timber
       private
         def debug_logger
           Timber::Config.instance.debug_logger
+        end
+
+        # This is a convenience method to ensure the flush thread are
+        # started. This is called lazily from #write so that we
+        # only start the threads as needed, but it also ensures
+        # threads are started after process forking.
+        def ensure_flush_threads_are_started
+          if @flush_continuously
+            if @outlet_thread.nil? || !@outlet_thread.alive?
+              @outlet_thread = Thread.new { outlet }
+            end
+
+            if @flush_thread.nil? || !@flush_thread.alive?
+              @flush_thread = Thread.new { intervaled_flush }
+            end
+          end
         end
 
         def flush
