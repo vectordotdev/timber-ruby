@@ -20,7 +20,7 @@ module Timber
         end
       end
 
-      TIMBER_API_URI = URI.parse('https://api.timber.io')
+      TIMBER_API_URI = URI.parse('https://api.timber-staging.io')
       APPLICATION_PATH = "/installer/application".freeze
       EVENT_PATH = "/installer/events".freeze
       HAS_LOGS_PATH = "/installer/has_logs".freeze
