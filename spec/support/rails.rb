@@ -46,7 +46,12 @@ if defined?(::Rails)
         #
         # You can see here that they use simple class attribute, hence the reason we need
         # to update all of them: https://github.com/rails/rails/blob/700ec897f97c60016ad748236bf3a49ef15a20de/actionview/lib/action_view/base.rb#L157
-        Timber::Frameworks::Rails.set_logger(logger)
+        ::ActionCable::Server::Base.logger = logger if defined?(::ActionCable::Server::Base) && ::ActionCable::Server::Base.respond_to?(:logger=)
+        ::ActionController::Base.logger = logger if defined?(::ActionController::Base) && ::ActionController::Base.respond_to?(:logger=)
+        ::ActionMailer::Base.logger = logger if defined?(::ActionMailer::Base) && ::ActionMailer::Base.respond_to?(:logger=)
+        ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
+        ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base) && ::ActiveRecord::Base.respond_to?(:logger=)
+        ::Rails.logger = logger
 
         yield
 
