@@ -155,7 +155,6 @@ CODE
           def send_test_messages(api_key)
             write Messages.task_start("Sending test logs")
 
-            Timber::Config.instance.debug_to_stdout
             http_device = LogDevices::HTTP.new(api_key)
             logger = Logger.new(http_device)
             logger.info("Welcome to Timber!")
