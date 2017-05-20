@@ -133,7 +133,11 @@ module Timber
     # @example Everything else
     #   Timber::Config.instance.logger = Timber::Logger.new(STDOUT)
     def logger
-      @logger || Logger.new(STDOUT)
+      if @logger.is_a?(Proc)
+        @logger.call()
+      else
+        @logger ||= Logger.new(STDOUT)
+      end
     end
 
     private
