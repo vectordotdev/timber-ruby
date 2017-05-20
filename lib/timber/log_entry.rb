@@ -80,9 +80,9 @@ module Timber
         event_type = event_hash.keys.first
 
         event_type = if event.is_a?(Events::Custom)
-          "#{event_type}.#{event.type}"
+          "event:#{event_type}.#{event.type}"
         else
-          event_type
+          "event:#{event_type}"
         end
 
         log_message = "#{message} [#{event_type}]"
