@@ -13,12 +13,16 @@ describe Timber::LogDevices::HTTP do
       expect(thread).to be_nil
       thread = http.instance_variable_get(:@outlet_thread)
       expect(thread).to be_nil
+
+      http.close
     end
   end
 
   describe "#write" do
     let(:http) { described_class.new("MYKEY") }
     let(:msg_queue) { http.instance_variable_get(:@msg_queue) }
+
+    after(:each) { http.close }
 
     it "should buffer the messages" do
       http.write("test log message")
