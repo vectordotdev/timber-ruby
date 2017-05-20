@@ -197,7 +197,7 @@ module Timber
 
       self.level = environment_level
 
-      after_initialize if respond_to? :after_initialize
+      after_initialize if respond_to?(:after_initialize)
 
       @initialized = true
     end

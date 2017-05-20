@@ -71,6 +71,26 @@ module Timber
       Util::Hash.deep_compact(hash)
     end
 
+    # This is used when LogEntry objects make it to a non-Timber logger.
+    def to_s
+      log_message = message
+
+      if !event.nil?
+        event_hash = event.as_json
+        event_type = event_hash.keys.first
+
+        event_type = if event.is_a?(Events::Custom)
+          "#{event_type}.#{event.type}"
+        else
+          event_type
+        end
+
+        log_message = "#{message} [#{event_type}]"
+      end
+
+      log_message + "\n"
+    end
+
     def to_json(options = {})
       as_json(options).to_json
     end
