@@ -115,7 +115,8 @@ module Timber
 
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
-        "#{String === msg ? msg : msg.inspect}\n"
+        log_entry = build_log_entry(severity, timestamp, progname, msg)
+        log_entry.to_s
       end
     end
 

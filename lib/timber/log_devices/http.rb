@@ -154,9 +154,26 @@ module Timber
 
       # Closes the log device, cleans up, and attempts one last delivery.
       def close
+        # Kill the flush thread immediately since we are about to flush again.
         @flush_thread.kill if @flush_thread
-        @outlet_thread.kill if @outlet_thread
+
+        # Flush all remaining messages
         flush
+
+        # Kill the outlet thread gracefully. We do not want to kill it while a
+        # requst is inflight. Ideally we'd let it finish before we die.
+        if @outlet_thread
+          4.times do
+            if @requests_in_flight == 0 && @request_queue.size == 0
+              @outlet_thread.kill
+              break
+            else
+              debug_logger.error("Timber is busy delivering the final log messages, " +
+                "connection will close when complete.")
+              sleep 1
+            end
+          end
+        end
       end
 
       private

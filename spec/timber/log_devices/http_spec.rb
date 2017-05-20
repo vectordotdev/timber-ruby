@@ -36,6 +36,7 @@ describe Timber::LogDevices::HTTP do
       expect(thread).to be_alive
       thread = http.instance_variable_get(:@outlet_thread)
       expect(thread).to be_alive
+      expect(http).to receive(:flush).exactly(1).times
     end
 
     context "with a low batch size" do
@@ -43,7 +44,7 @@ describe Timber::LogDevices::HTTP do
 
       it "should attempt a delivery when the limit is exceeded" do
         http.write("test")
-        expect(http).to receive(:flush).exactly(1).times
+        expect(http).to receive(:flush).exactly(2).times
         http.write("my log message")
       end
     end

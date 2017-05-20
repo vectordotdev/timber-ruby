@@ -2,4 +2,6 @@ require "timber"
 
 config = Timber::Config.instance
 config.append_metadata = true
-config.debug_logger = ::Logger.new(STDOUT)
+logger = ::Logger.new(STDOUT)
+logger.level = :error
+config.debug_logger = logger
