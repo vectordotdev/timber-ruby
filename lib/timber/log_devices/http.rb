@@ -118,6 +118,7 @@ module Timber
         @requests_per_conn = options[:requests_per_conn] || 2_500
         @msg_queue = LogMsgQueue.new(@batch_size)
         @request_queue = options[:request_queue] || SizedQueue.new(3)
+        @successive_error_count = 0
         @requests_in_flight = 0
       end
 
@@ -133,7 +134,7 @@ module Timber
         ensure_flush_threads_are_started
 
         if @msg_queue.full?
-          debug_logger.debug("Flushing timber buffer via write") if debug_logger
+          debug_logger.debug("Flushing HTTP buffer via write") if debug_logger
           flush
         end
         true
@@ -160,15 +161,15 @@ module Timber
         # Flush all remaining messages
         flush
 
-        # Kill the outlet thread gracefully. We do not want to kill it while a
-        # requst is inflight. Ideally we'd let it finish before we die.
-        if @outlet_thread
+        # Kill the request_outlet thread gracefully. We do not want to kill it while a
+        # request is inflight. Ideally we'd let it finish before we die.
+        if @request_outlet_thread
           4.times do
             if @requests_in_flight == 0 && @request_queue.size == 0
-              @outlet_thread.kill
+              @request_outlet_thread.kill
               break
             else
-              debug_logger.error("Timber is busy delivering the final log messages, " +
+              debug_logger.error("Busy delivering the final log messages, " +
                 "connection will close when complete.")
               sleep 1
             end
@@ -187,8 +188,8 @@ module Timber
         # threads are started after process forking.
         def ensure_flush_threads_are_started
           if @flush_continuously
-            if @outlet_thread.nil? || !@outlet_thread.alive?
-              @outlet_thread = Thread.new { outlet }
+            if @request_outlet_thread.nil? || !@request_outlet_thread.alive?
+              @request_outlet_thread = Thread.new { request_outlet }
             end
 
             if @flush_thread.nil? || !@flush_thread.alive?
@@ -200,15 +201,17 @@ module Timber
         def intervaled_flush
           # Wait specified time period before starting
           sleep @flush_interval
+
           loop do
             begin
               if intervaled_flush_ready?
-                debug_logger.debug("Flushing timber buffer via the interval") if debug_logger
+                debug_logger.debug("Flushing HTTP buffer via the interval") if debug_logger
                 flush
               end
-              sleep(0.1)
+
+              sleep(0.5)
             rescue Exception => e
-              logger.error("Timber intervaled flush failed: #{e.inspect}\n\n#{e.backtrace}")
+              logger.error("Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}")
             end
           end
         end
@@ -217,47 +220,69 @@ module Timber
           @last_flush.nil? || (Time.now.to_f - @last_flush.to_f).abs >= @flush_interval
         end
 
-        def outlet
+        def build_http
+          http = Net::HTTP.new(@timber_url.host, @timber_url.port)
+          http.set_debug_output(debug_logger) if debug_logger
+          http.use_ssl = true if @timber_url.scheme == 'https'
+          http.read_timeout = 30
+          http.ssl_timeout = 10
+          http.open_timeout = 10
+          http
+        end
+
+        def request_outlet
           loop do
-            http = Net::HTTP.new(@timber_url.host, @timber_url.port)
-            http.set_debug_output(debug_logger) if debug_logger
-            http.use_ssl = true if @timber_url.scheme == 'https'
-            http.read_timeout = 30
-            http.ssl_timeout = 10
-            http.open_timeout = 10
+            http = build_http
 
             begin
-              debug_logger.info("Starting Timber HTTP connection") if debug_logger
-              http.start do |conn|
-                num_reqs = 0
-                while num_reqs < @requests_per_conn
-                  if debug_logger
-                    debug_logger.debug("Waiting on next Timber request")
-                    debug_logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
-                  end
+              debug_logger.info("Starting HTTP connection") if debug_logger
 
-                  # Blocks waiting for a request.
-                  req = @request_queue.deq
-                  @requests_in_flight += 1
-                  resp = nil
-                  begin
-                    resp = conn.request(req)
-                  rescue => e
-                    debug_logger.error("Timber request error: #{e.message}") if debug_logger
-                    next
-                  ensure
-                    @requests_in_flight -= 1
-                  end
-                  num_reqs += 1
-                  debug_logger.debug("Timber request successful: #{resp.code}") if debug_logger
-                end
+              http.start do |conn|
+                deliver_requests(conn)
               end
             rescue => e
-              debug_logger.error("Timber request error: #{e.message}") if debug_logger
+              debug_logger.error("#request_outlet error: #{e.message}") if debug_logger
             ensure
-              debug_logger.debug("Finishing Timber HTTP connection") if debug_logger
+              debug_logger.info("Finishing HTTP connection") if debug_logger
               http.finish if http.started?
             end
+          end
+        end
+
+        def deliver_requests(conn)
+          num_reqs = 0
+
+          while num_reqs < @requests_per_conn
+            debug_logger.info("Waiting on next request, threads waiting: #{@request_queue.num_waiting}") if debug_logger
+
+            # Blocks waiting for a request.
+            req = @request_queue.deq
+            @requests_in_flight += 1
+
+            begin
+              resp = conn.request(req)
+            rescue => e
+              debug_logger.error("#deliver_request error: #{e.message}") if debug_logger
+
+              @successive_error_count += 1
+
+              # Back off so that we don't hammer the Timber API.
+              calculated_backoff = @successive_error_count * 2
+              backoff = calculated_backoff > 30 ? 30 : calculated_backoff
+
+              debug_logger.error("Backing off #{backoff} seconds, error ##{@successive_error_count}") if debug_logger
+
+              sleep backoff
+
+              # Throw the request back on the queue for a retry
+              @request_queue.enq(req)
+              return false
+            ensure
+              @requests_in_flight -= 1
+            end
+
+            num_reqs += 1
+            debug_logger.info("Request successful: #{resp.code}") if debug_logger
           end
         end
 

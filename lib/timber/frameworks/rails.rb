@@ -48,8 +48,13 @@ module Timber
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
 
-        initializer(:timber, after: :initialize_logger) do
+        config.before_initialize do
           Timber::Config.instance.logger = Proc.new { ::Rails.logger }
+        end
+
+        # Must be loaded after initializers so that we respect any Timber configuration
+        # set
+        initializer(:timber, after: :load_config_initializers) do
           Integrations.integrate!
 
           timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
