@@ -108,8 +108,9 @@ describe Timber::LogDevices::HTTP do
       http.send(:ensure_flush_threads_are_started)
       expect(http).to receive(:flush).exactly(1).times
       sleep 0.12 # too fast!
-      expect(http).to receive(:flush).exactly(1).times
+      expect(http).to receive(:flush).exactly(2).times
       sleep 0.12 # too fast!
+      http.close
     end
   end
 
