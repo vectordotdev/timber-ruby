@@ -1,6 +1,6 @@
-# We require all of ActiveRecord because #logger usses ActiveRecord::Base.
-# We can't require active_record/base directly because ActiveRecord does not require
-# files properly.
+# We require all of ActiveRecord because the #logger method in ::ActiveRecord::LogSubscriber
+# uses ActiveRecord::Base. We can't require active_record/base directly because ActiveRecord
+# does not require files properly and we receive unintialized constant errors.
 require "active_record"
 require "active_record/log_subscriber"
 

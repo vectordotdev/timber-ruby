@@ -1,3 +1,4 @@
+require "logger"
 require "singleton"
 
 module Timber
@@ -12,6 +13,13 @@ module Timber
   #   config.append_metdata = false
   class Config
     class NoLoggerError < StandardError; end
+
+    class SimpleFormatter < ::Logger::Formatter
+      # This method is invoked when a log event occurs
+      def call(severity, timestamp, progname, msg)
+        "[Timber] #{String === msg ? msg : msg.inspect}\n"
+      end
+    end
 
     PRODUCTION_NAME = "production".freeze
     STAGING_NAME = "staging".freeze
@@ -54,6 +62,7 @@ module Timber
       file.binmode
       file.sync = config.autoflush_log
       file_logger = ::Logger.new(file)
+      file_logger.formatter = SimpleFormatter.new
       self.debug_logger = file_logger
     end
 
@@ -65,6 +74,7 @@ module Timber
     #   Timber::Config.instance.debug_to_file("log/timber.log")
     def debug_to_stdout
       stdout_logger = ::Logger.new(STDOUT)
+      stdout_logger.formatter = SimpleFormatter.new
       self.debug_logger = stdout_logger
     end
 
