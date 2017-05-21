@@ -11,7 +11,7 @@ describe Timber::LogDevices::HTTP do
       # Ensure that threads have not started
       thread = http.instance_variable_get(:@flush_thread)
       expect(thread).to be_nil
-      thread = http.instance_variable_get(:@outlet_thread)
+      thread = http.instance_variable_get(:@request_outlet_thread)
       expect(thread).to be_nil
 
       http.close
@@ -22,11 +22,10 @@ describe Timber::LogDevices::HTTP do
     let(:http) { described_class.new("MYKEY") }
     let(:msg_queue) { http.instance_variable_get(:@msg_queue) }
 
-    after(:each) { http.close }
-
     it "should buffer the messages" do
       http.write("test log message")
       expect(msg_queue.flush).to eq(["test log message"])
+      http.close
     end
 
     it "should start the flush threads" do
@@ -34,9 +33,10 @@ describe Timber::LogDevices::HTTP do
 
       thread = http.instance_variable_get(:@flush_thread)
       expect(thread).to be_alive
-      thread = http.instance_variable_get(:@outlet_thread)
+      thread = http.instance_variable_get(:@request_outlet_thread)
       expect(thread).to be_alive
       expect(http).to receive(:flush).exactly(1).times
+      http.close
     end
 
     context "with a low batch size" do
@@ -46,6 +46,7 @@ describe Timber::LogDevices::HTTP do
         http.write("test")
         expect(http).to receive(:flush).exactly(2).times
         http.write("my log message")
+        http.close
       end
     end
   end
@@ -59,7 +60,7 @@ describe Timber::LogDevices::HTTP do
       thread = http.instance_variable_get(:@flush_thread)
       sleep 0.1 # too fast!
       expect(thread).to_not be_alive
-      thread = http.instance_variable_get(:@outlet_thread)
+      thread = http.instance_variable_get(:@request_outlet_thread)
       sleep 0.1 # too fast!
       expect(thread).to_not be_alive
     end
@@ -136,6 +137,28 @@ describe Timber::LogDevices::HTTP do
       sleep 0.3
 
       expect(stub).to have_been_requested.times(1)
+    end
+  end
+
+  describe "#deliver_requests" do
+    it "should handle exceptions properly and return" do
+      allow_any_instance_of(Net::HTTP).to receive(:request).and_raise("boom")
+
+      http_device = described_class.new("MYKEY", flush_continuously: false)
+      req_queue = http_device.instance_variable_get(:@request_queue)
+
+      # Place a request on the queue
+      req = Net::HTTP::Post.new("/")
+      req_queue.enq(req)
+
+      # Start a HTTP connection to test the method directly
+      http = http_device.send(:build_http)
+      http.start do |conn|
+        result = http_device.send(:deliver_requests, conn)
+        expect(result).to eq(false)
+      end
+
+      expect(req_queue.size).to eq(1)
     end
   end
 end
