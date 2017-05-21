@@ -8,8 +8,12 @@ module Timber
     class << self
       attr_writer :enabled
 
+      def enabled?
+        @enabled != false
+      end
+
       def integrate!(*args)
-        if enabled == false
+        if !enabled?
           Config.instance.debug_logger.debug("#{name} integration disabled, skipping") if Config.instance.debug_logger
           return false
         end
