@@ -13,8 +13,6 @@ describe Timber::LogDevices::HTTP do
       expect(thread).to be_nil
       thread = http.instance_variable_get(:@request_outlet_thread)
       expect(thread).to be_nil
-
-      http.close
     end
   end
 
@@ -93,13 +91,6 @@ describe Timber::LogDevices::HTTP do
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
     end
-
-    it "should preserve formatting for mshpack payloads" do
-      http = described_class.new("MYKEY", flush_continuously: false)
-      http.write("This is a log message 1".to_msgpack)
-      http.write("This is a log message 2".to_msgpack)
-      http.send(:flush)
-    end
   end
 
   # Testing a private method because it helps break down our tests
@@ -108,16 +99,16 @@ describe Timber::LogDevices::HTTP do
       http = described_class.new("MYKEY", flush_interval: 0.1)
       http.send(:ensure_flush_threads_are_started)
       expect(http).to receive(:flush).exactly(2).times
-      sleep 0.12 # too fast!
+      sleep 0.15 # too fast!
       http.close
     end
   end
 
   # Outlet
-  describe "#outlet" do
+  describe "#request_outlet" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
-    it "should start a intervaled flush thread and flush on an interval" do
+    it "should deliver requests on an interval" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
           :body => start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81\xA6system".force_encoding("ASCII-8BIT")),
@@ -130,13 +121,15 @@ describe Timber::LogDevices::HTTP do
         to_return(:status => 200, :body => "", :headers => {})
 
       http = described_class.new("MYKEY", flush_interval: 0.1)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
-      http.write(log_entry)
-      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
-      http.write(log_entry)
-      sleep 2
+      log_entry1 = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry1)
+      log_entry2 = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry2)
+      sleep 1
 
       expect(stub).to have_been_requested.times(1)
+
+      http.close
     end
   end
 
