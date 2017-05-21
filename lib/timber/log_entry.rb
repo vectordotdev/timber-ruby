@@ -71,6 +71,18 @@ module Timber
       Util::Hash.deep_compact(hash)
     end
 
+    def inspect
+      to_s
+    end
+
+    def to_json(options = {})
+      as_json(options).to_json
+    end
+
+    def to_msgpack(*args)
+      as_json.to_msgpack(*args)
+    end
+
     # This is used when LogEntry objects make it to a non-Timber logger.
     def to_s
       log_message = message
@@ -89,14 +101,6 @@ module Timber
       end
 
       log_message + "\n"
-    end
-
-    def to_json(options = {})
-      as_json(options).to_json
-    end
-
-    def to_msgpack(*args)
-      as_json.to_msgpack(*args)
     end
 
     private

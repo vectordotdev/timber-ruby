@@ -48,10 +48,17 @@ module Timber
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
 
-        initializer(:timber, after: :initialize_logger) do
+        # This runs before initializers but after the framework and gems have been loaded.
+        config.before_initialize do
+          # Delegate the internal Timber logger to the Rails.logger
           Timber::Config.instance.logger = Proc.new { ::Rails.logger }
+
+          # Install the integrations so that we capture structured data instead of
+          # raw text logs.
           Integrations.integrate!
 
+          # Install the Rack middlewares so that we capture structured data instead of
+          # raw text logs.
           timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
             [:use, [middleware_class], nil]
           end
