@@ -57,6 +57,8 @@ module Timber
         initializer(:timber, after: :load_config_initializers) do
           Integrations.integrate!
 
+          # Install the Rack middlewares so that we capture structured data instead of
+          # raw text logs.
           timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
             [:use, [middleware_class], nil]
           end
