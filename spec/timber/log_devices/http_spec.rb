@@ -107,11 +107,8 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
       http.send(:ensure_flush_threads_are_started)
-      expect(http).to receive(:flush).exactly(1).times
-      sleep 0.15 # too fast!
-      expect(http).to receive(:flush).exactly(1).times
-      sleep 0.15 # too fast!
-      expect(http).to receive(:flush).exactly(1).times
+      expect(http).to receive(:flush).exactly(2).times
+      sleep 0.12 # too fast!
       http.close
     end
   end

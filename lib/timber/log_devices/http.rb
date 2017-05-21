@@ -209,7 +209,7 @@ module Timber
                 flush
               end
 
-              sleep(0.1)
+              sleep(0.5)
             rescue Exception => e
               logger.error("Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}")
             end
