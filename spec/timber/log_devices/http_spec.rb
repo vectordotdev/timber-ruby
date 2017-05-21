@@ -137,7 +137,7 @@ describe Timber::LogDevices::HTTP do
       http.write(log_entry)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry)
-      sleep 0.5
+      sleep 2
 
       expect(stub).to have_been_requested.times(1)
     end
