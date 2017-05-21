@@ -228,36 +228,43 @@ module Timber
 
             begin
               debug_logger.info("Starting Timber HTTP connection") if debug_logger
-              http.start do |conn|
-                num_reqs = 0
-                while num_reqs < @requests_per_conn
-                  if debug_logger
-                    debug_logger.debug("Waiting on next Timber request")
-                    debug_logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
-                  end
-
-                  # Blocks waiting for a request.
-                  req = @request_queue.deq
-                  @requests_in_flight += 1
-                  resp = nil
-                  begin
-                    resp = conn.request(req)
-                  rescue => e
-                    debug_logger.error("Timber request error: #{e.message}") if debug_logger
-                    next
-                  ensure
-                    @requests_in_flight -= 1
-                  end
-                  num_reqs += 1
-                  debug_logger.debug("Timber request successful: #{resp.code}") if debug_logger
-                end
-              end
+              http.start(&:deliver_requests)
             rescue => e
               debug_logger.error("Timber request error: #{e.message}") if debug_logger
             ensure
               debug_logger.debug("Finishing Timber HTTP connection") if debug_logger
               http.finish if http.started?
             end
+          end
+        end
+
+        def deliver_requests(conn)
+          num_reqs = 0
+
+          while num_reqs < @requests_per_conn
+            if debug_logger
+              debug_logger.debug("Waiting on next Timber request")
+              debug_logger.debug("Number of threads waiting on Timber request queue: #{@request_queue.num_waiting}")
+            end
+
+            # Blocks waiting for a request.
+            req = @request_queue.deq
+            @requests_in_flight += 1
+            resp = nil
+
+            begin
+              resp = conn.request(req)
+            rescue => e
+              debug_logger.error("Timber request error: #{e.message}") if debug_logger
+
+              # If we error, let's return and let the caller build a new connection
+              return
+            ensure
+              @requests_in_flight -= 1
+            end
+
+            num_reqs += 1
+            debug_logger.debug("Timber request successful: #{resp.code}") if debug_logger
           end
         end
 
