@@ -282,6 +282,7 @@ module Timber
               @requests_in_flight -= 1
             end
 
+            @successive_error_count = 0
             num_reqs += 1
             debug_logger.info("Request successful: #{resp.code}") if debug_logger
           end
