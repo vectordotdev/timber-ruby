@@ -37,7 +37,7 @@ module Timber
     # This is useful for debugging. This Sets a debug_logger to view internal Timber library
     # log messages. The default is `nil`. Meaning log to nothing.
     #
-    # See `debug_to_file` and `debug_to_stdout` for convenience methods that handle creating
+    # See {#debug_to_file} and {#debug_to_stdout} for convenience methods that handle creating
     # and setting the logger.
     #
     # @example Rails

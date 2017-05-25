@@ -100,20 +100,6 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    if defined?(ActiveSupport::TaggedLogging)
-      context "with TaggedLogging", :rails_23 => false do
-        let(:logger) { ActiveSupport::TaggedLogging.new(Timber::Logger.new(io)) }
-
-        it "should format properly with events" do
-          message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
-          logger.tagged("tag") do
-            logger.info(message)
-          end
-          expect(io.string).to include("\"tags\":[\"tag\"]")
-        end
-      end
-    end
-
     context "with the HTTP log device" do
       let(:io) { Timber::LogDevices::HTTP.new("my_key") }
 

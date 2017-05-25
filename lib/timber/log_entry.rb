@@ -17,7 +17,7 @@ module Timber
     # @param context_snapshot [Hash] structured data representing a snapshot of the context at
     #   the given point in time.
     # @param event [Timber.Event] structured data representing the log line event. This should be
-    #   an instance of `Timber.Event`.
+    #   an instance of {Timber.Event}.
     # @return [LogEntry] the resulting LogEntry object
     def initialize(level, time, progname, message, context_snapshot, event, options = {})
       @level = level
@@ -92,9 +92,9 @@ module Timber
         event_type = event_hash.keys.first
 
         event_type = if event.is_a?(Events::Custom)
-          "event:#{event_type}.#{event.type}"
+          "#{event_type}.#{event.type}"
         else
-          "event:#{event_type}"
+          "#{event_type}"
         end
 
         log_message = "#{message} [#{event_type}]"

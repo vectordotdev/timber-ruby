@@ -2,7 +2,7 @@ module Timber
   module Contexts
     # The session context tracks the current session for the given user.
     #
-    # @note This is tracked automatically with the `Integrations::Rack::SessionContext` rack
+    # @note This is tracked automatically with the {Integrations::Rack::SessionContext} rack
     #   middleware.
     class Session < Context
       @keyspace = :session

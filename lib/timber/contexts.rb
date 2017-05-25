@@ -9,7 +9,7 @@ require "timber/contexts/user"
 module Timber
   # Namespace for all Timber supported Contexts.
   module Contexts
-    # Protocol for casting objects into a `Timber::Context`.
+    # Protocol for casting objects into a {Timber::Context}.
     #
     # @example Casting a hash
     #   Timber::Contexts.build(deploy: {version: "1.0.0"})
