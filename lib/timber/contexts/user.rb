@@ -2,7 +2,7 @@ module Timber
   module Contexts
     # The user context tracks the currently authenticated user.
     #
-    # @note This is tracked automatically with the `Integrations::Rack::UserContext` rack
+    # @note This is tracked automatically with the {Integrations::Rack::UserContext} rack
     #   middleware.
     class User < Context
       @keyspace = :user
