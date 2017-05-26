@@ -172,13 +172,14 @@ module Timber
       end
     end
 
-    private
-      def production?
-        environment == PRODUCTION_NAME
-      end
+    # @private
+    def production?
+      environment == PRODUCTION_NAME
+    end
 
-      def staging?
-        environment == STAGING_NAME
-      end
+    # @private
+    def staging?
+      environment == STAGING_NAME
+    end
   end
 end

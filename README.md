@@ -18,9 +18,9 @@ structured events with a single command. Spend more time focusing on your app an
 focusing on logging.
 
 1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
-2. **Automatically structures yours logs.** - ee [how it works](#how-it-works) below.
+2. **Automatically structures yours logs.** - Third-party and in-app logs are all structured in a consistent format.
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
-   Omniauth, etc.
+   Omniauth, etc. Automatically sets user and http context.
 
 
 ## Installation
@@ -165,7 +165,41 @@ you desire.
 ## Configuration
 
 Timber has taken great care to ensure most aspects of Timber are configurable or extendable
-where necessary:
+where necessary. Here are a few popular options:
+
+<details><summary><strong>Change log formats</strong></summary><p>
+
+Simply set the formatter you want to use just like you would with any other logger:
+
+```ruby
+logger = Timber::Logger.new(STDOUT)
+logger.formatter = Timber::Logger::JSONFormatter.new
+```
+
+Your options are:
+
+1. `Timber::Logger::StringFormatter` (default)
+
+   A human readable format with metadata appended to the end.
+
+   ```
+   My log message @metadata {"level":"info","dt":"2017-01-01T01:02:23.234321Z"}
+
+2. `Timber::Logger::JSONFormatter`
+
+   ```json
+   {"level":"info","message":"My log message","dt":"2017-01-01T01:02:23.234321Z"}
+   ```
+
+3. `Timber::Logger::LogfmtFormatter`
+
+   A simple key/value format that is simple and human readable.
+
+   ```
+   level=info message="My log message" dt=2017-01-01T01:02:23.234321Z
+
+
+</p></details>
 
 <details><summary><strong>Custom user context</strong></summary><p>
 

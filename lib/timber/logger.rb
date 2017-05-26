@@ -130,10 +130,37 @@ module Timber
     class StringFormatter < Formatter
       METADATA_CALLOUT = "@metadata".freeze
 
+      class << self
+        # This determines if the log messages should have metadata appended. Ex:
+        #
+        #     log message @metadata {...}
+        #
+        # By default, this is turned on for production and staging environments only. Other
+        # environment should set this setting explicitly.
+        #
+        # @example Rails
+        #   config.timber.append_metadata = false
+        # @example Everything else
+        #   Timber::Config.instance.append_metadata = false
+        def append_metadata=(value)
+          @append_metadata = value
+        end
+
+        # Accessor method for {#append_metadata=}.
+        def append_metadata?
+          if defined?(@append_metadata)
+            return @append_metadata == true
+          end
+
+          config = Config.instance
+          config.production? || config.staging?
+        end
+      end
+
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
 
-        if Config.instance.append_metadata?
+        if self.class.append_metadata?
           metadata = log_entry.to_json(:except => [:message])
           # use << for concatenation for performance reasons
           log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
