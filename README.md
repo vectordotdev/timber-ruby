@@ -18,8 +18,8 @@ structured events with a single command. Spend more time focusing on your app an
 focusing on logging.
 
 1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
-2. **Automatically structures yours logs.** - Adds critical event and context data to your
-   logs automatically (see how it works below).
+2. **Automatically structures yours logs.** - Adds critical metadata to your
+   logs automatically (see [how it works](#how-it-works) below).
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
    Omniauth, etc.
 
