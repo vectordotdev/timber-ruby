@@ -17,10 +17,14 @@ Timber for Ruby solves structured logging so you don't have to. Go from raw text
 structured events with a single command. Spend more time focusing on your app and less time
 focusing on logging.
 
-1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
-2. **Automatically structures yours logs.** - Third-party and in-app logs are all structured in a consistent format.
-3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
-   Omniauth, etc. Automatically sets user and http context.
+1. **Easy setup.**
+   `bundle exec timber install`, get setup in seconds.
+
+2. **Automatically structures yours logs.**
+   Third-party and in-app logs are all structured in a consistent format. See [how it works](#how-it-works) below.
+
+3. **Seamlessly integrates with popular libraries and frameworks.**
+   Rails, Rack, Devise, Omniauth, etc. Automatically sets user and http context.
 
 
 ## Installation
