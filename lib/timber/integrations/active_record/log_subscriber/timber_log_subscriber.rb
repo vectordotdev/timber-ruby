@@ -16,6 +16,8 @@ module Timber
         # @private
         class TimberLogSubscriber < ::ActiveRecord::LogSubscriber
           def sql(event)
+            return true if silence?
+
             r = super(event)
 
             if @message
@@ -37,6 +39,10 @@ module Timber
           private
             def debug(message)
               @message = message
+            end
+
+            def silence?
+              ActiveRecord.silence?
             end
         end
       end

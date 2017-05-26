@@ -1,8 +1,10 @@
+require "timber/integrations/rack/middleware"
+
 module Timber
   module Integrations
     module Rack
       # Reponsible for adding the Session context for applications that use `Rack`.
-      class SessionContext
+      class SessionContext < Middleware
         def initialize(app)
           @app = app
         end

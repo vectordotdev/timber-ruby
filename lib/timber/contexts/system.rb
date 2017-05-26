@@ -1,6 +1,6 @@
 module Timber
   module Contexts
-    # Tracks OS level process information, such as the process ID.
+    # The system context tracks OS level process information, such as the process ID.
     class System < Context
       @keyspace = :system
 

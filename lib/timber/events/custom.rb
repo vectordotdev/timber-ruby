@@ -22,7 +22,16 @@ module Timber
       def initialize(attributes)
         @type = attributes[:type] || raise(ArgumentError.new(":type is required"))
         @message = attributes[:message] || raise(ArgumentError.new(":message is required"))
-        @data = attributes[:data]
+
+        data = attributes[:data]
+
+        if data.is_a?(Hash) && data[:time_ms].is_a?(Time)
+          finish = Time.now
+          time_ms = (finish - data[:time_ms]) * 1000.0
+          data[:time_ms] = time_ms
+        end
+
+        @data = data
       end
 
       def to_hash

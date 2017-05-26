@@ -6,7 +6,6 @@ require "timber/overrides"
 require "timber/config"
 require "timber/context"
 require "timber/event"
-require "timber/integrator"
 require "timber/util"
 require "timber/version"
 

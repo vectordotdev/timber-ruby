@@ -14,7 +14,7 @@ module Timber
   class Config
     class NoLoggerError < StandardError; end
 
-    class SimpleFormatter < ::Logger::Formatter
+    class SimpleLogFormatter < ::Logger::Formatter
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
         "[Timber] #{String === msg ? msg : msg.inspect}\n"
@@ -26,12 +26,36 @@ module Timber
 
     include Singleton
 
-    attr_writer :append_metadata, :debug_logger, :header_filters, :http_body_limit, :logger
+    attr_writer :header_filters, :http_body_limit
 
     # @private
     def initialize
       @header_filters = []
       @http_body_limit = 2000
+    end
+
+    # This determines if the log messages should have metadata appended. Ex:
+    #
+    #     log message @metadata {...}
+    #
+    # By default, this is turned on for production and staging environments only. Other
+    # environment should set this setting explicitly.
+    #
+    # @example Rails
+    #   config.timber.append_metadata = false
+    # @example Everything else
+    #   Timber::Config.instance.append_metadata = false
+    def append_metadata=(value)
+      @append_metadata = value
+    end
+
+    # Accessor method for {#append_metadata=}.
+    def append_metadata?
+      if defined?(@append_metadata)
+        return @append_metadata == true
+      end
+
+      production? || staging?
     end
 
     # This is useful for debugging. This Sets a debug_logger to view internal Timber library
@@ -44,11 +68,16 @@ module Timber
     #   config.timber.debug_logger = ::Logger.new(STDOUT)
     # @example Everything else
     #   Timber::Config.instance.debug_logger = ::Logger.new(STDOUT)
+    def debug_logger=(value)
+      @debug_logger = value
+    end
+
+    # Accessor method for {#debug_logger=}.
     def debug_logger
       @debug_logger
     end
 
-    # A convenience method for writing debug messages to a file.
+    # A convenience method for writing internal Timber debug messages to a file.
     #
     # @example Rails
     #   config.timber.debug_to_file("#{Rails.root}/log/timber.log")
@@ -62,19 +91,19 @@ module Timber
       file.binmode
       file.sync = config.autoflush_log
       file_logger = ::Logger.new(file)
-      file_logger.formatter = SimpleFormatter.new
+      file_logger.formatter = SimpleLogFormatter.new
       self.debug_logger = file_logger
     end
 
-    # A convenience method for writing debug messages to a file.
+    # A convenience method for writing internal Timber debug messages to STDOUT.
     #
     # @example Rails
-    #   config.timber.debug_to_file("#{Rails.root}/log/timber.log")
+    #   config.timber.debug_to_stdout
     # @example Everything else
-    #   Timber::Config.instance.debug_to_file("log/timber.log")
+    #   Timber::Config.instance.debug_to_stdout
     def debug_to_stdout
       stdout_logger = ::Logger.new(STDOUT)
-      stdout_logger.formatter = SimpleFormatter.new
+      stdout_logger.formatter = SimpleLogFormatter.new
       self.debug_logger = stdout_logger
     end
 
@@ -82,9 +111,7 @@ module Timber
     # It should be rare that you have to set this. If the aforementioned env vars are not
     # set please do.
     #
-    # @example Rails
-    #   config.timber.environment = "staging"
-    # @example Everything else
+    # @example If you do not set `RACK_ENV` or `RAILS_ENV`
     #   Timber::Config.instance.environment = "staging"
     def environment
       @environment ||= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
@@ -114,34 +141,18 @@ module Timber
       @http_body_limit
     end
 
-    # This determines if the log messages should have metadata appended. Ex:
-    #
-    #     log message @metadata {...}
-    #
-    # By default, this is turned on for production and staging environments only. Other
-    # environment should set this setting explicitly.
-    #
-    # @example Rails
-    #   config.timber.append_metadata = false
-    # @example Everything else
-    #   Timber::Config.instance.append_metadata = false
-    def append_metadata?
-      if defined?(@append_metadata)
-        return @append_metadata == true
-      end
-
-      production? || staging?
-    end
-
     # This is the _main_ logger Timber writes to. All of the Timber integrations write to
     # this logger instance. It should be set to your global logger. For Rails, this is set
     # automatically to `Rails.logger`, you should not have to set this.
     #
-    # @example Rails
-    #   Rails.logger = Timber::Logger.new(STDOUT)
-    #   config.timber.logger = Rails.logger
-    # @example Everything else
-    #   Timber::Config.instance.logger = Timber::Logger.new(STDOUT)
+    # @example Non-rails frameworks
+    #   my_global_logger = Timber::Logger.new(STDOUT)
+    #   Timber::Config.instance.logger = my_global_logger
+    def logger=(value)
+      @logger = value
+    end
+
+    # Accessor method for {#logger=}.
     def logger
       if @logger.is_a?(Proc)
         @logger.call()

@@ -1,9 +1,12 @@
 module Timber
   module Contexts
-    # The user context tracks the currently authenticated user.
+    # The user context adds data about the currently authenticated user to your logs.
+    # By adding this context all of your logs will contain user information. This allows
+    # filter and tail logs by specific users.
     #
     # @note This is tracked automatically with the {Integrations::Rack::UserContext} rack
-    #   middleware.
+    #   middleware for supported authentication frameworks. See {Integrations::Rack::UserContext}
+    #   for more details.
     class User < Context
       @keyspace = :user
 

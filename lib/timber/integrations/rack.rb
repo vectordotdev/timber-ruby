@@ -7,10 +7,11 @@ require "timber/integrations/rack/user_context"
 module Timber
   module Integrations
     module Rack
-      # All available middlewares. The order is relevant. Middlewares that set
+      # All enabled middlewares. The order is relevant. Middlewares that set
       # context are added first so that context is included in subsequent log lines.
-      def self.middlewares
-        @middlewares ||= [HTTPContext, SessionContext, UserContext, HTTPEvents, ExceptionEvent]
+      def self.enabled_middlewares
+        @middlewares ||= [HTTPContext, SessionContext, UserContext,
+          HTTPEvents, ExceptionEvent].select(&:enabled?)
       end
     end
   end

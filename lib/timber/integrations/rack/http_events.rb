@@ -1,8 +1,10 @@
+require "timber/integrations/rack/middleware"
+
 module Timber
   module Integrations
     module Rack
       # Reponsible for capturing and logging HTTP server requests and response events.
-      class HTTPEvents
+      class HTTPEvents < Middleware
         def initialize(app)
           @app = app
         end
