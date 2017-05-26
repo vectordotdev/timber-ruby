@@ -141,6 +141,17 @@ module Timber
       @http_body_limit
     end
 
+    # A convenience method that automatically sets Timber's configuration to closely match
+    # the behavior of the popular lograge library. This makes it easier when transitioning
+    # from lograge. Here's what it does:
+    #
+    # 1. Silences ActiveRecord SQL query and ActiveView template rendering logs.
+    # 2. Collapses HTTP request and response logs into a single event.
+    # 3. Sets the log format to logfmt.
+    def logrageify
+      # TODO
+    end
+
     # This is the _main_ logger Timber writes to. All of the Timber integrations write to
     # this logger instance. It should be set to your global logger. For Rails, this is set
     # automatically to `Rails.logger`, you should not have to set this.

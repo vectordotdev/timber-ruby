@@ -193,11 +193,31 @@ end
 
 </p></details>
 
-<details><summary><strong>Cherry pick & silence integrations (like lograge)</strong></summary><p>
+<details><summary><strong>Lograge-ify</strong></summary><p>
+
+Using [lograge](). We've provided a convenience method that configures Timber to behave
+in the same way. Internally it's just altering the Timber configuration. Here's what
+it does:
+
+1. Silences ActiveRecord SQL query and ActiveView template rendering logs.
+2. Collapses HTTP request and response logs into a single event.
+3. Sets the log format to logfmt.
+
+
+```ruby
+# config/initializers/timber.rb
+Timber::Config.instance.logrageify()
+```
+
+That's it!
+
+</p></details>
+
+<details><summary><strong>Cherry pick & silence integrations</strong></summary><p>
 
 You can disable Timber integrations entirely or simply silence them. Disabling is like
-removing the code from Timber, whatever the library did before it what it will continue to do.
-Silencing ensures that library does not log.
+removing the code from Timber. The library will use it's defaults. Silencing ensures that library
+does not log at all. This is partly how we accomplish the logrageify option above.
 
 ```ruby
 # config/initializers/timber.rb
@@ -214,7 +234,8 @@ Timber::Integrations::ActionController.enabled = false
 
 </p></details>
 
-And much more. For a comprehensive guide / list, please see [the configuration documentation]().
+<br />
+...and much more. For a comprehensive guide / list, please see [the configuration documentation]().
 
 
 ## Jibber-Jabber
