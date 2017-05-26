@@ -166,11 +166,8 @@ you desire.
 
 ## Configuration
 
-Because every app varies in it's logging needs, Timber has taken great care
-to ensure most aspects of Timber are configurable or extendable where necessary.
-For a comprehensive guide / list, please see [the configuration documentation]().
-
-A few popular configuration options:
+Timber has taken great care to ensure most aspects of Timber are configurable or extendable
+where necessary:
 
 <details><summary><strong>Custom user context</strong></summary><p>
 
@@ -216,6 +213,8 @@ Timber::Integrations::ActionController.enabled = false
 ```
 
 </p></details>
+
+And much more. For a comprehensive guide / list, please see [the configuration documentation]().
 
 
 ## Jibber-Jabber
