@@ -14,7 +14,12 @@
 ## Overview
 
 Timber for Ruby solves structured logging so you don't have to. Go from raw text logs to rich
-structured events with a single command and spend time focusing on your app, not logging.
+structured events with a single command. Spend time focusing on your app, not logging.
+
+1. **Easy setup.** One command to install.
+2. **Automatically structures yours logs.**
+3. **Works seamlessly with popular libraries and frameworks.**
+4. **Provides a simple API for logging structured data.**
 
 
 ## Installation
@@ -32,10 +37,11 @@ structured events with a single command and spend time focusing on your app, not
 
 ## How it works
 
-Timber's goal is to provide you with a best-in-class, _complete_ structured logging solution
-without all of the decisions and effort to get setup. It does so in 3 ways:
-
-<details><summary><strong>1. Automatically structures third-party and framework logs</strong></summary><p>
+Instead of completely replacing your log messages,
+Timber efficiently augments your logs with critical metadata. Turning them into
+[rich events with context](https://timber.io/docs/ruby/events-and-context). This preserves the
+readability of your logs while still adding the critical context needed to properly analyze your
+logs.
 
 For example, Timber turns this familiar raw text log line:
 
@@ -61,20 +67,6 @@ Moreover, this data allows you to run powerful queries like:
 5. `level:info` - Levels in your logs!
 
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
-
-</p></details>
-
-<details><summary><strong>2. Provides a simple API for logging structured data</strong></summary><p>
-
-fdsfsdf
-
-</p></details>
-
-<details><summary><strong>3. Marries all of this with a simple and beautiful console</strong></summary><p>
-
-fsdfds
-
-</p></details>
 
 
 ## Usage
