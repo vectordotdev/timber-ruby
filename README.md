@@ -195,9 +195,9 @@ end
 
 <details><summary><strong>Lograge-ify</strong></summary><p>
 
-Using [lograge](). We've provided a convenience method that configures Timber to behave
-in the same way. Internally it's just altering the Timber configuration. Here's what
-it does:
+Using [lograge](https://github.com/roidrage/lograge)? We've provided a convenience method that
+configures Timber to behave in the same way. Internally it's just altering the Timber
+configuration. Here's what it does:
 
 1. Silences ActiveRecord SQL query and ActiveView template rendering logs.
 2. Collapses HTTP request and response logs into a single event.
