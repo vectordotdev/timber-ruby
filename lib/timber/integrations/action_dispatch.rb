@@ -1,4 +1,5 @@
 require "timber/integration"
+require "timber/integrations/rack/exception_event"
 require "timber/integrations/action_dispatch/debug_exceptions"
 
 module Timber
@@ -13,6 +14,8 @@ module Timber
       end
 
       def self.integrate!
+        return false if !enabled?
+
         DebugExceptions.integrate!
       end
     end

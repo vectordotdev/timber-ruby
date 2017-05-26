@@ -11,6 +11,8 @@ describe Timber::Events::Custom, :rails_23 => true do
     it "should coerce a Time into a float representing fractional milliseconds" do
       timer = Timber::Timber.start
       custom_event = described_class.new(:type => :my_event, :message => "hello", :data => {:time_ms => timer})
+      expect(custom_event.message).to include("in ")
+      expect(custom_event.message).to end_with("ms")
       data = custom_event.data
       expect(data[:time_ms]).to be_kind_of(Float)
       expect(data[:time_ms]).to be > 0

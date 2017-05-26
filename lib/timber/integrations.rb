@@ -9,12 +9,25 @@ module Timber
   # Namespace for all integrations.
   # @private
   module Integrations
+    #
+    def self.enabled=(value)
+      @enabled = value
+    end
+
+    # Accessor method for {#enabled=}.
+    def self.enabled?
+      @enabled != false
+    end
+
+    # Integrates all enabled integrations in one call.
     def self.integrate!
-      ActionController.integrate! if ActionController.enabled?
-      ActionDispatch.integrate! if ActionDispatch.enabled?
-      ActionView.integrate! if ActionView.enabled?
-      ActiveRecord.integrate! if ActiveRecord.enabled?
-      Rails.integrate! if Rails.enabled?
+      return true if !enabled?
+
+      ActionController.integrate!
+      ActionDispatch.integrate!
+      ActionView.integrate!
+      ActiveRecord.integrate!
+      Rails.integrate!
     end
   end
 end

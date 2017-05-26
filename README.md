@@ -14,12 +14,14 @@
 ## Overview
 
 Timber for Ruby solves structured logging so you don't have to. Go from raw text logs to rich
-structured events with a single command. Spend time focusing on your app, not logging.
+structured events with a single command. Spend more time focusing on your app and less time
+focusing on logging.
 
-1. **Easy setup.** One command to install.
-2. **Automatically structures yours logs.**
-3. **Works seamlessly with popular libraries and frameworks.**
-4. **Provides a simple API for logging structured data.**
+1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
+2. **Automatically structures yours logs.** - Adds critical event and context data to your
+   logs automatically (see how it works below).
+3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
+   Omniauth, etc.
 
 
 ## Installation
@@ -76,7 +78,8 @@ For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/r
 Use `Logger` as normal:
 
 ```ruby
-logger.info("My log message")
+logger = Timber::Logger.new(STDOUT)
+logger.info("My log message") # use warn, error, debug, etc.
 
 # => My log message @metadata {"level": "info", "context": {...}}
 ```
@@ -91,6 +94,7 @@ Custom events allow you to extend beyond events already defined in
 the [`Timber::Events`](lib/timber/events) namespace.
 
 ```ruby
+logger = Timber::Logger.new(STDOUT)
 logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 
 # => Payment rejected @metadata {"level": "warn", "event": {"payment_rejected": {"customer_id": "abcd1234", "amount": 100, "reason": "Card expired"}}, "context": {...}}
@@ -111,6 +115,7 @@ Custom contexts allow you to extend beyond contexts already defined in
 the [`Timber::Contexts`](lib/timber/contexts) namespace.
 
 ```ruby
+logger = Timber::Logger.new(STDOUT)
 logger.with_context(build: {version: "1.0.0"}) do
   logger.info("My log message")
 end
@@ -135,6 +140,7 @@ Here's a timing example. Notice how Timber automatically calculates the time and
 to the message.
 
 ```ruby
+logger = Timber::Logger.new(STDOUT)
 timer = Timber::Timer.start
 # ... code to time ...
 logger.info("Processed background job", background_job: {time_ms: timer})
@@ -145,6 +151,7 @@ logger.info("Processed background job", background_job: {time_ms: timer})
 Or capture any metric you want:
 
 ```ruby
+logger = Timber::Logger.new(STDOUT)
 logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
 
 # => Credit card charged @metadata {"level": "info", "event": {"credit_card_charge": {"amount": 123.23}}}
@@ -191,7 +198,7 @@ Using [lograge](https://github.com/roidrage/lograge)? We've provided a convenien
 configures Timber to behave in the same way. Internally it's just altering the Timber
 configuration. Here's what it does:
 
-1. Silences ActiveRecord SQL query and ActiveView template rendering logs.
+1. Silences ActiveRecord SQL query, ActiveView template rendering, and ActionController processing logs.
 2. Collapses HTTP request and response logs into a single event.
 3. Sets the log format to logfmt.
 

@@ -29,6 +29,8 @@ module Timber
           finish = Time.now
           time_ms = (finish - data[:time_ms]) * 1000.0
           data[:time_ms] = time_ms
+
+          @message += " in #{time_ms}ms"
         end
 
         @data = data

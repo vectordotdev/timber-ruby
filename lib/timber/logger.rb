@@ -176,7 +176,7 @@ module Timber
     include ::LoggerSilence if defined?(::LoggerSilence)
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
-    # The only difference is that it default the formatter to {HybridFormatter}. Using
+    # The only difference is that it default the formatter to {StringFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
     #
     # @example Changing your formatter
@@ -203,6 +203,9 @@ module Timber
       @initialized = true
     end
 
+    # Sets a new formatted on the logger.
+    #
+    # @note The formatter cannot be changed if you are using the HTTP logger backend.
     def formatter=(value)
       if @initialized && @logdev && @logdev.dev.is_a?(Timber::LogDevices::HTTP) && !value.is_a?(PassThroughFormatter)
         raise ArgumentError.new("The formatter cannot be changed when using the " +

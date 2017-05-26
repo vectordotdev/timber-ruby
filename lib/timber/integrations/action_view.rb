@@ -9,6 +9,8 @@ module Timber
       extend Integration
 
       def self.integrate!
+        return false if !enabled?
+
         LogSubscriber.integrate!
       end
     end
