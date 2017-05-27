@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # The system context tracks OS level process information, such as the process ID.

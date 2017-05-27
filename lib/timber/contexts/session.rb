@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # The session context adds the current session ID to your logs. This allows your

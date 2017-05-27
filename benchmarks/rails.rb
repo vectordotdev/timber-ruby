@@ -103,7 +103,6 @@ logger.level = Logger::DEBUG
 Timber::Frameworks::Rails.set_logger(logger)
 Timber::Frameworks::Rails.configure_middlewares(Rails.application.config.app_middleware)
 Timber::Integrations.integrate!
-Timber::Config.instance.append_metadata = false
 
 
 puts "Timing via benchmark:"

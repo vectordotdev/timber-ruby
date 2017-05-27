@@ -74,30 +74,32 @@ module Timber
       }
 
       private
-        def build_log_entry(severity, time, progname, msg)
-          level = SEVERITY_MAP.fetch(severity)
+        def build_log_entry(severity, time, progname, logged_obj)
           context_snapshot = CurrentContext.instance.snapshot
-
+          level = SEVERITY_MAP.fetch(severity)
           tags = extract_active_support_tagged_logging_tags
-          time_ms = nil
-          if msg.is_a?(Hash)
-            if msg.key?(:tag) || msg.key?(:tags)
-              tags = tags.clone
-              tags << msg.delete(:tag) if msg.key?(:tag)
-              tags += msg.delete(:tags) if msg.key?(:tags)
-              tags.uniq!
-            end
-            time_ms = msg.delete(:time_ms) if msg.key?(:time_ms)
 
-            msg = msg[:message] if msg.length == 1
-          end
+          if logged_obj.is_a?(Event)
+            LogEntry.new(level, time, progname, logged_obj.message, context_snapshot, logged_obj,
+              tags: tags)
+          elsif logged_obj.is_a?(Hash)
+            # Extract the tags
+            tags = tags.clone
+            tags << logged_obj.delete(:tag) if logged_obj.key?(:tag)
+            tags += logged_obj.delete(:tags) if logged_obj.key?(:tags)
+            tags.uniq!
 
-          event = Events.build(msg)
+            # Extract the time_ms
+            time_ms = logged_obj.delete(:time_ms)
 
-          if event
-            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags: tags, time_ms: time_ms)
+            # Build the event
+            event = Events.build(logged_obj)
+            message = event ? event.message : logged_obj[:message]
+
+            LogEntry.new(level, time, progname, message, context_snapshot, event, tags: tags,
+              time_ms: time_ms)
           else
-            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags: tags, time_ms: time_ms)
+            LogEntry.new(level, time, progname, logged_obj, context_snapshot, nil, tags: tags)
           end
         end
 
@@ -111,8 +113,7 @@ module Timber
 
     # For use in development and test environments where you do not want metadata
     # included in the log lines.
-    class SimpleFormatter < Formatter
-
+    class MessageOnlyFormatter < Formatter
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
         log_entry = build_log_entry(severity, timestamp, progname, msg)
@@ -127,46 +128,14 @@ module Timber
     #
     #   My log message @metadata {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
     #
-    class StringFormatter < Formatter
+    class AugmentedFormatter < Formatter
       METADATA_CALLOUT = "@metadata".freeze
-
-      class << self
-        # This determines if the log messages should have metadata appended. Ex:
-        #
-        #     log message @metadata {...}
-        #
-        # By default, this is turned on for production and staging environments only. Other
-        # environment should set this setting explicitly.
-        #
-        # @example Rails
-        #   config.timber.append_metadata = false
-        # @example Everything else
-        #   Timber::Config.instance.append_metadata = false
-        def append_metadata=(value)
-          @append_metadata = value
-        end
-
-        # Accessor method for {#append_metadata=}.
-        def append_metadata?
-          if defined?(@append_metadata)
-            return @append_metadata == true
-          end
-
-          config = Config.instance
-          config.production? || config.staging?
-        end
-      end
 
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
-
-        if self.class.append_metadata?
-          metadata = log_entry.to_json(:except => [:message])
-          # use << for concatenation for performance reasons
-          log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
-        else
-          log_entry.message + "\n"
-        end
+        metadata = log_entry.to_json(:except => [:message])
+        # use << for concatenation for performance reasons
+        log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
       end
     end
 
@@ -203,7 +172,7 @@ module Timber
     include ::LoggerSilence if defined?(::LoggerSilence)
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
-    # The only difference is that it default the formatter to {StringFormatter}. Using
+    # The only difference is that it default the formatter to {AugmentedFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
     #
     # @example Changing your formatter
@@ -220,7 +189,7 @@ module Timber
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
       else
-        self.formatter = StringFormatter.new
+        self.formatter = AugmentedFormatter.new
       end
 
       self.level = environment_level

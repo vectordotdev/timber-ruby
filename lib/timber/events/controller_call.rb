@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The controller call event tracks controller invocations. For example, this line in Rails:

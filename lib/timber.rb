@@ -2,12 +2,10 @@
 require "json" # brings to_json to the core classes
 
 # Base (must come first, order matters)
+require "timber/version"
 require "timber/overrides"
 require "timber/config"
-require "timber/context"
-require "timber/event"
 require "timber/util"
-require "timber/version"
 
 # Other (sorted alphabetically)
 require "timber/contexts"

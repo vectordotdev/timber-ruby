@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # Allows for custom events that aren't covered elsewhere.
@@ -26,11 +28,8 @@ module Timber
         data = attributes[:data]
 
         if data.is_a?(Hash) && data[:time_ms].is_a?(Time)
-          finish = Time.now
-          time_ms = (finish - data[:time_ms]) * 1000.0
-          data[:time_ms] = time_ms
-
-          @message += " in #{time_ms}ms"
+          data[:time_ms] = Timer.duration_ms(data[:time_ms])
+          @message += " in #{data[:time_ms]}ms"
         end
 
         @data = data

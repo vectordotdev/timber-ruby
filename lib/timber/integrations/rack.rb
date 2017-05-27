@@ -9,7 +9,7 @@ module Timber
     module Rack
       # All enabled middlewares. The order is relevant. Middlewares that set
       # context are added first so that context is included in subsequent log lines.
-      def self.enabled_middlewares
+      def self.middlewares
         @middlewares ||= [HTTPContext, SessionContext, UserContext,
           HTTPEvents, ExceptionEvent].select(&:enabled?)
       end

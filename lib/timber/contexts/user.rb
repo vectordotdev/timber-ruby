@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # The user context adds data about the currently authenticated user to your logs.

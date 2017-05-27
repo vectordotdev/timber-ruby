@@ -32,6 +32,9 @@ module Timber
       @time_ms = options[:time_ms]
 
       context_snapshot = {} if context_snapshot.nil?
+
+      # Set the system context for each log entry since processes can be forked
+      # and the process ID could change.
       hostname = Socket.gethostname
       pid = Process.pid
       system_context = Contexts::System.new(hostname: hostname, pid: pid)

@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # The runtime context adds current runtime data to your logs, such as the file, line number,

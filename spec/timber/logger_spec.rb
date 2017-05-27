@@ -10,8 +10,8 @@ describe Timber::Logger, :rails_23 => true do
       Timecop.freeze(time) { example.run }
     end
 
-    context "with the StringFormatter" do
-      before(:each) { logger.formatter = Timber::Logger::StringFormatter.new }
+    context "with the AugmentedFormatter" do
+      before(:each) { logger.formatter = Timber::Logger::AugmentedFormatter.new }
 
       it "should accept strings" do
         logger.info("this is a test")
@@ -91,7 +91,7 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    context "with the :json format" do
+    context "with the JSONFormatter" do
       before(:each) { logger.formatter = Timber::Logger::JSONFormatter.new }
 
       it "should log in the correct format" do
@@ -129,19 +129,19 @@ describe Timber::Logger, :rails_23 => true do
     let(:logger) { Timber::Logger.new(io) }
 
     it "should add context" do
-      expect(Timber::CurrentContext.hash).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
 
       logger.with_context(build: {version: "1.0.0"}) do
-        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
 
         logger.with_context({testing: {key: "value"}}) do
-          expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
+          expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
         end
 
-        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
       end
 
-      expect(Timber::CurrentContext.hash).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
     end
   end
 

@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # The HTTP context adds data about the current HTTP request being processed to your logs.

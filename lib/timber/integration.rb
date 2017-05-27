@@ -29,7 +29,7 @@ module Timber
 
     # Accessor method for {#silence=}
     def silence?
-      @silence != false
+      @silence == true
     end
 
     # Abstract method that each integration must implement.

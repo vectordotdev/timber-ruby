@@ -1,3 +1,5 @@
+require "timber/context"
+
 module Timber
   module Contexts
     # Custom contexts allow you to add application specific context not covered elsewhere.

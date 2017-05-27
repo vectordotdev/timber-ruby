@@ -34,30 +34,6 @@ module Timber
       @http_body_limit = 2000
     end
 
-    # This determines if the log messages should have metadata appended. Ex:
-    #
-    #     log message @metadata {...}
-    #
-    # By default, this is turned on for production and staging environments only. Other
-    # environment should set this setting explicitly.
-    #
-    # @example Rails
-    #   config.timber.append_metadata = false
-    # @example Everything else
-    #   Timber::Config.instance.append_metadata = false
-    def append_metadata=(value)
-      @append_metadata = value
-    end
-
-    # Accessor method for {#append_metadata=}.
-    def append_metadata?
-      if defined?(@append_metadata)
-        return @append_metadata == true
-      end
-
-      production? || staging?
-    end
-
     # This is useful for debugging. This Sets a debug_logger to view internal Timber library
     # log messages. The default is `nil`. Meaning log to nothing.
     #

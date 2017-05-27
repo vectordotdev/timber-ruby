@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The exception event is used to track exceptions.

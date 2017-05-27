@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The HTTP client response event tracks responses for *outgoing* HTTP *requests*.

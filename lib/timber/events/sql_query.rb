@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The SQL query event tracks sql queries to your database.
