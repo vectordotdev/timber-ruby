@@ -14,7 +14,7 @@
 ## Overview
 
 Timber solves structured logging so you don't have to. Go from raw text logs to rich
-structured events with a single command. Spend more time focusing on your app and less time
+structured events in seconds. Spend more time focusing on your app and less time
 focusing on logging.
 
 1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
@@ -103,13 +103,27 @@ structre, creates a contract with downstream consumers, and improves stability.
 
 So what can you do with this data? Amazing things:
 
-1. **Tail a user** - `user.id:1`
-2. **Trace a request** - `http.request_id:abcd1234`
+1. [**Tail a user** - `user.id:1`](https://timber.io/docs/app/tutorials/tail-a-user/)
+2. [**Trace a request** - `http.request_id:abcd1234`](https://timber.io/docs/app/tutorials/view-in-request-context/)
 3. **Narrow by host** - `system.hostname:1.server.com`
 4. **View slow responses** - `http_server_response.time_ms:>=1000`
 5. **Filter by log level** - `level:info`
 
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
+
+
+## What you get
+
+1. Automatic structuring of all Rails logs (HTTP requests / respones, controller invocations, template renders, sql queries, etc)
+2. Automatic structuring of exception events
+3. Automatic HTTP context via Rack middleware
+4. Automatic user context via Rack middleware (Devise, Omniauth, Clearance, and support for custom integrations)
+3. Automatic release context (supports Heroku dyno metadata, if applicable)
+5. Automatic system context
+6. Automatic session context via Rack middleware
+6. And more to come.
+
+All of this can be [configured and disabled as needed](#configuration).
 
 
 ## Usage
