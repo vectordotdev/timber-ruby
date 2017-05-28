@@ -3,7 +3,8 @@ require "timber/integrations/rack/middleware"
 module Timber
   module Integrations
     module Rack
-      # Reponsible for capturing exceptions events within a Rack stack.
+      # A Rack middleware that is reponsible for capturing exceptions events
+      # {Timber::Events::Exception}.
       class ExceptionEvent < Middleware
         def initialize(app)
           @app = app

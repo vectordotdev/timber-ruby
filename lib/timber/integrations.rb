@@ -6,23 +6,19 @@ require "timber/integrations/rack"
 require "timber/integrations/rails"
 
 module Timber
-  # Namespace for all integrations.
-  # @private
+  # Namespace for all integrations. Each integration provides it's own settings.
+  # And all integrations can be disabled with the {.enabled=} class method.
   module Integrations
-    #
+    # Disable / enable _all_ integrations with one setting.
     def self.enabled=(value)
-      @enabled = value
-    end
-
-    # Accessor method for {#enabled=}.
-    def self.enabled?
-      @enabled != false
+      ActionController.enabled = value
+      ActionView.enabled = value
+      ActiveRecord.enabled = value
+      Rack.enabled = value
     end
 
     # Integrates all enabled integrations in one call.
     def self.integrate!
-      return true if !enabled?
-
       ActionController.integrate!
       ActionDispatch.integrate!
       ActionView.integrate!

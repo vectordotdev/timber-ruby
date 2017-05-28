@@ -118,14 +118,44 @@ module Timber
     end
 
     # A convenience method that automatically sets Timber's configuration to closely match
-    # the behavior of the popular lograge library. This makes it easier when transitioning
-    # from lograge. Here's what it does:
+    # the behavior of the ruby lograge library. This makes it easier when transitioning
+    # from lograge.
     #
-    # 1. Silences ActiveRecord SQL query and ActiveView template rendering logs.
-    # 2. Collapses HTTP request and response logs into a single event.
-    # 3. Sets the log format to logfmt.
-    def logrageify
-      # TODO
+    # It turns this:
+    #
+    #   Started GET "/" for 127.0.0.1 at 2012-03-10 14:28:14 +0100
+    #   Processing by HomeController#index as HTML
+    #     Rendered text template within layouts/application (0.0ms)
+    #     Rendered layouts/_assets.html.erb (2.0ms)
+    #     Rendered layouts/_top.html.erb (2.6ms)
+    #     Rendered layouts/_about.html.erb (0.3ms)
+    #     Rendered layouts/_google_analytics.html.erb (0.4ms)
+    #   Completed 200 OK in 79ms (Views: 78.8ms | ActiveRecord: 0.0ms)
+    #
+    # Into this:
+    #
+    #   Get "/" sent 200 OK in 79ms @metadata {...}
+    #
+    # In other words it:
+    #
+    # 1. Silences ActiveRecord SQL query logs.
+    # 2. Silences ActiveView template rendering logs.
+    # 3. Silences ActionController controller call logs.
+    # 4. Collapses HTTP request and response logs into a single event.
+    #
+    # Notice also that is is not exactly like lograge. This is intentional. Lograge has
+    # a number of downsides:
+    #
+    # 1. The attribute names (`method`, `format`, `status`, `db`, etc) are too generalized and vague.
+    #    This makes it _very_ likely that it will clash with other structured data you're
+    #    logging.
+    # 2. It doesn't support context making it near impossible to view in-app logs generated for
+    #    the same request.
+    def logrageify!
+      Integrations::ActionController.silence = true
+      Integrations::ActionView.silence = true
+      Integrations::ActiveRecord.silence = true
+      Integrations::Rack::HTTPEvents.collapse_into_single_event = true
     end
 
     # This is the _main_ logger Timber writes to. All of the Timber integrations write to

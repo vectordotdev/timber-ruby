@@ -3,7 +3,7 @@ require "timber/integrations/rack/middleware"
 module Timber
   module Integrations
     module Rack
-      # Reponsible for adding the HTTP context for applications that use `Rack`.
+      # A Rack middleware that is reponsible for adding the HTTP context {Timber::Contexts::HTTP}.
       class HTTPContext < Middleware
         def initialize(app)
           @app = app

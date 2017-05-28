@@ -86,6 +86,11 @@ module Timber
       self
     end
 
+    # Fetch a specific context by key.
+    def fetch(*args)
+      hash.fetch(*args)
+    end
+
     # Removes a context. If you wish to remove by key, or some other way, use {#hash} and
     # modify the hash accordingly.
     def remove(*objects)

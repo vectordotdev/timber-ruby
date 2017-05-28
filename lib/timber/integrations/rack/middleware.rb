@@ -1,7 +1,7 @@
 module Timber
   module Integrations
     module Rack
-      # Base class that all Rack middlewares extend. See the class level methods for
+      # Base class that all Timber Rack middlewares extend. See the class level methods for
       # configuration options.
       class Middleware
         class << self
