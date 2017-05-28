@@ -17,13 +17,16 @@ Timber solves structured logging so you don't have to. Go from raw text logs to 
 structured events in seconds. Spend more time focusing on your app and less time
 focusing on logging.
 
-1. **Easy setup.** - `bundle exec timber install`, get setup in seconds.
+1. **Easy setup.** - `bundle exec timber install`, [get setup in seconds](#installation).
 
 2. **Automatically structures yours logs.** - Third-party and in-app logs are all structured
    in a consistent format. See [how it works](#how-it-works) below.
 
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
-   Omniauth, etc. Automatically captures user context, HTTP context, and event data.
+   Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-support)
+
+4. **Pairs with a modern console.** - Designed specifically for this librariy, instantly
+   usable, zero configuration.
 
 
 ## Installation
@@ -63,7 +66,7 @@ This is all accomplished by using the
 
 ```
 logger = Timber::Logger.new(STDOUT)
-logger.info("Send 200 in 45.2ms")
+logger.info("Sent 200 in 45.2ms")
 ```
 
 Here's a better look at the metadata:
@@ -99,9 +102,9 @@ Here's a better look at the metadata:
 
 This structure isn't arbitrary either, it follows the
 [log event JSON schema](https://github.com/timberio/log-event-json-schema), which formalizes the
-structre, creates a contract with downstream consumers, and improves stability.
+structure, creates a contract with downstream consumers, and improves stability.
 
-So what can you do with this data? Amazing things:
+So what can you do with this data?
 
 1. [**Tail a user** - `user.id:1`](https://timber.io/docs/app/tutorials/tail-a-user/)
 2. [**Trace a request** - `http.request_id:abcd1234`](https://timber.io/docs/app/tutorials/view-in-request-context/)
@@ -112,18 +115,17 @@ So what can you do with this data? Amazing things:
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
 
 
-## What you get
+## Third-party support
 
-1. Automatic structuring of all Rails logs (HTTP requests / respones, controller invocations, template renders, sql queries, etc)
-2. Automatic structuring of exception events
-3. Automatic HTTP context via Rack middleware
-4. Automatic user context via Rack middleware (Devise, Omniauth, Clearance, and support for custom integrations)
-3. Automatic release context (supports Heroku dyno metadata, if applicable)
-5. Automatic system context
-6. Automatic session context via Rack middleware
-6. And more to come.
+1. Structuring of all Rails logs ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
+2. Structuring of [exception events](https://timber.io/docs/ruby/events-and-context/exception-event/).
+3. [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/) via Rack middleware.
+4. [User context](https://timber.io/docs/ruby/events-and-context/user-context/) via Rack middleware (Devise, Omniauth, Clearance, and support for custom integrations).
+5. [Release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata), if applicable.
+6. [System context](https://timber.io/docs/ruby/events-and-context/system-context/).
+7. [Session context](https://timber.io/docs/ruby/events-and-context/session-context/) via Rack middleware.
 
-All of this can be [configured and disabled as needed](#configuration).
+...and more. Timber will continue to evolve and support more libraries.
 
 
 ## Usage
@@ -226,6 +228,51 @@ you to easily extend it if necessary. See
 [Timber::Config](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config) for a
 comprehensive list. Here are a few popular options:
 
+<details><summary><strong>Silence noisy logs (sql query, template renders, like lograge)</strong></summary><p>
+
+Silencing noisy logs is accomplished by configuring the various integrations. Add a
+`config/initializers/timber.rb` file and choose which settings you want.
+
+```ruby
+# config/initializers/timber.rb
+
+# Silence ActionView template renders, ex: "Rendered layouts/_assets.html.erb (2.0ms)"
+Timber::Integrations::ActionView.silence = true
+
+# Silence ActiveRecord SQL queries, ex: "(Product) SELECT * FROM products (2.5ms)"
+Timber::Integrations::ActiveRecord.silence = true
+
+# Silence ActionController controller call events, ex: "Processing by HomeController#index as HTML"
+Timber::Integrations::ActionController.enabled = false
+
+# Collapse HTTP request / response events into a single event
+Timber::Integrations::Rack::HTTPEvents.collapse_into_single_event = true
+
+# Silence HTTP request events, ex: "Started GET "/" for 127.0.0.1 at 2012-03-10 14:28:14 +0100"
+Timber::Integrations::Rack::HTTPEvents.silence = true
+
+# Silence HTTP response events, ex: "Completed 200 OK in 79ms (Views: 78.8ms | ActiveRecord: 0.0ms)"
+Timber::Integrations::Rack::HTTPEvents.silence_response = true
+```
+
+Using [lograge](https://github.com/roidrage/lograge)? Timber provides a shortcut method that
+configures Timber to work in a similar way:
+
+```ruby
+# config/initializers/timber.rb
+
+config = Timber::Config.instance
+config.logrageify!()
+```
+
+For a full list of integrations and settings, see
+[Timber::Integrations](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations)
+
+---
+
+</p></details>
+
+
 <details><summary><strong>Change log formats</strong></summary><p>
 
 Simply set the formatter like you would with any other logger:
@@ -238,25 +285,28 @@ logger.formatter = Timber::Logger::JSONFormatter.new
 Your options are:
 
 1. [`Timber::Logger::AugmentedFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/AugmentedFormatter) -
-   (default) A human readable format with metadata _appended_ to the original log line.
+   (default) A human readable format that _appends_ metadata to the original log line.
    Ex: `My log message @metadata {"level":"info","dt":"2017-01-01T01:02:23.234321Z"}`
 
 2. [`Timber::Logger::JSONFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/JSONFormatter) -
    Ex: `{"level":"info","message":"My log message","dt":"2017-01-01T01:02:23.234321Z"}`
 
 3. [`Timber::Logger::LogfmtFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/LogfmtFormatter) -
-   A simple key/value format. `level=info message="My log message" dt=2017-01-01T01:02:23.234321Z`
+   A simple key/value format. Ex: `level=info message="My log message" dt=2017-01-01T01:02:23.234321Z`
 
 3. [`Timber::Logger::MessageOnlyFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/MessageOnlyFormatter) -
-   For use in development / test. Prints logs as strings with no metadata attached.
+   For use in development / test. Prints logs as strings with no metadata attached. Ex: `My log message`
+
+---
 
 </p></details>
+
 
 <details><summary><strong>Capture custom user context</strong></summary><p>
 
 By default Timber automatically captures user context for mot of the popular authentication
 libraries (Devise, Omniauth, and Clearance). See
-[Timber::Integrations::Rack::UserContext]()
+[Timber::Integrations::Rack::UserContext](lib/timber/integrations/rack/user_context.rb)
 for a complete list.
 
 In cases where you Timber doesn't support your strategy, or you want to customize it further,
@@ -278,53 +328,9 @@ Timber::Integrations::Rack::UserContext.custom_user_hash = lambda do |rack_env|
 end
 ```
 
-*All* of the keys are optional, but you must provide at least one.
+*All* of the user hash keys are optional, but you must provide at least one.
 
-</p></details>
-
-<details><summary><strong>Lograge-ify (configure Timber to act like lograge)</strong></summary><p>
-
-Using [lograge](https://github.com/roidrage/lograge)? We've provided a convenience method that
-configures Timber to behave in a similar way (but not exact):
-
-```ruby
-# config/initializers/timber.rb
-Timber::Config.instance.logrageify!
-```
-
-This is equivalent to:
-
-```ruby
-# config/initializers/timber.rb
-Timber::Integrations::ActionController.silence = true
-Timber::Integrations::ActionView.silence = true
-Timber::Integrations::ActiveRecord.silence = true
-Timber::Integrations::ActiveRecord.silence = true
-```
-
-The big difference is that Timber does *not* collapse the request and response lines into
-a single log line.
-
-</p></details>
-
-<details><summary><strong>Silence noisy logs (sql query, template renders, etc)</strong></summary><p>
-
-You can disable Timber integrations entirely or simply silence them. Disabling is like
-removing the code from Timber. The library will use it's defaults. Silencing ensures that library
-does not log at all. This is partly how we accomplish the logrageify option above.
-
-```ruby
-# config/initializers/timber.rb
-
-# Don't log any ActionViews template renders
-Timber::Integrations::ActionView.silence = true
-
-# Don't log any ActiveRecord SQL queries, period
-Timber::Integrations::ActiveRecord.silence = true
-
-# Don't touch ActionController, use the default log messages (don't structure them)
-Timber::Integrations::ActionController.enabled = false
-```
+---
 
 </p></details>
 
@@ -333,12 +339,17 @@ Timber::Integrations::ActionController.enabled = false
 
 <details><summary><strong>Which events and context does Timber capture for me?</strong></summary><p>
 
-Out of the box you get everything in the [`Timber::Events`](lib/timber/events) namespace.
+Out of the box you get everything in the
+[`Timber::Events`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Events) namespace.
 
-We also add context to every log, everything in the [`Timber::Contexts`](lib/timber/contexts)
+We also add context to every log, everything in the
+[`Timber::Contexts`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts)
 namespace. Context is structured data representing the current environment when the log line
 was written. It is included in every log line. Think of it like join data for your logs. It's
 how Timber is able to accomplished tailing users (`context.user.id:1`).
+
+Lastly, you can checkout the specific integrations in
+[`Timber::Integrations`](lib/timber/integrations).
 
 ---
 
@@ -358,7 +369,11 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 </p></details>
 
 
-<details><summary><strong>?</strong></summary><p>
+<details><summary><strong>Why Timber?</strong></summary><p>
+
+[Timber](https://timber.io) views logs as more than raw text you archive away for emergencies
+and compliance. Nothing beats well-structured, open, raw data.
+
 
 1. **It's just _better_ logging**. Nothing beats well structured, open, raw data.
 2. **Improved log data quality.** Instead of relying on parsing alone, Timber ships libraries that
