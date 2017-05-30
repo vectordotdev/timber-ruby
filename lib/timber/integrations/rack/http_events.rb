@@ -73,7 +73,9 @@ module Timber
           request = Util::Request.new(env)
 
           if silenced?(env, request)
-            @app.call(env)
+            Config.instance.logger.silence do
+              @app.call(env)
+            end
 
           elsif collapse_into_single_event?
             start = Time.now
