@@ -73,6 +73,35 @@ describe Timber::LogDevices::HTTP do
   end
 
   # Testing a private method because it helps break down our tests
+  describe "#flush" do
+    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
+    it "should deliver the request" do
+      http = described_class.new("MYKEY", flush_continuously: false)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry)
+
+      stub = stub_request(:post, "https://logs.timber.io/frames").
+        with(
+          :body => start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81\xA6system\x82\xA8hostname".force_encoding("ASCII-8BIT")),
+          :headers => {
+            'Authorization'=>'Basic TVlLRVk=',
+            'Content-Type'=>'application/msgpack'
+          }
+        ).
+        to_return(:status => 200, :body => "", :headers => {})
+
+      http.send(:flush)
+
+      expect(stub).to have_been_requested.times(1)
+
+      http.close
+    end
+  end
+
+  # Testing a private method because it helps break down our tests
   describe "#flush_async" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
