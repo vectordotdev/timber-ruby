@@ -64,7 +64,7 @@ readability.
 This is all accomplished by using the
 [Timber::Logger](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger):
 
-```
+```ruby
 logger = Timber::Logger.new(STDOUT)
 logger.info("Sent 200 in 45.2ms")
 ```
@@ -117,13 +117,10 @@ For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/r
 
 ## Third-party support
 
-1. Structuring of Rails logs ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
-2. Structuring of [exception events](https://timber.io/docs/ruby/events-and-context/exception-event/).
-3. [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/) via Rack middleware.
-4. [User context](https://timber.io/docs/ruby/events-and-context/user-context/) via Rack middleware (Devise, Omniauth, Clearance, and support for custom integrations).
-5. [Release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata), if applicable.
-6. [System context](https://timber.io/docs/ruby/events-and-context/system-context/).
-7. [Session context](https://timber.io/docs/ruby/events-and-context/session-context/) via Rack middleware.
+1. **Rails**: Structures ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
+2. **Rack**: Structures [exceptions](https://timber.io/docs/ruby/events-and-context/exception-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
+3. **Devise, Omniauth, Clearance**: captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/)
+5. **Heroku**: Captures [release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata).
 
 ...and more. Timber will continue to evolve and support more libraries.
 
@@ -223,10 +220,10 @@ you desire.
 
 ## Configuration
 
-Most aspects of Timber are configurable, but Timber is also designed in a modular way, allowing
-you to easily extend it if necessary. See
-[Timber::Config](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config) for a
-comprehensive list. Here are a few popular options:
+Most aspects of Timber are configurable, it's also designed to be modular, allow you to use
+basic ruby semantic to customize. Below are a few popular configuration options, for a
+comprehensive list, see
+[Timber::Config](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
 
 <details><summary><strong>Logrageify. Silence noisy logs (sql query, template renders)</strong></summary><p>
 
@@ -271,8 +268,8 @@ Integrations::ActiveRecord.silence = true
 Integrations::Rack::HTTPEvents.collapse_into_single_event = true
 ```
 
-Feel free to deviate and customize which logs you silence. In fact, we recommend the following
-settings for Rails:
+Feel free to deviate and customize which logs you silence. We recommend a slight deviation
+from lograge with the following settings:
 
 ```ruby
 # config/initializers/timber.rb
@@ -283,8 +280,7 @@ Integrations::Rack::HTTPEvents.collapse_into_single_event = true
 ```
 
 This does _not_ silence the controller call log event. This is because Timber captures the
-parameters passed to the controller, which is extremely valuable when debugging. We highly
-recommend capturing this data.
+parameters passed to the controller, which is extremely valuable when debugging.
 
 For a full list of integrations and settings, see
 [Timber::Integrations](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations)
@@ -293,6 +289,23 @@ For a full list of integrations and settings, see
 
 </p></details>
 
+<details><summary><strong>Silence specific requests (LB health checks, etc)</strong></summary><p>
+
+The following will silence all `[GET] /_health` requests:
+
+```ruby
+# config/initializers/timber.rb
+
+Integrations::Rack::HTTPEvents.silence_request = lambda do |rack_env, rack_request|
+  rack_request.path == "/_health"
+end
+```
+
+We require a block because it gives you complete control over how you want to silence requests.
+The first parameter being the traditional Rack env hash, the second being a
+[Rack Request](http://www.rubydoc.info/gems/rack/Rack/Request) object.
+
+</p></details>
 
 <details><summary><strong>Change log formats</strong></summary><p>
 
@@ -319,7 +332,6 @@ Your options are:
 ---
 
 </p></details>
-
 
 <details><summary><strong>Capture custom user context</strong></summary><p>
 
@@ -387,6 +399,9 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 
 </p></details>
 
+<details><summary><strong>Why Timber?</strong></summary><p>
+
+Because logging
 
 ---
 

@@ -8,6 +8,10 @@ begin
 rescue => e
   raise e if $DEBUG
   STDERR.puts e.message
+  STDERR.puts ""
+  STDERR.puts Timber::CLI::Messages.separator
+  STDERR.puts "Backtrace:"
+  STDERR.puts ""
   STDERR.puts e.backtrace.join("\n")
   exit 1
 end

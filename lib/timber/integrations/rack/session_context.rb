@@ -3,7 +3,7 @@ require "timber/integrations/rack/middleware"
 module Timber
   module Integrations
     module Rack
-      # A Rack middleware that is teponsible for adding the Session context
+      # A Rack middleware that is responsible for adding the Session context
       # {Timber::Contexts::Session}.
       class SessionContext < Middleware
         def initialize(app)

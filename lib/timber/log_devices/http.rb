@@ -1,6 +1,10 @@
 require "base64"
 require "net/https"
 
+require "timber/log_devices/http/dropping_sized_queue"
+require "timber/log_devices/http/log_msg_queue"
+
+
 module Timber
   module LogDevices
     # A highly efficient log device that buffers and delivers log messages over HTTPS to
@@ -10,62 +14,11 @@ module Timber
     #
     # See {#initialize} for options and more details.
     class HTTP
-      # @private
-      class LogMsgQueue
-        def initialize(max_size)
-          @lock = Mutex.new
-          @max_size = max_size
-          @array = []
-        end
-
-        def enqueue(msg)
-          @lock.synchronize do
-            @array << msg
-          end
-        end
-
-        def flush
-          @lock.synchronize do
-            old = @array
-            @array = []
-            return old
-          end
-        end
-
-        def full?
-          size >= @max_size
-        end
-
-        def size
-          @array.size
-        end
-      end
-
-      # Works like SizedQueue, but drops message instead of blocking. Pass one of these in
-      # to {HTTP#intiialize} via the :request_queue option if you'd prefer to drop messages
-      # in the event of a buffer overflow instead of applying back pressure.
-      class DroppingSizedQueue < SizedQueue
-        # Returns true/false depending on whether the queue is full or not
-        def push(obj)
-          @mutex.synchronize do
-            return false unless @que.length < @max
-
-            @que.push obj
-            begin
-              t = @waiting.shift
-              t.wakeup if t
-            rescue ThreadError
-              retry
-            end
-            return true
-          end
-        end
-      end
-
-      TIMBER_URL = "https://logs.timber.io/frames".freeze
+      TIMBER_STAGING_URL = "https://logs-staging.timber.io/frames".freeze
+      TIMBER_PRODUCTION_URL = "https://logs.timber.io/frames".freeze
+      TIMBER_URL = ENV['TIMBER_STAGING'] ? TIMBER_STAGING_URL : TIMBER_PRODUCTION_URL
       CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
-
 
       # Instantiates a new HTTP log device that can be passed to {Timber::Logger#initialize}.
       #
@@ -73,9 +26,10 @@ module Timber
       # options control when the flush happens, `:batch_byte_size` and `:flush_interval`.
       # If either of these are surpassed, the buffer will be flushed.
       #
-      # By default, the buffer will apply back pressure log messages are generated faster than
-      # the client can delivery them. But you can drop messages instead by passing a
-      # {DroppingSizedQueue} via the `:request_queue` option.
+      # By default, the buffer will apply back pressure when the rate of log messages exceeds
+      # the maximum delivery rate. If you don't want to sacrifice app performance in this case
+      # you can drop the log messages instead by passing a {DroppingSizedQueue} via the
+      # `:request_queue` option.
       #
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
@@ -123,8 +77,8 @@ module Timber
         @requests_in_flight = 0
       end
 
-      # Write a new log line message to the buffer, and deliver if the msg exceeds the
-      # payload limit.
+      # Write a new log line message to the buffer, and deliver if the msg_queue size exceeds
+      # the queue size.
       def write(msg)
         @msg_queue.enqueue(msg)
 
@@ -141,6 +95,7 @@ module Timber
         true
       end
 
+      # Flush all log messages in the buffer to be queued for delivery.
       def flush
         @last_flush = Time.now
         msgs = @msg_queue.flush
@@ -199,6 +154,22 @@ module Timber
           end
         end
 
+        def queue_request
+          msgs = @msg_queue.flush
+          return if msgs.empty?
+
+          req = Net::HTTP::Post.new(@timber_url.path)
+          req['Authorization'] = authorization_payload
+          req['Content-Type'] = CONTENT_TYPE
+          req['User-Agent'] = USER_AGENT
+          req.body = msgs.to_msgpack
+          @request_queue.enq(req)
+        end
+
+        def wait_on_request_queue
+
+        end
+
         def intervaled_flush
           # Wait specified time period before starting
           sleep @flush_interval
@@ -231,6 +202,7 @@ module Timber
           http
         end
 
+        # Creates a loop that processes the @request_queue with keep alive connections.
         def request_outlet
           loop do
             http = build_http
@@ -250,6 +222,9 @@ module Timber
           end
         end
 
+        # Creates a loop that delivers requests on an open HTTP connection.
+        # If the connection dies, the request is thrown back onto the queue and
+        # the method returns for a retry.
         def deliver_requests(conn)
           num_reqs = 0
 

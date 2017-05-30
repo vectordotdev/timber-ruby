@@ -47,6 +47,10 @@ module Timber
           #     rach_env['my_custom_key'].user
           #   end
           def custom_user_hash=(proc)
+            if proc && !proc.is_a?(Proc)
+              raise ArgumentError.new("The value passed to #custom_user_hash must be a Proc")
+            end
+
             @custom_user_hash = proc
           end
 

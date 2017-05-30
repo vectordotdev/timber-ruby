@@ -6,21 +6,47 @@ require "uri"
 
 module Timber
   class CLI
+    # The API class provides an interface for all Timber API requests, parsing response
+    # and returning the appropriate objects.
     class API
+
+      # Raise when the API key provided is invalid.
       class APIKeyInvalidError < StandardError
         def message
-          "Uh oh! The API key supplied is invalid. Please ensure that you copied the" \
-            " key properly.\n\n#{Messages.obtain_key_instructions}"
+          "Uh oh! The API key supplied is invalid. Please ensure that you copied the \n" \
+            "key properly.\n\n#{Messages.obtain_key_instructions}"
         end
       end
 
-      class NoAPIKeyError < StandardError
+      # Raised when Timber is returning 500s
+      class ServerError < StandardError
         def message
-          "Uh oh! You didn't supply an API key.\n\n#{Messages.obtain_key_instructions}"
+          "Crap, it looks like the Timber API is returning 500s :/. In order to properly " \
+            "install Timber and test integration we need the Timber API to work correctly. " \
+            "Chances are we're aware of the issue and if you try again later the API should " \
+            "be working. \n\n" \
+            "Status updates: http://status.timber.io \n" \
+            "Yell at us via email: support@timber.io \n"
         end
       end
 
-      TIMBER_API_URI = URI.parse('https://api.timber.io')
+      # Raised when the API returns a response that a particular method is not expecting.
+      class UnrecognizedAPIResponse < StandardError
+        def initialize(res)
+          @res = res
+        end
+
+        def message
+          "Uh oh, we received a response from the Timber API that was not recognized " \
+            "(#{res.code}). We've been notified of the issue, but please feel free to " \
+            "yell at us via email to make sure we're aware: support@timber.io"
+        end
+      end
+
+      TIMBER_PRODUCTION_API_URL = "https://api.timber.io".freeze
+      TIMBER_STAGING_API_URL = "https://api.timber-staging.io".freeze
+      TIMBER_API_URL = ENV['TIMBER_STAGING'] ? TIMBER_STAGING_API_URL : TIMBER_PRODUCTION_API_URL
+      TIMBER_API_URI = URI.parse(TIMBER_API_URL)
       APPLICATION_PATH = "/installer/application".freeze
       EVENT_PATH = "/installer/events".freeze
       HAS_LOGS_PATH = "/installer/has_logs".freeze
@@ -29,16 +55,49 @@ module Timber
       def initialize(api_key)
         @api_key = api_key
         @session_id = SecureRandom.uuid
+        @application_environments_left = ["development", "staging", "production"]
       end
 
+      # Returns the application for the given API key.
       def application!
-        get!(APPLICATION_PATH)
+        res = get!(APPLICATION_PATH)
+        application = build_application(res)
+        @application_environments_left -= [application.environment]
+        application
       end
 
+      # Hits the API to clone the app for the provided API key to the specified environment.
+      def clone_application!(environment)
+        return nil
+      end
+
+      # Sends an event to Timber so that we can understand how the installer is performing
+      # an ensure a top notch user experience.
       def event!(name, data = {})
         post!(EVENT_PATH, event: {name: name, data: data})
       end
 
+      # This method allows the installer to iterate over all of the expected environments,
+      # either getting the existing application (if it exists), or creating one.
+      def next_application!
+        environment = @application_environments_left.shift
+        if environment.nil?
+          return nil
+        end
+
+        res = get!(APPLICATION_PATH + "/#{environment}")
+        case red.code
+        when "200"
+          build_application(res)
+        when "404"
+          clone_application(environment)
+        else
+          raise UnrecognizedAPIResponse.new(res)
+        end
+      end
+
+      # After test logs are sent to the Timber API this method waits for them to be
+      # received. This is how we test integration.
       def wait_for_logs(iteration = 0, &block)
         if block_given?
           yield iteration
@@ -58,13 +117,20 @@ module Timber
         case res.code
         when "202"
           wait_for_logs(iteration + 1, &block)
-
         when "204"
           true
+        else
+          raise UnrecognizedAPIResponse.new(res)
         end
       end
 
       private
+        def build_application(res)
+          parsed_body = JSON.parse(res.body)
+          attributes = parsed_body.fetch("data")
+          Application.new(attributes)
+        end
+
         def get!(path)
           req = Net::HTTP::Get.new(path)
           issue!(req)
@@ -85,10 +151,12 @@ module Timber
             http.request(req)
           end
 
-          if res.code == "401"
-            raise NoAPIKeyError.new
-          elsif res.code == "403"
+          code = Integer(res.code)
+
+          if [401, 403].include?(code)
             raise APIKeyInvalidError.new
+          elsif code >= 500
+            raise ServerError.new
           else
             res
           end

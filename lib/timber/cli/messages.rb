@@ -128,13 +128,13 @@ Don't have a key? Head over to:
 
     #{colorize("https://app.timber.io", :blue)}
 
-Once there, create an application. Your API key will be displayed afterwards.
-For more detailed instructions, checkout our docs page:
+For a simple guide checkout out:
 
-https://timber.io/docs/app/obtain-api-key/
+    #{colorize("https://timber.io/docs/app/obtain-api-key/", :blue)}
 
-If you're confused, don't hesitate to contact us: #{SUPPORT_EMAIL}
+If you're stuck, contact us:
 
+    #{colorize(SUPPORT_EMAIL, :blue)}
 MESSAGE
 message.rstrip
       end

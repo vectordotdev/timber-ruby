@@ -19,66 +19,30 @@ module Timber
             puts Messages.no_api_key_provided
             return
           end
-
           api = API.new(api_key)
 
           api.event!(:started)
 
-          app = Application.new(api)
+          app = api.application!
 
           puts Messages.application_details(app)
           puts ""
 
           case ask_yes_no("Are the above details correct?", api)
           when :yes
-            if app.heroku?
-              update_environment_config("production", :stdout, api)
+            install_app(app, api)
 
+            # Setup other environments
+            while !(app = api.next_environment_application).nil? do
+              puts "Would also like to setup the #{app.environment} environment?"
+              puts "(you can always run this intaller again later. It designed to be idempotent.)"
               puts ""
-              puts Messages.separator
-              puts ""
-              puts Messages.heroku_install(app)
-              puts ""
+              puts
 
-              ask_yes_no("Ready to proceed?", api)
-              puts ""
-
-            else
-              puts ""
-              puts Messages.separator
-              puts ""
-              puts "How would you like configure Timber?"
-              puts ""
-              puts "1) Using environment variables"
-              puts "2) Configuring in my app"
-              puts ""
-
-              case ask("Enter your choice: (1/2) ", api)
-              when "1"
-                update_environment_config("production", :http, api, :api_key_code => "ENV['TIMBER_API_KEY']")
-
-                puts ""
-                puts Messages.http_environment_variables(app.api_key)
-                puts ""
-
-                ask_yes_no("Ready to proceed?", api)
-                puts ""
-
-              when "2"
-                update_environment_config("production", :http, api, :api_key_code => "'#{app.api_key}'")
-
+              if ask_yes_no("Enter your choice", api) == :yes
+                install_app(app, api)
               end
-
-              send_test_messages(api_key)
             end
-
-
-            api.wait_for_logs do |iteration|
-              write Messages.task_start("Waiting for logs")
-              write Messages.spinner(iteration)
-            end
-
-            puts colorize(Messages.task_complete("Waiting for logs"), :green)
 
             puts ""
             puts Messages.separator
@@ -106,9 +70,67 @@ module Timber
           end
         end
 
+        def install_app(app, api)
+          puts ""
+          puts Messages.separator
+          puts ""
+          puts "Proceeding to install and setup the #{colorize(app.environment, :blue)} environment..."
+
+          if app.development?
+            update_environment_config(app.environment, :http, api, :api_key_code => "'#{app.api_key}'")
+
+          elsif app.heroku?
+            update_environment_config(app.environment, :stdout, api)
+
+            puts ""
+            puts Messages.heroku_install(app)
+            puts ""
+
+            ask_yes_no("Ready to proceed?", api)
+            puts ""
+
+          else
+            puts ""
+            puts "How would you like configure Timber?"
+            puts ""
+            puts "1) Using environment variables"
+            puts "2) Configuring in my app"
+            puts ""
+
+            case ask("Enter your choice: (1/2)", api)
+            when "1"
+              update_environment_config(app.environment, :http, api, :api_key_code => "ENV['TIMBER_API_KEY']")
+
+              puts ""
+              puts Messages.http_environment_variables(app.api_key)
+              puts ""
+
+              ask_yes_no("Ready to proceed?", api)
+              puts ""
+
+            when "2"
+              update_environment_config(app.environment, :http, api, :api_key_code => "'#{app.api_key}'")
+
+            end
+
+            send_test_messages(api_key)
+          end
+
+          api.wait_for_logs do |iteration|
+            write Messages.task_start("Waiting for logs")
+            write Messages.spinner(iteration)
+          end
+
+          puts colorize(Messages.task_complete("Waiting for logs"), :green)
+        end
+
         private
-          def update_environment_config(name, log_device_type, api, options = {})
-            path = File.join("config", "environments", "#{name}.rb")
+          def update_environment_config(environment_name, log_device_type, api, options = {})
+            path = File.join("config", "environments", "#{environment_name}.rb")
+
+            if !File.exists?(path)
+              raise "Whoa! It looks like the #{path} file does not exist!"
+            end
 
             puts ""
             task_message = "Configuring Timber in #{path}"
@@ -140,7 +162,6 @@ CODE
                 code.rstrip
               end
 
-
             current_contents = File.read(path)
 
             if !current_contents.include?("Timber::Logger.new")
@@ -155,11 +176,12 @@ CODE
           def send_test_messages(api_key)
             write Messages.task_start("Sending test logs")
 
-            http_device = LogDevices::HTTP.new(api_key)
+            http_device = LogDevices::HTTP.new(api_key, flush_continuously: false)
             logger = Logger.new(http_device)
             logger.info("Welcome to Timber!")
             logger.info("This is a test log to ensure the pipes are working")
             logger.info("Be sure to commit and deploy your app to start seeing real logs")
+            logger.flush
 
             puts colorize(Messages.task_complete("Sending test logs"), :green)
           end

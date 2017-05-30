@@ -1,3 +1,5 @@
+require "set"
+
 require "timber/integrations/rack/middleware"
 
 module Timber
@@ -36,8 +38,30 @@ module Timber
           end
 
           # Accessor method for {#collapse_into_single_event=}.
-          def collapse_into_single_event
-            @collapse_into_single_event
+          def collapse_into_single_event?
+            @collapse_into_single_event == true
+          end
+
+          # This setting allows you to silence requests based on any conditions you desire.
+          # We require a block because it gives you complete control over how you want to
+          # silence requests. The first parameter being the traditional Rack env hash, the
+          # second being a [Rack Request](http://www.rubydoc.info/gems/rack/Rack/Request) object.
+          #
+          # @example
+          #   Integrations::Rack::HTTPEvents.silence_request = lambda do |rack_env, rack_request|
+          #     rack_request.path == "/_health"
+          #   end
+          def silence_request=(proc)
+            if proc && !proc.is_a?(Proc)
+              raise ArgumentError.new("The value passed to #silence_request must be a Proc")
+            end
+
+            @silence_request = proc
+          end
+
+          # Accessor method for {#silence_request=}
+          def silence_request
+            @silence_request
           end
         end
 
@@ -46,37 +70,76 @@ module Timber
         end
 
         def call(env)
-          start = Time.now
           request = Util::Request.new(env)
 
-          Config.instance.logger.info do
-            Events::HTTPServerRequest.new(
-              headers: request.headers,
-              host: request.host,
-              method: request.request_method,
-              path: request.path,
-              port: request.port,
-              query_string: request.query_string,
-              request_id: request.request_id, # we insert this middleware after ActionDispatch::RequestId
-              scheme: request.scheme
-            )
+          if silenced?(env, request)
+            @app.call(env)
+
+          elsif collapse_into_single_event?
+            start = Time.now
+
+            status, headers, body = @app.call(env)
+
+            Config.instance.logger.info do
+              http_context_key = Contexts::HTTP.keyspace
+              http_context = CurrentContext.fetch(http_context_key)
+              time_ms = (Time.now - start) * 1000.0
+
+              Events::HTTPServerResponse.new(
+                headers: headers,
+                http_context: http_context,
+                request_id: request.request_id,
+                status: status,
+                time_ms: time_ms
+              )
+            end
+
+            [status, headers, body]
+
+          else
+            start = Time.now
+
+            Config.instance.logger.info do
+              Events::HTTPServerRequest.new(
+                headers: request.headers,
+                host: request.host,
+                method: request.request_method,
+                path: request.path,
+                port: request.port,
+                query_string: request.query_string,
+                request_id: request.request_id, # we insert this middleware after ActionDispatch::RequestId
+                scheme: request.scheme
+              )
+            end
+
+            status, headers, body = @app.call(env)
+
+            Config.instance.logger.info do
+              time_ms = (Time.now - start) * 1000.0
+              Events::HTTPServerResponse.new(
+                headers: headers,
+                request_id: request.request_id,
+                status: status,
+                time_ms: time_ms
+              )
+            end
+
+            [status, headers, body]
           end
-
-          status, headers, body = @app.call(env)
-
-          Config.instance.logger.info do
-            time_ms = (Time.now - start) * 1000.0
-            Events::HTTPServerResponse.new(
-              headers: headers,
-              http_context: CurrentContext.fetch(:http),
-              request_id: request.request_id,
-              status: status,
-              time_ms: time_ms
-            )
-          end
-
-          [status, headers, body]
         end
+
+        private
+          def collapse_into_single_event?
+            self.class.collapse_into_single_event?
+          end
+
+          def silenced?(env, request)
+            if !self.class.silence_request.nil?
+              self.class.silence_request.call(env, request)
+            else
+              false
+            end
+          end
       end
     end
   end

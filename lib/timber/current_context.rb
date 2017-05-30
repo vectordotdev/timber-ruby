@@ -23,6 +23,11 @@ module Timber
         instance.add(*args)
       end
 
+      # Convenience method for {CurrentContext#fetch}. See {CurrentContext#fetch} for more info.
+      def fetch(*args)
+        instance.fetch(*args)
+      end
+
       # Convenience method for {CurrentContext#remove}. See {CurrentContext#remove} for more info.
       def remove(*args)
         instance.remove(*args)
