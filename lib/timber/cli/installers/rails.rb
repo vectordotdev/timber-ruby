@@ -96,6 +96,12 @@ module Timber
 
             case ask("Enter your choice: (1/2)", ["1", "2"], api)
             when "1"
+              puts ""
+              puts Messages.http_environment_variables(api.api_key)
+              puts ""
+
+              ask_yes_no("Ready to proceed?", api)
+
               :environment
             when "2"
               :inline

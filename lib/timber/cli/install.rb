@@ -43,6 +43,13 @@ module Timber
 
             send_test_messages(app.api_key)
 
+            api.wait_for_logs do |iteration|
+              write Messages.task_start("Waiting for logs")
+              write Messages.spinner(iteration)
+            end
+
+            puts colorize(Messages.task_complete("Waiting for logs"), :green)
+
             puts ""
             puts Messages.separator
             puts ""

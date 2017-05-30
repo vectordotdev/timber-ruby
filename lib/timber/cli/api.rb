@@ -20,6 +20,14 @@ module Timber
         end
       end
 
+      class LogsNotReceivedError< StandardError
+        def message
+          "Bummer, we couldn't confirm log delivery with the Timber API, something is off. " \
+            "If you email support@timber.io, we'll work with you to figure out what's going on. " \
+            "And as an apology for using more of your time, we'll set you up with a 25% discount."
+        end
+      end
+
       # Raised when Timber is returning 500s
       class ServerError < StandardError
         def message
@@ -110,8 +118,10 @@ module Timber
         case iteration
         when 0
           event!(:waiting_for_logs)
-        when 30
+        when 20
           event!(:excessively_waiting_for_logs)
+        when 60
+          raise LogsNotReceivedError.new
         end
 
         sleep 0.5
