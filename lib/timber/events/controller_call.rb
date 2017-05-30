@@ -1,4 +1,5 @@
 require "timber/event"
+require "timber/util"
 
 module Timber
   module Events

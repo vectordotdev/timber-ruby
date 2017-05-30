@@ -1,6 +1,11 @@
 require "logger"
 require "msgpack"
 
+require "timber/current_context"
+require "timber/event"
+require "timber/log_devices/http"
+require "timber/log_entry"
+
 module Timber
   # The Timber Logger behaves exactly like `::Logger`, except that it supports a transparent API
   # for logging structured messages. It ensures your log messages are communicated properly

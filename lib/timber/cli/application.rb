@@ -1,5 +1,3 @@
-require "json"
-
 module Timber
   class CLI
     class Application

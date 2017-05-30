@@ -4,6 +4,8 @@ require "net/https"
 require "securerandom"
 require "uri"
 
+require "timber/cli/application"
+
 module Timber
   class CLI
     # The API class provides an interface for all Timber API requests, parsing response
@@ -51,6 +53,8 @@ module Timber
       EVENT_PATH = "/installer/events".freeze
       HAS_LOGS_PATH = "/installer/has_logs".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
+
+      attr_reader :api_key
 
       def initialize(api_key)
         @api_key = api_key

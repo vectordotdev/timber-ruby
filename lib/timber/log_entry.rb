@@ -1,5 +1,8 @@
 require 'socket'
 
+require "timber/contexts"
+require "timber/events"
+
 module Timber
   # Represents a new log entry into the log. This is an intermediary class between
   # `Logger` and the log device that you set it up with.

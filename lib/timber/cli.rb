@@ -1,14 +1,8 @@
 require "optparse"
 require "yaml"
-require "timber"
-
-
-require "timber/cli/api"
-require "timber/cli/application"
-require "timber/cli/io_helper"
-require "timber/cli/messages"
 
 require "timber/cli/install"
+require "timber/version"
 
 module Timber
   # @private
@@ -29,7 +23,7 @@ module Timber
             commands[command].parse!(argv)
             case command.to_sym
             when :install
-              Timber::CLI::Install.run(argv.shift)
+              Install.run(argv.shift)
             end
           else
             puts "Command '#{command}' does not exist, run timber -h to "\

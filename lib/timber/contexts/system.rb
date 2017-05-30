@@ -1,4 +1,5 @@
 require "timber/context"
+require "timber/util"
 
 module Timber
   module Contexts
