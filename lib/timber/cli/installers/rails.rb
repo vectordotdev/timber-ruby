@@ -1,3 +1,8 @@
+begin
+  require "lograge"
+rescue Exception
+end
+
 require "timber/cli/file_helper"
 require "timber/cli/installer"
 require "timber/cli/io_helper"
@@ -13,10 +18,15 @@ module Timber
           # Ask all of the questions up front. These values get cached.
           development_preference = get_development_preference(api)
           api_key_storage_preference = get_api_key_storage_preference(api)
+          should_logrageify = logrageify?(api)
 
           puts ""
           puts Messages.separator
           puts ""
+
+          if should_logrageify
+            logrageify!
+          end
 
           environments.each do |environment|
             if already_configured?(environment)
@@ -38,6 +48,7 @@ module Timber
   #
   # Be sure to remove the "log_device =" and "logger =" lines below.
 NOTE
+                extra_comment = extra_comment.rstrip
                 install_http(environment, :inline, api, extra_comment: extra_comment)
               when :dont_send
                 install_stdout(environment, api)
@@ -58,6 +69,51 @@ NOTE
         end
 
         private
+          def logrageify?(api)
+            if true || defined?(::Lograge)
+              puts ""
+              puts Messages.separator
+              puts ""
+              puts "We noticed you have lograge installed. Would you like to configure "
+              puts "Timber to function similarly?"
+              puts "(this silences template renders, sql queries, and controller calls)"
+              puts ""
+              puts colorize("1) Yes, configure Timber like lograge", :blue)
+              puts colorize("2) No, use the Rails logging defaults", :blue)
+              puts ""
+
+              case ask("Enter your choice: (1/2)", ["1", "2"], api)
+              when "1"
+                true
+              when "2"
+                false
+              end
+            else
+              false
+            end
+          end
+
+          def logrageify!
+            initializer_path = File.join("config", "initializers", "timber.rb")
+
+            task_message = "Configuring Timber in #{initializer_path}"
+            write Messages.task_start(task_message)
+
+            initializer_content = get_initializer_content(initializer_path)
+
+            if !initializer_content.include?("logrageify!")
+              code = "config.logrageify!"
+              FileHelper.append(initializer_path, code)
+            end
+
+            puts colorize(Messages.task_complete(task_message), :green)
+          end
+
+          def get_initializer_content(initializer_path)
+            config_code = "config = Timber::Config.instance\n"
+            FileHelper.read_or_create(initializer_path, config_code)
+          end
+
           # Traverses the config/environments directory and returns an array of
           # symbols representing the various environments.
           def environments
@@ -78,8 +134,8 @@ NOTE
             puts "to kick the tires. Once you're done testing, you can disable "
             puts "this in config/environments/development.rb)"
             puts ""
-            puts "1) Yes, send development logs to Timber"
-            puts "2) No, just print development logs to STDOUIT"
+            puts colorize("1) Yes, send development logs to Timber", :blue)
+            puts colorize("2) No, just print development logs to STDOUIT", :blue)
             puts ""
 
             case ask("Enter your choice: (1/2)", ["1", "2"], api)
@@ -97,8 +153,8 @@ NOTE
             puts ""
             puts "For production/staging how would you like to store the Timber API key?"
             puts ""
-            puts "1) Using environment variables"
-            puts "2) Configured inline in my app"
+            puts colorize("1) Using environment variables", :blue)
+            puts colorize("2) Configured inline in my app", :blue)
             puts ""
 
             case ask("Enter your choice: (1/2)", ["1", "2"], api)
@@ -207,7 +263,7 @@ CODE
           def install_logger(environment_file_path, logger_code, api)
             current_contents = get_environment_file_contents(environment_file_path)
 
-            task_message = "Configuring Timber in #{environment_file_path}"
+            task_message = "Configuring logger Timber in #{environment_file_path}"
             write Messages.task_start(task_message)
 
             if !logger_installed?(current_contents)
