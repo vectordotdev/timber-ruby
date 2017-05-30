@@ -125,10 +125,10 @@ describe Timber::LogDevices::HTTP do
   # Testing a private method because it helps break down our tests
   describe "#intervaled_flush" do
     it "should start a intervaled flush thread and flush on an interval" do
-      http = described_class.new("MYKEY", flush_interval: 0.5)
+      http = described_class.new("MYKEY", flush_interval: 0.1)
       http.send(:ensure_flush_threads_are_started)
       expect(http).to receive(:flush_async).exactly(2).times
-      sleep 1.5 # too fast!
+      sleep 1.1 # iterations check every 0.5 seconds
       http.close
     end
   end

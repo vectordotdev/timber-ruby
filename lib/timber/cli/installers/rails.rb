@@ -31,7 +31,14 @@ module Timber
             when :development
               case development_preference
               when :send
-                install_http(environment, :inline, api)
+                extra_comment = <<-NOTE
+  # Note: When you are done testing, simply instantiate the logger like this:
+  #
+  #   logger = Timber::Logger.new(STDOUT)
+  #
+  # Be sure to remove the "log_device =" and "logger =" lines below.
+NOTE
+                install_http(environment, :inline, api, extra_comment: extra_comment)
               when :dont_send
                 install_stdout(environment, api)
               end
@@ -132,11 +139,11 @@ module Timber
             environment_file_path = get_environment_file_path(environment)
 
             logger_code = <<-CODE
-# Install the Timber.io logger but silence all logs (log to nil). We install the
-# logger to ensure the Rails.logger object exposes the proper API.
-logger = Timber::Logger.new(nil)
-logger.level = config.log_level
-config.logger = #{config_set_logger_code}
+  # Install the Timber.io logger but silence all logs (log to nil). We install the
+  # logger to ensure the Rails.logger object exposes the proper API.
+  logger = Timber::Logger.new(nil)
+  logger.level = config.log_level
+  config.logger = #{config_set_logger_code}
 CODE
 
             install_logger(environment_file_path, logger_code, api)
@@ -144,16 +151,17 @@ CODE
 
           # Installs the Timber logger using the HTTP transport strategy in the
           # specified environment file.
-          def install_http(environment, api_key_storage_type, api)
+          def install_http(environment, api_key_storage_type, api, options = {})
             environment_file_path = get_environment_file_path(environment)
             api_key_code = get_api_key_code(api_key_storage_type, api.api_key)
+            extra_comment = options[:extra_comment]
 
             logger_code = <<-CODE
-# Install the Timber.io logger, send logs over HTTP.
-log_device = Timber::LogDevices::HTTP.new(#{api_key_code})
-logger = Timber::Logger.new(log_device)
-logger.level = config.log_level
-config.logger = #{config_set_logger_code}
+  # Install the Timber.io logger, send logs over HTTP.#{extra_comment}
+  log_device = Timber::LogDevices::HTTP.new(#{api_key_code})
+  logger = Timber::Logger.new(log_device)
+  logger.level = config.log_level
+  config.logger = #{config_set_logger_code}
 CODE
 
             install_logger(environment_file_path, logger_code, api)
@@ -166,11 +174,11 @@ CODE
             api_key_code = get_api_key_code(api_key_storage_type, api.api_key)
 
             logger_code = <<-CODE
-# Install the Timber.io logger, send logs over STDOUT. Actual log delivery
-# to the Timber service is handled external of this application.
-logger = Timber::Logger.new(STDOUT)
-logger.level = config.log_level
-config.logger = #{config_set_logger_code}
+  # Install the Timber.io logger, send logs over STDOUT. Actual log delivery
+  # to the Timber service is handled external of this application.
+  logger = Timber::Logger.new(STDOUT)
+  logger.level = config.log_level
+  config.logger = #{config_set_logger_code}
 CODE
 
             install_logger(environment_file_path, logger_code, api)
