@@ -1,4 +1,4 @@
-# 🌲 Timber - Instant Ruby Structured Logging
+# 🌲 Timber - Automatic Ruby Structured Logging
 
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
@@ -13,7 +13,7 @@
 
 ## Overview
 
-Timber solves structured logging so you don't have to. Go from raw text logs to rich
+Timber solves ruby structured logging so you don't have to. Go from raw text logs to rich
 structured events in seconds. Spend more time focusing on your app and less time
 focusing on logging.
 

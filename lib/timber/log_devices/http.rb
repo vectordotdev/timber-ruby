@@ -102,17 +102,10 @@ module Timber
 
       # Flush all log messages in the buffer synchronously. This method will not return
       # until delivery of the messages has been successful. If you want to flush
-      # asynchronously see {#flush_asyn}.
+      # asynchronously see {#flush_async}.
       def flush
-        req = build_request
-
-        if !req.nil?
-          http = build_http
-          http.start do |conn|
-            conn.request(req)
-          end
-        end
-
+        flush_async
+        wait_on_request_queue
         true
       end
 
@@ -124,21 +117,8 @@ module Timber
         # Flush all remaining messages
         flush
 
-        # Kill the request_outlet thread gracefully. We do not want to kill it while a
-        # request is inflight. Ideally we'd let it finish before we die.
-        if @request_outlet_thread
-          4.times do
-            if @requests_in_flight == 0 && @request_queue.size == 0
-              @request_outlet_thread.kill
-              break
-            else
-              debug do
-                "Busy delivering the final log messages, connection will close when complete."
-              end
-              sleep 1
-            end
-          end
-        end
+        # Kill the request queue thread. Flushing ensures that no requests are pending.
+        @request_outlet_thread.kill if @request_outlet_thread
       end
 
       private
@@ -192,7 +172,25 @@ module Timber
           @last_async_flush = Time.now
           req = build_request
           if !req.nil?
+            debug { "New request placed on queue" }
             @request_queue.enq(req)
+          end
+        end
+
+        # Waits on the request queue. This is used in {#flush} to ensure
+        # the log data has been delivered before returning.
+        def wait_on_request_queue
+          # Wait 20 seconds
+          40.times do |i|
+            if @request_queue.size == 0 && @requests_in_flight == 0
+              debug { "Request queue is empty and no requests are in flight, finish waiting" }
+              return true
+            end
+            debug do
+              "Request size #{@request_queue.size}, reqs in-flight #{@requests_in_flight}, " \
+                "continue waiting (iteration #{i + 1})"
+            end
+            sleep 0.5
           end
         end
 

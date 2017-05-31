@@ -9,23 +9,31 @@ module Timber
 
       def self.read_or_create(path, initial_code)
         if !File.exists?(path)
-          File.open(path, "w") do |f|
-            f.write(initial_code)
-          end
+          write(path, initial_code)
         end
 
         File.read(path)
       end
 
-      def self.verify(path)
-        if !File.exists?(path)
-          puts ""
-          puts "Uh oh! It looks like we couldn't locate the #{path} file. "
-          puts "Please enter the correct path:"
-          puts
+      def self.read(path)
+        File.read(path)
+      end
 
-          new_path = gets
-          find(new_path)
+      def self.write(path, contents)
+        File.open(path, "w") do |f|
+          f.write(initial_code)
+        end
+      end
+
+      def self.verify(path, io)
+        if !File.exists?(path)
+          io.puts ""
+          io.puts "Uh oh! It looks like we couldn't locate the #{path} file. "
+          io.puts "Please enter the correct path:"
+          io.puts
+
+          new_path = io.gets
+          verify(new_path, io)
         else
           path
         end

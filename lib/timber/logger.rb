@@ -223,6 +223,13 @@ module Timber
       Timber::CurrentContext.with(context, &block)
     end
 
+    # Patch to ensure that the {#level} method is used instead of `@level`.
+    # This is required because of Rails' monkey patching on Logger via `::LoggerSilence`.
+    def add(severity, message = nil, progname = nil, &block)
+      return true if @logdev.nil? || (severity || UNKNOWN) < level
+      super
+    end
+
     # Backwards compatibility with older ActiveSupport::Logger versions
     Logger::Severity.constants.each do |severity|
       class_eval(<<-EOT, __FILE__, __LINE__ + 1)

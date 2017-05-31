@@ -82,21 +82,8 @@ describe Timber::LogDevices::HTTP do
       http.write(log_entry)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry)
-
-      stub = stub_request(:post, "https://logs.timber.io/frames").
-        with(
-          :body => start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81\xA6system\x82\xA8hostname".force_encoding("ASCII-8BIT")),
-          :headers => {
-            'Authorization'=>'Basic TVlLRVk=',
-            'Content-Type'=>'application/msgpack'
-          }
-        ).
-        to_return(:status => 200, :body => "", :headers => {})
-
+      expect(http).to receive(:flush_async).exactly(2).times
       http.send(:flush)
-
-      expect(stub).to have_been_requested.times(1)
-
       http.close
     end
   end
@@ -127,7 +114,7 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
       http.send(:ensure_flush_threads_are_started)
-      expect(http).to receive(:flush_async).exactly(2).times
+      expect(http).to receive(:flush_async).exactly(3).times
       sleep 1.1 # iterations check every 0.5 seconds
       http.close
     end

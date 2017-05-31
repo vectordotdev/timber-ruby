@@ -1,7 +1,9 @@
 require "optparse"
 require "yaml"
 
-require "timber/cli/install"
+require "timber/cli/api"
+require "timber/cli/installers"
+require "timber/cli/io"
 require "timber/version"
 
 module Timber
@@ -13,27 +15,25 @@ module Timber
       attr_accessor :options
 
       def run(argv = ARGV)
-        @options = {}
         global = global_option_parser
-        commands = command_option_parser
         global.order!(argv)
         command = argv.shift
-        if command
-          if AVAILABLE_COMMANDS.include?(command)
-            commands[command].parse!(argv)
-            case command.to_sym
-            when :install
-              Install.run(argv.shift)
-            end
-          else
-            puts "Command '#{command}' does not exist, run timber -h to "\
-              "see the help"
-            exit(1)
-          end
-        else
+
+        case command
+        when nil
           # Print help
           puts global
           exit(0)
+
+        when "install"
+          api_key = argv.shift
+          io = IO.new
+          Installers.run(api_key, io)
+
+        else
+          puts "Command '#{command}' does not exist, run timber -h to "\
+            "see the help"
+          exit(1)
         end
       end
 
@@ -54,12 +54,6 @@ module Timber
           o.separator ""
           o.separator "Available commands: #{AVAILABLE_COMMANDS.join(", ")}"
         end
-      end
-
-      def command_option_parser
-        {
-          "install" => OptionParser.new
-        }
       end
     end
   end

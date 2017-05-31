@@ -4,7 +4,8 @@ require "net/https"
 require "securerandom"
 require "uri"
 
-require "timber/cli/application"
+require "timber/cli/api/application"
+require "timber/cli/io/messages"
 
 module Timber
   class CLI
@@ -16,7 +17,7 @@ module Timber
       class APIKeyInvalidError < StandardError
         def message
           "Uh oh! The API key supplied is invalid. Please ensure that you copied the \n" \
-            "key properly.\n\n#{Messages.obtain_key_instructions}"
+            "key properly.\n\n#{IO::Messages.obtain_key_instructions}"
         end
       end
 
@@ -24,7 +25,7 @@ module Timber
         def message
           "Bummer, we couldn't confirm log delivery with the Timber API, something is off. " \
             "If you email support@timber.io, we'll work with you to figure out what's going on. " \
-            "And as an apology for using more of your time, we'll set you up with a 25% discount."
+            "And as a thank you sticking with us, we'll set you up with a 25% indefinite discount."
         end
       end
 
@@ -67,15 +68,12 @@ module Timber
       def initialize(api_key)
         @api_key = api_key
         @session_id = SecureRandom.uuid
-        @application_environments_left = ["development", "staging", "production"]
       end
 
       # Returns the application for the given API key.
       def application!
         res = get!(APPLICATION_PATH)
-        application = build_application(res)
-        @application_environments_left -= [application.environment]
-        application
+        build_application(res)
       end
 
       # Hits the API to clone the app for the provided API key to the specified environment.
@@ -87,25 +85,7 @@ module Timber
       # an ensure a top notch user experience.
       def event!(name, data = {})
         post!(EVENT_PATH, event: {name: name, data: data})
-      end
-
-      # This method allows the installer to iterate over all of the expected environments,
-      # either getting the existing application (if it exists), or creating one.
-      def next_application!
-        environment = @application_environments_left.shift
-        if environment.nil?
-          return nil
-        end
-
-        res = get!(APPLICATION_PATH + "/#{environment}")
-        case red.code
-        when "200"
-          build_application(res)
-        when "404"
-          clone_application(environment)
-        else
-          raise UnrecognizedAPIResponse.new(res)
-        end
+        true
       end
 
       # After test logs are sent to the Timber API this method waits for them to be

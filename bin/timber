@@ -2,22 +2,21 @@
 
 $LOAD_PATH << File.expand_path(File.join(File.dirname(__FILE__), "..", "lib"))
 require "timber/cli"
-require "timber/cli/io_helper"
-require "timber/cli/messages"
-
-include Timber::CLI::IOHelper
+require "timber/cli/io"
+require "timber/cli/io/messages"
 
 begin
   Timber::CLI.run
 rescue => e
   raise e if $DEBUG
-  STDERR.puts ""
-  STDERR.puts ""
-  STDERR.puts colorize(e.message, :red)
-  STDERR.puts ""
-  STDERR.puts Timber::CLI::Messages.separator
-  STDERR.puts "Backtrace:"
-  STDERR.puts ""
-  STDERR.puts e.backtrace[0..25].join("\n")
+
+  io = Timber::CLI::IO.new(io_out: STDERR)
+  io.puts ""
+  io.puts e.message, :red
+  io.puts ""
+  io.puts Timber::CLI::IO::Messages.separator
+  io.puts "Backtrace:"
+  io.puts ""
+  io.puts e.backtrace[0..25].join("\n")
   exit 1
 end
