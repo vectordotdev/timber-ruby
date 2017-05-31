@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 # Attempt to load rails so that we can determine the proper sub-installer to use.
 begin
   require "rails"
