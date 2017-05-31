@@ -58,7 +58,7 @@ module Timber
               io.puts "n) No, use the Rails logging defaults", :blue
               io.puts ""
 
-              case io.ask_yes_no("Enter your choice:")
+              case io.ask_yes_no("Enter your choice:", event_prompt: "Logrageify?")
               when :yes
                 true
               when :no
@@ -100,7 +100,7 @@ module Timber
             io.puts "n) No, just print development logs to STDOUT", :blue
             io.puts ""
 
-            case io.ask_yes_no("Enter your choice:")
+            case io.ask_yes_no("Enter your choice:", event_prompt: "Send dev logs to Timber?")
             when :yes
               :send
             when :no

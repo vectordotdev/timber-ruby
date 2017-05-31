@@ -27,7 +27,7 @@ module Timber
           io.puts "n) No, just paste the API key inline", :blue
           io.puts ""
 
-          case io.ask_yes_no("Enter your choice:")
+          case io.ask_yes_no("Enter your choice:", event_prompt: "Store API key in env?")
           when :yes
             io.puts ""
             io.puts IO::Messages.http_environment_variables(api.api_key)

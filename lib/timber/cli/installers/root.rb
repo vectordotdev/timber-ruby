@@ -25,7 +25,7 @@ module Timber
           io.puts IO::Messages.application_details(app)
           io.puts ""
 
-          case io.ask_yes_no("Are the above details correct?")
+          case io.ask_yes_no("Are the above details correct?", event_prompt: "App details correct?")
           when :yes
             install_platform(app)
             run_sub_installer(app)
@@ -119,7 +119,7 @@ module Timber
             io.puts ""
 
             if OSHelper.has_git?
-              case io.ask_yes_no("We can run these commands for you. Shall we?")
+              case io.ask_yes_no("We can run these commands for you. Shall we?", event_prompt: "Run git commands?")
               when :yes
                 io.puts ""
 

@@ -15,7 +15,7 @@ module Timber
         @io_in = options[:io_in] || STDIN
       end
 
-      def ask(prompt, allowed_inputs, iteration = 0)
+      def ask(prompt, allowed_inputs, options = {}, iteration = 0)
         if api
           api.event!(:waiting_for_input, prompt: prompt)
         end
@@ -24,7 +24,8 @@ module Timber
         input = gets.downcase
 
         if api
-          api.event!(:received_input, prompt: prompt, value: input)
+          event_prompt = options[:event_prompt] || prompt
+          api.event!(:received_input, prompt: event_prompt, value: input)
         end
 
         if allowed_inputs.include?(input)
@@ -36,7 +37,7 @@ module Timber
               "We were expecting one of #{allowed_inputs}, but got #{input.inspect}."
           else
             puts "Woops! That's not a valid input. Please enter one of #{allowed_inputs.join(", ")}."
-            ask(prompt, allowed_inputs, iteration + 1)
+            ask(prompt, allowed_inputs, options, iteration + 1)
           end
         end
       end
@@ -51,8 +52,8 @@ module Timber
         end
       end
 
-      def ask_yes_no(message)
-        case ask(message + " (y/n)", ["y", "n"])
+      def ask_yes_no(message, options = {})
+        case ask(message + " (y/n)", ["y", "n"], options)
         when "y"
           :yes
         when "n"
