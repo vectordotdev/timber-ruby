@@ -23,7 +23,7 @@ module Timber
 
         else
           api = API.new(api_key)
-          api.event!(:started)
+          api.event(:started)
 
           io.api = api
 

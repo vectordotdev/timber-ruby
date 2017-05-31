@@ -82,10 +82,13 @@ module Timber
       end
 
       # Sends an event to Timber so that we can understand how the installer is performing
-      # an ensure a top notch user experience.
-      def event!(name, data = {})
+      # an ensure a top notch user experience. We do not raise here because it is not
+      # critical for the install process.
+      def event(name, data = {})
         post!(EVENT_PATH, event: {name: name, data: data})
         true
+      rescue Exception
+        false
       end
 
       # After test logs are sent to the Timber API this method waits for them to be
@@ -97,9 +100,9 @@ module Timber
 
         case iteration
         when 0
-          event!(:waiting_for_logs)
+          event(:waiting_for_logs)
         when 20
-          event!(:excessively_waiting_for_logs)
+          event(:excessively_waiting_for_logs)
         when 60
           raise LogsNotReceivedError.new
         end

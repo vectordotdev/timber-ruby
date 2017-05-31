@@ -17,7 +17,7 @@ module Timber
 
       def ask(prompt, allowed_inputs, options = {}, iteration = 0)
         if api
-          api.event!(:waiting_for_input, prompt: prompt)
+          api.event(:waiting_for_input, prompt: prompt)
         end
 
         write prompt + " "
@@ -25,7 +25,7 @@ module Timber
 
         if api
           event_prompt = options[:event_prompt] || prompt
-          api.event!(:received_input, prompt: event_prompt, value: input)
+          api.event(:received_input, prompt: event_prompt, value: input)
         end
 
         if allowed_inputs.include?(input)

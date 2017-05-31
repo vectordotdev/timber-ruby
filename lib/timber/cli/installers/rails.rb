@@ -246,7 +246,7 @@ CODE
             if !logger_installed?(current_contents)
               new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
               FileHelper.write(environment_file_path, new_contents)
-              api.event!(:file_written, path: environment_file_path)
+              api.event(:file_written, path: environment_file_path)
             end
 
             io.puts IO::Messages.task_complete(task_message), :green

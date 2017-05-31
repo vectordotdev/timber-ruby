@@ -36,7 +36,7 @@ module Timber
 
             assist_with_git
 
-            api.event!(:success)
+            api.event(:success)
 
             collect_feedback
 
@@ -164,7 +164,7 @@ module Timber
 
             case rating
             when "4", "5"
-              api.event!(:feedback, rating: rating.to_i)
+              api.event(:feedback, rating: rating.to_i)
               io.puts ""
               io.puts IO::Messages.we_love_you_too
 
@@ -177,7 +177,7 @@ module Timber
 
               comments = io.gets
 
-              api.event!(:feedback, rating: rating.to_i, comments: comments)
+              api.event(:feedback, rating: rating.to_i, comments: comments)
 
               io.puts ""
               io.puts "Thank you! We take feedback seriously and will work to improve this."
