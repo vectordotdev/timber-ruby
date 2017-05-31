@@ -1,6 +1,12 @@
 module Timber
   class CLI
     module OSHelper
+      def self.copy_to_clipboard?
+        `which pbcopy` != ""
+      rescue Exception
+        false
+      end
+
       def self.copy_to_clipboard(input)
         ::IO.popen('pbcopy', 'w') { |f| f << input }
         true
@@ -22,8 +28,7 @@ module Timber
 
       def self.has_git?
         begin
-          `git`
-          true
+          `which git` != ""
         rescue Exception
           false
         end
