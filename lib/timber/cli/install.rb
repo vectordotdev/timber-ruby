@@ -43,12 +43,14 @@ module Timber
 
             send_test_messages(app.api_key)
 
+            task_message = "Confirming log delivery"
+
             api.wait_for_logs do |iteration|
-              write Messages.task_start("Waiting for logs")
+              write Messages.task_start(task_message)
               write Messages.spinner(iteration)
             end
 
-            puts colorize(Messages.task_complete("Waiting for logs"), :green)
+            puts colorize(Messages.task_complete(task_message), :green)
 
             puts ""
             puts Messages.separator
@@ -78,7 +80,8 @@ module Timber
 
         private
           def send_test_messages(api_key)
-            write Messages.task_start("Sending test logs")
+            task_message = "Sending test logs"
+            write Messages.task_start(task_message)
 
             http_device = LogDevices::HTTP.new(api_key, flush_continuously: false)
             logger = Logger.new(http_device)
@@ -87,7 +90,7 @@ module Timber
             logger.info("Be sure to commit and deploy your app to start seeing real logs")
             http_device.flush
 
-            puts colorize(Messages.task_complete("Sending test logs"), :green)
+            puts colorize(Messages.task_complete(task_message), :green)
           end
 
           def collect_feedback(api)

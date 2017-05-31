@@ -65,10 +65,7 @@ if defined?(::Rack)
 
           dispatch_rails_request("/rack_http")
 
-          lines = clean_lines(io.string.split("\n"))
-          expect(lines.length).to eq(1)
-
-          expect(lines.first).to start_with("Processing by RackHttpController#index as HTML @metadata ")
+          expect(io.string).to eq("")
         end
       end
 

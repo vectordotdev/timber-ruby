@@ -31,7 +31,7 @@ module Timber
           environments.each do |environment|
             if already_configured?(environment)
               environment_file_path = get_environment_file_path(environment)
-              message = "Configuring Timber in #{environment_file_path}"
+              message = "Installing the Timber::Logger in #{environment_file_path}"
               puts colorize(Messages.task_complete(message), :green)
 
               next
@@ -96,7 +96,7 @@ NOTE
           def logrageify!
             initializer_path = File.join("config", "initializers", "timber.rb")
 
-            task_message = "Configuring Timber in #{initializer_path}"
+            task_message = "Logrageifying in #{initializer_path}"
             write Messages.task_start(task_message)
 
             initializer_content = get_initializer_content(initializer_path)
@@ -263,7 +263,7 @@ CODE
           def install_logger(environment_file_path, logger_code, api)
             current_contents = get_environment_file_contents(environment_file_path)
 
-            task_message = "Configuring logger Timber in #{environment_file_path}"
+            task_message = "Installing the Timber::Logger in #{environment_file_path}"
             write Messages.task_start(task_message)
 
             if !logger_installed?(current_contents)
