@@ -380,14 +380,15 @@ end
 <details><summary><strong>Capture release / deploy context</strong></summary><p>
 
 [Timber::Contexts::Release](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts/Release)
-tracks the current application release and version. If you are on Heroku, simply enable the
-[dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata) feature to get this
-automatically. If you are not, simply add the follow environment variables to have the context
-set automatically.
+tracks the current application release and version. If you're on Heroku, simply enable the
+[dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata) feature. If you are not,
+set the following environment variables and this context will be added automatically:
 
-1. `RELEASE_COMMIT` - `2c3a0b24069af49b3de35b8e8c26765c1dba9ff0`
-2. `RELEASE_CREATED_AT` - `2015-04-02T18:00:42Z`
-3. `RELEASE_VERSION` - `v2.3.1`
+1. `RELEASE_COMMIT` - Ex: `2c3a0b24069af49b3de35b8e8c26765c1dba9ff0`
+2. `RELEASE_CREATED_AT` - Ex: `2015-04-02T18:00:42Z`
+3. `RELEASE_VERSION` - Ex: `v2.3.1`
+
+All variables are optional, but at least one must be present.
 
 ---
 
