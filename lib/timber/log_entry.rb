@@ -49,7 +49,6 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-
       hash = {
         :level => level,
         :dt => formatted_dt,

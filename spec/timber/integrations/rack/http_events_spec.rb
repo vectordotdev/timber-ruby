@@ -65,7 +65,8 @@ if defined?(::Rack)
 
           dispatch_rails_request("/rack_http")
 
-          expect(io.string).to eq("")
+          lines = clean_lines(io.string.split("\n"))
+          expect(lines.length).to eq(0)
         end
       end
 

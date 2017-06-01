@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('msgpack', '~> 1.0')
 
+  s.add_development_dependency('benchmark-memory', '>= 0')
   s.add_development_dependency('rails_stdout_logging', '>= 0')
   s.add_development_dependency('rake', '>= 0')
   s.add_development_dependency('rspec', '~> 3.4')
