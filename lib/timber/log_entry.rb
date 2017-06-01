@@ -47,6 +47,7 @@ module Timber
       @event = event
     end
 
+    # Builds a hash representation of containing simply objects, suitable for serialization.
     def as_json(options = {})
       options ||= {}
       hash = {

@@ -3,7 +3,8 @@ require "timber/util"
 
 module Timber
   module Contexts
-    # The system context tracks OS level process information, such as the process ID.
+    # The release context tracks application releases / versions / deploys.
+    # To automatically set this context, see {.from_env}.
     class Release < Context
       @keyspace = :release
 
@@ -36,6 +37,7 @@ module Timber
         @version = attributes[:version]
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {commit_hash: commit_hash, created_at: created_at, version: version}
       end

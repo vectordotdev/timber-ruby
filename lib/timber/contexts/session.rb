@@ -19,6 +19,7 @@ module Timber
         @id = attributes[:id] || raise(ArgumentError.new(":id is required"))
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {id: Timber::Util::Object.try(id, :to_s)}
       end

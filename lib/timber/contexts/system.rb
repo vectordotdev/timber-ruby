@@ -15,6 +15,7 @@ module Timber
         @pid = @pid.to_s
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {hostname: hostname, pid: Timber::Util::Object.try(pid, :to_s)}
       end

@@ -21,6 +21,7 @@ module Timber
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:sql_query => to_hash}
       end

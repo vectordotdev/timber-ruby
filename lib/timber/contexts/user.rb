@@ -21,6 +21,7 @@ module Timber
         @email = attributes[:email]
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {id: Timber::Util::Object.try(id, :to_s), name: name, email: email}
       end

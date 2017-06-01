@@ -20,6 +20,7 @@ module Timber
         @module_name = attributes[:module_name]
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {application: application, class_name: class_name, file: file, function: function,
           line: line, module_name: module_name}
