@@ -3,6 +3,7 @@ module Timber
     module HTTPEvent
       AUTHORIZATION_HEADER = 'authorization'.freeze
       QUERY_STRING_LIMIT = 5_000.freeze
+      STRING_CLASS_NAME = 'String'.freeze
 
       extend self
 
@@ -26,9 +27,23 @@ module Timber
         if headers.is_a?(::Hash)
           h = headers.each_with_object({}) do |(k, v), h|
             # Force the header into a valid UTF-8 string, otherwise we will encounter
-            # encoding issues when we convert this data to json. Moreoever, if the
+            # encoding issues when we serialize this data. Moreoever, if the
             # data is already valid UTF-8 we don't pay a penalty.
-            h[k] = v && Timber::Util::String.normalize_to_utf8(v)
+            #
+            # Note: we compare the class name because...
+            #
+            #   string = 'my string'.force_encoding('ASCII-8BIT')
+            #   string.is_a?(String) => false
+            #   string.class => String
+            #   string.class == String => false
+            #   string.class.name == "String" => true
+            #
+            # ¯\_(ツ)_/¯
+            if v.class.name == STRING_CLASS_NAME
+              h[k] = Timber::Util::String.normalize_to_utf8(v)
+            else
+              h[k] = v
+            end
           end
 
           keys_to_sanitize = [AUTHORIZATION_HEADER] + (Config.instance.header_filters || [])

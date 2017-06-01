@@ -9,7 +9,7 @@ module Timber
         if string.encoding.to_s == UTF8
           string
         else
-          string.encode('UTF-8', {
+          string.encode(UTF8, {
             :invalid => :replace,
             :undef   => :replace,
             :replace => '?'
