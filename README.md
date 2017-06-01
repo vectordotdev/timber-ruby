@@ -1,4 +1,4 @@
-# 🌲 Timber - Automatic Ruby Structured Logging
+# 🌲 Timber - Simple Ruby Structured Logging
 
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
@@ -45,7 +45,7 @@ focusing on logging.
 
 ## How it works
 
-Let's start with an example. Timber turns this familiar raw text log line:
+Let's start with an example. Timber turns this:
 
 ```
 Sent 200 in 45.2ms
@@ -54,13 +54,13 @@ Sent 200 in 45.2ms
 Into a rich [`http_server_response` event](https://timber.io/docs/ruby/events-and-context/http-server-response-event/).
 
 ```
-Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"user": {"id": 1, "name": "Ben Johnson"}, "http": {"method": "GET", "host": "timber.io", "path": "/path", "request_id": "abcd1234"}, "system": {"hostname": "1.server.com", "pid": "254354"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
+Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"http": {"method": "GET", "path": "/path", "remote_addr": "192.32.23.12", "request_id": "abcd1234"}, "system": {"hostname": "1.server.com", "pid": "254354"}, "user": {"id": 1, "name": "Ben Johnson", "email": "bens@email.com"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
 ```
 
 Notice that instead of completely replacing your log messages,
-Timber _augments_ your logs with structured metadata. Turning them into
+Timber _augments_ your logs with structured metadata. Turning turns them into
 [rich events with context](https://timber.io/docs/ruby/events-and-context) without sacrificing
-readability.
+readability. And you have [complete control over which data is captured](#configuration).
 
 This is all accomplished by using the
 [Timber::Logger](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger):
@@ -77,20 +77,21 @@ Here's a better look at the metadata:
   "dt": "2017-02-02T01:33:21.154345Z",
   "level": "info",
   "context": {
-    "user": {
-      "id": 1,
-      "name": "Ben Johnson"
-    },
     "http": {
       "method": "GET",
-      "host": "timber.io",
       "path": "/path",
+      "remote_addr": "192.32.23.12",
       "request_id": "abcd1234"
     },
     "system": {
       "hostname": "1.server.com",
       "pid": "254354"
-    }
+    },
+    "user": {
+      "id": 1,
+      "name": "Ben Johnson",
+      "email": "bens@email.com"
+    },
   },
   "event": {
     "http_server_response": {
