@@ -6,6 +6,7 @@ require "uri"
 
 require "timber/cli/api/application"
 require "timber/cli/io/messages"
+require "timber/version"
 
 module Timber
   class CLI

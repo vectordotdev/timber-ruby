@@ -5,7 +5,7 @@ require "net/https"
 require "timber/config"
 require "timber/log_devices/http/dropping_sized_queue"
 require "timber/log_devices/http/flushable_sized_queue"
-
+require "timber/version"
 
 module Timber
   module LogDevices
