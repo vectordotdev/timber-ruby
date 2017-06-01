@@ -16,15 +16,16 @@ module Timber
       end
 
       def ask(prompt, allowed_inputs, options = {}, iteration = 0)
+        event_prompt = options[:event_prompt] || prompt
+
         if api
-          api.event(:waiting_for_input, prompt: prompt)
+          api.event(:waiting_for_input, prompt: event_prompt)
         end
 
         write prompt + " "
         input = gets.downcase
 
         if api
-          event_prompt = options[:event_prompt] || prompt
           api.event(:received_input, prompt: event_prompt, value: input)
         end
 
