@@ -2,6 +2,7 @@
 
 [![ISC License](https://img.shields.io/badge/license-ISC-ff69b4.svg)](LICENSE.md)
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
+[![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 [![View docs](https://img.shields.io/badge/docs-viewdocs-blue.svg?style=flat-square "Viewdocs")](http://www.rubydoc.info/github/timberio/timber-ruby)
 
@@ -57,7 +58,7 @@ Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "inf
 ```
 
 Notice that instead of completely replacing your log messages,
-Timber _augments_ your logs with critical metadata. Turning them into
+Timber _augments_ your logs with structured metadata. Turning them into
 [rich events with context](https://timber.io/docs/ruby/events-and-context) without sacrificing
 readability.
 
@@ -101,8 +102,9 @@ Here's a better look at the metadata:
 ```
 
 This structure isn't arbitrary either, it follows the
-[log event JSON schema](https://github.com/timberio/log-event-json-schema), which formalizes the
-structure, creates a contract with downstream consumers, and improves stability.
+[simple log event JSON schema](https://github.com/timberio/log-event-json-schema), which
+formalizes the data structure, creates a contract with downstream consumers, and
+improves stability.
 
 So what can you do with this data?
 
@@ -110,7 +112,8 @@ So what can you do with this data?
 2. [**Trace a request** - `http.request_id:abcd1234`](https://timber.io/docs/app/tutorials/view-in-request-context/)
 3. **Narrow by host** - `system.hostname:1.server.com`
 4. **View slow responses** - `http_server_response.time_ms:>=1000`
-5. **Filter by log level** - `level:info`
+5. **Filter by log level** - `level:error`
+6. **Quickly find exceptions** - `is:exception`
 
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
 
@@ -220,9 +223,7 @@ you desire.
 
 ## Configuration
 
-Most aspects of Timber are configurable, it's also designed to be modular, allow you to use
-basic ruby semantic to customize. Below are a few popular configuration options, for a
-comprehensive list, see
+Below are a few popular configuration options, for a comprehensive list, see
 [Timber::Config](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config).
 
 <details><summary><strong>Logrageify. Silence noisy logs (sql query, template renders)</strong></summary><p>
@@ -280,7 +281,7 @@ Integrations::Rack::HTTPEvents.collapse_into_single_event = true
 ```
 
 This does _not_ silence the controller call log event. This is because Timber captures the
-parameters passed to the controller, which is extremely valuable when debugging.
+parameters passed to the controller, which is very valuable when debugging.
 
 For a full list of integrations and settings, see
 [Timber::Integrations](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations)
@@ -335,7 +336,7 @@ Your options are:
 
 <details><summary><strong>Capture custom user context</strong></summary><p>
 
-By default Timber automatically captures user context for mot of the popular authentication
+By default Timber automatically captures user context for most of the popular authentication
 libraries (Devise, Omniauth, and Clearance). See
 [Timber::Integrations::Rack::UserContext](lib/timber/integrations/rack/user_context.rb)
 for a complete list.
@@ -398,10 +399,6 @@ encouraged. In cases where the data is meaningful, consider [logging a custom ev
 ---
 
 </p></details>
-
-<details><summary><strong>Why Timber?</strong></summary><p>
-
-Because logging
 
 ---
 

@@ -28,6 +28,7 @@ module Timber
       #
       # * Devise, or any Warden based authentication strategy
       # * Omniauth
+      # * Clearance
       #
       # Or, you can use your own custom authentication, see the {.custom_user_context}
       # class method for more details.
