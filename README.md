@@ -24,10 +24,10 @@ focusing on logging.
    in a consistent format. See [how it works](#how-it-works) below.
 
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
-   Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-support)
+   Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-integrations)
 
-4. **Pairs with a modern console.** - Designed specifically for this librariy, instantly
-   usable, zero configuration.
+4. **Pairs with a modern console.** - Designed specifically for this librariy, hosted, instantly
+   usable, zero configuration. [Checkout the docs](https://timber.io/docs/app/overview/).
 
 
 ## Installation
@@ -118,7 +118,7 @@ So what can you do with this data?
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
 
 
-## Third-party support
+## Third-party integrations
 
 1. **Rails**: Structures ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
 2. **Rack**: Structures [exceptions](https://timber.io/docs/ruby/events-and-context/exception-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
