@@ -1,5 +1,7 @@
 require "singleton"
 
+require "timber/contexts/release"
+
 module Timber
   # Holds the current context in a thread safe memory storage. This context is
   # appended to every log line. Think of context as join data between your log lines,
@@ -36,6 +38,17 @@ module Timber
       # Convenience method for {CurrentContext#reset}. See {CurrentContext#reset} for more info.
       def reset(*args)
         instance.reset(*args)
+      end
+    end
+
+    # Instantiates a new object, automatically adding context based on env variables (if present).
+    # For example, the {Contexts::ReleaseContext} is automatically added if the proper environment
+    # variables are present. Please see that class for more details.
+    def initialize
+      super
+      release_context = Contexts::Release.from_env
+      if release_context
+        add(release_context)
       end
     end
 

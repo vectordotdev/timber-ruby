@@ -346,7 +346,7 @@ Your options are:
 
 By default Timber automatically captures user context for most of the popular authentication
 libraries (Devise, Omniauth, and Clearance). See
-[Timber::Integrations::Rack::UserContext](lib/timber/integrations/rack/user_context.rb)
+[Timber::Integrations::Rack::UserContext](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations/Rack/UserContext)
 for a complete list.
 
 In cases where you Timber doesn't support your strategy, or you want to customize it further,
@@ -371,6 +371,22 @@ end
 ```
 
 *All* of the user hash keys are optional, but you must provide at least one.
+
+---
+
+</p></details>
+
+<details><summary><strong>Capture release / deploy context</strong></summary><p>
+
+[Timber::Contexts::Release](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts/Release)
+tracks the current application release and version. If you are on Heroku, simply enable the
+[dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata) feature to get this
+automatically. If you are not, simply add the follow environment variables to have the context
+set automatically.
+
+1. `RELEASE_COMMIT` - `2c3a0b24069af49b3de35b8e8c26765c1dba9ff0`
+2. `RELEASE_CREATED_AT` - `2015-04-02T18:00:42Z`
+3. `RELEASE_VERSION` - `v2.3.1`
 
 ---
 

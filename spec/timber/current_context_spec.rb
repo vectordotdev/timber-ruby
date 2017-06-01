@@ -1,6 +1,55 @@
 require "spec_helper"
 
 describe Timber::CurrentContext, :rails_23 => true do
+  describe ".initialize" do
+    it "should not set the release context" do
+      context = described_class.send(:new)
+      expect(context.send(:hash)).to eq({})
+    end
+
+    context "with Heroku dyno metadata" do
+      around(:each) do |example|
+        ENV['HEROKU_SLUG_COMMIT'] = "2c3a0b24069af49b3de35b8e8c26765c1dba9ff0"
+        ENV['HEROKU_RELEASE_CREATED_AT'] = "2015-04-02T18:00:42Z"
+        ENV['HEROKU_RELEASE_VERSION'] = "v2.3.1"
+
+        example.run
+
+        ENV.delete('HEROKU_SLUG_COMMIT')
+        ENV.delete('HEROKU_RELEASE_CREATED_AT')
+        ENV.delete('HEROKU_RELEASE_VERSION')
+
+        described_class.reset
+      end
+
+      it "should automatically set the release context" do
+        context = described_class.send(:new)
+        expect(context.send(:hash)).to eq({:release=>{:commit_hash=>"2c3a0b24069af49b3de35b8e8c26765c1dba9ff0", :created_at=>"2015-04-02T18:00:42Z", :version=>"v2.3.1"}})
+      end
+    end
+
+    context "with genric env vars" do
+      around(:each) do |example|
+        ENV['RELEASE_COMMIT'] = "2c3a0b24069af49b3de35b8e8c26765c1dba9ff0"
+        ENV['RELEASE_CREATED_AT'] = "2015-04-02T18:00:42Z"
+        ENV['RELEASE_VERSION'] = "v2.3.1"
+
+        example.run
+
+        ENV.delete('RELEASE_COMMIT')
+        ENV.delete('RELEASE_CREATED_AT')
+        ENV.delete('RELEASE_VERSION')
+
+        described_class.reset
+      end
+
+      it "should automatically set the release context" do
+        context = described_class.send(:new)
+        expect(context.send(:hash)).to eq({:release=>{:commit_hash=>"2c3a0b24069af49b3de35b8e8c26765c1dba9ff0", :created_at=>"2015-04-02T18:00:42Z", :version=>"v2.3.1"}})
+      end
+    end
+  end
+
   describe ".add" do
     after(:each) do
       described_class.reset
