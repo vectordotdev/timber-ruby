@@ -18,12 +18,14 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
   let(:output) { StringIO.new }
   let(:io) { Timber::CLI::IO.new(io_out: output, io_in: input) }
   let(:installer) { described_class.new(io, api) }
+  let(:initial_config_contents) { "# Timber.io Ruby Configuration - Simple Structured Logging\n#\n#  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^\n# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# -------------------------------------------------------------------\n# Website:       https://timber.io\n# Documentation: https://timber.io/docs\n# Support:       support@timber.io\n# -------------------------------------------------------------------\n\nconfig = Timber::Config.instance\n\n# Add additional configuration here.\n# For a full list of configuration options and their explanations see:\n# http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config\n\n" }
 
   describe ".run" do
     it "should execute properly" do
       expect(installer).to receive(:get_development_preference).exactly(1).times.and_return(:send)
       expect(installer).to receive(:get_api_key_storage_preference).exactly(1).times.and_return(:environment)
       expect(installer).to receive(:logrageify?).exactly(1).times.and_return(true)
+      expect(installer).to receive(:initializer).exactly(1).times.and_return(true)
       expect(installer).to receive(:logrageify!).exactly(1).times.and_return(true)
       expect(installer).to receive(:environment_file_paths).exactly(1).times.and_return(["config/environments/development.rb", "config/environments/production.rb", "config/environments/test.rb"])
       expect(installer).to receive(:setup_development_environment).with("config/environments/development.rb", :send).and_return(true)
@@ -58,15 +60,20 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
   describe ".logrageify!" do
     it "should set the option in the config file" do
       config_file_path = "config/initializers/timber.rb"
-      initial_config_contents = "config = Timber::Config.instance\n"
 
       expect(Timber::CLI::FileHelper).to receive(:read_or_create).
         with(config_file_path, initial_config_contents).
         and_return(initial_config_contents)
 
-      expect(Timber::CLI::FileHelper).to receive(:append).
-        with(config_file_path, "config.logrageify!").
+      expect(Timber::CLI::FileHelper).to receive(:read).
+        with(config_file_path).
         and_return(initial_config_contents)
+
+      new_config_contents = "# Timber.io Ruby Configuration - Simple Structured Logging\n#\n#  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^\n# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# -------------------------------------------------------------------\n# Website:       https://timber.io\n# Documentation: https://timber.io/docs\n# Support:       support@timber.io\n# -------------------------------------------------------------------\n\nconfig = Timber::Config.instance\n\nconfig.logrageify!\n\n# Add additional configuration here.\n# For a full list of configuration options and their explanations see:\n# http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config\n\n"
+
+      expect(Timber::CLI::FileHelper).to receive(:write).
+        with(config_file_path, new_config_contents).
+        and_return(true)
 
       expect(installer.send(:logrageify!)).to eq(true)
     end

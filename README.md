@@ -265,10 +265,11 @@ Internally this is equivalent to:
 ```ruby
 # config/initializers/timber.rb
 
-Integrations::ActionController.silence = true
-Integrations::ActionView.silence = true
-Integrations::ActiveRecord.silence = true
-Integrations::Rack::HTTPEvents.collapse_into_single_event = true
+config = Timber::Config.instance
+config.integrations.action_controller.silence = true
+config.integrations.action_view.silence = true
+config.integrations.active_record.silence = true
+config.integrations.rack.http_events.collapse_into_single_event = true
 ```
 
 Feel free to deviate and customize which logs you silence. We recommend a slight deviation
@@ -277,9 +278,10 @@ from lograge with the following settings:
 ```ruby
 # config/initializers/timber.rb
 
-Integrations::ActionView.silence = true
-Integrations::ActiveRecord.silence = true
-Integrations::Rack::HTTPEvents.collapse_into_single_event = true
+config = Timber::Config.instance
+config.integrations.action_view.silence = true
+config.integrations.active_record.silence = true
+config.integrations.rack.http_events.collapse_into_single_event = true
 ```
 
 This does _not_ silence the controller call log event. This is because Timber captures the
@@ -299,7 +301,8 @@ The following will silence all `[GET] /_health` requests:
 ```ruby
 # config/initializers/timber.rb
 
-Integrations::Rack::HTTPEvents.silence_request = lambda do |rack_env, rack_request|
+config = Timber::Config.instance
+config.integrations.rack.http_events.silence_request = lambda do |rack_env, rack_request|
   rack_request.path == "/_health"
 end
 ```
@@ -317,6 +320,7 @@ The first parameter being the traditional Rack env hash, the second being a
 Simply set the formatter like you would with any other logger:
 
 ```ruby
+# This is set in your various environment files
 logger = Timber::Logger.new(STDOUT)
 logger.formatter = Timber::Logger::JSONFormatter.new
 ```
@@ -350,7 +354,9 @@ you can do so like:
 
 ```ruby
 # config/initializers/timber.rb
-Timber::Integrations::Rack::UserContext.custom_user_hash = lambda do |rack_env|
+
+config = Timber::Config.instance
+config.integrations.rack.user_context.custom_user_hash = lambda do |rack_env|
   user = rack_env['warden'].user
   if user
     {

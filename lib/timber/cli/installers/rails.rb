@@ -3,6 +3,7 @@ begin
 rescue Exception
 end
 
+require "timber/cli/config_file"
 require "timber/cli/file_helper"
 require "timber/cli/installer"
 require "timber/cli/io/messages"
@@ -22,6 +23,9 @@ module Timber
           io.puts ""
           io.puts IO::Messages.separator
           io.puts ""
+
+          # Create the initializer
+          initializer
 
           if should_logrageify
             logrageify!
@@ -70,19 +74,10 @@ module Timber
           end
 
           def logrageify!
-            initializer_path = File.join("config", "initializers", "timber.rb")
-
-            task_message = "Logrageifying in #{initializer_path}"
-            io.write IO::Messages.task_start(task_message)
-
-            initializer_content = get_initializer_content(initializer_path)
-
-            if !initializer_content.include?("logrageify!")
-              code = "config.logrageify!"
-              FileHelper.append(initializer_path, code)
+            task_message = "Logrageifying in #{initializer.path}"
+            io.task(task_message) do
+              initializer.logrageify!
             end
-
-            io.puts IO::Messages.task_complete(task_message), :green
             true
           end
 
@@ -108,9 +103,12 @@ module Timber
             end
           end
 
-          def get_initializer_content(initializer_path)
-            config_code = "config = Timber::Config.instance\n"
-            FileHelper.read_or_create(initializer_path, config_code)
+          def initializer
+            @initializer ||= begin
+              initializer_path = File.join("config", "initializers", "timber.rb")
+              task_message = "Creating #{initializer_path}"
+              io.task(task_message) { ConfigFile.new(initializer_path) }
+            end
           end
 
           # Wraps the logger in TaggedLogging if it is available. Older versions of Rails
@@ -241,15 +239,13 @@ CODE
             current_contents = get_environment_file_contents(environment_file_path)
 
             task_message = "Installing the Timber::Logger in #{environment_file_path}"
-            io.write IO::Messages.task_start(task_message)
-
-            if !logger_installed?(current_contents)
-              new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
-              FileHelper.write(environment_file_path, new_contents)
-              api.event(:file_written, path: environment_file_path)
+            io.task(task_message) do
+              if !logger_installed?(current_contents)
+                new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
+                FileHelper.write(environment_file_path, new_contents)
+                api.event(:file_written, path: environment_file_path)
+              end
             end
-
-            io.puts IO::Messages.task_complete(task_message), :green
 
             true
           end

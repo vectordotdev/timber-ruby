@@ -1,10 +1,12 @@
 require "logger"
 require "singleton"
 
+require "timber/config/integrations"
+
 module Timber
-  # Interface for setting and reading Timber configuration.
+  # Singleton class for reading and setting Timber configuration.
   #
-  # For Rails apps this is installed into `config.timber`. See examples below.
+  # For Rails apps, this is installed into `config.timber`. See examples below.
   #
   # @example Rails example
   #   config.timber.append_metadata = false
@@ -12,8 +14,10 @@ module Timber
   #   config = Timber::Config.instance
   #   config.append_metdata = false
   class Config
+    # @private
     class NoLoggerError < StandardError; end
 
+    # @private
     class SimpleLogFormatter < ::Logger::Formatter
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
@@ -26,11 +30,10 @@ module Timber
 
     include Singleton
 
-    attr_writer :header_filters, :http_body_limit
+    attr_writer :http_body_limit
 
     # @private
     def initialize
-      @header_filters = []
       @http_body_limit = 2000
     end
 
@@ -89,6 +92,11 @@ module Timber
     #
     # @example If you do not set `RACK_ENV` or `RAILS_ENV`
     #   Timber::Config.instance.environment = "staging"
+    def environment=(value)
+      @environment = value
+    end
+
+    # Accessor method for {#environment=}
     def environment
       @environment ||= ENV["RACK_ENV"] || ENV["RAILS_ENV"] || "development"
     end
@@ -98,9 +106,14 @@ module Timber
     #
     # @example Rails
     #   # config/environments/production.rb
-    #   config.timber.filter_headers += ['api-key']
-    def header_filters
-      @header_filters
+    #   config.timber.header_filter_headers += ['api-key']
+    def http_header_filters=(value)
+      @http_header_filters = value
+    end
+
+    # Accessor method for {#http_header_filters=}
+    def http_header_filters
+      @http_header_filters ||= []
     end
 
     # Truncates captured HTTP bodies to this specified limit. The default is `2000`.
@@ -113,8 +126,20 @@ module Timber
     #   config.timber.http_body_limit = 500
     # @example Everything else
     #   Timber::Config.instance.http_body_limit = 500
+    def http_body_limit=(value)
+      @http_body_limit = value
+    end
+
+    # Accessor method for {#http_body_limit=}
     def http_body_limit
       @http_body_limit
+    end
+
+    # Convenience method for accessing the various `Timber::Integrations::*` class
+    # settings. These provides settings for enabling, disabled, and silencing integrations.
+    # See {Integrations} for a full list of available methods.
+    def integrations
+      Integrations
     end
 
     # A convenience method that automatically sets Timber's configuration to closely match
@@ -152,10 +177,10 @@ module Timber
     # 2. It doesn't support context making it near impossible to view in-app logs generated for
     #    the same request.
     def logrageify!
-      Integrations::ActionController.silence = true
-      Integrations::ActionView.silence = true
-      Integrations::ActiveRecord.silence = true
-      Integrations::Rack::HTTPEvents.collapse_into_single_event = true
+      integrations.action_controller.silence = true
+      integrations.action_view.silence = true
+      integrations.active_record.silence = true
+      integrations.rack.http_events.collapse_into_single_event = true
     end
 
     # This is the _main_ logger Timber writes to. All of the Timber integrations write to

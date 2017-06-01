@@ -13,6 +13,7 @@ module Timber
         :scheme
 
       def initialize(attributes)
+        @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))

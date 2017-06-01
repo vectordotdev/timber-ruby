@@ -7,9 +7,9 @@ module Timber
         end
       end
 
-      def self.read_or_create(path, initial_code)
+      def self.read_or_create(path, contents)
         if !File.exists?(path)
-          write(path, initial_code)
+          write(path, contents)
         end
 
         File.read(path)
@@ -21,7 +21,7 @@ module Timber
 
       def self.write(path, contents)
         File.open(path, "w") do |f|
-          f.write(initial_code)
+          f.write(contents)
         end
       end
 

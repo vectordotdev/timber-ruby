@@ -18,6 +18,10 @@ module Timber
             @enabled != false
           end
         end
+
+        def initialize(app)
+          @app = app
+        end
       end
     end
   end

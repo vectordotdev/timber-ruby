@@ -6,10 +6,6 @@ module Timber
       # A Rack middleware that is responsible for adding the Session context
       # {Timber::Contexts::Session}.
       class SessionContext < Middleware
-        def initialize(app)
-          @app = app
-        end
-
         def call(env)
           id = get_session_id(env)
           if id

@@ -61,10 +61,6 @@ module Timber
           end
         end
 
-        def initialize(app)
-          @app = app
-        end
-
         def call(env)
           user_hash = get_user_hash(env)
           if user_hash

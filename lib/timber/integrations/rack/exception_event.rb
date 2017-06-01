@@ -6,10 +6,6 @@ module Timber
       # A Rack middleware that is reponsible for capturing exceptions events
       # {Timber::Events::Exception}.
       class ExceptionEvent < Middleware
-        def initialize(app)
-          @app = app
-        end
-
         def call(env)
           begin
             status, headers, body = @app.call(env)

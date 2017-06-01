@@ -6,10 +6,46 @@ module Timber
   module Integrations
     module Rack
       # A Rack middleware that is reponsible for capturing and logging HTTP server requests and
-      # response events. The {Timber::Events::HTTPServerRequest} and
-      # {Timber::Events::HTTPServerResponse} events respectively.
+      # response events. The {Events::HTTPServerRequest} and {Events::HTTPServerResponse} events
+      # respectively.
       class HTTPEvents < Middleware
         class << self
+          # Allows you to capture the HTTP request body, default is off (false).
+          #
+          # Capturing HTTP bodies can be extremely helpful when debugging issues,
+          # but please proceed with caution:
+          #
+          # 1. Capturing HTTP bodies can use quite a bit of data (this can be mitigated, see below)
+          # 2. The {Events::ControllerCall} event captures the parsed parmaters sent to
+          #    the controller. This is a parsed representation of the body, which is usually more
+          #    helpful and redundant to the body captured here.
+          #
+          # If you opt to capture bodies, you can also truncate the size to reduce the data
+          # captured. See {Events::HTTPServerRequest}.
+          #
+          # @example
+          #   Timber::Integrations::Rack::HTTPEvents.capture_request_body = true
+          def capture_request_body=(value)
+            @capture_request_body = value
+          end
+
+          # Accessor method for {#capture_request_body=}
+          def capture_request_body?
+            @capture_request_body == true
+          end
+
+          # Just like {#capture_request_body=} but for the {Events::HTTPServerResponse} event.
+          # Please see {#capture_request_body=} for more details. The documentation there also
+          # applies here.
+          def capture_response_body=(value)
+            @capture_response_body = value
+          end
+
+          # Accessor method for {#capture_response_body=}
+          def capture_response_body?
+            @capture_response_body == true
+          end
+
           # Collapse both the HTTP request and response events into a single log line event.
           # While we don't recommend this, it can help to reduce log volume if desired.
           # The reason we don't recommend this, is because the logging service you use should
@@ -65,10 +101,6 @@ module Timber
           end
         end
 
-        def initialize(app)
-          @app = app
-        end
-
         def call(env)
           request = Util::Request.new(env)
 
@@ -102,7 +134,10 @@ module Timber
             start = Time.now
 
             Config.instance.logger.info do
+              event_body = capture_request_body? ? request.body_content : nil
+
               Events::HTTPServerRequest.new(
+                body: event_body,
                 headers: request.headers,
                 host: request.host,
                 method: request.request_method,
@@ -118,7 +153,10 @@ module Timber
 
             Config.instance.logger.info do
               time_ms = (Time.now - start) * 1000.0
+              event_body = capture_response_body? ? body : nil
+
               Events::HTTPServerResponse.new(
+                body: event_body,
                 headers: headers,
                 request_id: request.request_id,
                 status: status,
@@ -131,6 +169,14 @@ module Timber
         end
 
         private
+          def capture_request_body?
+            self.class.capture_request_body?
+          end
+
+          def capture_response_body?
+            self.class.capture_response_body?
+          end
+
           def collapse_into_single_event?
             self.class.collapse_into_single_event?
           end

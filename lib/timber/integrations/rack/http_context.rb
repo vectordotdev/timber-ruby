@@ -5,10 +5,6 @@ module Timber
     module Rack
       # A Rack middleware that is reponsible for adding the HTTP context {Timber::Contexts::HTTP}.
       class HTTPContext < Middleware
-        def initialize(app)
-          @app = app
-        end
-
         def call(env)
           request = Util::Request.new(env)
           context = Contexts::HTTP.new(
