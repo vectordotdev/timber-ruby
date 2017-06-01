@@ -1,3 +1,6 @@
+require "timber/context"
+require "timber/util"
+
 module Timber
   module Contexts
     # The organization context tracks the organization of the currently

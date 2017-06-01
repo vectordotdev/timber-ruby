@@ -13,25 +13,27 @@ module Timber
     THREAD_NAMESPACE = :_timber_current_context.freeze
 
     class << self
-      # Convenience method for {#with}. See {#with} for full details and examples.
+      # Convenience method for {CurrentContext#with}. See {CurrentContext#with} for more info.
       def with(*args, &block)
         instance.with(*args, &block)
       end
 
-      # Convenience method for {#add}. See {#add} for full details and examples.
+      # Convenience method for {CurrentContext#add}. See {CurrentContext#add} for more info.
       def add(*args)
         instance.add(*args)
       end
 
-      def hash(*args)
-        instance.hash(*args)
+      # Convenience method for {CurrentContext#fetch}. See {CurrentContext#fetch} for more info.
+      def fetch(*args)
+        instance.fetch(*args)
       end
 
-      # Convenience method for {#remove}. See {#remove} for full details and examples.
+      # Convenience method for {CurrentContext#remove}. See {CurrentContext#remove} for more info.
       def remove(*args)
         instance.remove(*args)
       end
 
+      # Convenience method for {CurrentContext#reset}. See {CurrentContext#reset} for more info.
       def reset(*args)
         instance.reset(*args)
       end
@@ -85,12 +87,13 @@ module Timber
           hash[key] = json
         end
       end
+      expire_cache!
+      self
     end
 
-    # The internal hash that is maintained. It is recommended that you use {#with} and {#add}
-    # for hash maintenance.
-    def hash
-      Thread.current[THREAD_NAMESPACE] ||= {}
+    # Fetch a specific context by key.
+    def fetch(*args)
+      hash.fetch(*args)
     end
 
     # Removes a context. If you wish to remove by key, or some other way, use {#hash} and
@@ -113,18 +116,34 @@ module Timber
           end
         end
       end
+      expire_cache!
+      self
     end
 
     # Resets the context to be blank. Use this carefully! This will remove *any* context,
     # include context that is automatically included with Timber.
     def reset
       hash.clear
+      expire_cache!
+      self
     end
 
     # Snapshots the current context so that you get a moment in time representation of the context,
-    # since the context can change as execution proceeds.
+    # since the context can change as execution proceeds. Note that individual contexts
+    # should be immutable, and we implement snapshot caching as a result of this assumption.
     def snapshot
-      hash.clone
+      @snapshot ||= hash.clone
     end
+
+    private
+      # The internal hash that is maintained. Use {#with} and {#add} for hash maintenance.
+      def hash
+        Thread.current[THREAD_NAMESPACE] ||= {}
+      end
+
+      # Hook to clear any caching implement in this class
+      def expire_cache!
+        @snapshot = nil
+      end
   end
 end

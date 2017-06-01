@@ -1,5 +1,8 @@
 require 'socket'
 
+require "timber/contexts"
+require "timber/events"
+
 module Timber
   # Represents a new log entry into the log. This is an intermediary class between
   # `Logger` and the log device that you set it up with.
@@ -32,6 +35,9 @@ module Timber
       @time_ms = options[:time_ms]
 
       context_snapshot = {} if context_snapshot.nil?
+
+      # Set the system context for each log entry since processes can be forked
+      # and the process ID could change.
       hostname = Socket.gethostname
       pid = Process.pid
       system_context = Contexts::System.new(hostname: hostname, pid: pid)
@@ -43,8 +49,13 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-      hash = {:level => level, :dt => formatted_dt, :message => message, :tags => tags,
-        :time_ms => time_ms}
+      hash = {
+        :level => level,
+        :dt => formatted_dt,
+        :message => message,
+        :tags => tags,
+        :time_ms => time_ms
+      }
 
       if !event.nil?
         hash[:event] = event.as_json

@@ -10,6 +10,8 @@ module Timber
         # @private
         class TimberLogSubscriber < ::ActionView::LogSubscriber
           def render_template(event)
+            return true if silence?
+
             info do
               full_name = from_rails_root(event.payload[:identifier])
               message = "  Rendered #{full_name}"
@@ -25,6 +27,8 @@ module Timber
           end
 
           def render_partial(event)
+            return true if silence?
+
             info do
               full_name = from_rails_root(event.payload[:identifier])
               message = "  Rendered #{full_name}"
@@ -41,6 +45,8 @@ module Timber
           end
 
           def render_collection(event)
+            return true if silence?
+
             if respond_to?(:render_count, true)
               info do
                 identifier = event.payload[:identifier] || "templates"
@@ -65,6 +71,10 @@ module Timber
               # Consolidates 2 template rendering events into 1. We don't need 2 events for
               # rendering a template. If you disagree, please feel free to open a PR and we
               # can make this an option.
+            end
+
+            def silence?
+              ActionView.silence?
             end
         end
       end

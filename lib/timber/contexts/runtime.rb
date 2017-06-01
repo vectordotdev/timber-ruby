@@ -1,6 +1,11 @@
+require "timber/context"
+
 module Timber
   module Contexts
-    # Tracks OS level process information, such as the process ID.
+    # The runtime context adds current runtime data to your logs, such as the file, line number,
+    # class or module name, etc. This makes it easy to tail and search your logs by their
+    # origin in your code. For example, if you are debugging a specific class, you can narrow
+    # by that class and see only it's logs.
     class Runtime < Context
       @keyspace = :runtime
 
