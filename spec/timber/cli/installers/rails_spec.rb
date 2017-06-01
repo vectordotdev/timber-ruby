@@ -36,6 +36,19 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
     end
   end
 
+  describe ".initializer" do
+    it "should create a config file" do
+      config_file_path = "config/initializers/timber.rb"
+
+      expect(Timber::CLI::FileHelper).to receive(:read_or_create).
+        with(config_file_path, initial_config_contents).
+        and_return(initial_config_contents)
+
+      config_file = installer.send(:initializer)
+      expect(config_file.path).to eq(config_file_path)
+    end
+  end
+
   describe ".logrageify?" do
     it "should do nothing if Lograge is not detected" do
       expect(installer.send(:logrageify?)).to eq(false)
