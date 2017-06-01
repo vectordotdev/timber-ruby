@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require "spec_helper"
 
 describe Timber::CLI::Installers::Root, :rails_23 => true do
