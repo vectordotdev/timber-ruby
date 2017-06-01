@@ -84,7 +84,7 @@ MESSAGE
           message = message.rstrip
 
           if copied
-            message += "\n    #{copied_to_clipboard}"
+            message << "\n    #{copied_to_clipboard}"
           end
 
           message
@@ -125,7 +125,7 @@ MESSAGE
           message = message.rstrip
 
           if copied
-            message += "\n    #{copied_to_clipboard}"
+            message << "\n    #{copied_to_clipboard}"
           end
 
           message

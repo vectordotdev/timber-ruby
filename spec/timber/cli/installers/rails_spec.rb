@@ -88,7 +88,7 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
         with(env_file_path, new_contents).
         and_return(true)
 
-      expect(api).to receive(:event!).with(:file_written, path: env_file_path)
+      expect(api).to receive(:event).with(:file_written, path: env_file_path)
 
       expect(installer.send(:setup_development_environment, env_file_path, :send)).to eq(true)
     end
@@ -110,7 +110,7 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
         with(env_file_path, new_contents).
         and_return(true)
 
-      expect(api).to receive(:event!).with(:file_written, path: env_file_path)
+      expect(api).to receive(:event).with(:file_written, path: env_file_path)
 
       expect(installer.send(:setup_test_environment, env_file_path)).to eq(true)
     end
@@ -132,7 +132,7 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
         with(env_file_path, new_contents).
         and_return(true)
 
-      expect(api).to receive(:event!).with(:file_written, path: env_file_path).exactly(1).times
+      expect(api).to receive(:event).with(:file_written, path: env_file_path).exactly(1).times
 
       expect(installer.send(:setup_other_environment, app, env_file_path, :environment)).to eq(true)
     end

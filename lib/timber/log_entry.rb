@@ -49,8 +49,14 @@ module Timber
 
     def as_json(options = {})
       options ||= {}
-      hash = {:level => level, :dt => formatted_dt, :message => message, :tags => tags,
-        :time_ms => time_ms}
+
+      hash = {
+        :level => level,
+        :dt => formatted_dt,
+        :message => message,
+        :tags => tags,
+        :time_ms => time_ms
+      }
 
       if !event.nil?
         hash[:event] = event.as_json

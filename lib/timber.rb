@@ -1,6 +1,3 @@
-# core classes
-require "json" # brings to_json to the core classes
-
 # Base (must come first, order matters)
 require "timber/version"
 require "timber/overrides"

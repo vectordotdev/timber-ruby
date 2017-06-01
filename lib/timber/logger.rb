@@ -77,6 +77,7 @@ module Timber
         "FATAL" => :fatal,
         "UNKNOWN" => :unknown
       }
+      EMPTY_ARRAY = []
 
       private
         def build_log_entry(severity, time, progname, logged_obj)
@@ -108,11 +109,11 @@ module Timber
           end
         end
 
-        # Because of all the crazy ways Rails has attempted this we need this crazy method.
+        # Because of all the crazy ways Rails has attempted tags, we need this crazy method.
         def extract_active_support_tagged_logging_tags
           Thread.current[:activesupport_tagged_logging_tags] ||
             Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
-            []
+            EMPTY_ARRAY
         end
     end
 
@@ -134,13 +135,16 @@ module Timber
     #   My log message @metadata {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
     #
     class AugmentedFormatter < Formatter
-      METADATA_CALLOUT = "@metadata".freeze
+      METADATA_CALLOUT = " @metadata ".freeze
+      NEW_LINE = "\n".freeze
+      ESCAPED_NEW_LINE = "\\n".freeze
 
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
         metadata = log_entry.to_json(:except => [:message])
         # use << for concatenation for performance reasons
-        log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
+        log_entry.message.gsub(NEW_LINE, ESCAPED_NEW_LINE) << METADATA_CALLOUT <<
+          metadata << NEW_LINE
       end
     end
 
@@ -237,7 +241,7 @@ module Timber
           progname = args.first
           options = args.last
 
-          if args.length == 2 and options.is_a?(Hash) && options != {}
+          if args.length == 2 and options.is_a?(Hash) && options.length > 0
             progname = options.merge(message: progname)
           end
 

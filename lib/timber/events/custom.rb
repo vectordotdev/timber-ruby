@@ -30,7 +30,7 @@ module Timber
 
         if data.is_a?(Hash) && data[:time_ms].is_a?(Time)
           data[:time_ms] = Timer.duration_ms(data[:time_ms])
-          @message += " in #{data[:time_ms]}ms"
+          @message << " in #{data[:time_ms]}ms"
         end
 
         @data = data
@@ -43,10 +43,6 @@ module Timber
 
       def as_json(_options = {})
         {:custom => to_hash}
-      end
-
-      def to_json(options = {})
-        as_json().to_json(options)
       end
     end
   end

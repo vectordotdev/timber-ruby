@@ -28,7 +28,7 @@ module Timber
         @data = attributes[:data] || raise(ArgumentError.new(":data is required"))
       end
 
-      def as_json(_options = {})
+      def as_json(options = {})
         {Timber::Util::Object.try(type, :to_sym) => data}
       end
     end
