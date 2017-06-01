@@ -185,6 +185,8 @@ end
 * In the [Timber console](https://app.timber.io) use queries like: `build.version:1.0.0`
 * See more details on our [custom contexts docs page](https://timber.io/docs/ruby/custom-contexts/)
 
+---
+
 </p></details>
 
 <details><summary><strong>Metrics & Timings</strong></summary><p>
@@ -305,6 +307,8 @@ end
 We require a block because it gives you complete control over how you want to silence requests.
 The first parameter being the traditional Rack env hash, the second being a
 [Rack Request](http://www.rubydoc.info/gems/rack/Rack/Request) object.
+
+---
 
 </p></details>
 
