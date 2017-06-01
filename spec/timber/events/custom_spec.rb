@@ -15,7 +15,7 @@ describe Timber::Events::Custom, :rails_23 => true do
       expect(custom_event.message).to end_with("ms")
       data = custom_event.data
       expect(data[:time_ms]).to be_kind_of(Float)
-      expect(data[:time_ms]).to be > 0
+      expect(data[:time_ms]).to be > 0.0
     end
   end
 end
