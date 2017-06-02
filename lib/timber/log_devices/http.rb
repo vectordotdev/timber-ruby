@@ -94,7 +94,7 @@ module Timber
         ensure_flush_threads_are_started
 
         if @msg_queue.full?
-          debug { "Flushing HTTP buffer via write" }
+          Timber.debug { "Flushing HTTP buffer via write" }
           flush_async
         end
         true
@@ -122,18 +122,6 @@ module Timber
       end
 
       private
-        def debug_logger
-          Timber::Config.instance.debug_logger
-        end
-
-        # Convenience method for writing debug messages.
-        def debug(&block)
-          if debug_logger
-            message = yield
-            debug_logger.debug(message)
-          end
-        end
-
         # This is a convenience method to ensure the flush thread are
         # started. This is called lazily from {#write} so that we
         # only start the threads as needed, but it also ensures
@@ -172,7 +160,7 @@ module Timber
           @last_async_flush = Time.now
           req = build_request
           if !req.nil?
-            debug { "New request placed on queue" }
+            Timber.debug { "New request placed on queue" }
             @request_queue.enq(req)
           end
         end
@@ -183,7 +171,7 @@ module Timber
           # Wait 20 seconds
           40.times do |i|
             if @request_queue.size == 0 && @requests_in_flight == 0
-              debug { "Request queue is empty and no requests are in flight, finish waiting" }
+              Timber.debug { "Request queue is empty and no requests are in flight, finish waiting" }
               return true
             end
             debug do
@@ -204,13 +192,13 @@ module Timber
           loop do
             begin
               if intervaled_flush_ready?
-                debug { "Flushing HTTP buffer via the interval" }
+                Timber.debug { "Flushing HTTP buffer via the interval" }
                 flush_async
               end
 
               sleep(0.5)
             rescue Exception => e
-              debug { "Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}" }
+              Timber.debug { "Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}" }
             end
           end
         end
@@ -239,15 +227,15 @@ module Timber
             http = build_http
 
             begin
-              debug { "Starting HTTP connection" }
+              Timber.debug { "Starting HTTP connection" }
 
               http.start do |conn|
                 deliver_requests(conn)
               end
             rescue => e
-              debug { "#request_outlet error: #{e.message}" }
+              Timber.debug { "#request_outlet error: #{e.message}" }
             ensure
-              debug { "Finishing HTTP connection" }
+              Timber.debug { "Finishing HTTP connection" }
               http.finish if http.started?
             end
           end
@@ -261,7 +249,7 @@ module Timber
           num_reqs = 0
 
           while num_reqs < @requests_per_conn
-            debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
+            Timber.debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
 
             # Blocks waiting for a request.
             req = @request_queue.deq
@@ -270,7 +258,7 @@ module Timber
             begin
               resp = conn.request(req)
             rescue => e
-              debug { "#deliver_request error: #{e.message}" }
+              Timber.debug { "#deliver_request error: #{e.message}" }
 
               @successive_error_count += 1
 
@@ -278,7 +266,7 @@ module Timber
               calculated_backoff = @successive_error_count * 2
               backoff = calculated_backoff > 30 ? 30 : calculated_backoff
 
-              debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
+              Timber.debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
 
               sleep backoff
 
@@ -291,7 +279,7 @@ module Timber
 
             @successive_error_count = 0
             num_reqs += 1
-            debug { "Request successful: #{resp.code}" }
+            Timber.debug { "Request successful: #{resp.code}" }
           end
         end
 

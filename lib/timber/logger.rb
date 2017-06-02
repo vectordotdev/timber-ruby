@@ -209,6 +209,8 @@ module Timber
 
       after_initialize if respond_to?(:after_initialize)
 
+      Timber.debug { "Timber::Logger instantiated, level: #{level}, formatter: #{formatter.class}" }
+
       @initialized = true
     end
 

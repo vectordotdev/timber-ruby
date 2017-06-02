@@ -79,20 +79,20 @@ module Timber
             # not return a user, in which case the user data might be in the omniauth
             # data.
             if self.class.custom_user_hash.is_a?(Proc)
-              debug { "Obtaining user context from the custom user hash" }
+              Timber.debug { "Obtaining user context from the custom user hash" }
               self.class.custom_user_hash.call(env)
             elsif (auth_hash = env['omniauth.auth'])
-              debug { "Obtaining user context from the omniauth auth hash" }
+              Timber.debug { "Obtaining user context from the omniauth auth hash" }
               get_omniauth_user_hash(auth_hash)
             elsif env[:clearance] && env[:clearance].signed_in?
-              debug { "Obtaining user context from the clearance user" }
+              Timber.debug { "Obtaining user context from the clearance user" }
               user = env[:clearance].current_user
               get_user_object_hash(user)
             elsif env['warden'] && (user = env['warden'].user)
-              debug { "Obtaining user context from the warden user" }
+              Timber.debug { "Obtaining user context from the warden user" }
               get_user_object_hash(user)
             else
-              debug { "Could not locate any user data" }
+              Timber.debug { "Could not locate any user data" }
               nil
             end
           end
@@ -138,17 +138,6 @@ module Timber
               user.email
             else
               nil
-            end
-          end
-
-          def debug_logger
-            Timber::Config.instance.debug_logger
-          end
-
-          def debug(&block)
-            if debug_logger
-              message = yield
-              debug_logger.debug(message)
             end
           end
       end
