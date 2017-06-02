@@ -1,6 +1,7 @@
 require "logger"
 require "msgpack"
 
+require "timber/config"
 require "timber/current_context"
 require "timber/event"
 require "timber/log_devices/http"
@@ -209,7 +210,7 @@ module Timber
 
       after_initialize if respond_to?(:after_initialize)
 
-      Timber.debug { "Timber::Logger instantiated, level: #{level}, formatter: #{formatter.class}" }
+      Timber::Config.instance.debug { "Timber::Logger instantiated, level: #{level}, formatter: #{formatter.class}" }
 
       @initialized = true
     end

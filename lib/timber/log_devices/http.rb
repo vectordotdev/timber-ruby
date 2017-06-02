@@ -94,7 +94,7 @@ module Timber
         ensure_flush_threads_are_started
 
         if @msg_queue.full?
-          Timber.debug { "Flushing HTTP buffer via write" }
+          Timber::Config.instance.debug { "Flushing HTTP buffer via write" }
           flush_async
         end
         true
@@ -160,7 +160,7 @@ module Timber
           @last_async_flush = Time.now
           req = build_request
           if !req.nil?
-            Timber.debug { "New request placed on queue" }
+            Timber::Config.instance.debug { "New request placed on queue" }
             @request_queue.enq(req)
           end
         end
@@ -171,10 +171,10 @@ module Timber
           # Wait 20 seconds
           40.times do |i|
             if @request_queue.size == 0 && @requests_in_flight == 0
-              Timber.debug { "Request queue is empty and no requests are in flight, finish waiting" }
+              Timber::Config.instance.debug { "Request queue is empty and no requests are in flight, finish waiting" }
               return true
             end
-            debug do
+            Timber::Config.instance.debug do
               "Request size #{@request_queue.size}, reqs in-flight #{@requests_in_flight}, " \
                 "continue waiting (iteration #{i + 1})"
             end
@@ -192,13 +192,13 @@ module Timber
           loop do
             begin
               if intervaled_flush_ready?
-                Timber.debug { "Flushing HTTP buffer via the interval" }
+                Timber::Config.instance.debug { "Flushing HTTP buffer via the interval" }
                 flush_async
               end
 
               sleep(0.5)
             rescue Exception => e
-              Timber.debug { "Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}" }
+              Timber::Config.instance.debug { "Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}" }
             end
           end
         end
@@ -227,15 +227,15 @@ module Timber
             http = build_http
 
             begin
-              Timber.debug { "Starting HTTP connection" }
+              Timber::Config.instance.debug { "Starting HTTP connection" }
 
               http.start do |conn|
                 deliver_requests(conn)
               end
             rescue => e
-              Timber.debug { "#request_outlet error: #{e.message}" }
+              Timber::Config.instance.debug { "#request_outlet error: #{e.message}" }
             ensure
-              Timber.debug { "Finishing HTTP connection" }
+              Timber::Config.instance.debug { "Finishing HTTP connection" }
               http.finish if http.started?
             end
           end
@@ -249,7 +249,7 @@ module Timber
           num_reqs = 0
 
           while num_reqs < @requests_per_conn
-            Timber.debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
+            Timber::Config.instance.debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
 
             # Blocks waiting for a request.
             req = @request_queue.deq
@@ -258,7 +258,7 @@ module Timber
             begin
               resp = conn.request(req)
             rescue => e
-              Timber.debug { "#deliver_request error: #{e.message}" }
+              Timber::Config.instance.debug { "#deliver_request error: #{e.message}" }
 
               @successive_error_count += 1
 
@@ -266,7 +266,7 @@ module Timber
               calculated_backoff = @successive_error_count * 2
               backoff = calculated_backoff > 30 ? 30 : calculated_backoff
 
-              Timber.debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
+              Timber::Config.instance.debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
 
               sleep backoff
 
@@ -279,7 +279,7 @@ module Timber
 
             @successive_error_count = 0
             num_reqs += 1
-            Timber.debug { "Request successful: #{resp.code}" }
+            Timber::Config.instance.debug { "Request successful: #{resp.code}" }
           end
         end
 

@@ -17,7 +17,13 @@ module Timber
           # Ask all of the questions up front. This allows us to to apply the
           # changes as a neat task list when done.
           development_preference = get_development_preference
-          api_key_storage_preference = get_api_key_storage_preference
+
+          api_key_storage_preference = if get_delivery_strategy(app) == :http
+            get_api_key_storage_preference
+          else
+            nil
+          end
+
           should_logrageify = logrageify?
 
           io.puts ""
@@ -166,10 +172,11 @@ NOTE
               return true
             end
 
-            if app.heroku?
-              install_stdout(environment_file_path)
-            else
+            case get_delivery_strategy(app)
+            when :http
               install_http(environment_file_path, api_key_storage_preference)
+            when :stdout
+              install_stdout(environment_file_path)
             end
           end
 

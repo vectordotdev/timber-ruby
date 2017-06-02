@@ -39,10 +39,22 @@ module Timber
       @http_body_limit = 2000
     end
 
+    # Convenience method for logging debug statements to the debug logger
+    # set in this class.
+    # @private
+    def debug(&block)
+      debug_logger = Config.instance.debug_logger
+      if debug_logger
+        message = yield
+        debug_logger.debug(message)
+      end
+      true
+    end
+
     # This is useful for debugging. This Sets a debug_logger to view internal Timber library
     # log messages. The default is `nil`. Meaning log to nothing.
     #
-    # See {#debug_to_file} and {#debug_to_stdout} for convenience methods that handle creating
+    # See {#debug_to_file!} and {#debug_to_stdout!} for convenience methods that handle creating
     # and setting the logger.
     #
     # @example Rails
@@ -61,10 +73,10 @@ module Timber
     # A convenience method for writing internal Timber debug messages to a file.
     #
     # @example Rails
-    #   config.timber.debug_to_file("#{Rails.root}/log/timber.log")
+    #   config.timber.debug_to_file!("#{Rails.root}/log/timber.log")
     # @example Everything else
-    #   Timber::Config.instance.debug_to_file("log/timber.log")
-    def debug_to_file(file_path)
+    #   Timber::Config.instance.debug_to_file!("log/timber.log")
+    def debug_to_file!(file_path)
       unless File.exist? File.dirname path
         FileUtils.mkdir_p File.dirname path
       end
@@ -79,10 +91,10 @@ module Timber
     # A convenience method for writing internal Timber debug messages to STDOUT.
     #
     # @example Rails
-    #   config.timber.debug_to_stdout
+    #   config.timber.debug_to_stdout!
     # @example Everything else
-    #   Timber::Config.instance.debug_to_stdout
-    def debug_to_stdout
+    #   Timber::Config.instance.debug_to_stdout!
+    def debug_to_stdout!
       stdout_logger = ::Logger.new(STDOUT)
       stdout_logger.formatter = SimpleLogFormatter.new
       self.debug_logger = stdout_logger

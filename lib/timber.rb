@@ -18,12 +18,4 @@ require "timber/timer"
 require "timber/frameworks"
 
 module Timber
-  def self.debug(&block)
-    debug_logger = Config.instance.debug_logger
-    if debug_logger
-      message = yield
-      debug_logger.debug(message)
-    end
-    true
-  end
 end

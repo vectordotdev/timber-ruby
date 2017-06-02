@@ -5,4 +5,3 @@ require "timber/config"
 
 config = Timber::Config.instance
 config.environment = "production"
-config.debug_to_stdout

@@ -1,3 +1,4 @@
+require "timber/config"
 require "timber/context"
 require "timber/util"
 
@@ -22,10 +23,10 @@ module Timber
           version = ENV['RELEASE_VERSION'] || ENV['HEROKU_RELEASE_VERSION']
 
           if commit_hash || created_at || version
-            Timber.debug { "Release env vars detected, adding to context" }
+            Timber::Config.instance.debug { "Release env vars detected, adding to context" }
             new(commit_hash: commit_hash, created_at: created_at, version: version)
           else
-            Timber.debug { "Release env vars _not_ detected" }
+            Timber::Config.instance.debug { "Release env vars _not_ detected" }
             nil
           end
         end

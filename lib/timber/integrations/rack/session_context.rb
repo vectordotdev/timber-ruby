@@ -3,6 +3,7 @@ begin
 rescue Exception
 end
 
+require "timber/config"
 require "timber/contexts/session"
 require "timber/integrations/rack/middleware"
 
@@ -29,22 +30,22 @@ module Timber
             if defined?(::Rails)
               session_key = ::Rails.application.config.session_options[:key]
               request = ::ActionDispatch::Request.new(env)
-              Timber.debug { "Rails detected, extracting session_id from cookie" }
+              Timber::Config.instance.debug { "Rails detected, extracting session_id from cookie" }
               extract_from_cookie(request, session_key)
 
             elsif session = env['rack.session']
               if session.respond_to?(:id)
-                Timber.debug { "Rack env session detected, using id attribute" }
+                Timber::Config.instance.debug { "Rack env session detected, using id attribute" }
                 session.id
               elsif session.respond_to?(:[])
-                Timber.debug { "Rack env session detected, using the session_id key" }
+                Timber::Config.instance.debug { "Rack env session detected, using the session_id key" }
                 session["session_id"]
               else
-                Timber.debug { "Rack env session detected but could not extract id" }
+                Timber::Config.instance.debug { "Rack env session detected but could not extract id" }
                 nil
               end
             else
-              Timber.debug { "No session data could be detected, skipping" }
+              Timber::Config.instance.debug { "No session data could be detected, skipping" }
 
               nil
             end

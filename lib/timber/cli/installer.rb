@@ -15,6 +15,14 @@ module Timber
       end
 
       private
+        def get_delivery_strategy(app)
+          if app.heroku?
+            :stdout
+          else
+            :http
+          end
+        end
+
         # Determines the API key storage prference (environment variable or inline)
         def get_api_key_storage_preference
           io.puts ""
