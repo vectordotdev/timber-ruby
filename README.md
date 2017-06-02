@@ -430,6 +430,8 @@ data. A few things to point out though:
 
 Finally, log what is useful to you. Quality over quantity certainly applies to logging.
 
+---
+
 </p></details>
 
 <details><summary><strong>What about my current log statements?</strong></summary><p>

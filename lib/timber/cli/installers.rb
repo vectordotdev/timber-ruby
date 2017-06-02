@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require "timber/cli/api"
 require "timber/cli/installers/root"
 require "timber/cli/io/messages"
