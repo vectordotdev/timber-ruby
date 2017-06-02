@@ -26,8 +26,9 @@ focusing on logging.
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
    Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-integrations)
 
-4. **Pairs with a modern console.** - Designed specifically for this librariy, hosted, instantly
-   usable, zero configuration. [Checkout the docs](https://timber.io/docs/app/overview/).
+4. **Pairs with a modern structured-logging console.** - Designed specifically for structured data,
+   hosted, instantly usable, tail users, trace requests, get shit done.
+   [Checkout the docs](https://timber.io/docs/app/tutorials/).
 
 
 ## Installation
@@ -418,15 +419,18 @@ Lastly, you can checkout how we capture these events in
 
 <details><summary><strong>Won't this increase the size of my log data?</strong></summary><p>
 
-Yes. In terms of size, it's no different than adding tags to your logs or any other useful
-data. A few things to point out though:
+Yes, but it's no different than adding any other useful data to your logs, such as
+[tags](http://api.rubyonrails.org/classes/ActiveSupport/TaggedLogging.html). A few
+of things to note:
 
-1. Timber generally _reduces_ the amount of logs your app generates by providing options to
-   consolidate request / response logs, template logs, and even silence logs that are not
-   of value to you. (see [configuration](#configuration) for examples).
-2. Your log provider should be compressing your data and charging you accordingly. Log data
-   is notoriously repetitive, and the context Timber generates is repetitive as well.
-   Because of compression we've seen somes apps only incur a 10% increase in data size.
+1. Timber generally _reduces_ the amount of logs your app generates, trading quality for quantity.
+   It does so by providing options to consolidate request / response logs, template logs, and
+   even silence logs that are not of value to you. (see [configuration](#configuration) for examples).
+2. Timber lets you pick exactly which events and contexts you want.
+   (see [configuration](#configuration) for examples)
+3. Your logging provider should be compressing your data and charging you accordingly. Log data
+   is notoriously repetitive, and the context Timber generates is repetitive.
+   Because of compression we've seen somes apps only incur a ~15% increase in data size.
 
 Finally, log what is useful to you. Quality over quantity certainly applies to logging.
 
