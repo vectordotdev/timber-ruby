@@ -1,3 +1,6 @@
+require "timber/event"
+require "timber/util"
+
 module Timber
   module Events
     # The HTTP server request event tracks incoming HTTP requests to your HTTP server.
@@ -10,6 +13,7 @@ module Timber
         :scheme
 
       def initialize(attributes)
+        @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
@@ -26,6 +30,7 @@ module Timber
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:http_server_request => to_hash}
       end

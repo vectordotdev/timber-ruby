@@ -1,71 +1,27 @@
 require "base64"
+require "msgpack"
 require "net/https"
+
+require "timber/config"
+require "timber/log_devices/http/dropping_sized_queue"
+require "timber/log_devices/http/flushable_sized_queue"
+require "timber/version"
 
 module Timber
   module LogDevices
     # A highly efficient log device that buffers and delivers log messages over HTTPS to
     # the Timber API. It uses batches, keep-alive connections, and msgpack to deliver logs with
     # high-throughput and little overhead. All log preparation and delivery is done asynchronously
-    # in a thread as not to block application execution.
+    # in a thread as not to block application execution and efficient deliver logs for
+    # multi-threaded environments.
     #
     # See {#initialize} for options and more details.
     class HTTP
-      # @private
-      class LogMsgQueue
-        def initialize(max_size)
-          @lock = Mutex.new
-          @max_size = max_size
-          @array = []
-        end
-
-        def enqueue(msg)
-          @lock.synchronize do
-            @array << msg
-          end
-        end
-
-        def flush
-          @lock.synchronize do
-            old = @array
-            @array = []
-            return old
-          end
-        end
-
-        def full?
-          size >= @max_size
-        end
-
-        def size
-          @array.size
-        end
-      end
-
-      # Works like SizedQueue, but drops message instead of blocking. Pass one of these in
-      # to {HTTP#intiialize} via the :request_queue option if you'd prefer to drop messages
-      # in the event of a buffer overflow instead of applying back pressure.
-      class DroppingSizedQueue < SizedQueue
-        # Returns true/false depending on whether the queue is full or not
-        def push(obj)
-          @mutex.synchronize do
-            return false unless @que.length < @max
-
-            @que.push obj
-            begin
-              t = @waiting.shift
-              t.wakeup if t
-            rescue ThreadError
-              retry
-            end
-            return true
-          end
-        end
-      end
-
-      TIMBER_URL = "https://logs.timber.io/frames".freeze
+      TIMBER_STAGING_URL = "https://logs-staging.timber.io/frames".freeze
+      TIMBER_PRODUCTION_URL = "https://logs.timber.io/frames".freeze
+      TIMBER_URL = ENV['TIMBER_STAGING'] ? TIMBER_STAGING_URL : TIMBER_PRODUCTION_URL
       CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
-
 
       # Instantiates a new HTTP log device that can be passed to {Timber::Logger#initialize}.
       #
@@ -73,9 +29,10 @@ module Timber
       # options control when the flush happens, `:batch_byte_size` and `:flush_interval`.
       # If either of these are surpassed, the buffer will be flushed.
       #
-      # By default, the buffer will apply back pressure log messages are generated faster than
-      # the client can delivery them. But you can drop messages instead by passing a
-      # {DroppingSizedQueue} via the `:request_queue` option.
+      # By default, the buffer will apply back pressure when the rate of log messages exceeds
+      # the maximum delivery rate. If you don't want to sacrifice app performance in this case
+      # you can drop the log messages instead by passing a {DroppingSizedQueue} via the
+      # `:request_queue` option.
       #
       # @param api_key [String] The API key provided to you after you add your application to
       #   [Timber](https://timber.io).
@@ -117,14 +74,16 @@ module Timber
         @flush_continuously = options[:flush_continuously] != false
         @flush_interval = options[:flush_interval] || 1 # 1 second
         @requests_per_conn = options[:requests_per_conn] || 2_500
-        @msg_queue = LogMsgQueue.new(@batch_size)
+        @msg_queue = FlushableSizedQueue.new(@batch_size)
         @request_queue = options[:request_queue] || SizedQueue.new(3)
         @successive_error_count = 0
         @requests_in_flight = 0
       end
 
-      # Write a new log line message to the buffer, and deliver if the msg exceeds the
-      # payload limit.
+      # Write a new log line message to the buffer, and flush asynchronously if the
+      # message queue is full. We flush asynchronously because the maximum message batch
+      # size is constricted by the Timber API. The actual application limit is a multiple
+      # of this. Hence the `@request_queue`.
       def write(msg)
         @msg_queue.enqueue(msg)
 
@@ -135,23 +94,19 @@ module Timber
         ensure_flush_threads_are_started
 
         if @msg_queue.full?
-          debug_logger.debug("Flushing HTTP buffer via write") if debug_logger
-          flush
+          debug { "Flushing HTTP buffer via write" }
+          flush_async
         end
         true
       end
 
+      # Flush all log messages in the buffer synchronously. This method will not return
+      # until delivery of the messages has been successful. If you want to flush
+      # asynchronously see {#flush_async}.
       def flush
-        @last_flush = Time.now
-        msgs = @msg_queue.flush
-        return if msgs.empty?
-
-        req = Net::HTTP::Post.new(@timber_url.path)
-        req['Authorization'] = authorization_payload
-        req['Content-Type'] = CONTENT_TYPE
-        req['User-Agent'] = USER_AGENT
-        req.body = msgs.to_msgpack
-        @request_queue.enq(req)
+        flush_async
+        wait_on_request_queue
+        true
       end
 
       # Closes the log device, cleans up, and attempts one last delivery.
@@ -162,20 +117,8 @@ module Timber
         # Flush all remaining messages
         flush
 
-        # Kill the request_outlet thread gracefully. We do not want to kill it while a
-        # request is inflight. Ideally we'd let it finish before we die.
-        if @request_outlet_thread
-          4.times do
-            if @requests_in_flight == 0 && @request_queue.size == 0
-              @request_outlet_thread.kill
-              break
-            else
-              debug_logger.error("Busy delivering the final log messages, " +
-                "connection will close when complete.")
-              sleep 1
-            end
-          end
-        end
+        # Kill the request queue thread. Flushing ensures that no requests are pending.
+        @request_outlet_thread.kill if @request_outlet_thread
       end
 
       private
@@ -183,8 +126,16 @@ module Timber
           Timber::Config.instance.debug_logger
         end
 
+        # Convenience method for writing debug messages.
+        def debug(&block)
+          if debug_logger
+            message = yield
+            debug_logger.debug(message)
+          end
+        end
+
         # This is a convenience method to ensure the flush thread are
-        # started. This is called lazily from #write so that we
+        # started. This is called lazily from {#write} so that we
         # only start the threads as needed, but it also ensures
         # threads are started after process forking.
         def ensure_flush_threads_are_started
@@ -199,6 +150,53 @@ module Timber
           end
         end
 
+        # Builds an HTTP request based on the current messages queued.
+        def build_request
+          msgs = @msg_queue.flush
+          return if msgs.empty?
+
+          req = Net::HTTP::Post.new(@timber_url.path)
+          req['Authorization'] = authorization_payload
+          req['Content-Type'] = CONTENT_TYPE
+          req['User-Agent'] = USER_AGENT
+          req.body = msgs.to_msgpack
+          req
+        end
+
+        # Flushes the message buffer asynchronously. The reason we provide this
+        # method is because the message buffer limit is constricted by the
+        # Timber API. The application limit is multiples of the buffer limit,
+        # hence the `@request_queue`, allowing us to buffer beyond the Timber API
+        # imposed limit.
+        def flush_async
+          @last_async_flush = Time.now
+          req = build_request
+          if !req.nil?
+            debug { "New request placed on queue" }
+            @request_queue.enq(req)
+          end
+        end
+
+        # Waits on the request queue. This is used in {#flush} to ensure
+        # the log data has been delivered before returning.
+        def wait_on_request_queue
+          # Wait 20 seconds
+          40.times do |i|
+            if @request_queue.size == 0 && @requests_in_flight == 0
+              debug { "Request queue is empty and no requests are in flight, finish waiting" }
+              return true
+            end
+            debug do
+              "Request size #{@request_queue.size}, reqs in-flight #{@requests_in_flight}, " \
+                "continue waiting (iteration #{i + 1})"
+            end
+            sleep 0.5
+          end
+        end
+
+        # Flushes the message queue on an interval. You will notice that {#write} also
+        # flushes the buffer if it is full. This method takes note of this via the
+        # `@last_async_flush` variable as to not flush immediately after a write flush.
         def intervaled_flush
           # Wait specified time period before starting
           sleep @flush_interval
@@ -206,21 +204,25 @@ module Timber
           loop do
             begin
               if intervaled_flush_ready?
-                debug_logger.debug("Flushing HTTP buffer via the interval") if debug_logger
-                flush
+                debug { "Flushing HTTP buffer via the interval" }
+                flush_async
               end
 
               sleep(0.5)
             rescue Exception => e
-              logger.error("Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}")
+              debug { "Intervaled HTTP flush failed: #{e.inspect}\n\n#{e.backtrace}" }
             end
           end
         end
 
+        # Determines if the loop in {#intervaled_flush} is ready to be flushed again. It
+        # uses the `@last_async_flush` variable to ensure that a flush does not happen
+        # too rapidly ({#write} also triggers a flush).
         def intervaled_flush_ready?
-          @last_flush.nil? || (Time.now.to_f - @last_flush.to_f).abs >= @flush_interval
+          @last_async_flush.nil? || (Time.now.to_f - @last_async_flush.to_f).abs >= @flush_interval
         end
 
+        # Builds an `Net::HTTP` object to deliver requests over.
         def build_http
           http = Net::HTTP.new(@timber_url.host, @timber_url.port)
           http.set_debug_output(debug_logger) if debug_logger
@@ -231,30 +233,35 @@ module Timber
           http
         end
 
+        # Creates a loop that processes the `@request_queue` on an interval.
         def request_outlet
           loop do
             http = build_http
 
             begin
-              debug_logger.info("Starting HTTP connection") if debug_logger
+              debug { "Starting HTTP connection" }
 
               http.start do |conn|
                 deliver_requests(conn)
               end
             rescue => e
-              debug_logger.error("#request_outlet error: #{e.message}") if debug_logger
+              debug { "#request_outlet error: #{e.message}" }
             ensure
-              debug_logger.info("Finishing HTTP connection") if debug_logger
+              debug { "Finishing HTTP connection" }
               http.finish if http.started?
             end
           end
         end
 
+        # Creates a loop that delivers requests over an open (kept alive) HTTP connection.
+        # If the connection dies, the request is thrown back onto the queue and
+        # the method returns. It is the responsibility of the caller to implement retries
+        # and establish a new connection.
         def deliver_requests(conn)
           num_reqs = 0
 
           while num_reqs < @requests_per_conn
-            debug_logger.info("Waiting on next request, threads waiting: #{@request_queue.num_waiting}") if debug_logger
+            debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
 
             # Blocks waiting for a request.
             req = @request_queue.deq
@@ -263,7 +270,7 @@ module Timber
             begin
               resp = conn.request(req)
             rescue => e
-              debug_logger.error("#deliver_request error: #{e.message}") if debug_logger
+              debug { "#deliver_request error: #{e.message}" }
 
               @successive_error_count += 1
 
@@ -271,7 +278,7 @@ module Timber
               calculated_backoff = @successive_error_count * 2
               backoff = calculated_backoff > 30 ? 30 : calculated_backoff
 
-              debug_logger.error("Backing off #{backoff} seconds, error ##{@successive_error_count}") if debug_logger
+              debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
 
               sleep backoff
 
@@ -284,10 +291,11 @@ module Timber
 
             @successive_error_count = 0
             num_reqs += 1
-            debug_logger.info("Request successful: #{resp.code}") if debug_logger
+            debug { "Request successful: #{resp.code}" }
           end
         end
 
+        # Builds the `Authorization` header value for HTTP delivery to the Timber API.
         def authorization_payload
           @authorization_payload ||= "Basic #{Base64.urlsafe_encode64(@api_key).chomp}"
         end

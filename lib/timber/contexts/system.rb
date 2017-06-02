@@ -1,6 +1,9 @@
+require "timber/context"
+require "timber/util"
+
 module Timber
   module Contexts
-    # Tracks OS level process information, such as the process ID.
+    # The system context tracks OS level process information, such as the process ID.
     class System < Context
       @keyspace = :system
 
@@ -12,6 +15,7 @@ module Timber
         @pid = @pid.to_s
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {hostname: hostname, pid: Timber::Util::Object.try(pid, :to_s)}
       end

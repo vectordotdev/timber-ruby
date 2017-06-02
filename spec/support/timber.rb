@@ -1,4 +1,7 @@
 require "timber"
+require "timber/cli"
+require "timber/cli/io"
+require "timber/config"
 
 config = Timber::Config.instance
-config.append_metadata = true
+config.environment = "production"

@@ -1,6 +1,11 @@
 require "logger"
 require "msgpack"
 
+require "timber/current_context"
+require "timber/event"
+require "timber/log_devices/http"
+require "timber/log_entry"
+
 module Timber
   # The Timber Logger behaves exactly like `::Logger`, except that it supports a transparent API
   # for logging structured messages. It ensures your log messages are communicated properly
@@ -72,47 +77,49 @@ module Timber
         "FATAL" => :fatal,
         "UNKNOWN" => :unknown
       }
+      EMPTY_ARRAY = []
 
       private
-        def build_log_entry(severity, time, progname, msg)
-          level = SEVERITY_MAP.fetch(severity)
+        def build_log_entry(severity, time, progname, logged_obj)
           context_snapshot = CurrentContext.instance.snapshot
-
+          level = SEVERITY_MAP.fetch(severity)
           tags = extract_active_support_tagged_logging_tags
-          time_ms = nil
-          if msg.is_a?(Hash)
-            if msg.key?(:tag) || msg.key?(:tags)
-              tags = tags.clone
-              tags << msg.delete(:tag) if msg.key?(:tag)
-              tags += msg.delete(:tags) if msg.key?(:tags)
-              tags.uniq!
-            end
-            time_ms = msg.delete(:time_ms) if msg.key?(:time_ms)
 
-            msg = msg[:message] if msg.length == 1
-          end
+          if logged_obj.is_a?(Event)
+            LogEntry.new(level, time, progname, logged_obj.message, context_snapshot, logged_obj,
+              tags: tags)
+          elsif logged_obj.is_a?(Hash)
+            # Extract the tags
+            tags = tags.clone
+            tags << logged_obj.delete(:tag) if logged_obj.key?(:tag)
+            tags += logged_obj.delete(:tags) if logged_obj.key?(:tags)
+            tags.uniq!
 
-          event = Events.build(msg)
+            # Extract the time_ms
+            time_ms = logged_obj.delete(:time_ms)
 
-          if event
-            LogEntry.new(level, time, progname, event.message, context_snapshot, event, tags: tags, time_ms: time_ms)
+            # Build the event
+            event = Events.build(logged_obj)
+            message = event ? event.message : logged_obj[:message]
+
+            LogEntry.new(level, time, progname, message, context_snapshot, event, tags: tags,
+              time_ms: time_ms)
           else
-            LogEntry.new(level, time, progname, msg, context_snapshot, nil, tags: tags, time_ms: time_ms)
+            LogEntry.new(level, time, progname, logged_obj, context_snapshot, nil, tags: tags)
           end
         end
 
-        # Because of all the crazy ways Rails has attempted this we need this crazy method.
+        # Because of all the crazy ways Rails has attempted tags, we need this crazy method.
         def extract_active_support_tagged_logging_tags
           Thread.current[:activesupport_tagged_logging_tags] ||
             Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
-            []
+            EMPTY_ARRAY
         end
     end
 
     # For use in development and test environments where you do not want metadata
     # included in the log lines.
-    class SimpleFormatter < Formatter
-
+    class MessageOnlyFormatter < Formatter
       # This method is invoked when a log event occurs
       def call(severity, timestamp, progname, msg)
         log_entry = build_log_entry(severity, timestamp, progname, msg)
@@ -127,19 +134,17 @@ module Timber
     #
     #   My log message @metadata {"level":"info","dt":"2016-09-01T07:00:00.000000-05:00"}
     #
-    class StringFormatter < Formatter
-      METADATA_CALLOUT = "@metadata".freeze
+    class AugmentedFormatter < Formatter
+      METADATA_CALLOUT = " @metadata ".freeze
+      NEW_LINE = "\n".freeze
+      ESCAPED_NEW_LINE = "\\n".freeze
 
       def call(severity, time, progname, msg)
         log_entry = build_log_entry(severity, time, progname, msg)
-
-        if Config.instance.append_metadata?
-          metadata = log_entry.to_json(:except => [:message])
-          # use << for concatenation for performance reasons
-          log_entry.message.gsub("\n", "\\n") << " " << METADATA_CALLOUT << " " << metadata << "\n"
-        else
-          log_entry.message + "\n"
-        end
+        metadata = log_entry.to_json(:except => [:message])
+        # use << for concatenation for performance reasons
+        log_entry.message.gsub(NEW_LINE, ESCAPED_NEW_LINE) << METADATA_CALLOUT <<
+          metadata << NEW_LINE
       end
     end
 
@@ -176,7 +181,7 @@ module Timber
     include ::LoggerSilence if defined?(::LoggerSilence)
 
     # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
-    # The only difference is that it default the formatter to {HybridFormatter}. Using
+    # The only difference is that it default the formatter to {AugmentedFormatter}. Using
     # a different formatter is easy. For example, if you prefer your logs in JSON.
     #
     # @example Changing your formatter
@@ -190,10 +195,14 @@ module Timber
         args.first.sync = true
       end
 
+      # Set the default formatter. The formatter cannot be set during
+      # initialization, and can be changed with #formatter=.
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
+      elsif Config.instance.development? || Config.instance.test?
+        self.formatter = MessageOnlyFormatter.new
       else
-        self.formatter = StringFormatter.new
+        self.formatter = AugmentedFormatter.new
       end
 
       self.level = environment_level
@@ -203,6 +212,9 @@ module Timber
       @initialized = true
     end
 
+    # Sets a new formatted on the logger.
+    #
+    # @note The formatter cannot be changed if you are using the HTTP logger backend.
     def formatter=(value)
       if @initialized && @logdev && @logdev.dev.is_a?(Timber::LogDevices::HTTP) && !value.is_a?(PassThroughFormatter)
         raise ArgumentError.new("The formatter cannot be changed when using the " +
@@ -219,6 +231,13 @@ module Timber
       Timber::CurrentContext.with(context, &block)
     end
 
+    # Patch to ensure that the {#level} method is used instead of `@level`.
+    # This is required because of Rails' monkey patching on Logger via `::LoggerSilence`.
+    def add(severity, message = nil, progname = nil, &block)
+      return true if @logdev.nil? || (severity || UNKNOWN) < level
+      super
+    end
+
     # Backwards compatibility with older ActiveSupport::Logger versions
     Logger::Severity.constants.each do |severity|
       class_eval(<<-EOT, __FILE__, __LINE__ + 1)
@@ -226,7 +245,7 @@ module Timber
           progname = args.first
           options = args.last
 
-          if args.length == 2 and options.is_a?(Hash) && options != {}
+          if args.length == 2 and options.is_a?(Hash) && options.length > 0
             progname = options.merge(message: progname)
           end
 

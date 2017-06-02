@@ -10,6 +10,8 @@ module Timber
         # @private
         class TimberLogSubscriber < ::ActionController::LogSubscriber
           def start_processing(event)
+            return true if silence?
+
             info do
               payload = event.payload
               params  = payload[:params].except(*INTERNAL_PARAMS)
@@ -32,6 +34,10 @@ module Timber
               elsif payload.key?(:formats)
                 payload[:formats].first # rails 3.X
               end
+            end
+
+            def silence?
+              ActionController.silence?
             end
         end
       end

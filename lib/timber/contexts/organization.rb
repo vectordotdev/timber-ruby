@@ -1,3 +1,6 @@
+require "timber/context"
+require "timber/util"
+
 module Timber
   module Contexts
     # The organization context tracks the organization of the currently
@@ -25,6 +28,7 @@ module Timber
         @name = attributes[:name]
       end
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {id: Timber::Util::Object.try(id, :to_s), name: name}
       end

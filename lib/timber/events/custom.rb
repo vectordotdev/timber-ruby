@@ -1,3 +1,6 @@
+require "timber/event"
+require "timber/util"
+
 module Timber
   module Events
     # Allows for custom events that aren't covered elsewhere.
@@ -22,7 +25,15 @@ module Timber
       def initialize(attributes)
         @type = attributes[:type] || raise(ArgumentError.new(":type is required"))
         @message = attributes[:message] || raise(ArgumentError.new(":message is required"))
-        @data = attributes[:data]
+
+        data = attributes[:data]
+
+        if data.is_a?(Hash) && data[:time_ms].is_a?(Time)
+          data[:time_ms] = Timer.duration_ms(data[:time_ms])
+          @message << " in #{data[:time_ms]}ms"
+        end
+
+        @data = data
       end
 
       def to_hash
@@ -30,12 +41,9 @@ module Timber
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:custom => to_hash}
-      end
-
-      def to_json(options = {})
-        as_json().to_json(options)
       end
     end
   end

@@ -4,6 +4,8 @@
 require "active_record"
 require "active_record/log_subscriber"
 
+require "timber/integrator"
+
 module Timber
   module Integrations
     module ActiveRecord
@@ -16,6 +18,8 @@ module Timber
         # @private
         class TimberLogSubscriber < ::ActiveRecord::LogSubscriber
           def sql(event)
+            return true if silence?
+
             r = super(event)
 
             if @message
@@ -37,6 +41,10 @@ module Timber
           private
             def debug(message)
               @message = message
+            end
+
+            def silence?
+              ActiveRecord.silence?
             end
         end
       end

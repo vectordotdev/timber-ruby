@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The SQL query event tracks sql queries to your database.
@@ -19,6 +21,7 @@ module Timber
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:sql_query => to_hash}
       end

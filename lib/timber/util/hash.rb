@@ -16,7 +16,7 @@ module Timber
             v
           end
 
-          if v != nil && v != "" && v != {} && v != []
+          if v != nil && (!v.respond_to?(:length) || v.length > 0)
             new_hash[k] = v
           end
         end

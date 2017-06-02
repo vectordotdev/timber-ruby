@@ -1,3 +1,6 @@
+require "timber/event"
+require "timber/util"
+
 module Timber
   module Events
     # The HTTP server response event tracks outgoing HTTP responses that you send
@@ -6,10 +9,12 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class HTTPServerResponse < Timber::Event
-      attr_reader :headers, :request_id, :status, :time_ms
+      attr_reader :body, :headers, :http_context, :request_id, :status, :time_ms
 
       def initialize(attributes)
+        @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
+        @http_context = attributes[:http_context]
         @request_id = attributes[:request_id]
         @status = attributes[:status] || raise(ArgumentError.new(":status is required"))
         @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
@@ -17,16 +22,23 @@ module Timber
       end
 
       def to_hash
-        {headers: headers, request_id: request_id, status: status, time_ms: time_ms}
+        {body: body, headers: headers, request_id: request_id, status: status, time_ms: time_ms}
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:http_server_response => to_hash}
       end
 
+      # Returns the human readable log message for this event.
       def message
-        "Completed #{status} #{status_description} in #{time_ms}ms"
+        if http_context
+          "#{http_context[:method]} #{http_context[:path]} sent #{status} #{status_description} " \
+            "in #{time_ms}ms"
+        else
+          "Completed #{status} #{status_description} in #{time_ms}ms"
+        end
       end
 
       def status_description

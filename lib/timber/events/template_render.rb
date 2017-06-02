@@ -1,3 +1,5 @@
+require "timber/event"
+
 module Timber
   module Events
     # The template render event track template renderings and their performance.
@@ -19,6 +21,7 @@ module Timber
       end
       alias to_h to_hash
 
+      # Builds a hash representation of containing simply objects, suitable for serialization.
       def as_json(_options = {})
         {:template_render => to_hash}
       end

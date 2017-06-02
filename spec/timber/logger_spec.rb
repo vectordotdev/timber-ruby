@@ -1,6 +1,27 @@
 require "spec_helper"
 
 describe Timber::Logger, :rails_23 => true do
+  describe "#initialize" do
+    it "shoud select the augmented formatter" do
+      logger = described_class.new(nil)
+      expect(logger.formatter).to be_kind_of(Timber::Logger::AugmentedFormatter)
+    end
+
+    context "development environment" do
+      around(:each) do |example|
+        old_env = Timber::Config.instance.environment
+        Timber::Config.instance.environment = "development"
+        example.run
+        Timber::Config.instance.environment = old_env
+      end
+
+      it "shoud select the augmented formatter" do
+        logger = described_class.new(nil)
+        expect(logger.formatter).to be_kind_of(Timber::Logger::MessageOnlyFormatter)
+      end
+    end
+  end
+
   describe "#add" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
     let(:io) { StringIO.new }
@@ -10,8 +31,8 @@ describe Timber::Logger, :rails_23 => true do
       Timecop.freeze(time) { example.run }
     end
 
-    context "with the StringFormatter" do
-      before(:each) { logger.formatter = Timber::Logger::StringFormatter.new }
+    context "with the AugmentedFormatter" do
+      before(:each) { logger.formatter = Timber::Logger::AugmentedFormatter.new }
 
       it "should accept strings" do
         logger.info("this is a test")
@@ -91,7 +112,7 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    context "with the :json format" do
+    context "with the JSONFormatter" do
       before(:each) { logger.formatter = Timber::Logger::JSONFormatter.new }
 
       it "should log in the correct format" do
@@ -124,24 +145,37 @@ describe Timber::Logger, :rails_23 => true do
     end
   end
 
+  describe "#silence" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should silence the logs" do
+      logger.silence do
+        logger.info("test")
+      end
+
+      expect(io.string).to eq("")
+    end
+  end
+
   describe "#with_context" do
     let(:io) { StringIO.new }
     let(:logger) { Timber::Logger.new(io) }
 
     it "should add context" do
-      expect(Timber::CurrentContext.hash).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
 
       logger.with_context(build: {version: "1.0.0"}) do
-        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
 
         logger.with_context({testing: {key: "value"}}) do
-          expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
+          expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
         end
 
-        expect(Timber::CurrentContext.hash).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
       end
 
-      expect(Timber::CurrentContext.hash).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
     end
   end
 

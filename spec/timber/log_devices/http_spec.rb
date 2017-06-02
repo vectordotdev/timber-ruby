@@ -42,7 +42,7 @@ describe Timber::LogDevices::HTTP do
 
       it "should attempt a delivery when the limit is exceeded" do
         http.write("test")
-        expect(http).to receive(:flush).exactly(1).times
+        expect(http).to receive(:flush_async).exactly(1).times
         http.write("my log message")
         expect(http).to receive(:flush).exactly(1).times
         http.close
@@ -76,13 +76,29 @@ describe Timber::LogDevices::HTTP do
   describe "#flush" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
+    it "should deliver the request" do
+      http = described_class.new("MYKEY", flush_continuously: false)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry)
+      log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry)
+      expect(http).to receive(:flush_async).exactly(2).times
+      http.send(:flush)
+      http.close
+    end
+  end
+
+  # Testing a private method because it helps break down our tests
+  describe "#flush_async" do
+    let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
+
     it "should add a request to the queue" do
       http = described_class.new("MYKEY", flush_continuously: false)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
       http.write(log_entry)
       log_entry = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry)
-      http.send(:flush)
+      http.send(:flush_async)
       request_queue = http.instance_variable_get(:@request_queue)
       request = request_queue.deq
       expect(request).to be_kind_of(Net::HTTP::Post)
@@ -98,8 +114,8 @@ describe Timber::LogDevices::HTTP do
     it "should start a intervaled flush thread and flush on an interval" do
       http = described_class.new("MYKEY", flush_interval: 0.1)
       http.send(:ensure_flush_threads_are_started)
-      expect(http).to receive(:flush).exactly(2).times
-      sleep 0.15 # too fast!
+      expect(http).to receive(:flush_async).at_least(3).times
+      sleep 1.1 # iterations check every 0.5 seconds
       http.close
     end
   end
