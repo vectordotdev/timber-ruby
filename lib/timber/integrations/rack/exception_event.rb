@@ -1,4 +1,7 @@
 begin
+  # Rails 3.2 requires you to require all of Rails before requiring
+  # the exception wrapper.
+  require "rails"
   require "action_dispatch/middleware/exception_wrapper"
 rescue Exception
 end

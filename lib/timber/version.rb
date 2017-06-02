@@ -1,3 +1,3 @@
 module Timber
-  VERSION = "2.1.0.rc1"
+  VERSION = "2.1.0.rc2"
 end

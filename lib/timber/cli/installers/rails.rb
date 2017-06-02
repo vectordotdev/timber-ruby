@@ -135,11 +135,11 @@ module Timber
             case development_preference
             when :send
               extra_comment = <<-NOTE
-# Note: When you are done testing, simply instantiate the logger like this:
-#
-#   logger = Timber::Logger.new(STDOUT)
-#
-# Be sure to remove the "log_device =" and "logger =" lines below.
+  # Note: When you are done testing, simply instantiate the logger like this:
+  #
+  #   logger = Timber::Logger.new(STDOUT)
+  #
+  # Be sure to remove the "log_device =" and "logger =" lines below.
 NOTE
               extra_comment = extra_comment.rstrip
               install_http(environment_file_path, :inline, extra_comment: extra_comment)
