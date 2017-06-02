@@ -102,7 +102,7 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
         and_return("\nend")
 
       logger_code = defined?(ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
-      new_contents = "\n\n  # Install the Timber.io logger, send logs over HTTP.\n    # Note: When you are done testing, simply instantiate the logger like this:\n  #\n  #   logger = Timber::Logger.new(STDOUT)\n  #\n  # Be sure to remove the \"log_device =\" and \"logger =\" lines below.\n  log_device = Timber::LogDevices::HTTP.new('abcd1234')\n  logger = Timber::Logger.new(log_device)\n  logger.level = config.log_level\n  config.logger = ActiveSupport::TaggedLogging.new(logger)\n\nend"
+      new_contents = "\n\n  # Install the Timber.io logger, send logs over HTTP.\n    # Note: When you are done testing, simply instantiate the logger like this:\n  #\n  #   logger = Timber::Logger.new(STDOUT)\n  #\n  # Be sure to remove the \"log_device =\" and \"logger =\" lines below.\n  log_device = Timber::LogDevices::HTTP.new('abcd1234')\n  logger = Timber::Logger.new(log_device)\n  logger.level = config.log_level\n  config.logger = #{logger_code}\n\nend"
 
       expect(Timber::CLI::FileHelper).to receive(:write).
         with(env_file_path, new_contents).
