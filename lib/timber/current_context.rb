@@ -1,5 +1,4 @@
-require "singleton"
-
+require "timber/config"
 require "timber/contexts/release"
 
 module Timber
@@ -10,11 +9,15 @@ module Timber
   # @note Because context is appended to every log line, it is recommended that you limit this
   #   to only neccessary data needed to relate your log lines.
   class CurrentContext
-    include Singleton
-
     THREAD_NAMESPACE = :_timber_current_context.freeze
 
     class << self
+      # Impelements the Singleton pattern in a thread specific way. Each thread receives
+      # its own context.
+      def instance
+        Thread.current[THREAD_NAMESPACE] ||= new
+      end
+
       # Convenience method for {CurrentContext#with}. See {CurrentContext#with} for more info.
       def with(*args, &block)
         instance.with(*args, &block)
@@ -38,17 +41,6 @@ module Timber
       # Convenience method for {CurrentContext#reset}. See {CurrentContext#reset} for more info.
       def reset(*args)
         instance.reset(*args)
-      end
-    end
-
-    # Instantiates a new object, automatically adding context based on env variables (if present).
-    # For example, the {Contexts::ReleaseContext} is automatically added if the proper environment
-    # variables are present. Please see that class for more details.
-    def initialize
-      super
-      release_context = Contexts::Release.from_env
-      if release_context
-        add(release_context)
       end
     end
 
@@ -89,16 +81,7 @@ module Timber
     #   to only neccessary data.
     def add(*objects)
       objects.each do |object|
-        context = Contexts.build(object) # Normalizes objects into a Timber::Context descendant.
-        key = context.keyspace
-        json = context.as_json # Convert to json now so that we aren't doing it for every line
-        if key == :custom
-          # Custom contexts are merged into the space
-          hash[key] ||= {}
-          hash[key].merge!(json)
-        else
-          hash[key] = json
-        end
+        add_to(hash, object)
       end
       expire_cache!
       self
@@ -151,7 +134,33 @@ module Timber
     private
       # The internal hash that is maintained. Use {#with} and {#add} for hash maintenance.
       def hash
-        Thread.current[THREAD_NAMESPACE] ||= {}
+        @hash ||= build_initial_hash
+      end
+
+      # Builds the initial hash. This is extract into a method to support a threaded
+      # environment. Each thread holds it's own context and also needs to instantiate
+      # it's hash properly.
+      def build_initial_hash
+        new_hash = {}
+        release_context = Contexts::Release.from_env
+        if release_context
+          add_to(new_hash, release_context)
+        end
+        new_hash
+      end
+
+      def add_to(hash, object)
+        context = Contexts.build(object) # Normalizes objects into a Timber::Context descendant.
+        key = context.keyspace
+        json = context.as_json # Convert to json now so that we aren't doing it for every line
+        if key == :custom
+          # Custom contexts are merged into the space
+          hash[key] ||= {}
+          hash[key].merge!(json)
+        else
+          hash[key] = json
+        end
+        hash
       end
 
       # Hook to clear any caching implement in this class
