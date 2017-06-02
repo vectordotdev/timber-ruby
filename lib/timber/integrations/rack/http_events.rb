@@ -105,7 +105,11 @@ module Timber
           request = Util::Request.new(env)
 
           if silenced?(env, request)
-            Config.instance.logger.silence do
+            if Config.instance.logger.respond_to?(:silence)
+              Config.instance.logger.silence do
+                @app.call(env)
+              end
+            else
               @app.call(env)
             end
 
