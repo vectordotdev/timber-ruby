@@ -329,7 +329,8 @@ logger.formatter = Timber::Logger::JSONFormatter.new
 Your options are:
 
 1. [`Timber::Logger::AugmentedFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/AugmentedFormatter) -
-   (default) A human readable format that _appends_ metadata to the original log line.
+   (default) A human readable format that _appends_ metadata to the original log line. The Timber
+   service can parse this data appropriately.
    Ex: `My log message @metadata {"level":"info","dt":"2017-01-01T01:02:23.234321Z"}`
 
 2. [`Timber::Logger::JSONFormatter`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger/JSONFormatter) -
@@ -397,7 +398,7 @@ All variables are optional, but at least one must be present.
 
 ## Jibber-Jabber
 
-<details><summary><strong>Which events and context does Timber capture for me?</strong></summary><p>
+<details><summary><strong>Which events and contexts does Timber capture for me?</strong></summary><p>
 
 Out of the box you get everything in the
 [`Timber::Events`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Events) namespace.
@@ -408,10 +409,26 @@ namespace. Context is structured data representing the current environment when 
 was written. It is included in every log line. Think of it like join data for your logs. It's
 how Timber is able to accomplished tailing users (`context.user.id:1`).
 
-Lastly, you can checkout the specific integrations in
+Lastly, you can checkout how we capture these events in
 [`Timber::Integrations`](lib/timber/integrations).
 
 ---
+
+</p></details>
+
+<details><summary><strong>Won't this increase the size of my log data?</strong></summary><p>
+
+Yes. In terms of size, it's no different than adding tags to your logs or any other useful
+data. A few things to point out though:
+
+1. Timber generally _reduces_ the amount of logs your app generates by providing options to
+   consolidate request / response logs, template logs, and even silence logs that are not
+   of value to you. (see [configuration](#configuration) for examples).
+2. Your log provider should be compressing your data and charging you accordingly. Log data
+   is notoriously repetitive, and the context Timber generates is repetitive as well.
+   Because of compression we've seen somes apps only incur a 10% increase in data size.
+
+Finally, log what is useful to you. Quality over quantity certainly applies to logging.
 
 </p></details>
 
