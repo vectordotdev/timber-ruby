@@ -9,7 +9,7 @@ module Timber
         def call(env)
           id = get_session_id(env)
           if id
-            context = Contexts::Session.new(id: get_session_id(env))
+            context = Contexts::Session.new(id: id)
             CurrentContext.with(context) do
               @app.call(env)
             end
@@ -20,10 +20,16 @@ module Timber
 
         private
           def get_session_id(env)
-            if env['rack.session']
+            session = env['rack.session']
+
+            if session
               begin
-                env['rack.session'].id
-              rescue Exception
+                if session.respond_to?(:id)
+                  session.id
+                elsif session.respond_to?(:[])
+                  session["session_id"]
+                end
+              rescue Exception => e
                 nil
               end
             else
