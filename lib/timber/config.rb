@@ -25,8 +25,10 @@ module Timber
       end
     end
 
+    DEVELOPMENT_NAME = "development".freeze
     PRODUCTION_NAME = "production".freeze
     STAGING_NAME = "staging".freeze
+    TEST_NAME = "test".freeze
 
     include Singleton
 
@@ -201,6 +203,16 @@ module Timber
       else
         @logger ||= Logger.new(STDOUT)
       end
+    end
+
+    # @private
+    def development?
+      environment == DEVELOPMENT_NAME
+    end
+
+    # @private
+    def test?
+      environment == TEST_NAME
     end
 
     # @private

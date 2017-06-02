@@ -1,6 +1,27 @@
 require "spec_helper"
 
 describe Timber::Logger, :rails_23 => true do
+  describe "#initialize" do
+    it "shoud select the augmented formatter" do
+      logger = described_class.new(nil)
+      expect(logger.formatter).to be_kind_of(Timber::Logger::AugmentedFormatter)
+    end
+
+    context "development environment" do
+      around(:each) do |example|
+        old_env = Timber::Config.instance.environment
+        Timber::Config.instance.environment = "development"
+        example.run
+        Timber::Config.instance.environment = old_env
+      end
+
+      it "shoud select the augmented formatter" do
+        logger = described_class.new(nil)
+        expect(logger.formatter).to be_kind_of(Timber::Logger::MessageOnlyFormatter)
+      end
+    end
+  end
+
   describe "#add" do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
     let(:io) { StringIO.new }

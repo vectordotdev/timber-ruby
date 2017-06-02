@@ -195,8 +195,12 @@ module Timber
         args.first.sync = true
       end
 
+      # Set the default formatter. The formatter cannot be set during
+      # initialization, and can be changed with #formatter=.
       if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
+      elsif Config.instance.development? || Config.instance.test?
+        self.formatter = MessageOnlyFormatter.new
       else
         self.formatter = AugmentedFormatter.new
       end
