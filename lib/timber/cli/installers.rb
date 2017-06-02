@@ -14,13 +14,41 @@ module Timber
         io.puts ""
 
         if !api_key
-          io.puts IO::Messages.no_api_key_provided
+          app_url = IO::Messages::APP_URL
 
-          case io.ask_yes_no("Open the Timber app in your brower now?")
-          when :yes
-            OSHelper.open(IO::Messages::APP_URL)
+          io.puts "Hey there! Welcome to Timber. In order to proceed, you'll need an API key."
+          io.puts "You can grab one by registering at #{IO::ANSI.colorize(app_url, :blue)}."
+          io.puts ""
+          io.puts "It takes less than a minute, with one click Google and Github registration."
+          io.puts ""
+
+          if OSHelper.can_open?
+            case io.ask_yes_no("Open #{app_url}?")
+            when :yes
+              puts ""
+              io.task("Opening #{app_url}") do
+                OSHelper.open(app_url)
+              end
+            when :no
+              io.puts ""
+              io.puts "No problem, navigate to the following URL:"
+              io.puts ""
+              io.puts "    #{IO::ANSI.colorize(app_url, :blue)}"
+            end
+          else
+            io.puts ""
+            io.puts "Please navigate to:"
+            io.puts ""
+            io.puts "    #{IO::ANSI.colorize(app_url, :blue)}"
           end
 
+          io.puts ""
+          io.puts "Once you obtain your API key, you can run the installer like"
+          io.puts ""
+          io.puts "    #{IO::ANSI.colorize("bundle exec timber my-api-key", :blue)}"
+          io.puts ""
+          io.puts "See you soon! 🎈"
+          io.puts ""
         else
           api = API.new(api_key)
           api.event(:started)

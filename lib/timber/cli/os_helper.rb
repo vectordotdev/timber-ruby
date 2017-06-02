@@ -1,7 +1,7 @@
 module Timber
   class CLI
     module OSHelper
-      def self.copy_to_clipboard?
+      def self.can_copy_to_clipboard?
         `which pbcopy` != ""
       rescue Exception
         false
@@ -34,20 +34,33 @@ module Timber
         end
       end
 
+      def self.can_open?
+        begin
+          `which #{open_command}` != ""
+        rescue Exception
+          false
+        end
+      end
+
       # Attemps to open a URL in the user's default browser across
       # the popular operating systems.
       def self.open(link)
-        if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
-          system "start #{link}"
-        elsif RbConfig::CONFIG['host_os'] =~ /darwin/
-          system "open #{link}"
-        elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
-          system "xdg-open #{link}"
-        end
+        `#{open_command} #{link}`
         true
       rescue Exception
         false
       end
+
+      private
+        def self.open_command
+          if RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+            "start"
+          elsif RbConfig::CONFIG['host_os'] =~ /darwin/
+            "open"
+          elsif RbConfig::CONFIG['host_os'] =~ /linux|bsd/
+            "xdg-open"
+          end
+        end
     end
   end
 end

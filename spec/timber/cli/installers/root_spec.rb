@@ -55,7 +55,7 @@ describe Timber::CLI::Installers::Root, :rails_23 => true do
 
         expect(installer.send(:install_platform, app)).to eq(true)
 
-        copy_to_clipboard_message = Timber::CLI::OSHelper.copy_to_clipboard? ? "\n    \e[32m(✓ copied to clipboard)\e[0m" : ""
+        copy_to_clipboard_message = Timber::CLI::OSHelper.can_copy_to_clipboard? ? "\n    \e[32m(✓ copied to clipboard)\e[0m" : ""
         expected_output = "\n--------------------------------------------------------------------------------\n\nFirst, let's setup your Heroku drain. Run this command in a separate window:\n\n    \e[34mheroku drains:add http://drain.heroku.com\e[0m#{copy_to_clipboard_message}\n\nReady to proceed? (y/n) "
         expect(output.string).to eq(expected_output)
       end

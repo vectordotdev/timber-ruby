@@ -6,40 +6,47 @@ module Timber
     module Installers
       class Other < Installer
         def run(app)
-          puts ""
-          puts IO::Messages.separator
-          puts ""
-
           if app.heroku?
             install_stdout
           else
             api_key_storage_preference = get_api_key_storage_preference
-            api_key_code = get_api_key_code(api_key_storage_type)
-
+            api_key_code = get_api_key_code(api_key_storage_preference)
             install_http(api_key_code)
           end
+
+          io.puts ""
+          io.puts IO::Messages.separator
+          io.puts ""
+          io.puts "We're going to send a few test messages to ensure communication is working."
+          io.puts ""
+          io.ask_to_proceed
+          io.puts ""
         end
 
         private
           def install_stdout
-            puts ""
-            puts IO::Messages.separator
-            puts ""
-            puts "To integrate Timber, we need to instantiate the logger. Your global"
-            puts "logger should be set to something like this:"
-            puts ""
-            puts colorize("    LOGGER = Timber::Logger.new(STDOUT)", :blue)
+            io.puts ""
+            io.puts IO::Messages.separator
+            io.puts ""
+            io.puts "To integrate Timber, simply use the Timber::Logger. Just set your"
+            io.puts "global logger to something like this:"
+            io.puts ""
+            io.puts IO::ANSI.colorize("    LOGGER = Timber::Logger.new(STDOUT)", :blue)
+            io.puts ""
+            io.ask_to_proceed
           end
 
           def install_http(api_key_code)
-            puts ""
-            puts IO::Messages.separator
-            puts ""
-            puts "To integrate Timber, we need to instantiate the logger. Your global"
-            puts "logger should be set to something like this:"
-            puts ""
-            puts colorize("    log_device = Timber::LogDevices::HTTP.new(#{api_key_code})", :blue)
-            puts colorize("    LOGGER = Timber::Logger.new(log_device)", :blue)
+            io.puts ""
+            io.puts IO::Messages.separator
+            io.puts ""
+            io.puts "To integrate Timber, simply use the Timber::Logger. Just set your"
+            io.puts "global logger to something like this:"
+            io.puts ""
+            io.puts IO::ANSI.colorize("    log_device = Timber::LogDevices::HTTP.new(#{api_key_code})", :blue)
+            io.puts IO::ANSI.colorize("    LOGGER = Timber::Logger.new(log_device)", :blue)
+            io.puts ""
+            io.ask_to_proceed
           end
       end
     end
