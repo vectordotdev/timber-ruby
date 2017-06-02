@@ -1,5 +1,10 @@
 require "set"
 
+require "timber/config"
+require "timber/contexts/http"
+require "timber/current_context"
+require "timber/events/http_server_request"
+require "timber/events/http_server_response"
 require "timber/integrations/rack/middleware"
 
 module Timber

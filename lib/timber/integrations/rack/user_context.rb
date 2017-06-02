@@ -1,3 +1,4 @@
+require "timber/contexts/user"
 require "timber/integrations/rack/middleware"
 
 module Timber

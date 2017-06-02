@@ -1,4 +1,7 @@
+require "timber/contexts/http"
+require "timber/current_context"
 require "timber/integrations/rack/middleware"
+require "timber/util"
 
 module Timber
   module Integrations

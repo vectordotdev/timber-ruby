@@ -213,7 +213,7 @@ module Timber
         # Builds an `Net::HTTP` object to deliver requests over.
         def build_http
           http = Net::HTTP.new(@timber_url.host, @timber_url.port)
-          http.set_debug_output(debug_logger) if debug_logger
+          http.set_debug_output(Config.instance.debug_logger) if Config.instance.debug_logger
           http.use_ssl = true if @timber_url.scheme == 'https'
           http.read_timeout = 30
           http.ssl_timeout = 10
