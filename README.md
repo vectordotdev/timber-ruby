@@ -27,7 +27,7 @@ focusing on logging.
    Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-integrations)
 
 4. **Pairs with a modern structured-logging console.** - Designed specifically for structured data,
-   hosted, instantly usable, tail users, trace requests, get shit done.
+   hosted, instantly usable, tail users, trace requests.
    [Checkout the docs](https://timber.io/docs/app/tutorials/).
 
 
@@ -49,7 +49,7 @@ focusing on logging.
 Let's start with an example. Timber turns this:
 
 ```
-Sent 200 in 45.2ms
+I, [2017-06-04T18:04:53.653812 #42348]  INFO -- : Sent 200 in 45.2ms
 ```
 
 Into a rich [`http_server_response` event](https://timber.io/docs/ruby/events-and-context/http-server-response-event/).
