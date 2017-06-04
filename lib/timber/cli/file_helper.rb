@@ -1,32 +1,44 @@
 module Timber
   class CLI
-    module FileHelper
-      def self.append(path, contents)
+    class FileHelper
+      attr_reader :api
+
+      def initialize(api)
+        @api = api
+      end
+
+      def append(path, contents)
         File.open(path, "a") do |f|
           f.write(contents)
         end
       end
 
-      def self.read_or_create(path, contents)
-        if !File.exists?(path)
+      def exists?(path)
+        File.exists?
+      end
+
+      def read_or_create(path, contents)
+        if !exists?(path)
           write(path, contents)
         end
 
+        read(path)
+      end
+
+      def read(path)
         File.read(path)
       end
 
-      def self.read(path)
-        File.read(path)
-      end
-
-      def self.write(path, contents)
+      def write(path, contents)
         File.open(path, "w") do |f|
           f.write(contents)
         end
+
+        api.event(:file_written, path: path)
       end
 
-      def self.verify(path, io)
-        if !File.exists?(path)
+      def verify(path, io)
+        if !exists?(path)
           io.puts ""
           io.puts "Uh oh! It looks like we couldn't locate the #{path} file. "
           io.puts "Please enter the correct path:"

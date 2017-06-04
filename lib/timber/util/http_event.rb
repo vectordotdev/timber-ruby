@@ -33,27 +33,13 @@ module Timber
 
       # Normalizes headers to:
       #
-      # 1. Ensure the value is UTF8, this will otherwise throw errors upon capturing.
+      # 1. Only select values that are UTF8, otherwise they will throw errors when serializing.
       # 2. Sanitize sensitive headers such as `Authorization` or custom headers specified in
       def normalize_headers(headers)
         if headers.is_a?(::Hash)
           h = headers.each_with_object({}) do |(k, v), h|
-            # Force the header into a valid UTF-8 string, otherwise we will encounter
-            # encoding issues when we serialize this data. Moreoever, if the
-            # data is already valid UTF-8 we don't pay a penalty.
-            #
-            # Note: we compare the class name because...
-            #
-            #   string = 'my string'.force_encoding('ASCII-8BIT')
-            #   string.is_a?(String) => false
-            #   string.class => String
-            #   string.class == String => false
-            #   string.class.name == "String" => true
-            #
-            # ¯\_(ツ)_/¯
-            if v.class.name == STRING_CLASS_NAME
-              h[k] = Timber::Util::String.normalize_to_utf8(v)
-            else
+            v = v.to_s
+            if v.encoding == Encoding::UTF_8
               h[k] = v
             end
           end

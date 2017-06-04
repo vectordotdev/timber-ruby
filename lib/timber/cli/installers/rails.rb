@@ -1,4 +1,3 @@
-require "timber/cli/file_helper"
 require "timber/cli/installer"
 require "timber/cli/installers/config_file"
 require "timber/cli/io/messages"
@@ -128,17 +127,12 @@ CODE
 
           def get_environment_file_path(environment)
             path = File.join("config", "environments", "#{environment}.rb")
-            File.exists?(path) ? path : nil
+            file_helper.exists?(path) ? path : nil
           end
 
           def install_nil(environment_file_path)
-            logger_code = <<-CODE
-  # Install the Timber.io logger but silence all logs (log to nil). We install the
-  # logger to ensure the Rails.logger object exposes the proper API.
-  logger = Timber::Logger.new(nil)
-  logger.level = config.log_level
-  config.logger = #{config_set_logger_code}
-CODE
+            logger_code =
+
 
             install_logger(environment_file_path, logger_code)
           end
@@ -181,7 +175,7 @@ CODE
 
           # Convenience method for getting the current environment file contents.
           def get_environment_file_contents(environment_file_path)
-            FileHelper.read(environment_file_path)
+            file_helper.read(environment_file_path)
           end
 
           # Determines if the Timber logger is already installed in the environment
@@ -199,8 +193,7 @@ CODE
             io.task(task_message) do
               if !logger_installed?(current_contents)
                 new_contents = current_contents.sub(/\nend/, "\n\n#{logger_code}\nend")
-                FileHelper.write(environment_file_path, new_contents)
-                api.event(:file_written, path: environment_file_path)
+                file_helper.write(environment_file_path, new_contents)
               end
             end
 
