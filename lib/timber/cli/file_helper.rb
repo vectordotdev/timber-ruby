@@ -14,7 +14,7 @@ module Timber
       end
 
       def exists?(path)
-        File.exists?
+        File.exists?(path)
       end
 
       def read_or_create(path, contents)
