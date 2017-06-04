@@ -25,15 +25,16 @@ describe Timber::CLI::Installers::Root, :rails_23 => true do
     it "should run properly" do
       input.string = "y\n"
 
-      expect(installer).to receive(:install_platform).with(app).exactly(1).times.and_return(true)
-      expect(installer).to receive(:run_sub_installer).with(app).exactly(1).times.and_return(true)
-      expect(installer).to receive(:send_test_messages).exactly(1).times.and_return(true)
-      expect(installer).to receive(:confirm_log_delivery).exactly(1).times.and_return(true)
-      expect(installer).to receive(:assist_with_git).exactly(1).times.and_return(true)
+      expect(installer).to receive(:install_platform).with(app).exactly(1).times
+      expect(installer).to receive(:run_sub_installer).with(app).exactly(1).times
+      expect(installer).to receive(:send_test_messages).exactly(1).times
+      expect(installer).to receive(:confirm_log_delivery).exactly(1).times
+      expect(installer).to receive(:wrap_up).with(app).exactly(1).times
       expect(api).to receive(:event).with(:success).exactly(1).times
-      expect(installer).to receive(:collect_feedback).exactly(1).times.and_return(true)
+      expect(installer).to receive(:collect_feedback).exactly(1).times
+      expect(installer).to receive(:free_data).exactly(1).times
 
-      expect(installer.run(app)).to eq(true)
+      installer.run(app)
     end
   end
 

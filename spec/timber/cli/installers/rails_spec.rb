@@ -293,7 +293,7 @@ CODE
   describe ".get_environment_file_path" do
     it "should return the file if it exists" do
       env_file_path = "config/environments/development.rb"
-      expect(File).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(true)
+      expect(installer.file_helper).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(true)
 
       result = installer.send(:get_environment_file_path, "development")
       expect(result).to eq(env_file_path)
@@ -301,7 +301,7 @@ CODE
 
     it "should return nil if it does not exist" do
       env_file_path = "config/environments/production.rb"
-      expect(File).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(false)
+      expect(installer.file_helper).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(false)
 
       result = installer.send(:get_environment_file_path, "production")
       expect(result).to eq(nil)
@@ -313,8 +313,7 @@ CODE
       env_file_path = "config/environments/development.rb"
 
       expected_code = <<-CODE
-  # Install the Timber.io logger but silence all logs (log to nil). We install the
-  # logger to ensure the Rails.logger object exposes the proper API.
+  # Install the Timber.io logger, but do not send logs.
   logger = Timber::Logger.new(nil)
   logger.level = config.log_level
   config.logger = #{logger_code}
@@ -337,14 +336,14 @@ CODE
 
         current_contents = "\nend"
 
-        expect(Timber::CLI::FileHelper).to receive(:read).
+        expect(installer.file_helper).to receive(:read).
           with(env_file_path).
           exactly(1).times.
           and_return(current_contents)
 
         new_contents = "\n\nmy code\nend"
 
-        expect(Timber::CLI::FileHelper).to receive(:write).
+        expect(installer.file_helper).to receive(:write).
           with(env_file_path, new_contents).
           exactly(1).times.
           and_return("\nend")

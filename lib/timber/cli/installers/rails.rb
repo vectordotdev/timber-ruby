@@ -131,8 +131,12 @@ CODE
           end
 
           def install_nil(environment_file_path)
-            logger_code =
-
+            logger_code = <<-CODE
+  # Install the Timber.io logger, but do not send logs.
+  logger = Timber::Logger.new(nil)
+  logger.level = config.log_level
+  config.logger = #{config_set_logger_code}
+CODE
 
             install_logger(environment_file_path, logger_code)
           end
