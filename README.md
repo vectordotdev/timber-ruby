@@ -46,16 +46,16 @@ focusing on logging.
 
 ## How it works
 
-Let's start with an example. Timber turns this:
+Let's start with an example. Timber turns this production log line:
 
 ```
-I, [2017-06-04T18:04:53.653812 #42348]  INFO -- : Sent 200 in 45.2ms
+I, [2017-06-04T18:04:53.653812 #42348]  INFO -- : [my.host.com] [df88dbaa-50fd-4178-85d7-d66279ea33b6] [192.32.23.12] [bfa8242cd9733bf0211e334be203f0d0] Sent 200 in 45.2ms
 ```
 
 Into a rich [`http_server_response` event](https://timber.io/docs/ruby/events-and-context/http-server-response-event/).
 
 ```
-Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"http": {"method": "GET", "path": "/path", "remote_addr": "192.32.23.12", "request_id": "abcd1234"}, "system": {"hostname": "1.server.com", "pid": "254354"}, "user": {"id": 1, "name": "Ben Johnson", "email": "bens@email.com"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
+Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"http": {"method": "GET", "path": "/path", "remote_addr": "192.32.23.12", "request_id": "df88dbaa-50fd-4178-85d7-d66279ea33b6"}, "session": {"id": "bfa8242cd9733bf0211e334be203f0d0"}, "system": {"hostname": "my.host.com", "pid": "254354"}, "user": {"id": 1, "name": "Ben Johnson", "email": "bens@email.com"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
 ```
 
 Notice that instead of completely replacing your log messages,
@@ -84,11 +84,14 @@ Here's a better look at the metadata:
       "remote_addr": "192.32.23.12",
       "request_id": "abcd1234"
     },
+    "session": {
+      "id": "bfa8242cd9733bf0211e334be203f0d0"
+    },
     "system": {
       "hostname": "1.server.com",
       "pid": "254354"
     },
-    "user": {
+    "user": { // user identifiable logs :O
       "id": 1,
       "name": "Ben Johnson",
       "email": "bens@email.com"
