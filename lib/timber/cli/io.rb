@@ -76,13 +76,25 @@ module Timber
       end
 
       def task(message, &block)
-        write IO::Messages.task_start(message), :blue
+        task_start(message)
         result = yield
-        puts IO::Messages.task_complete(message), :green
+        task_complete(message)
         result
       rescue Exception => e
-        puts IO::Messages.task_failed(message), :red
+        task_failed(message)
         raise e
+      end
+
+      def task_start(message)
+        write IO::Messages.task_start(message), :blue
+      end
+
+      def task_complete(message)
+        puts IO::Messages.task_complete(message), :green
+      end
+
+      def task_failed(message)
+        puts IO::Messages.task_failed(message), :red
       end
 
       def write(message, color = nil)

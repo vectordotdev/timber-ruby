@@ -7,27 +7,24 @@ module Timber
 
       def initialize(path)
         @path = path
-        FileHelper.read_or_create(path, initial_content)
+      end
+
+      def create!
+        FileHelper.write(path, content)
+      end
+
+      def exists?
+        File.exists?(path)
       end
 
       def logrageify!
-        append("config.logrageify!")
+        append!("config.logrageify!")
       end
 
       private
-        def get_content
-          FileHelper.read(path)
-        end
-
-        def append(code)
-          current_content = get_content
-          if !current_content.include?(code)
-            if current_content.include?(insert_hook)
-              new_content = current_content.gsub(insert_hook, "#{code}\n\n#{insert_hook}")
-              FileHelper.write(path, new_content)
-            else
-              FileHelper.append(path, new_content)
-            end
+        def append!(code)
+          if !content.include?(code)
+            content.gsub!(insert_hook, "#{code}\n\n#{insert_hook}")
           end
 
           true
@@ -39,8 +36,8 @@ module Timber
 
         # We provide this as an instance method so that the string is only defined when needed.
         # This avoids allocating this string during normal app runtime.
-        def initial_content
-          <<-CONTENT
+        def content
+          @content ||= <<-CONTENT
 # Timber.io Ruby Configuration - Simple Structured Logging
 #
 #  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^

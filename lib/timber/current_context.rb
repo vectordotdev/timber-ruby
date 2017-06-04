@@ -1,5 +1,8 @@
+require "socket"
+
 require "timber/config"
 require "timber/contexts/release"
+require "timber/contexts/system"
 
 module Timber
   # Holds the current context in a thread safe memory storage. This context is
@@ -81,7 +84,7 @@ module Timber
     #   to only neccessary data.
     def add(*objects)
       objects.each do |object|
-        add_to(hash, object)
+        add_to!(hash, object)
       end
       expire_cache!
       self
@@ -142,14 +145,23 @@ module Timber
       # it's hash properly.
       def build_initial_hash
         new_hash = {}
+
+        # Release context
         release_context = Contexts::Release.from_env
         if release_context
-          add_to(new_hash, release_context)
+          add_to!(new_hash, release_context)
         end
+
+        # System context
+        hostname = Socket.gethostname
+        pid = Process.pid
+        system_context = Contexts::System.new(hostname: hostname, pid: pid)
+        add_to!(new_hash, system_context)
+
         new_hash
       end
 
-      def add_to(hash, object)
+      def add_to!(hash, object)
         context = Contexts.build(object) # Normalizes objects into a Timber::Context descendant.
         key = context.keyspace
         json = context.as_json # Convert to json now so that we aren't doing it for every line

@@ -102,7 +102,7 @@ describe Timber::LogDevices::HTTP do
       request_queue = http.instance_variable_get(:@request_queue)
       request = request_queue.deq
       expect(request).to be_kind_of(Net::HTTP::Post)
-      expect(request.body).to start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81".force_encoding("ASCII-8BIT"))
+      expect(request.body).to start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT"))
 
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
@@ -127,7 +127,7 @@ describe Timber::LogDevices::HTTP do
     it "should deliver requests on an interval" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
-          :body => start_with("\x92\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1\xA7context\x81\xA6system".force_encoding("ASCII-8BIT")),
+          :body => start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT")),
           :headers => {
             'Authorization' => 'Basic TVlLRVk=',
             'Content-Type' => 'application/msgpack',

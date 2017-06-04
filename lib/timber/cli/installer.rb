@@ -1,13 +1,15 @@
+require "timber/cli/file_helper"
 require "timber/cli/io/messages"
 
 module Timber
   class CLI
     class Installer
-      attr_reader :io, :api
+      attr_reader :io, :api, :file_helper
 
       def initialize(io, api)
         @io = io
         @api = api
+        @file_helper = FileHelper.new(api)
       end
 
       def run(app)

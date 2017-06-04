@@ -33,20 +33,10 @@ module Timber
             run_sub_installer(app)
             send_test_messages
             confirm_log_delivery
-
-            assist_with_git
-
+            wrap_up(app)
             api.event(:success)
-
             collect_feedback
-
-            io.puts ""
-            io.puts IO::Messages.separator
-            io.puts ""
-            io.puts IO::Messages.free_data
-            io.puts ""
-
-            true
+            free_data
 
           when :no
             io.puts ""
@@ -55,8 +45,6 @@ module Timber
             io.puts "    #{IO::Messages.edit_app_url(app)}", :blue
             io.puts ""
             io.puts "exiting..."
-
-            false
           end
         end
 
@@ -111,48 +99,68 @@ module Timber
             end
           end
 
-          def assist_with_git
+          def wrap_up(app)
+            if app.development? || app.test?
+              development_note
+            else
+              assist_with_commit_and_deploy
+            end
+          end
+
+          def development_note
             io.puts ""
             io.puts IO::Messages.separator
             io.puts ""
-            io.puts "Last step! We need to commit these changes via git:"
+            io.puts "All done! Simply run your application locally and you'll see logs"
+            io.puts "show up in Timber. Enjoy!"
             io.puts ""
-            io.puts IO::Messages.git_commands
+            io.puts "When you're ready to move to production/staging, create a"
+            io.puts "production/staging app in Timber and follow the instructions shown."
+            io.puts ""
+            io.ask_to_proceed
+          end
+
+          def assist_with_commit_and_deploy
+            io.puts ""
+            io.puts IO::Messages.separator
             io.puts ""
 
             if OSHelper.has_git?
-              case io.ask_yes_no("We can run these commands for you. Shall we?", event_prompt: "Run git commands?")
+              case io.ask_yes_no("All done! Would you like to commit these changes?", event_prompt: "Run git commands?")
               when :yes
                 io.puts ""
 
                 task_message = "Committing changes via git"
-                io.write IO::Messages.task_start(task_message)
+                io.task_start(task_message)
 
                 committed = OSHelper.git_commit_changes
 
                 if committed
-                  io.puts IO::Messages.task_complete(task_message), :green
+                  io.task_complete(task_message)
                 else
-                  io.puts IO::Messages.task_failed(task_message), :red
+                  io.task_failed(task_message)
 
                   io.puts ""
                   io.puts "Bummer, it looks like we couldn't access the git command.", :yellow
-                  io.puts "No problem though, just copy and paste the above commands to", :yellow
-                  io.puts "run them manually.", :yellow
+                  io.puts "No problem though, just run these commands yourself:", :yellow
+                  io.puts ""
+                  io.puts IO::Messages.git_commands
                 end
               when :no
                 io.puts ""
-                io.puts "No problem. Just copy and paste the above commands to run them manually."
+                io.puts "No problem. Here's the commands for reference when you're ready:"
+                io.puts ""
+                io.puts IO::Messages.git_commands
               end
             else
               io.puts ""
-              io.puts "Finally, commit your changes:"
+              io.puts "All done! Commit your changes:"
               io.puts ""
               io.puts IO::Messages.git_commands
             end
 
             io.puts ""
-            io.puts "=> Reminder: git push and deploy 🚀 to see logs in staging/production", :yellow
+            io.puts "=> Reminder: remember to deploy 🚀 to see logs in staging/production", :yellow
           end
 
           def collect_feedback
@@ -182,7 +190,15 @@ module Timber
               io.puts ""
               io.puts "Thank you! We take feedback seriously and will work to improve this."
             end
-        end
+          end
+
+          def free_data
+            io.puts ""
+            io.puts IO::Messages.separator
+            io.puts ""
+            io.puts IO::Messages.free_data
+            io.puts ""
+          end
       end
     end
   end

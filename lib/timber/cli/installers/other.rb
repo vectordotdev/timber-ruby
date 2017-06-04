@@ -14,13 +14,7 @@ module Timber
             install_http(api_key_code)
           end
 
-          io.puts ""
-          io.puts IO::Messages.separator
-          io.puts ""
-          io.puts "We're going to send a few test messages to ensure communication is working."
-          io.puts ""
-          io.ask_to_proceed
-          io.puts ""
+          ask_to_proceed
         end
 
         private
@@ -47,6 +41,16 @@ module Timber
             io.puts IO::ANSI.colorize("    LOGGER = Timber::Logger.new(log_device)", :blue)
             io.puts ""
             io.ask_to_proceed
+          end
+
+          def ask_to_proceed
+            io.puts ""
+            io.puts IO::Messages.separator
+            io.puts ""
+            io.puts "We're going to send a few test messages to ensure communication is working."
+            io.puts ""
+            io.ask_to_proceed
+            io.puts ""
           end
       end
     end

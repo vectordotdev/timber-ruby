@@ -64,7 +64,7 @@ module Timber
       HAS_LOGS_PATH = "/installer/has_logs".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
-      attr_reader :api_key
+      attr_accessor :api_key
 
       def initialize(api_key)
         @api_key = api_key
@@ -103,7 +103,7 @@ module Timber
         when 0
           event(:waiting_for_logs)
         when 20
-          event(:excessively_waiting_for_logs)
+          event(:excessive_log_waiting)
         when 60
           raise LogsNotReceivedError.new
         end
@@ -142,7 +142,10 @@ module Timber
         end
 
         def issue!(req)
-          req['Authorization'] = "Basic #{encoded_api_key}"
+          if api_key
+            req['Authorization'] = "Basic #{encoded_api_key}"
+          end
+
           req['User-Agent'] = USER_AGENT
           req['X-Installer-Session-Id'] = @session_id
           res = http.start do |http|
