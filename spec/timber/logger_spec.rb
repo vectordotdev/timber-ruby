@@ -163,19 +163,19 @@ describe Timber::Logger, :rails_23 => true do
     let(:logger) { Timber::Logger.new(io) }
 
     it "should add context" do
-      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to be_nil
 
       logger.with_context(build: {version: "1.0.0"}) do
-        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}})
 
         logger.with_context({testing: {key: "value"}}) do
-          expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}}})
+          expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}})
         end
 
-        expect(Timber::CurrentContext.instance.send(:hash)).to eq({:custom=>{:build=>{:version=>"1.0.0"}}})
+        expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}})
       end
 
-      expect(Timber::CurrentContext.instance.send(:hash)).to eq({})
+      expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to be_nil
     end
   end
 

@@ -33,16 +33,6 @@ module Timber
       @message = message.is_a?(String) ? message : message.inspect
       @tags = options[:tags]
       @time_ms = options[:time_ms]
-
-      context_snapshot = {} if context_snapshot.nil?
-
-      # Set the system context for each log entry since processes can be forked
-      # and the process ID could change.
-      hostname = Socket.gethostname
-      pid = Process.pid
-      system_context = Contexts::System.new(hostname: hostname, pid: pid)
-      context_snapshot[system_context.keyspace] = system_context.as_json
-
       @context_snapshot = context_snapshot
       @event = event
     end

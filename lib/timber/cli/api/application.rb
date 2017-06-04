@@ -2,7 +2,8 @@ module Timber
   class CLI
     class API
       class Application
-        DEVELOPMENT = "development".freeze
+        DEVELOPMENT_ENVIRONMENT = "development".freeze
+        TEST_ENVIRONMENT = "test".freeze
         HEROKU = "heroku".freeze
 
         attr_accessor :api_key, :environment, :framework_type, :heroku_drain_url,
@@ -18,7 +19,11 @@ module Timber
         end
 
         def development?
-          environment == DEVELOPMENT
+          environment == DEVELOPMENT_ENVIRONMENT
+        end
+
+        def test?
+          environment == TEST_ENVIRONMENT
         end
 
         def heroku?

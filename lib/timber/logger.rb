@@ -92,8 +92,8 @@ module Timber
           elsif logged_obj.is_a?(Hash)
             # Extract the tags
             tags = tags.clone
-            tags << logged_obj.delete(:tag) if logged_obj.key?(:tag)
-            tags += logged_obj.delete(:tags) if logged_obj.key?(:tags)
+            tags.push(logged_obj.delete(:tag)) if logged_obj.key?(:tag)
+            tags.concat(logged_obj.delete(:tags)) if logged_obj.key?(:tags)
             tags.uniq!
 
             # Extract the time_ms
@@ -113,8 +113,12 @@ module Timber
         # Because of all the crazy ways Rails has attempted tags, we need this crazy method.
         def extract_active_support_tagged_logging_tags
           Thread.current[:activesupport_tagged_logging_tags] ||
-            Thread.current["activesupport_tagged_logging_tags:#{object_id}"] ||
+            Thread.current[tagged_logging_object_key_name] ||
             EMPTY_ARRAY
+        end
+
+        def tagged_logging_object_key_name
+          @tagged_logging_object_key_name ||= "activesupport_tagged_logging_tags:#{object_id}"
         end
     end
 

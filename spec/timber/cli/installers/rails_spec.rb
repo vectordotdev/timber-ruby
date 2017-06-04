@@ -19,142 +19,339 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
   let(:io) { Timber::CLI::IO.new(io_out: output, io_in: input) }
   let(:installer) { described_class.new(io, api) }
   let(:initial_config_contents) { "# Timber.io Ruby Configuration - Simple Structured Logging\n#\n#  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^\n# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# -------------------------------------------------------------------\n# Website:       https://timber.io\n# Documentation: https://timber.io/docs\n# Support:       support@timber.io\n# -------------------------------------------------------------------\n\nconfig = Timber::Config.instance\n\n# Add additional configuration here.\n# For a full list of configuration options and their explanations see:\n# http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config\n\n" }
+  let(:logger_code) { defined?(ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger" }
 
   describe ".run" do
-    it "should execute properly" do
-      expect(installer).to receive(:get_development_preference).exactly(1).times.and_return(:send)
-      expect(installer).to receive(:get_api_key_storage_preference).exactly(1).times.and_return(:environment)
-      expect(installer).to receive(:logrageify?).exactly(1).times.and_return(true)
-      expect(installer).to receive(:initializer).exactly(1).times.and_return(true)
-      expect(installer).to receive(:logrageify!).exactly(1).times.and_return(true)
-      expect(installer).to receive(:environment_file_paths).exactly(1).times.and_return(["config/environments/development.rb", "config/environments/production.rb", "config/environments/test.rb"])
-      expect(installer).to receive(:setup_development_environment).with("config/environments/development.rb", :send).and_return(true)
-      expect(installer).to receive(:setup_other_environment).with(app, "config/environments/production.rb", :environment).and_return(true)
-      expect(installer).to receive(:setup_test_environment).with("config/environments/test.rb").and_return(true)
+    context "development" do
+      it "should execute properly" do
+        expect(installer).to receive(:install_initializer).with(app).exactly(1).times
+        expect(installer).to receive(:install_development_environment).with(app).exactly(1).times
+        expect(installer).to receive(:install_test_environment).with(app).exactly(1).times
+        expect(installer).to_not receive(:install_app_environment)
 
-      installer.run(app)
+        installer.run(app)
+      end
+    end
+
+    context "staging" do
+      before(:each) do
+        app.environment = "staging"
+      end
+
+      it "should execute properly" do
+        expect(installer).to receive(:install_initializer).with(app).exactly(1).times
+        expect(installer).to receive(:install_development_environment).with(app).exactly(1).times
+        expect(installer).to receive(:install_test_environment).with(app).exactly(1).times
+        expect(installer).to receive(:install_app_environment).with(app).exactly(1).times
+
+        installer.run(app)
+      end
+    end
+
+    context "production" do
+      before(:each) do
+        app.environment = "production"
+      end
+
+      it "should execute properly" do
+        expect(installer).to receive(:install_initializer).with(app).exactly(1).times
+        expect(installer).to receive(:install_development_environment).with(app).exactly(1).times
+        expect(installer).to receive(:install_test_environment).with(app).exactly(1).times
+        expect(installer).to receive(:install_app_environment).with(app).exactly(1).times
+
+        installer.run(app)
+      end
     end
   end
 
-  describe ".initializer" do
+  describe ".install_initializer" do
     it "should create a config file" do
       config_file_path = "config/initializers/timber.rb"
+      expect_any_instance_of(Timber::CLI::Installers::ConfigFile).to receive(:run).with(app, config_file_path).exactly(1).times
 
-      expect(Timber::CLI::FileHelper).to receive(:read_or_create).
-        with(config_file_path, initial_config_contents).
-        and_return(initial_config_contents)
-
-      config_file = installer.send(:initializer)
-      expect(config_file.path).to eq(config_file_path)
+      installer.send(:install_initializer, app)
     end
   end
 
-  describe ".logrageify?" do
-    it "should do nothing if Lograge is not detected" do
-      expect(installer.send(:logrageify?)).to eq(false)
-      expect(output.string).to eq("")
-    end
+  describe ".install_development_environment" do
+    let(:env_file_path) { "config/environments/development.rb" }
 
-    context "with a Lograge constant" do
-      around(:each) do |example|
-        Lograge = 1
-        example.run
-        Object.send(:remove_const, :Lograge)
+    context "env file exists" do
+      context "not installed" do
+        context "send logs" do
+          it "should setup properly" do
+            expect(installer).to receive(:get_environment_file_path).
+              with("development").
+              exactly(1).times.
+              and_return(env_file_path)
+
+            expect(installer).to receive(:already_installed?).
+              with(env_file_path).
+              exactly(1).times.
+              and_return(false)
+
+            expect(installer).to receive(:get_development_preference).
+              with(app).
+              exactly(1).times.
+              and_return(:send)
+
+            expected_code = <<-CODE
+  # Install the Timber.io logger
+  send_logs_to_timber = true # <---- set to false to stop sending dev logs to Timber.io
+
+  log_device = send_logs_to_timber ? Timber::LogDevices::HTTP.new('#{app.api_key}') : STDOUT
+  logger = Timber::Logger.new(log_device)
+  logger.level = config.log_level
+  config.logger = #{logger_code}
+CODE
+
+            expect(installer).to receive(:install_logger).
+              with(env_file_path, expected_code).
+              exactly(1).times
+
+            result = installer.send(:install_development_environment, app)
+            expect(result).to eq(:http)
+          end
+        end
+
+        context "dont send" do
+          it "should setup properly" do
+            expect(installer).to receive(:get_environment_file_path).
+              with("development").
+              exactly(1).times.
+              and_return(env_file_path)
+
+            expect(installer).to receive(:already_installed?).
+              with(env_file_path).
+              exactly(1).times.
+              and_return(false)
+
+            expect(installer).to receive(:get_development_preference).
+              with(app).
+              exactly(1).times.
+              and_return(:dont_send)
+
+            expect(installer).to receive(:install_stdout).
+              with(env_file_path).
+              exactly(1).times
+
+            result = installer.send(:install_development_environment, app)
+            expect(result).to eq(:stdout)
+          end
+        end
       end
 
-      it "should prompt for Lograge configuration and return true for y" do
-        input.string = "y\n"
-        expect(installer.send(:logrageify?)).to eq(true)
-        expect(output.string).to eq("\n--------------------------------------------------------------------------------\n\nWe noticed you have lograge installed. Would you like to configure \nTimber to function similarly?\n(This silences template renders, sql queries, and controller calls.\nYou can always do this later in config/initialzers/timber.rb)\n\n\e[34my) Yes, configure Timber like lograge\e[0m\n\e[34mn) No, use the Rails logging defaults\e[0m\n\nEnter your choice: (y/n) ")
+      context "installed" do
+        it "should skip" do
+          expect(installer).to receive(:get_environment_file_path).
+            with("development").
+            exactly(1).times.
+            and_return(env_file_path)
+
+          expect(installer).to receive(:already_installed?).
+            with(env_file_path).
+            exactly(1).times.
+            and_return(true)
+
+          result = installer.send(:install_development_environment, app)
+          expect(result).to eq(:already_installed)
+        end
       end
     end
   end
 
-  describe ".logrageify!" do
-    it "should set the option in the config file" do
-      config_file_path = "config/initializers/timber.rb"
+  describe ".install_test_environment" do
+    let(:env_file_path) { "config/environments/test.rb" }
 
-      expect(Timber::CLI::FileHelper).to receive(:read_or_create).
-        with(config_file_path, initial_config_contents).
-        and_return(initial_config_contents)
+    context "env file exists" do
+      context "not installed" do
+        it "should setup properly" do
+          expect(installer).to receive(:get_environment_file_path).
+            with("test").
+            exactly(1).times.
+            and_return(env_file_path)
 
-      expect(Timber::CLI::FileHelper).to receive(:read).
-        with(config_file_path).
-        and_return(initial_config_contents)
+          expect(installer).to receive(:already_installed?).
+            with(env_file_path).
+            exactly(1).times.
+            and_return(false)
 
-      new_config_contents = "# Timber.io Ruby Configuration - Simple Structured Logging\n#\n#  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^\n# /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   /  \\_-__\\   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# /|\\/|\\/|\\ /|\\   |[]| [] |   /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\\n# -------------------------------------------------------------------\n# Website:       https://timber.io\n# Documentation: https://timber.io/docs\n# Support:       support@timber.io\n# -------------------------------------------------------------------\n\nconfig = Timber::Config.instance\n\nconfig.logrageify!\n\n# Add additional configuration here.\n# For a full list of configuration options and their explanations see:\n# http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config\n\n"
+          expect(installer).to receive(:install_nil).
+            with(env_file_path).
+            exactly(1).times
 
-      expect(Timber::CLI::FileHelper).to receive(:write).
-        with(config_file_path, new_config_contents).
-        and_return(true)
+          result = installer.send(:install_test_environment, app)
+          expect(result).to eq(:nil)
+        end
+      end
 
-      expect(installer.send(:logrageify!)).to eq(true)
+      context "installed" do
+        it "should skip" do
+          expect(installer).to receive(:get_environment_file_path).
+            with("test").
+            exactly(1).times.
+            and_return(env_file_path)
+
+          expect(installer).to receive(:already_installed?).
+            with(env_file_path).
+            exactly(1).times.
+            and_return(true)
+
+          result = installer.send(:install_test_environment, app)
+          expect(result).to eq(:already_installed)
+        end
+      end
     end
   end
 
-  describe ".setup_development_environment" do
-    it "should setup properly" do
+  describe ".install_app_environment" do
+    context "production" do
+      before(:each) do
+        app.environment = "production"
+      end
+
+      let(:env_file_path) { "config/environments/production.rb" }
+
+      context "env file exists" do
+        context "not installed" do
+          context "http" do
+            it "should setup properly" do
+              expect(installer).to receive(:get_environment_file_path).
+                with("production").
+                exactly(1).times.
+                and_return(env_file_path)
+
+              expect(installer).to receive(:already_installed?).
+                with(env_file_path).
+                exactly(1).times.
+                and_return(false)
+
+              expect(installer).to receive(:get_delivery_strategy).
+                with(app).
+                exactly(1).times.
+                and_return(:http)
+
+              expect(installer).to receive(:get_api_key_storage_preference).
+                exactly(1).times.
+                and_return(:inline)
+
+              expect(installer).to receive(:install_http).
+                with(env_file_path, :inline).
+                exactly(1).times
+
+              result = installer.send(:install_app_environment, app)
+              expect(result).to eq(:http)
+            end
+          end
+
+          context "stdout" do
+            it "should setup properly" do
+              expect(installer).to receive(:get_environment_file_path).
+                with("production").
+                exactly(1).times.
+                and_return(env_file_path)
+
+              expect(installer).to receive(:already_installed?).
+                with(env_file_path).
+                exactly(1).times.
+                and_return(false)
+
+              expect(installer).to receive(:get_delivery_strategy).
+                with(app).
+                exactly(1).times.
+                and_return(:stdout)
+
+              expect(installer).to receive(:install_stdout).
+                with(env_file_path).
+                exactly(1).times
+
+              result = installer.send(:install_app_environment, app)
+              expect(result).to eq(:stdout)
+            end
+          end
+        end
+
+        context "installed" do
+          it "should skip" do
+            expect(installer).to receive(:get_environment_file_path).
+              with("production").
+              exactly(1).times.
+              and_return(env_file_path)
+
+            expect(installer).to receive(:already_installed?).
+              with(env_file_path).
+              exactly(1).times.
+              and_return(true)
+
+            result = installer.send(:install_app_environment, app)
+            expect(result).to eq(:already_installed)
+          end
+        end
+      end
+    end
+  end
+
+  describe ".get_environment_file_path" do
+    it "should return the file if it exists" do
+      env_file_path = "config/environments/development.rb"
+      expect(File).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(true)
+
+      result = installer.send(:get_environment_file_path, "development")
+      expect(result).to eq(env_file_path)
+    end
+
+    it "should return nil if it does not exist" do
+      env_file_path = "config/environments/production.rb"
+      expect(File).to receive(:exists?).with(env_file_path).exactly(1).times.and_return(false)
+
+      result = installer.send(:get_environment_file_path, "production")
+      expect(result).to eq(nil)
+    end
+  end
+
+  describe ".install_nil" do
+    it "should pass the proper code" do
       env_file_path = "config/environments/development.rb"
 
-      expect(Timber::CLI::FileHelper).to receive(:read).
-        with(env_file_path).
-        exactly(2).times.
-        and_return("\nend")
+      expected_code = <<-CODE
+  # Install the Timber.io logger but silence all logs (log to nil). We install the
+  # logger to ensure the Rails.logger object exposes the proper API.
+  logger = Timber::Logger.new(nil)
+  logger.level = config.log_level
+  config.logger = #{logger_code}
+CODE
 
-      logger_code = defined?(ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
-      new_contents = "\n\n  # Install the Timber.io logger, send logs over HTTP.\n    # Note: When you are done testing, simply instantiate the logger like this:\n  #\n  #   logger = Timber::Logger.new(STDOUT)\n  #\n  # Be sure to remove the \"log_device =\" and \"logger =\" lines below.\n  log_device = Timber::LogDevices::HTTP.new('abcd1234')\n  logger = Timber::Logger.new(log_device)\n  logger.level = config.log_level\n  config.logger = #{logger_code}\n\nend"
+      expect(installer).to receive(:install_logger).
+        with(env_file_path, expected_code).
+        exactly(1).times
 
-      expect(Timber::CLI::FileHelper).to receive(:write).
-        with(env_file_path, new_contents).
-        and_return(true)
-
-      expect(api).to receive(:event).with(:file_written, path: env_file_path)
-
-      expect(installer.send(:setup_development_environment, env_file_path, :send)).to eq(true)
+      installer.send(:install_nil, env_file_path)
     end
   end
 
-  describe ".setup_test_environment" do
-    it "should setup properly" do
-      env_file_path = "config/environments/test.rb"
+  describe ".install_logger" do
+    context "not installed" do
+      it "should pass the proper code" do
+        env_file_path = "config/environments/development.rb"
 
-      expect(Timber::CLI::FileHelper).to receive(:read).
-        with(env_file_path).
-        exactly(2).times.
-        and_return("\nend")
+        logger_code = "my code"
 
-      logger_code = defined?(ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
-      new_contents = "\n\n  # Install the Timber.io logger but silence all logs (log to nil). We install the\n  # logger to ensure the Rails.logger object exposes the proper API.\n  logger = Timber::Logger.new(nil)\n  logger.level = config.log_level\n  config.logger = #{logger_code}\n\nend"
+        current_contents = "\nend"
 
-      expect(Timber::CLI::FileHelper).to receive(:write).
-        with(env_file_path, new_contents).
-        and_return(true)
+        expect(Timber::CLI::FileHelper).to receive(:read).
+          with(env_file_path).
+          exactly(1).times.
+          and_return(current_contents)
 
-      expect(api).to receive(:event).with(:file_written, path: env_file_path)
+        new_contents = "\n\nmy code\nend"
 
-      expect(installer.send(:setup_test_environment, env_file_path)).to eq(true)
-    end
-  end
+        expect(Timber::CLI::FileHelper).to receive(:write).
+          with(env_file_path, new_contents).
+          exactly(1).times.
+          and_return("\nend")
 
-  describe ".setup_other_environment" do
-    it "should setup properly" do
-      env_file_path = "config/environments/production.rb"
-
-      expect(Timber::CLI::FileHelper).to receive(:read).
-        with(env_file_path).
-        exactly(2).times.
-        and_return("\nend")
-
-      logger_code = defined?(ActiveSupport::TaggedLogging) ? "ActiveSupport::TaggedLogging.new(logger)" : "logger"
-      new_contents = "\n\n  # Install the Timber.io logger, send logs over HTTP.\n  log_device = Timber::LogDevices::HTTP.new(ENV['TIMBER_API_KEY'])\n  logger = Timber::Logger.new(log_device)\n  logger.level = config.log_level\n  config.logger = #{logger_code}\n\nend"
-
-      expect(Timber::CLI::FileHelper).to receive(:write).
-        with(env_file_path, new_contents).
-        and_return(true)
-
-      expect(api).to receive(:event).with(:file_written, path: env_file_path).exactly(1).times
-
-      expect(installer.send(:setup_other_environment, app, env_file_path, :environment)).to eq(true)
+        installer.send(:install_logger, env_file_path, logger_code)
+      end
     end
   end
 end
