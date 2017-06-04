@@ -38,9 +38,11 @@ module Timber
       def normalize_headers(headers)
         if headers.is_a?(::Hash)
           h = headers.each_with_object({}) do |(k, v), h|
-            v = v.to_s
-            if v.encoding == Encoding::UTF_8
-              h[k] = v
+            if v
+              v = v.to_s
+              if [Encoding::UTF_8, Encoding::US_ASCII].include?(v.encoding)
+                h[k] = v
+              end
             end
           end
 
