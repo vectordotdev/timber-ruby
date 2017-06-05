@@ -59,7 +59,7 @@ Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "inf
 ```
 
 Notice that instead of completely replacing your log messages,
-Timber _augments_ your logs with structured metadata. Turning turns them into
+Timber _augments_ your logs with structured metadata. Turning them into
 [rich events with context](https://timber.io/docs/ruby/events-and-context) without sacrificing
 readability. And you have [complete control over which data is captured](#configuration).
 
