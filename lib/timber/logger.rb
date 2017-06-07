@@ -224,11 +224,19 @@ module Timber
     # @note The formatter cannot be changed if you are using the HTTP logger backend.
     def formatter=(value)
       if @initialized && @logdev && @logdev.dev.is_a?(Timber::LogDevices::HTTP) && !value.is_a?(PassThroughFormatter)
+        raise @logdev.inspect
         raise ArgumentError.new("The formatter cannot be changed when using the " +
           "Timber::LogDevices::HTTP log device. The PassThroughFormatter must be used for proper " +
           "delivery.")
       end
 
+      super
+    end
+
+    def level=(value)
+      if value.is_a?(Symbol)
+        value = level_from_symbol(value)
+      end
       super
     end
 
@@ -269,6 +277,18 @@ module Timber
       def environment_level
         level = ([ENV['LOG_LEVEL'].to_s.upcase, "DEBUG"] & %w[DEBUG INFO WARN ERROR FATAL UNKNOWN]).compact.first
         self.class.const_get(level)
+      end
+
+      def level_from_symbol(value)
+        case value
+        when :debug; DEBUG
+        when :info;  INFO
+        when :warn;  WARN
+        when :error; ERROR
+        when :fatal; FATAL
+        when :unknown; UNKNOWN
+        else; raise ArgumentError.new("level #{value.inspect} is not a valid logger level")
+        end
       end
   end
 end

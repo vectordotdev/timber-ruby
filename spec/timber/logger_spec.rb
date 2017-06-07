@@ -15,7 +15,7 @@ describe Timber::Logger, :rails_23 => true do
         Timber::Config.instance.environment = old_env
       end
 
-      it "shoud select the augmented formatter" do
+      it "shoud select the message only formatter" do
         logger = described_class.new(nil)
         expect(logger.formatter).to be_kind_of(Timber::Logger::MessageOnlyFormatter)
       end
@@ -31,6 +31,32 @@ describe Timber::Logger, :rails_23 => true do
       Timecop.freeze(time) { example.run }
     end
 
+    it "should respect the level via Logger constants" do
+      logger.formatter = Timber::Logger::MessageOnlyFormatter.new
+
+      logger.level = ::Logger::DEBUG
+      logger.info("message")
+      expect(io.string).to eq("message\n")
+
+      io.string = ""
+      logger.level = ::Logger::WARN
+      logger.info("message")
+      expect(io.string).to eq("")
+    end
+
+    it "should respect the level via level symbols" do
+      logger.formatter = Timber::Logger::MessageOnlyFormatter.new
+
+      logger.level = :debug
+      logger.info("message")
+      expect(io.string).to eq("message\n")
+
+      io.string = ""
+      logger.level = :warn
+      logger.info("message")
+      expect(io.string).to eq("")
+    end
+
     context "with the AugmentedFormatter" do
       before(:each) { logger.formatter = Timber::Logger::AugmentedFormatter.new }
 
@@ -39,7 +65,7 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to start_with("this is a test @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\"")
       end
 
-      it "should non-strings" do
+      it "should accept non-strings" do
         logger.info(true)
         expect(io.string).to start_with("true @metadata")
       end
@@ -76,7 +102,7 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to include("\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}")
       end
 
-      it "should log properly when an event is passed" do
+      it "should log properly when a Timber::Event object is passed" do
         message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
         logger.info(message)
         expect(io.string).to start_with("select * from users @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
@@ -94,8 +120,12 @@ describe Timber::Logger, :rails_23 => true do
       end
 
       it "should allow :tags" do
-        logger.info("event complete", tags: ["tag1", "tag2"])
+        tags = ["tag1", "tag2"]
+        logger.info("event complete", tags: tags)
         expect(io.string).to include("\"tags\":[\"tag1\",\"tag2\"]")
+
+        # Ensure the tags object is not modified
+        expect(tags).to eq(["tag1", "tag2"])
       end
 
       it "should allow functions" do
@@ -130,6 +160,24 @@ describe Timber::Logger, :rails_23 => true do
     end
   end
 
+  describe "#error" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should allow default usage" do
+      logger.error("message")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"error"')
+    end
+
+    it "should allow messages with options" do
+      logger.error("message", tag: "tag")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"error"')
+      expect(io.string).to include('"tags":["tag"]')
+    end
+  end
+
   describe "#formatter=" do
     it "should not allow changing the formatter when the device is HTTP" do
       http_device = Timber::LogDevices::HTTP.new("api_key")
@@ -142,6 +190,29 @@ describe Timber::Logger, :rails_23 => true do
       formatter = ::Logger::Formatter.new
       logger.formatter = formatter
       expect(logger.formatter).to eq(formatter)
+    end
+  end
+
+  describe "#info" do
+    let(:io) { StringIO.new }
+    let(:logger) { Timber::Logger.new(io) }
+
+    it "should allow default usage" do
+      logger.info("message")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"info"')
+    end
+
+    it "should allow messages with options" do
+      logger.info("message", tag: "tag")
+      expect(io.string).to start_with("message @metadata")
+      expect(io.string).to include('"level":"info"')
+      expect(io.string).to include('"tags":["tag"]')
+    end
+
+    it "should accept non-string messages" do
+      logger.info(true)
+      expect(io.string).to start_with("true @metadata")
     end
   end
 
@@ -176,47 +247,6 @@ describe Timber::Logger, :rails_23 => true do
       end
 
       expect(Timber::CurrentContext.instance.send(:hash)[:custom]).to be_nil
-    end
-  end
-
-  describe "#info" do
-    let(:io) { StringIO.new }
-    let(:logger) { Timber::Logger.new(io) }
-
-    it "should allow default usage" do
-      logger.info("message")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"info"')
-    end
-
-    it "should allow messages with options" do
-      logger.info("message", tag: "tag")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"info"')
-      expect(io.string).to include('"tags":["tag"]')
-    end
-
-    it "should accept non-string messages" do
-      logger.info(true)
-      expect(io.string).to start_with("true @metadata")
-    end
-  end
-
-  describe "#error" do
-    let(:io) { StringIO.new }
-    let(:logger) { Timber::Logger.new(io) }
-
-    it "should allow default usage" do
-      logger.error("message")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"error"')
-    end
-
-    it "should allow messages with options" do
-      logger.error("message", tag: "tag")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"error"')
-      expect(io.string).to include('"tags":["tag"]')
     end
   end
 end
