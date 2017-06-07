@@ -213,7 +213,13 @@ logger.info("Processed background job", background_job: {time_ms: timer})
 # => Processed background job in 54.2ms @metadata {"level": "info", "event": {"background_job": {"time_ms": 54.2}}}
 ```
 
-Or capture any metric you want:
+And of course, `time_ms` can also take a `Float`:
+
+```ruby
+logger.info("Processed background job", background_job: {time_ms: 45.6})
+```
+
+Lastly, metrics aren't limited to timings. You can capture any metric you want:
 
 ```ruby
 logger = Timber::Logger.new(STDOUT)
