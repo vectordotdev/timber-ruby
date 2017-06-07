@@ -3,47 +3,6 @@ module Timber
     # Module for Rails specific code, such as the Railtie and any methods that assist
     # with Rails setup.
     module Rails
-      # Because of the crazy way Rails sorts it's initializers, it is
-      # impossible for Timber to be inserted after Devise's omnitauth
-      # middlewares.
-      # See: https://github.com/plataformatec/devise/blob/master/lib/devise/rails.rb#L22
-      # As such, we take a brute force approach here, ensuring we are inserted last
-      # no matter what. This ensures that we come after authentication so that we can
-      # properly set the user context.
-      #
-      # @private
-      module MiddlewareStackProxyFix
-        def self.included(klass)
-          klass.class_eval do
-            attr_accessor :timber_operations
-
-            alias old_merge_into merge_into
-
-            # This method does not exist for older versions of rails
-            begin
-              alias old_plus +
-            rescue NameError
-            end
-
-            def +(*args)
-              result = old_plus(*args)
-              result.timber_operations = timber_operations
-              result
-            end
-
-            def merge_into(*args)
-              if timber_operations
-                @operations -= timber_operations
-                @operations += timber_operations
-              end
-              old_merge_into(*args)
-            end
-          end
-        end
-      end
-
-      ::Rails::Configuration::MiddlewareStackProxy.send(:include, MiddlewareStackProxyFix)
-
       # Installs Timber into your Rails app automatically.
       class Railtie < ::Rails::Railtie
         config.timber = Config.instance
@@ -52,18 +11,24 @@ module Timber
           Timber::Config.instance.logger = Proc.new { ::Rails.logger }
         end
 
+        after =
+          begin
+            require 'devise'
+            'devise.omniauth'
+          rescue LoadError
+            :load_config_initializers
+          end
+
         # Must be loaded after initializers so that we respect any Timber configuration
         # set
-        initializer(:timber, after: :load_config_initializers) do
+        initializer(:timber, before: :build_middleware_stack, after: after) do
           Integrations.integrate!
 
           # Install the Rack middlewares so that we capture structured data instead of
           # raw text logs.
-          timber_operations = Integrations::Rack.middlewares.collect do |middleware_class|
-            [:use, [middleware_class], nil]
+          Integrations::Rack.middlewares.collect do |middleware_class|
+            config.app_middleware.use middleware_class
           end
-
-          config.app_middleware.timber_operations = timber_operations
         end
       end
     end
