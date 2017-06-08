@@ -19,10 +19,19 @@ module Timber
           def self.included(klass)
             klass.class_eval do
               private
-                # Rails 3.2 calls Rails.logger directly, so this is the first place
-                # we can mute the logger calls.
-                def started_request_message(*args)
-                  ""
+                if ::Rails::VERSION::MAJOR == 3
+                  # Rails 3.2 calls Rails.logger directly in call_app, so we
+                  # will just replace it with a version that doesn't
+                  def call_app(_, env)
+                    # Put some space between requests in development logs.
+                    if ::Rails.env.development?
+                      ::Rails.logger.info ''
+                      ::Rails.logger.info ''
+                    end
+                    @app.call(env)
+                  ensure
+                    ActiveSupport::LogSubscriber.flush_all!
+                  end
                 end
 
                 # Rails > 3.2 uses a logger method. Muting logs is accomplished by
