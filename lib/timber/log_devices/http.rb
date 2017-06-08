@@ -12,7 +12,7 @@ module Timber
     # A highly efficient log device that buffers and delivers log messages over HTTPS to
     # the Timber API. It uses batches, keep-alive connections, and msgpack to deliver logs with
     # high-throughput and little overhead. All log preparation and delivery is done asynchronously
-    # in a thread as not to block application execution and efficient deliver logs for
+    # in a thread as not to block application execution and efficiently deliver logs for
     # multi-threaded environments.
     #
     # See {#initialize} for options and more details.

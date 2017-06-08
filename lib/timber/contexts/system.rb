@@ -4,6 +4,9 @@ require "timber/util"
 module Timber
   module Contexts
     # The system context tracks OS level process information, such as the process ID.
+    #
+    # @note This is tracked automatically in {CurrentContext}. When the current context
+    #   is initialized, the system context gets added automatically.
     class System < Context
       @keyspace = :system
 

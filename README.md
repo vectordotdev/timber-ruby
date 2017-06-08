@@ -198,8 +198,8 @@ end
 
 Aggregates destroy details, and with Timber capturing metrics and timings is just logging events.
 Timber is built on modern big-data principles, it can calculate aggregates across terrabytes of
-data in seconds. Don't reduce the quality of your data because the system processing
-your data is limited.
+data in seconds. Don't reduce the quality of your log data to accomodate a restrive
+logging system.
 
 Here's a timing example. Notice how Timber automatically calculates the time and adds the timing
 to the message.
@@ -213,7 +213,7 @@ logger.info("Processed background job", background_job: {time_ms: timer})
 # => Processed background job in 54.2ms @metadata {"level": "info", "event": {"background_job": {"time_ms": 54.2}}}
 ```
 
-And of course, `time_ms` can also take a `Float`:
+And of course, `time_ms` can also take a `Float` or `Fixnum`:
 
 ```ruby
 logger.info("Processed background job", background_job: {time_ms: 45.6})
@@ -296,10 +296,10 @@ config.integrations.rack.http_events.collapse_into_single_event = true
 ```
 
 This does _not_ silence the controller call log event. This is because Timber captures the
-parameters passed to the controller, which is very valuable when debugging.
+parameters passed to the controller, which are generally valuable when debugging.
 
-For a full list of integrations and settings, see
-[Timber::Integrations](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations)
+For a full list of integration settings, see
+[Timber::Config::Integrations](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config/Integrations)
 
 ---
 

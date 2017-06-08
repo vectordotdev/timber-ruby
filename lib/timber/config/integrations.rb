@@ -29,7 +29,7 @@ module Timber
         Timber::Integrations::ActionController
       end
 
-      # Convenience method for accessing the {Timber::IIntegrations::ActionView} class
+      # Convenience method for accessing the {Timber::Integrations::ActionView} class
       # specific configuration.
       #
       # @example
@@ -39,7 +39,7 @@ module Timber
         Timber::Integrations::ActionView
       end
 
-      # Convenience method for accessing the {Timber::IIntegrations::ActiveRecord} class
+      # Convenience method for accessing the {Timber::Integrations::ActiveRecord} class
       # specific configuration.
       #
       # @example
@@ -49,7 +49,7 @@ module Timber
         Timber::Integrations::ActiveRecord
       end
 
-      # Convenience method for accessing the various `Timber::IIntegrations::Rack::*`
+      # Convenience method for accessing the various `Timber::Integrations::Rack::*`
       # classes. See {Rack} for a list of methods available.
       #
       # @example

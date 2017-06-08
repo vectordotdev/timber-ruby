@@ -5,7 +5,8 @@ require "timber/util"
 module Timber
   module Contexts
     # The release context tracks application releases / versions / deploys.
-    # To automatically set this context, see {.from_env}.
+    #
+    # @note To automatically set this context, see {.from_env}.
     class Release < Context
       @keyspace = :release
 
