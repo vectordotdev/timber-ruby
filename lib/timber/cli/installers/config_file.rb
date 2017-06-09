@@ -12,7 +12,7 @@ module Timber
     module Installers
       class ConfigFile < Installer
         def run(app, path)
-          config_file = Timber::CLI::ConfigFile.new(path)
+          config_file = Timber::CLI::ConfigFile.new(path, file_helper)
 
           if config_file.exists?
             io.puts ""

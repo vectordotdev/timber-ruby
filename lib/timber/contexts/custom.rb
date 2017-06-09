@@ -28,7 +28,7 @@ module Timber
         @data = attributes[:data] || raise(ArgumentError.new(":data is required"))
       end
 
-      # Builds a hash representation of containing simply objects, suitable for serialization.
+      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(options = {})
         {Timber::Util::Object.try(type, :to_sym) => data}
       end

@@ -3,14 +3,15 @@ require "timber/cli/file_helper"
 module Timber
   class CLI
     class ConfigFile
-      attr_reader :path
+      attr_reader :path, :file_helper
 
-      def initialize(path)
+      def initialize(path, file_helper)
         @path = path
+        @file_helper = file_helper
       end
 
       def create!
-        FileHelper.write(path, content)
+        file_helper.write(path, content)
       end
 
       def exists?

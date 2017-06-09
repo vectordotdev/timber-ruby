@@ -13,7 +13,7 @@ module Timber
     attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 
     # Creates a log entry suitable to be sent to the Timber API.
-    # @param severity [Integer] the log level / severity
+    # @param level [Integer] the log level / severity
     # @param time [Time] the exact time the log message was written
     # @param progname [String] the progname scope for the log message
     # @param message [String] Human readable log message.
@@ -37,7 +37,7 @@ module Timber
       @event = event
     end
 
-    # Builds a hash representation of containing simply objects, suitable for serialization.
+    # Builds a hash representation containing simple objects, suitable for serialization (JSON).
     def as_json(options = {})
       options ||= {}
       hash = {

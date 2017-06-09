@@ -28,7 +28,7 @@ module Timber
         @name = attributes[:name]
       end
 
-      # Builds a hash representation of containing simply objects, suitable for serialization.
+      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
         {id: Timber::Util::Object.try(id, :to_s), name: name}
       end

@@ -24,7 +24,7 @@ module Timber
         @request_id = attributes[:request_id]
       end
 
-      # Builds a hash representation of containing simply objects, suitable for serialization.
+      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
         {:method => method, :path => path, :remote_addr => remote_addr, :request_id => request_id}
       end

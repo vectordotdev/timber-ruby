@@ -23,9 +23,9 @@ describe Timber::CLI::Installers::ConfigFile, :rails_23 => true do
   describe ".run" do
     it "should run properly" do
       path = "/path/to/file"
-      config_file = Timber::CLI::ConfigFile.new(path)
+      config_file = Timber::CLI::ConfigFile.new(path, installer.file_helper)
 
-      expect(Timber::CLI::ConfigFile).to receive(:new).with(path).and_return(config_file)
+      expect(Timber::CLI::ConfigFile).to receive(:new).with(path, installer.file_helper).and_return(config_file)
       expect(config_file).to receive(:exists?).exactly(1).times.and_return(false)
       expect(installer).to receive(:logrageify?).exactly(1).times.and_return(true)
       expect(config_file).to receive(:logrageify!).exactly(1).times

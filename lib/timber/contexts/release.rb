@@ -41,7 +41,7 @@ module Timber
         @version = attributes[:version]
       end
 
-      # Builds a hash representation of containing simply objects, suitable for serialization.
+      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
         {commit_hash: commit_hash, created_at: created_at, version: version}
       end

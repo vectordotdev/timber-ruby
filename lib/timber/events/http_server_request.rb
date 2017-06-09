@@ -30,7 +30,7 @@ module Timber
       end
       alias to_h to_hash
 
-      # Builds a hash representation of containing simply objects, suitable for serialization.
+      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
         {:http_server_request => to_hash}
       end
