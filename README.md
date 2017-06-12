@@ -124,10 +124,10 @@ For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/r
 
 ## Third-party integrations
 
-1. **Rails**: Structures ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
-2. **Rack**: Structures [exceptions](https://timber.io/docs/ruby/events-and-context/exception-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
+1. **Rails**: Automatically structures ([HTTP request events](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP response events](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller call events](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template rendering events](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql query events](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
+2. **Rack**: Automatically structures [exception events](https://timber.io/docs/ruby/events-and-context/exception-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
 3. **Devise, Omniauth, Clearance**: captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/)
-5. **Heroku**: Captures [release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata).
+5. **Heroku**: Automatically captures [release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata).
 
 ...and more. Timber will continue to evolve and support more libraries.
 
@@ -195,13 +195,7 @@ end
 
 <details><summary><strong>Metrics & Timings</strong></summary><p>
 
-Aggregates destroy details, and with Timber capturing metrics and timings is just logging events.
-Timber is built on modern big-data principles, it can calculate aggregates across terrabytes of
-data in seconds. Don't reduce the quality of your log data to accomodate a restrive
-logging system.
-
-Here's a timing example. Notice how Timber automatically calculates the time and adds the timing
-to the message.
+Aggregates destroy details, and with Timber capturing metrics and timings is just logging events. Below is a timing example. Notice how Timber automatically calculates the time:
 
 ```ruby
 logger = Timber::Logger.new(STDOUT)
@@ -212,13 +206,13 @@ logger.info("Processed background job", background_job: {time_ms: timer})
 # => Processed background job in 54.2ms @metadata {"level": "info", "event": {"background_job": {"time_ms": 54.2}}}
 ```
 
-And of course, `time_ms` can also take a `Float` or `Fixnum`:
+`time_ms` can also take a `Float` or `Fixnum`:
 
 ```ruby
 logger.info("Processed background job", background_job: {time_ms: 45.6})
 ```
 
-Lastly, metrics aren't limited to timings. You can capture any metric you want:
+Lastly, metrics aren't limited to timings, capture any metric you want:
 
 ```ruby
 logger = Timber::Logger.new(STDOUT)
@@ -227,8 +221,7 @@ logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
 # => Credit card charged @metadata {"level": "info", "event": {"credit_card_charge": {"amount": 123.23}}}
 ```
 
-In Timber you can easily sum, average, min, and max the `amount` attribute across any interval
-you desire.
+In Timber you can easily perform aggreates on any numerical data type. For example, sum, average, min, and max the `amount` attribute across any interval you desire.
 
 </p></details>
 
