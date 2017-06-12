@@ -1,5 +1,6 @@
 require "timber/contexts/custom"
 require "timber/contexts/http"
+require "timber/contexts/job"
 require "timber/contexts/organization"
 require "timber/contexts/release"
 require "timber/contexts/runtime"

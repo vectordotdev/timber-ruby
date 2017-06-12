@@ -8,8 +8,8 @@ module Timber
     # filter and tail logs by specific users.
     #
     # @note This is tracked automatically with the {Integrations::Rack::UserContext} rack
-    #   middleware for supported authentication frameworks. See {Integrations::Rack::UserContext}
-    #   for more details.
+    #   middleware and it can be configured for custom integrations.
+    #   See {Integrations::Rack::UserContext} for more details.
     class User < Context
       @keyspace = :user
 
