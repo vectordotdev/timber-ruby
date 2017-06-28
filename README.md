@@ -14,8 +14,7 @@
 ## Overview
 
 Timber solves ruby structured logging so you don't have to. Go from raw text logs to rich
-structured events in seconds. Spend more time focusing on your app and less time
-focusing on logging.
+structured events in seconds.
 
 1. **Easy setup.** - `bundle exec timber install`, [get setup in seconds](#installation).
 
@@ -25,14 +24,10 @@ focusing on logging.
 3. **Seamlessly integrates with popular libraries and frameworks.** - Rails, Rack, Devise,
    Omniauth, etc. [Automatically captures user context, HTTP context, and event data.](#third-party-integrations)
 
-4. **Pairs with a modern structured-logging console.** - Designed specifically for structured data,
-   hosted, instantly usable, tail users, trace requests.
-   [Checkout the docs](https://timber.io/docs/app/tutorials/).
-
 
 ## Installation
 
-1. In `Gemfile`, add the `timber` gem:
+1. In your `Gemfile`, add the `timber` gem:
 
     ```ruby
     gem 'timber', '~> 2.0'
@@ -54,16 +49,15 @@ I, [2017-06-04T18:04:53.653812 #42348]  INFO -- : [my.host.com] [df88dbaa-50fd-4
 Into a structured [`http_server_response` event](https://timber.io/docs/ruby/events-and-context/http-server-response-event/).
 
 ```
-Sent 200 in 45.2ms @metadata {"dt": "2017-02-02T01:33:21.154345Z", "level": "info", "context": {"http": {"method": "GET", "path": "/path", "remote_addr": "192.32.23.12", "request_id": "df88dbaa-50fd-4178-85d7-d66279ea33b6"}, "session": {"id": "bfa8242cd9733bf0211e334be203f0d0"}, "system": {"hostname": "my.host.com", "pid": "254354"}, "user": {"id": 1, "name": "Ben Johnson", "email": "bens@email.com"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
+2017-02-02T01:33:21.154345Z: Sent 200 in 45.2ms @metadata {"level": "info", "context": {"http": {"method": "GET", "path": "/path", "remote_addr": "192.32.23.12", "request_id": "df88dbaa-50fd-4178-85d7-d66279ea33b6"}, "session": {"id": "bfa8242cd9733bf0211e334be203f0d0"}, "system": {"hostname": "my.host.com", "pid": "254354"}, "user": {"id": 1, "name": "Ben Johnson", "email": "bens@email.com"}}, "event": {"http_server_response": {"status": 200, "time_ms": 45.2}}}
 ```
 
-Notice that instead of completely replacing your log messages,
-Timber _augments_ your logs with structured metadata. Turning them into
-[rich events with context](https://timber.io/docs/ruby/events-and-context) without sacrificing
-readability. And you have [complete control over which data is captured](#configuration).
+Notice that, Timber neatly _augments_ your logs with metadata, keeping the original message, and
+preserving readability. You can also [adjust the format to use JSON or logfmt](#configuration).
 
 This is all accomplished by using the
-[Timber::Logger](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger):
+[Timber::Logger](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Logger) just like
+you would the standard ruby `::Logger`.
 
 ```ruby
 logger = Timber::Logger.new(STDOUT)
@@ -74,7 +68,6 @@ Here's a better look at the metadata:
 
 ```js
 {
-  "dt": "2017-02-02T01:33:21.154345Z",
   "level": "info",
   "context": {
     "http": {
