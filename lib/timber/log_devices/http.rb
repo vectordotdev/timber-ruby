@@ -214,7 +214,11 @@ module Timber
         def build_http
           http = Net::HTTP.new(@timber_url.host, @timber_url.port)
           http.set_debug_output(Config.instance.debug_logger) if Config.instance.debug_logger
-          http.use_ssl = true if @timber_url.scheme == 'https'
+          if @timber_url.scheme == 'https'
+            http.use_ssl = true
+            # Verification on Windows fails despite having a valid certificate.
+            http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          end
           http.read_timeout = 30
           http.ssl_timeout = 10
           http.open_timeout = 10
