@@ -4,7 +4,7 @@ module Timber
     # {Events::HTTPServerResponse}, {Events::HTTPClientRequest}, {Events::HTTPClientResponse}.
     module HTTPEvent
       HEADERS_TO_SANITIZE = ['authorization', 'x-amz-security-token'].freeze
-      QUERY_STRING_LIMIT = 5_000.freeze
+      MAX_QUERY_STRING_BYTES = 2048.freeze
       STRING_CLASS_NAME = 'String'.freeze
 
       extend self
@@ -25,7 +25,7 @@ module Timber
 
         limit = Config.instance.http_body_limit
         if limit
-          body[0..(limit - 1)]
+          body.byteslice(0, limit)
         else
           body
         end
@@ -63,7 +63,7 @@ module Timber
           query_string = query_string.to_s
         end
 
-        query_string && query_string[0..(QUERY_STRING_LIMIT - 1)]
+        query_string && query_string.byteslice(0, MAX_QUERY_STRING_BYTES)
       end
     end
   end

@@ -10,6 +10,7 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class ControllerCall < Timber::Event
+      PARAMS_JSON_MAX_BYTES = 8192.freeze
       PASSWORD_NAME = 'password'.freeze
 
       attr_reader :controller, :action, :params, :format
@@ -44,11 +45,12 @@ module Timber
 
       private
         def params_json
-          @params_json ||= if params.nil? || params == {}
-            nil
-          else
-            params.to_json
-          end
+          @params_json ||=
+            if params.nil? || params == {}
+              nil
+            else
+              params.to_json.byteslice(0, PARAMS_JSON_MAX_BYTES)
+            end
         end
 
         def sanitize_params(params)

@@ -8,11 +8,15 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionDispatch::DebugExceptions} integration.
     class Exception < Timber::Event
+      MAX_MESSAGE_BYTES = 8192.freeze
+
       attr_reader :name, :exception_message, :backtrace
 
       def initialize(attributes)
         @name = attributes[:name] || raise(ArgumentError.new(":name is required"))
+
         @exception_message = attributes[:exception_message] || raise(ArgumentError.new(":exception_message is required"))
+        @exception_message = @exception_message.byteslice(0, MAX_MESSAGE_BYTES)
 
         backtrace = attributes[:backtrace]
         if backtrace.nil? || backtrace == []
