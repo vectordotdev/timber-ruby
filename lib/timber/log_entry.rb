@@ -32,7 +32,7 @@ module Timber
       # This follows the default behavior set by ::Logger
       # See: https://github.com/ruby/ruby/blob/trunk/lib/logger.rb#L615
       @message = message.is_a?(String) ? message : message.inspect
-      @message = message.byteslice(0, MESSAGE_MAX_BYTES)
+      @message = @message.byteslice(0, MESSAGE_MAX_BYTES)
       @tags = options[:tags]
       @time_ms = options[:time_ms]
       @context_snapshot = context_snapshot
