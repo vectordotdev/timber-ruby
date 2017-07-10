@@ -8,7 +8,8 @@ module Timber
   # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
-    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v2.0.4/schema.json".freeze
+    MESSAGE_MAX_BYTES = 8192.freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v2.1.1/schema.json".freeze
 
     attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 
@@ -31,6 +32,7 @@ module Timber
       # This follows the default behavior set by ::Logger
       # See: https://github.com/ruby/ruby/blob/trunk/lib/logger.rb#L615
       @message = message.is_a?(String) ? message : message.inspect
+      @message = @message.byteslice(0, MESSAGE_MAX_BYTES)
       @tags = options[:tags]
       @time_ms = options[:time_ms]
       @context_snapshot = context_snapshot

@@ -36,7 +36,7 @@ module Timber
 
     # @private
     def initialize
-      @http_body_limit = 2000
+      @http_body_limit = 2048
     end
 
     # Convenience method for logging debug statements to the debug logger
@@ -130,16 +130,15 @@ module Timber
       @http_header_filters ||= []
     end
 
-    # Truncates captured HTTP bodies to this specified limit. The default is `2000`.
-    # If you want to capture more data, you can raise this to a maximum of `5000`,
-    # or lower this to be more efficient with data. `2000` characters should give you a good
-    # idea of the body content. If you need to raise to `5000` you're only constraint is
-    # network throughput.
+    # Truncates captured HTTP bodies to this specified limit. The default is `2048`.
+    # If you want to capture more data, you can raise this to a maximum of `8192`,
+    # or lower this to be more efficient with data. `2048` characters should give you a good
+    # idea of the body content.
     #
     # @example Rails
-    #   config.timber.http_body_limit = 500
+    #   config.timber.http_body_limit = 2048
     # @example Everything else
-    #   Timber::Config.instance.http_body_limit = 500
+    #   Timber::Config.instance.http_body_limit = 2048
     def http_body_limit=(value)
       @http_body_limit = value
     end
