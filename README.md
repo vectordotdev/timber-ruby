@@ -110,7 +110,7 @@ So what can you do with this data?
 3. **Narrow by host** - `system.hostname:1.server.com`
 4. **View slow responses** - `http_server_response.time_ms:>=1000`
 5. **Filter by log level** - `level:error`
-6. **Quickly find exceptions** - `is:exception`
+6. **Quickly find errors** - `is:error`
 
 For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/ruby/overview/).
 
@@ -118,7 +118,7 @@ For a complete overview, see the [Timber for Ruby docs](https://timber.io/docs/r
 ## Third-party integrations
 
 1. **Rails**: Structures ([HTTP requests](https://timber.io/docs/ruby/events-and-context/http-server-request-event/), [HTTP respones](https://timber.io/docs/ruby/events-and-context/http-server-response-event/), [controller calls](https://timber.io/docs/ruby/events-and-context/controller-call-event/), [template renders](https://timber.io/docs/ruby/events-and-context/template-render-event/), and [sql queries](https://timber.io/docs/ruby/events-and-context/sql-query-event/)).
-2. **Rack**: Structures [exceptions](https://timber.io/docs/ruby/events-and-context/exception-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
+2. **Rack**: Structures [errors](https://timber.io/docs/ruby/events-and-context/error-event/), captures [HTTP context](https://timber.io/docs/ruby/events-and-context/http-context/), captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/), captures [session context](https://timber.io/docs/ruby/events-and-context/session-context/).
 3. **Devise, Omniauth, Clearance**: captures [user context](https://timber.io/docs/ruby/events-and-context/user-context/)
 5. **Heroku**: Captures [release context](https://timber.io/docs/ruby/events-and-context/release-context/) via [Heroku dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata).
 

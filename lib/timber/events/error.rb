@@ -3,42 +3,39 @@ require "timber/util"
 
 module Timber
   module Events
-    # The exception event is used to track exceptions.
+    # The error event is used to track errors and exceptions.
     #
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionDispatch::DebugExceptions} integration.
-    class Exception < Timber::Event
+    class Error < Timber::Event
       MAX_MESSAGE_BYTES = 8192.freeze
 
-      attr_reader :name, :exception_message, :backtrace
+      attr_reader :name, :error_message, :backtrace
 
       def initialize(attributes)
         @name = attributes[:name] || raise(ArgumentError.new(":name is required"))
 
-        @exception_message = attributes[:exception_message] || raise(ArgumentError.new(":exception_message is required"))
-        @exception_message = @exception_message.byteslice(0, MAX_MESSAGE_BYTES)
+        @error_message = attributes[:error_message] || raise(ArgumentError.new(":error_message is required"))
+        @error_message = @error_message.byteslice(0, MAX_MESSAGE_BYTES)
 
         backtrace = attributes[:backtrace]
-        if backtrace.nil? || backtrace == []
-          raise(ArgumentError.new(":backtrace is required"))
+        if !backtrace.nil? && backtrace != []
+          @backtrace = backtrace[0..9].collect { |line| parse_backtrace_line(line) }
         end
-
-        # 10 items max
-        @backtrace = backtrace[0..9].collect { |line| parse_backtrace_line(line) }
       end
 
       def to_hash
-        {name: name, message: exception_message, backtrace: backtrace}
+        {name: name, message: error_message, backtrace: backtrace}
       end
       alias to_h to_hash
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {:exception => to_hash}
+        {:error => to_hash}
       end
 
       def message
-        "#{name} (#{exception_message})"
+        "#{name} (#{error_message})"
       end
 
       private

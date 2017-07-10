@@ -7,16 +7,16 @@ rescue Exception
 end
 
 require "timber/config"
-require "timber/events/exception"
+require "timber/events/error"
 require "timber/integrations/rack/middleware"
 require "timber/util"
 
 module Timber
   module Integrations
     module Rack
-      # A Rack middleware that is reponsible for capturing exceptions events
-      # {Timber::Events::Exception}.
-      class ExceptionEvent < Middleware
+      # A Rack middleware that is reponsible for capturing exception and error events
+      # {Timber::Events::Error}.
+      class ErrorEvent < Middleware
         # We determine this when the app loads to avoid the overhead on a per request basis.
         EXCEPTION_WRAPPER_TAKES_CLEANER = if Gem.loaded_specs["rails"]
           Gem.loaded_specs["rails"].version >= Gem::Version.new('5.0.0')
@@ -31,9 +31,9 @@ module Timber
             Config.instance.logger.fatal do
               backtrace = extract_backtrace(env, exception)
 
-              Events::Exception.new(
+              Events::Error.new(
                 name: exception.class.name,
-                exception_message: exception.message,
+                error_message: exception.message,
                 backtrace: backtrace
               )
             end

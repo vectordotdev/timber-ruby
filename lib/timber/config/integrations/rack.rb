@@ -14,15 +14,15 @@ module Timber
       module Rack
         extend self
 
-        # Convenience method for accessing the {Timber::Integrations::Rack::ExceptionEvent}
+        # Convenience method for accessing the {Timber::Integrations::Rack::ErrorEvent}
         # middleware class specific configuration. See {Timber::Integrations::Rack::ExceptionEvent}
         # for a list of methods available.
         #
         # @example
         #   config = Timber::Config.instance
-        #   config.integrations.rack.exception_event.enabled = false
-        def exception_event
-          Timber::Integrations::Rack::ExceptionEvent
+        #   config.integrations.rack.error_event.enabled = false
+        def error_event
+          Timber::Integrations::Rack::ErrorEvent
         end
 
         # Convenience method for accessing the {Timber::Integrations::Rack::HTTPContext}
