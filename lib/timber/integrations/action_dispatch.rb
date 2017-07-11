@@ -1,5 +1,5 @@
 require "timber/integration"
-require "timber/integrations/rack/exception_event"
+require "timber/integrations/rack/error_event"
 require "timber/integrations/action_dispatch/debug_exceptions"
 
 module Timber
@@ -10,7 +10,7 @@ module Timber
     # works as expected.
     module ActionDispatch
       def self.enabled?
-        Rack::ExceptionEvent.enabled?
+        Rack::ErrorEvent.enabled?
       end
 
       def self.integrate!
