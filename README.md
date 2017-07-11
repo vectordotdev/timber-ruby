@@ -156,7 +156,7 @@ logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amou
 
 * Notice the `:payment_rejected` root key. Timber will classify this event as such.
 * In the [Timber console](https://app.timber.io) use the query: `type:payment_rejected` or `payment_rejected.amount:>100`.
-* See more details on our [custom events docs page](https://timber.io/docs/ruby/custom-events/)
+* See more details on our [custom events docs page](https://timber.io/docs/ruby/usage/custom-events/)
 
 ---
 
@@ -180,7 +180,7 @@ end
 
 * Notice the `:build` root key. Timber will classify this context as such.
 * In the [Timber console](https://app.timber.io) use queries like: `build.version:1.0.0`
-* See more details on our [custom contexts docs page](https://timber.io/docs/ruby/custom-contexts/)
+* See more details on our [custom contexts docs page](https://timber.io/docs/ruby/usage/custom-contexts/)
 
 ---
 
