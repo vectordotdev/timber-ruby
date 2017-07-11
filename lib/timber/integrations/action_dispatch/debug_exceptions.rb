@@ -10,7 +10,9 @@ module Timber
       # @private
       class DebugExceptions < Integrator
 
-        # Patch for disabling logging
+        # Patch for disabling logging *only*. This leaves the rest of the class
+        # intact since it performs other functions, like displaying the user friendly
+        # exception screen in development.
         #
         # @private
         module InstanceMethods

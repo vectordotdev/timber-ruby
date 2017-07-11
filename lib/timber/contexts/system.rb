@@ -3,7 +3,7 @@ require "timber/util"
 
 module Timber
   module Contexts
-    # The system context tracks OS level process information, such as the process ID.
+    # The system context tracks OS level information, such as the process ID and hostname.
     #
     # @note This is tracked automatically in {CurrentContext}. When the current context
     #   is initialized, the system context gets added automatically.

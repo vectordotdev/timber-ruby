@@ -1,6 +1,7 @@
 require "timber/integrations/action_controller"
 require "timber/integrations/action_dispatch"
 require "timber/integrations/action_view"
+require "timber/integrations/active_job"
 require "timber/integrations/active_record"
 require "timber/integrations/rack"
 require "timber/integrations/rails"
@@ -13,6 +14,7 @@ module Timber
     def self.enabled=(value)
       ActionController.enabled = value
       ActionView.enabled = value
+      ActiveJob.enabled = value
       ActiveRecord.enabled = value
       Rack.enabled = value
     end
@@ -22,6 +24,7 @@ module Timber
       ActionController.integrate!
       ActionDispatch.integrate!
       ActionView.integrate!
+      ActiveJob.integrate!
       ActiveRecord.integrate!
       Rails.integrate!
     end

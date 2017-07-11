@@ -50,6 +50,7 @@ if defined?(::Rails)
         ::ActionController::Base.logger = logger if defined?(::ActionController::Base) && ::ActionController::Base.respond_to?(:logger=)
         ::ActionMailer::Base.logger = logger if defined?(::ActionMailer::Base) && ::ActionMailer::Base.respond_to?(:logger=)
         ::ActionView::Base.logger = logger if defined?(::ActionView::Base) && ::ActionView::Base.respond_to?(:logger=)
+        ::ActiveJob::Base.logger = logger if defined?(::ActiveJob::Base) && ::ActiveJob::Base.respond_to?(:logger=)
         ::ActiveRecord::Base.logger = logger if defined?(::ActiveRecord::Base) && ::ActiveRecord::Base.respond_to?(:logger=)
         ::Rails.logger = logger
 
