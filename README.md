@@ -23,7 +23,7 @@ Fundamentally changing the way you use your logs.
 1. In your `Gemfile`, add the `timber` gem:
 
     ```ruby
-    gem 'timber', '~> 2.0'
+    gem 'timber', '~> 2.1'
     ```
 
 2. In your `shell`, run `bundle install`
