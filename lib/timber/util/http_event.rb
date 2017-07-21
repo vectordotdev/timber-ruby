@@ -1,7 +1,6 @@
 module Timber
   module Util
-    # Utility module for dealing with HTTP events {Events::HTTPServerRequest},
-    # {Events::HTTPServerResponse}, {Events::HTTPClientRequest}, {Events::HTTPClientResponse}.
+    # Utility module for dealing with HTTP events {Events::HTTPRequest} and {Events::HTTPResponse}.
     module HTTPEvent
       HEADERS_TO_SANITIZE = ['authorization', 'x-amz-security-token'].freeze
       MAX_QUERY_STRING_BYTES = 2048.freeze

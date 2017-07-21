@@ -3,15 +3,15 @@ require "set"
 require "timber/config"
 require "timber/contexts/http"
 require "timber/current_context"
-require "timber/events/http_server_request"
-require "timber/events/http_server_response"
+require "timber/events/http_request"
+require "timber/events/http_response"
 require "timber/integrations/rack/middleware"
 
 module Timber
   module Integrations
     module Rack
       # A Rack middleware that is reponsible for capturing and logging HTTP server requests and
-      # response events. The {Events::HTTPServerRequest} and {Events::HTTPServerResponse} events
+      # response events. The {Events::HTTPRequest} and {Events::HTTPResponse} events
       # respectively.
       class HTTPEvents < Middleware
         class << self
@@ -26,7 +26,7 @@ module Timber
           #    helpful and redundant to the body captured here.
           #
           # If you opt to capture bodies, you can also truncate the size to reduce the data
-          # captured. See {Events::HTTPServerRequest}.
+          # captured. See {Events::HTTPRequest}.
           #
           # @example
           #   Timber::Integrations::Rack::HTTPEvents.capture_request_body = true
@@ -39,7 +39,7 @@ module Timber
             @capture_request_body == true
           end
 
-          # Just like {#capture_request_body=} but for the {Events::HTTPServerResponse} event.
+          # Just like {#capture_request_body=} but for the {Events::HTTPResponse} event.
           # Please see {#capture_request_body=} for more details. The documentation there also
           # applies here.
           def capture_response_body=(value)
@@ -67,9 +67,9 @@ module Timber
           #
           #   Get "/" sent 200 OK in 79ms
           #
-          # The single event is still a {Timber::Events::HTTPServerResponse} event. Because
+          # The single event is still a {Timber::Events::HTTPResponse} event. Because
           # we capture HTTP context, you still get the HTTP details, but you will not get
-          # all of the request details that the {Timber::Events::HTTPServerRequest} event would
+          # all of the request details that the {Timber::Events::HTTPRequest} event would
           # provide.
           #
           # @example
@@ -128,7 +128,7 @@ module Timber
               http_context = CurrentContext.fetch(http_context_key)
               time_ms = (Time.now - start) * 1000.0
 
-              Events::HTTPServerResponse.new(
+              Events::HTTPResponse.new(
                 headers: headers,
                 http_context: http_context,
                 request_id: request.request_id,
@@ -145,7 +145,7 @@ module Timber
             Config.instance.logger.info do
               event_body = capture_request_body? ? request.body_content : nil
 
-              Events::HTTPServerRequest.new(
+              Events::HTTPRequest.new(
                 body: event_body,
                 headers: request.headers,
                 host: request.host,
@@ -164,7 +164,7 @@ module Timber
               time_ms = (Time.now - start) * 1000.0
               event_body = capture_response_body? ? body : nil
 
-              Events::HTTPServerResponse.new(
+              Events::HTTPResponse.new(
                 body: event_body,
                 headers: headers,
                 request_id: request.request_id,
