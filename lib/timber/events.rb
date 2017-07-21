@@ -1,10 +1,8 @@
 require "timber/events/controller_call"
 require "timber/events/custom"
 require "timber/events/error"
-require "timber/events/http_client_request"
-require "timber/events/http_client_response"
-require "timber/events/http_server_request"
-require "timber/events/http_server_response"
+require "timber/events/http_request"
+require "timber/events/http_response"
 require "timber/events/sql_query"
 require "timber/events/template_render"
 

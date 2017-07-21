@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe Timber::Events::HTTPServerRequest, :rails_23 => true do
+describe Timber::Events::HTTPRequest, :rails_23 => true do
   describe ".initialize" do
     context "with a header filters" do
       around(:each) do |example|

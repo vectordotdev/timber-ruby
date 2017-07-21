@@ -8,8 +8,8 @@ module Timber
     #
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
-    class HTTPServerResponse < Timber::Event
-      attr_reader :body, :headers, :http_context, :request_id, :status, :time_ms
+    class HTTPResponse < Timber::Event
+      attr_reader :body, :headers, :http_context, :request_id, :service_name, :status, :time_ms
 
       def initialize(attributes)
         @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
@@ -28,7 +28,7 @@ module Timber
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {:http_server_response => to_hash}
+        {:http_response => to_hash}
       end
 
       # Returns the human readable log message for this event.
