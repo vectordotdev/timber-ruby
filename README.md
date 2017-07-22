@@ -7,8 +7,8 @@
 
 ## Overview
 
-[Timber](https://timber.io) takes a different approach to logging. Instead of parsing, which
-relies on unreadable, unpredictable, hard to use text logs, Timber integrates directly with
+[Timber](https://timber.io) is a logging platform with one major difference: Instead of parsing,
+which relies on unreadable, unpredictable, hard to use text logs, Timber integrates directly with
 your application, producing rich structured events containing metadata and context you couldn't
 capture otherwise. It fundamentally changes the way you use your logs.
 
