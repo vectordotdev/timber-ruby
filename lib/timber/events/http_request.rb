@@ -15,12 +15,12 @@ module Timber
       def initialize(attributes)
         @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
-        @host = attributes[:host] || raise(ArgumentError.new(":host is required"))
+        @host = attributes[:host]
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
         @path = attributes[:path]
         @port = attributes[:port]
         @query_string = Util::HTTPEvent.normalize_query_string(attributes[:query_string])
-        @scheme = attributes[:scheme] || raise(ArgumentError.new(":scheme is required"))
+        @scheme = attributes[:scheme]
         @request_id = attributes[:request_id]
       end
 
