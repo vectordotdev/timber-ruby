@@ -9,7 +9,7 @@ module Timber
     class Runtime < Context
       @keyspace = :runtime
 
-      attr_reader :application, :class_name, :file, :function, :line, :module_name
+      attr_reader :application, :class_name, :file, :function, :line, :module_name, :vm_pid
 
       def initialize(attributes)
         @application = attributes[:application]
@@ -18,12 +18,13 @@ module Timber
         @function = attributes[:function]
         @line = attributes[:line]
         @module_name = attributes[:module_name]
+        @vm_pid = attributes[:vm_pid]
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
         {application: application, class_name: class_name, file: file, function: function,
-          line: line, module_name: module_name}
+          line: line, module_name: module_name, vm_pid: vm_pid}
       end
     end
   end
