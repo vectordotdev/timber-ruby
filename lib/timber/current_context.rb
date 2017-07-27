@@ -158,6 +158,11 @@ module Timber
         system_context = Contexts::System.new(hostname: hostname, pid: pid)
         add_to!(new_hash, system_context)
 
+        # Runtime context
+        thread_object_id = Thread.current.object_id
+        runtime_context = Contexts::System.new(vm_pid: thread_object_id)
+        add_to!(new_hash, runtime_context)
+
         new_hash
       end
 
