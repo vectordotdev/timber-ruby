@@ -20,6 +20,15 @@ describe Timber::Logger, :rails_23 => true do
         expect(logger.formatter).to be_kind_of(Timber::Logger::MessageOnlyFormatter)
       end
     end
+
+    it "should use the Multi log device" do
+      io1 = StringIO.new
+      io2 = StringIO.new
+      logger = Timber::Logger.new(STDOUT, io1, io2)
+      logger.info("hello world")
+      expect(io1.string).to start_with("hello world @metadata {")
+      expect(io2.string).to start_with("hello world @metadata {")
+    end
   end
 
   describe "#add" do

@@ -4,7 +4,7 @@ require "msgpack"
 require "timber/config"
 require "timber/current_context"
 require "timber/event"
-require "timber/log_devices/http"
+require "timber/log_devices"
 require "timber/log_entry"
 
 module Timber
@@ -185,24 +185,50 @@ module Timber
     include ::ActiveSupport::LoggerThreadSafeLevel if defined?(::ActiveSupport::LoggerThreadSafeLevel)
     include ::LoggerSilence if defined?(::LoggerSilence)
 
-    # Creates a new Timber::Logger instances. Accepts the same arguments as `::Logger.new`.
-    # The only difference is that it default the formatter to {AugmentedFormatter}. Using
-    # a different formatter is easy. For example, if you prefer your logs in JSON.
+    # Creates a new Timber::Logger instance where the passed argument is an IO device. That is,
+    # anything that responds to `#write` and `#close`.
     #
-    # @example Changing your formatter
+    # Note, this method does *not* accept the same arguments as the standard Ruby `::Logger`.
+    # The Ruby `::Logger` accepts additional options controlling file rotation if the first argument
+    # is a file *name*. This is a design flaw that Timber does not assume. Logging to a file, or
+    # multiple IO devices is demonstrated in the examples below.
+    #
+    # @example Logging to STDOUT
     #   logger = Timber::Logger.new(STDOUT)
-    #   logger.formatter = Timber::Logger::JSONFormatter.new
-    def initialize(*args)
-      super(*args)
+    #
+    # @example Logging to the Timber HTTP device
+    #   http_device = Timber::LogDevices::HTTP.new("my-timber-api-key")
+    #   logger = Timber::Logger.new(http_device)
+    #
+    # @example Logging to a file (with rotation)
+    #   file_device = Logger::LogDevice.new("path/to/file.log")
+    #   logger = Timber::Logger.new(file_device)
+    #
+    # @example Logging to a file and the Timber HTTP device (multiple log devices)
+    #   http_device = Timber::LogDevices::HTTP.new("my-timber-api-key")
+    #   file_device = Logger::LogDevice.new("path/to/file.log")
+    #   logger = Timber::Logger.new(http_device, file_device)
+    def initialize(*io_devices)
+      io_device = \
+        if io_devices.size == 0
+          raise ArgumentError.new("At least one IO device must be provided when instantiating " +
+            "a Timber::Logger. Ex: Timber::Logger.new(STDOUT).")
+        elsif io_devices.size > 1
+          LogDevices::Multi.new(io_devices)
+        else
+          io_devices.first
+        end
+
+      super(io_device)
 
       # Ensure we sync STDOUT to avoid buffering
-      if args.size == 1 and args.first.respond_to?(:"sync=")
-        args.first.sync = true
+      if io_device.respond_to?(:"sync=")
+        io_device.sync = true
       end
 
       # Set the default formatter. The formatter cannot be set during
       # initialization, and can be changed with #formatter=.
-      if args.size == 1 and args.first.is_a?(LogDevices::HTTP)
+      if io_device.is_a?(LogDevices::HTTP)
         self.formatter = PassThroughFormatter.new
       elsif Config.instance.development? || Config.instance.test?
         self.formatter = MessageOnlyFormatter.new
