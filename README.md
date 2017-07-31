@@ -6,11 +6,10 @@
 
 ## Overview
 
-[Timber](https://timber.io) for Ruby is a drop in replacement for your logger. It takes a different
-approach to structured logging. Instead of parsing, which relies on non-standard, unreadable,
-hard to use text logs, Timber integrates directly with your application, augmenting your logs
-with rich metadata and context. It automatically transforms your logs into rich events,
-fundamentally changing the way you use your logs.
+Timber for Ruby is an drop-in replacement for your `Logger` that transparently augments your logs
+with critical metadata and context. It's structured logging without all of the structured logging
+noise. This turns your logs into rich, useful, readable events. Paired with the
+[Timber console](#the-timber-console), it will fundamentally change the way you use your logs.
 
 1. [**Easy setup** - `mix timber.install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#jibber-jabber)
