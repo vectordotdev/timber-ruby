@@ -11,7 +11,7 @@ logs with critical metadata and context. It's structured logging without all of 
 your logs into rich, useful, readable events. When paired with the
 [Timber console](#the-timber-console), Timber will fundamentally change the way you use your logs.
 
-1. [**Easy setup** - `mix timber.install`](#installation)
+1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#jibber-jabber)
 3. [**Modern fast console, designed specifically for your application**](#the-timber-console)
 
