@@ -13,7 +13,7 @@ your logs into rich, useful, readable events. When paired with the
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#jibber-jabber)
-3. [**Modern fast console, designed specifically for your application**](#the-timber-console)
+3. [**Modern fast console, designed for Ruby application logging**](#the-timber-console)
 
 
 ## Installation
