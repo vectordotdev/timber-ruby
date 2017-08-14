@@ -53,7 +53,7 @@ module Timber
             io.puts ""
             io.puts "Once you obtain your API key, you can run the installer like"
             io.puts ""
-            io.puts "    #{IO::ANSI.colorize("bundle exec timber my-api-key", :blue)}"
+            io.puts "    #{IO::ANSI.colorize("bundle exec timber install my-api-key", :blue)}"
             io.puts ""
             io.puts "See you soon! 🎈"
             io.puts ""
