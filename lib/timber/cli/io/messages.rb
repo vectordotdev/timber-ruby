@@ -23,7 +23,6 @@ module Timber
 Woot! Your API 🔑  is valid:
 
 Name:      #{app.name} (#{app.environment})
-Framework: #{app.framework_type}
 Platform:  #{app.platform_type}
 MESSAGE
           message.rstrip

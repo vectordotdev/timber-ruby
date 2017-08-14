@@ -6,7 +6,6 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
     attributes = {
       "api_key" => api_key,
       "environment" => "development",
-      "framework_type" => "rails",
       "heroku_drain_url" => "http://drain.heroku.com",
       "name" => "My Rails App",
       "platform_type" => "other"
