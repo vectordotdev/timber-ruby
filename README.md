@@ -306,21 +306,14 @@ functionality and integrates with popular libraries and frameworks. This makes s
 logging effortless. Below is a list of integrations we offer and the various events and contexts
 they create.
 
-* Frameworks
-
-   1. [**Rails**](https://timber.io/docs/languages/ruby/integrations/rails)
-   2. [**Rack**](https://timber.io/docs/languages/ruby/integrations/rack)
-
-* Platforms
-
-   1. [**Heroku**](https://timber.io/docs/languages/ruby/integrations/heroku)
-
-* Authentication
-
-   1. [**Devise**](https://timber.io/docs/languages/ruby/integrations/devise)
-   2. [**Clearance**](https://timber.io/docs/languages/ruby/integrations/clearnace)
-   3. [**Omniauth**](https://timber.io/docs/languages/ruby/integrations/omniauth)
-   4. [**Warden**](https://timber.io/docs/languages/ruby/integrations/devise)
+1. [**Rails**](https://timber.io/docs/languages/ruby/integrations/rails)
+2. [**Rack**](https://timber.io/docs/languages/ruby/integrations/rack)
+3. [**Heroku**](https://timber.io/docs/languages/ruby/integrations/heroku)
+4. [**Devise**](https://timber.io/docs/languages/ruby/integrations/devise)
+5. [**Clearance**](https://timber.io/docs/languages/ruby/integrations/clearnace)
+6. [**Omniauth**](https://timber.io/docs/languages/ruby/integrations/omniauth)
+7. [**Warden**](https://timber.io/docs/languages/ruby/integrations/devise)
+8. ...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
 
 
 ## Do amazing things
