@@ -10,7 +10,7 @@ Timber for Ruby is a drop-in upgrade for your Ruby logs that unobtrusively
 [structures your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation).
 It's clean structured logging without the effort. When paired with the
 [Timber console](#the-timber-console), Timber will
-[fundamentally change the way you use your logs](#what-you-can-do).
+[fundamentally change the way you use your logs](#do-amazing-things-with-your-logs).
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
