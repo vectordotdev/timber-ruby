@@ -14,7 +14,7 @@ It's clean structured logging without the effort. When paired with the
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
-3. [**Do amazing things with your Ruby logs**](#do-amazing-things)
+3. [**Do amazing things with your Ruby logs**](#do-amazing-things-with-your-logs)
 
 
 ## Installation
@@ -316,7 +316,7 @@ they create.
 8. ...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
 
 
-## Do amazing things
+## Do amazing things with your logs
 
 What does all of this mean? Doing amazing things with your logs! Being more productive, solving
 problems faster, and _actually_ enjoying using your logs for application insight:
