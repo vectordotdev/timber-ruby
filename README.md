@@ -132,7 +132,7 @@ logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
 1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `background_job.time_ms:>500`
 2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
 3. [View this log's metadata in the console](https://timber.io/docs/app/console/view-metdata-and-context)
-4. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/custom-context)
+4. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/metrics-and-timings)
 
 
 </p></details>
