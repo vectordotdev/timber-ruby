@@ -9,7 +9,7 @@ module Timber
   class LogEntry #:nodoc:
     DT_PRECISION = 6.freeze
     MESSAGE_MAX_BYTES = 8192.freeze
-    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.0.7/schema.json".freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.1.1/schema.json".freeze
 
     attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 

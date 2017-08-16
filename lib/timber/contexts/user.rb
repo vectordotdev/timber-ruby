@@ -13,17 +13,19 @@ module Timber
     class User < Context
       @keyspace = :user
 
-      attr_reader :id, :name, :email
+      attr_reader :id, :name, :email, :type, :meta
 
       def initialize(attributes)
         @id = attributes[:id]
         @name = attributes[:name]
         @email = attributes[:email]
+        @type = attributes[:type]
+        @meta = attributes[:meta]
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {id: Timber::Util::Object.try(id, :to_s), name: name, email: email}
+        {id: Timber::Util::Object.try(id, :to_s), name: name, email: email, type: type, meta: meta}
       end
     end
   end
