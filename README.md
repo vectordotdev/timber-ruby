@@ -6,9 +6,10 @@
 
 ## Overview
 
-Timber for Ruby is a drop-in upgrade for your Ruby logs that unobtrusively
-[structures your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation).
-It's clean structured logging without the effort. When paired with the
+Timber for Ruby is a drop-in upgrade for your Ruby logs that brings your Ruby apps up to date with
+modern logging practices. It works by unobtrusively
+[structuring your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation),
+which is a fancy way of saying readable structured logging. When paired with the
 [Timber console](#the-timber-console), Timber will
 [fundamentally change the way you use your logs](#do-amazing-things-with-your-logs).
 
@@ -52,12 +53,13 @@ metadata, you don't have to worry about making every log structured!
 
 </p></details>
 
-<details><summary><strong>Custom events</strong></summary><p>
+<details><summary><strong>Logging events</strong></summary><p>
 
-Custom events allow you to extend beyond events already defined in the
-[`Timber::Events`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Events) namespace.
-If you aren't sure what an event is, please read the
-["Metdata, Context, and Events" doc](https://timber.io/docs/concepts/metadata-context-and-events).
+Logging events allows you to log structured data without sacrificing readability or worrying about
+structured data name or type conflicts. Keep in mind, Timber defines common events in the
+[`Timber::Events`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Events) namespace,
+which are automatically logged for you through our [integrations](#integrations). You should not
+have to maually log events defined there except in special circumstances.
 
 ### How to use it
 
@@ -75,22 +77,29 @@ logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amou
 
 </p></details>
 
-<details><summary><strong>Custom contexts</strong></summary><p>
+<details><summary><strong>Setting context</strong></summary><p>
 
-Custom contexts allow you to extend beyond contexts already defined in
-the [`Timber::Contexts`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts)
-namespace. If you aren't sure what context is, please read the
-["Metdata, Context, and Events" doc](https://timber.io/docs/concepts/metadata-context-and-events).
+Context is amazingly powerful, think of it like join data for your logs. It represents the
+environment when the log was written, allowing you to relate logs so you can easily segment them.
+It's how Timber is able to accomplish features like
+[tailing users](https://timber.io/docs/app/console/tail-a-user) and
+[tracing HTTP requests](https://timber.io/docs/app/console/trace-http-requests).
+Keep in mind, Timber defines common contexts in the
+[`Timber::Contexts`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts) namespace,
+which are automatically set for you through our [integrations](#integrations). You should not
+have to maually set these contexts except in special circumstances.
 
 ### How to use it
 
 ```ruby
-logger.with_context(build: {version: "1.0.0"}) do
-  logger.info("My log message")
+logger.with_context(job: {id: 123}) do
+  logger.info("Background job execution started")
+  # ... code here
+  logger.info("Background job execution completed")
 end
 ```
 
-1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `build.version:1.0.0`
+1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `job.id:123`
 2. [View this context when viewing a log's metadata](https://timber.io/docs/app/console/view-metdata-and-context)
 3. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/custom-context)
 
