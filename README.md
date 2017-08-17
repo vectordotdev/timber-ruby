@@ -158,7 +158,7 @@ config = Timber::Config.instance
 config.logrageify!()
 ```
 
-## How it works
+### How it works
 
 It turns this:
 
