@@ -6,12 +6,9 @@
 
 ## Overview
 
-Timber for Ruby is a drop-in upgrade for your Ruby logs that brings your Ruby apps up to date with
-modern logging practices. It works by unobtrusively
-[structuring your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation),
-which is a fancy way of saying readable structured logging. When paired with the
-[Timber console](#the-timber-console), Timber will
-[make your logs insanely useful](#do-amazing-things-with-your-logs).
+Timber for Ruby is a drop-in solution for your noisy Ruby logs, turning them into insanely useful
+events. Solve problems faster, produce higher quality apps, and never be left in the dark wondering
+if your app is performing well for your users.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
@@ -29,6 +26,19 @@ which is a fancy way of saying readable structured logging. When paired with the
 2. In your `shell`, run `bundle install`
 
 3. In your `shell`, run `bundle exec timber install`
+
+
+## How it works
+
+Timber works by
+[unobtrusively structuring your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation),
+which is a fancy way of saying Timber _appends_ structured data to your original log messages
+instead of replacing them all together. This makes your logs enjoyable to read (and use!) while
+[still offering rich structured data when you need it](https://timber.io/docs/app/console/view-metadata-and-context).
+It does this automatically by replacing your logger and
+[integrating with popular frameworks and libraries](#integrations). When paired with the
+[Timber console](#the-timber-console) it creates a highly productive custom tailored logging
+experience conducive for Ruby app development.
 
 
 ## Usage
@@ -327,8 +337,7 @@ they create.
 
 ## Do amazing things with your logs
 
-What does all of this mean? Doing amazing things with your logs! Being more productive, solving
-problems faster, and _actually_ enjoying using your logs for application insight:
+What does all of this mean? Being more productive, solving problems faster, and _actually_ enjoying using your logs for application insight:
 
 1. [**Live tail users on your app**](https://timber.io/docs/app/console/tail-a-user)
 2. [**Trace HTTP requests**](https://timber.io/docs/app/console/trace-http-requests)
