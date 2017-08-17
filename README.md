@@ -53,7 +53,7 @@ metadata, you don't have to worry about making every log structured!
 
 </p></details>
 
-<details><summary><strong>Logging events</strong></summary><p>
+<details><summary><strong>Logging events (structured data)</strong></summary><p>
 
 Logging events allows you to log structured data without sacrificing readability or worrying about
 structured data name or type conflicts. Keep in mind, Timber defines common events in the
