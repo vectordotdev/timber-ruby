@@ -11,7 +11,7 @@ modern logging practices. It works by unobtrusively
 [structuring your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation),
 which is a fancy way of saying readable structured logging. When paired with the
 [Timber console](#the-timber-console), Timber will
-[fundamentally change the way you use your logs](#do-amazing-things-with-your-logs).
+[make your logs insanely useful](#do-amazing-things-with-your-logs).
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
