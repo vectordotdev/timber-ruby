@@ -322,7 +322,7 @@ support:
 
 ## Do amazing things with your logs
 
-Being more productive, solving problems faster, and never feel left in the dark wondering if
+Solve problems faster, produce higher quality apps, and never feel left in the dark wondering if
 your app is performing well for your users:
 
 1. [**Live tail users on your app**](https://timber.io/docs/app/console/tail-a-user)
