@@ -6,9 +6,10 @@
 
 ## Overview
 
-Timber makes great Ruby logging effortless. It pairs with the [Timber console](#the-timber-console),
-enabling you to obtain complete insight into your application, so that you can solve problems
-faster and produce top-notch Ruby apps.
+Timber for Ruby is an extension for the [Timber logging service](https://timber.io) that instantly
+makes your Ruby logs great. Without changing your logs, it captures crticial metadata and context,
+providing you with unparalleled insight into your app. Log better, solve problems faster, and
+produce higher quality Ruby apps.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Powerful logging**](#usage)
