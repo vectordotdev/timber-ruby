@@ -6,7 +6,9 @@
 
 ## Overview
 
-Timber makes great Ruby logging effortless:
+Timber makes great Ruby logging effortless. It pairs with the [Timber console](#the-timber-console),
+enabling you to obtain complete insight into your application, so that you can solve problems
+faster and produce top-notch Ruby apps.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
