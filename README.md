@@ -11,8 +11,9 @@ enabling you to obtain complete insight into your application, so that you can s
 faster and produce top-notch Ruby apps.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
-2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
-3. [**Do amazing things with your Ruby logs**](#do-amazing-things-with-your-logs)
+2. [**Powerful logging**](#usage)
+3. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
+4. [**Do amazing things with your Ruby logs**](#do-amazing-things-with-your-logs)
 
 
 ## Installation
