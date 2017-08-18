@@ -7,8 +7,7 @@
 ## Overview
 
 Timber for Ruby is a drop-in solution for your noisy Ruby logs, turning them into insanely useful
-events with context. Solve problems *faster*, produce higher quality apps, and never be left in the
-dark  wondering if your app is performing well for your users.
+events with context. It pairs with the [Timber console](#the-timber-console) to help you solve problems *faster* and produce higher quality apps. Never feel left in the dark wondering if your app is performing well for your users.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
