@@ -6,8 +6,7 @@
 
 ## Overview
 
-Timber for Ruby is a drop-in solution for your noisy Ruby logs, turning them into insanely useful
-events with context. It pairs with the [Timber console](#the-timber-console) to help you solve problems *faster*, produce higher quality apps, and never feel left in the dark wondering if your app is performing well for your users.
+Timber makes great Ruby logging effortless:
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
@@ -25,19 +24,6 @@ events with context. It pairs with the [Timber console](#the-timber-console) to 
 2. In your `shell`, run `bundle install`
 
 3. In your `shell`, run `bundle exec timber install`
-
-
-## How it works
-
-Timber works by
-[unobtrusively structuring your logs through augmentation](https://timber.io/docs/concepts/structuring-through-augmentation),
-which is a fancy way of saying Timber _appends_ structured data to your original log messages
-instead of replacing them all together. This makes your logs enjoyable to read (and use!) while
-[still offering rich structured data when you need it](https://timber.io/docs/app/console/view-metadata-and-context).
-It does this automatically by replacing your logger and
-[integrating with popular frameworks and libraries](#integrations). When paired with the
-[Timber console](#the-timber-console) it creates a highly productive custom tailored logging
-experience conducive for Ruby app development.
 
 
 ## Usage
@@ -319,10 +305,10 @@ All variables are optional, but at least one must be present.
 
 ## Integrations
 
-[Timber for Ruby](https://github.com/timberio/timber-ruby) extends beyond your basic logging
-functionality and integrates with popular libraries and frameworks. This makes structured quality
-logging effortless. Below is a list of integrations we offer and the various events and contexts
-they create.
+Timber integrates with popular frameworks and libraries to capture context and metadata you
+couldn't otherwise. This automatically upgrades logs produced by these libraries, making them
+[easier to search and use](#do-amazing-things-with-your-logs). Below is a list of libraries we
+support:
 
 1. [**Rails**](https://timber.io/docs/languages/ruby/integrations/rails)
 2. [**Rack**](https://timber.io/docs/languages/ruby/integrations/rack)
@@ -336,7 +322,8 @@ they create.
 
 ## Do amazing things with your logs
 
-What does all of this mean? Being more productive, solving problems faster, and _actually_ enjoying using your logs for application insight:
+Being more productive, solving problems faster, and never feel left in the dark wondering if
+your app is performing well for your users:
 
 1. [**Live tail users on your app**](https://timber.io/docs/app/console/tail-a-user)
 2. [**Trace HTTP requests**](https://timber.io/docs/app/console/trace-http-requests)
