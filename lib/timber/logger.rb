@@ -8,63 +8,14 @@ require "timber/log_devices"
 require "timber/log_entry"
 
 module Timber
-  # The Timber Logger behaves exactly like `::Logger`, except that it supports a transparent API
-  # for logging structured messages. It ensures your log messages are communicated properly
-  # with the Timber.io API.
+  # The Timber Logger behaves exactly like the standard Ruby `::Logger`, except that it supports a
+  # transparent API for logging structured data and events.
   #
-  # To adhere to our no code debt / no lock-in promise, the Timber Logger will *never* deviate
-  # from the `::Logger` interface. That is, it will *never* add methods, or alter any
-  # method signatures. This ensures Timber can be removed without consequence.
-  #
-  # @example Basic example (the original ::Logger interface remains untouched):
+  # @example Basic logging
   #   logger.info "Payment rejected for customer #{customer_id}"
   #
-  # @example Using a Hash
-  #   # The :message key is required, the other additional key is your event type and data
-  #   # :type is the namespace used in timber for the :data
+  # @example Logging an event
   #   logger.info "Payment rejected", payment_rejected: {customer_id: customer_id, amount: 100}
-  #
-  # @example Using a Struct (a simple, more structured way, to define events)
-  #   PaymentRejectedEvent = Struct.new(:customer_id, :amount, :reason) do
-  #     # `#message` and `#type` are required, otherwise they will not be logged properly.
-  #     # `#type` is the namespace used in timber for the struct data
-  #     def message; "Payment rejected for #{customer_id}"; end
-  #     def type; :payment_rejected; end
-  #   end
-  #   Logger.info PaymentRejectedEvent.new("abcd1234", 100, "Card expired")
-  #
-  # @example Using typed Event classes
-  #   # Event implementation is left to you. Events should be simple classes.
-  #   # The only requirement is that it responds to #to_timber_event and return the
-  #   # appropriate Timber::Events::* type.
-  #   class Event
-  #     def to_hash
-  #       hash = {}
-  #       instance_variables.each { |var| hash[var.to_s.delete("@")] = instance_variable_get(var) }
-  #       hash
-  #     end
-  #     alias to_h to_hash
-  #
-  #     def to_timber_event
-  #       Timber::Events::Custom.new(type: type, message: message, data: to_hash)
-  #     end
-  #
-  #     def message; raise NotImplementedError.new; end
-  #     def type; raise NotImplementedError.new; end
-  #   end
-  #
-  #   class PaymentRejectedEvent < Event
-  #     attr_accessor :customer_id, :amount
-  #     def initialize(customer_id, amount)
-  #       @customer_id = customer_id
-  #       @amount = amount
-  #     end
-  #     def message; "Payment rejected for customer #{customer_id}"; end
-  #     def type; :payment_rejected_event; end
-  #   end
-  #
-  #   Logger.info PymentRejectedEvent.new("abcd1234", 100)
-  #
   class Logger < ::Logger
 
     # @private

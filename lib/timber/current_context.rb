@@ -52,21 +52,10 @@ module Timber
     # @note Because context is included with every log line, it is recommended that you limit this
     #   to only neccessary data.
     #
-    # @example Adding a custom context with a map
+    # @example Adding a custom context
     #   Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
     #     # ... anything logged here will include the context ...
     #   end
-    #
-    # @example Adding a custom context with a struct
-    #   BuildContext = Struct.new(:version) do
-    #     def type; :build; end
-    #    end
-    #    build_context = BuildContext.new("1.0.0")
-    #    Timber::CurrentContext.with(build_context) do
-    #     # ... anything logged here will include the context ...
-    #   end
-    #   # Be sure to checkout Timber::Contexts! These are officially supported and many of these
-    #   # will be automatically included via Timber::Integrations
     #
     # @example Adding multiple contexts
     #   Timber::CurrentContext.with(context1, context2) { ... }
