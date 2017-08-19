@@ -334,11 +334,11 @@ support:
 Solve problems faster, produce higher quality apps, and never feel left in the dark wondering if
 your app is performing well for your users:
 
-1. [**Powerful searching**](https://timber.io/docs/app/console/searching)
-2. [**Live tail users & solve customer issues faster](https://timber.io/docs/app/console/tail-a-user)
-3. [**Viw logs per HTTP request**](https://timber.io/docs/app/console/trace-http-requests)
-4. [**Inspect HTTP request parameters**](https://timber.io/docs/app/console/inspect-http-requests)
-5. [**Threshold based alerting**](https://timber.io/docs/app/alerts)
+1. [**Powerful searching.** - Find what you need faster.](https://timber.io/docs/app/console/searching)
+2. [**Live tail users.** - Easily solve customer issues.](https://timber.io/docs/app/console/tail-a-user)
+3. [**Viw logs per HTTP request.** - See the full story.](https://timber.io/docs/app/console/trace-http-requests)
+4. [**Inspect HTTP request parameters.** - Quickly reproduce.](https://timber.io/docs/app/console/inspect-http-requests)
+5. [**Threshold based alerting.** - Know when things break.](https://timber.io/docs/app/alerts)
 6. ...and more! Checkout our [the Timber application docs](https://timber.io/docs/app)
 
 
