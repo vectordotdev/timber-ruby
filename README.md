@@ -331,8 +331,7 @@ support:
 
 ## Do amazing things with your logs
 
-Solve problems faster, produce higher quality apps, and never feel left in the dark wondering if
-your app is performing well for your users:
+Unlock the potential of your logs:
 
 1. [**Powerful searching.** - Find what you need faster.](https://timber.io/docs/app/console/searching)
 2. [**Live tail users.** - Easily solve customer issues.](https://timber.io/docs/app/console/tail-a-user)
