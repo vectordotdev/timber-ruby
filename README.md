@@ -4,12 +4,17 @@
 [![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://www.rubydoc.info/github/timberio/timber-ruby)
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 
+[Timber.io](https://timber.io) is a simple cloud-based logging platform built for developers.
+This is our official Ruby library.
+
 ## Overview
 
-Timber for Ruby is an extension for the [Timber logging service](https://timber.io) that instantly
-makes your Ruby logs great. It transparently captures crticial metadata and context,
-providing you with unparalleled insight into your app. Log better, solve problems faster, and
-produce higher quality Ruby apps.
+Ruby logs are broken. They're noisy, unparseable, and in the context of concurrent production
+environments, unreadable and unusable. Logging systems built for ops people didn't help. This
+is why we built Timber. It takes a different approach to logging by integrating directly with
+your app. Instead of prefixing your logs with endless tags, Timber captures context and metadata
+without changing your logs. This makes your logs easy to search, use, and _read_! Logs have
+more potential than anything to give you application insight, Timber unlocks this.
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Powerful logging**](#usage)
