@@ -11,12 +11,12 @@ This is our official Ruby library.
 
 **Ruby logging is broken:** First, Ruby logs are noisy, unparesable, and in the context of multiple servers and processes, unreadable. Second, current logging systems are clunky, hard to use, and built for ops engineers.
 
-This is why we built Timber. It's a different approach to Ruby logging. It integrates directly with your app to capture rich context and metadata without changing your logs. And it pairs with [a console designed for developers](#the-timber-console) that makes it easy to [search, use, and _read_](#do-amazing-things-with-your-logs) your logs so you can do your job effectively.
+This is why we built Timber. It's a different approach to Ruby logging. It integrates directly with your app to capture rich context and metadata without changing your logs. And it pairs with [a console designed specifically for developers](#the-timber-console), making it easy to [search, use, and _read_](#use-your-logs-to-get-things-done) your logs so you can [get things done](#use-your-logs-to-get-things-done).
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Powerful logging**](#usage)
 3. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
-4. [**Do amazing things with your Ruby logs**](#do-amazing-things-with-your-logs)
+4. [**Use your logs to get things done**](#use-your-logs-to-get-things-done)
 
 
 ## Installation
@@ -326,9 +326,9 @@ support:
 8. ...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
 
 
-## Do amazing things with your logs
+## Use your logs to get things done
 
-Unlock the potential of your logs:
+Use your logs in ways a developer needs. Be more productive:
 
 1. [**Powerful searching.** - Find what you need faster.](https://timber.io/docs/app/console/searching)
 2. [**Live tail users.** - Easily solve customer issues.](https://timber.io/docs/app/console/tail-a-user)
