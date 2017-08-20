@@ -22,6 +22,10 @@ module Timber
         append!("config.logrageify!")
       end
 
+      def silence_template_renders!
+        append!("config.integrations.action_view.silence = true")
+      end
+
       private
         def append!(code)
           if !content.include?(code)

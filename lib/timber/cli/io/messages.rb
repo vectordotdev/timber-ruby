@@ -91,7 +91,7 @@ MESSAGE
 
         def free_data
           message = <<-MESSAGE
-Because you're awesome, we've credited your account with ✨ 100mb✨.
+Get free data:
 
 * Get ✨ 250mb✨  for starring our repo: #{IO::ANSI.colorize(REPO_URL, :blue)}
 * Get ✨ 250mb✨  for tweeting your experience to #{IO::ANSI.colorize(TWITTER_HANDLE, :blue)}
@@ -101,7 +101,7 @@ MESSAGE
 
         def header
           message = <<-MESSAGE
-🌲 Timber.io Ruby Installer
+🌲 Timber.io Ruby Installer - Sane logging for Ruby developers.
 
  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^
 /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\

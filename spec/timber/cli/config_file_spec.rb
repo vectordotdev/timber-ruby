@@ -16,7 +16,8 @@ describe Timber::CLI::ConfigFile, :rails_23 => true do
   end
 
   describe ".logrageify!" do
-    it "should set the option in the config file" do
+    it "should not set the option in the config file" do
+      allow(config_file).to receive(:log_rage?).and_return(true)
       config_file.logrageify!
       new_contents = initial_contents.gsub(contents_hook, "config.logrageify!\n\n#{contents_hook}")
       expect(config_file.send(:content)).to eq(new_contents)

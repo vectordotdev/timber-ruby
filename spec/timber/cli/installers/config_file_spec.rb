@@ -40,18 +40,11 @@ describe Timber::CLI::Installers::ConfigFile, :rails_23 => true do
       expect(output.string).to eq("")
     end
 
-    context "with a Lograge constant" do
-      around(:each) do |example|
-        Lograge = 1
-        example.run
-        Object.send(:remove_const, :Lograge)
-      end
-
-      it "should prompt for Lograge configuration and return true for y" do
-        input.string = "y\n"
-        expect(installer.send(:logrageify?)).to eq(true)
-        expect(output.string).to eq("\n--------------------------------------------------------------------------------\n\nWe noticed you have lograge installed. Would you like to configure \nTimber to function similarly?\n(This silences template renders, sql queries, and controller calls.\nYou can always do this later in config/initialzers/timber.rb)\n\n\e[34my) Yes, configure Timber like lograge\e[0m\n\e[34mn) No, use the Rails logging defaults\e[0m\n\nEnter your choice: (y/n) ")
-      end
+    it "should prompt for Lograge configuration and return true for y" do
+      allow(installer).to receive(:lograge?).and_return(true)
+      input.string = "y\n"
+      expect(installer.send(:logrageify?)).to eq(true)
+      expect(output.string).to eq("\n--------------------------------------------------------------------------------\n\nWe noticed you have lograge installed. Would you like to configure \nTimber to function similarly?\n(This silences template renders, sql queries, and controller calls.\nYou can always do this later in config/initialzers/timber.rb)\n\n\e[34my) Yes, configure Timber like lograge\e[0m\n\e[34mn) No, use the Rails logging defaults\e[0m\n\nEnter your choice: (y/n) ")
     end
   end
 end

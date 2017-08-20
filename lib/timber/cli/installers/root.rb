@@ -111,11 +111,11 @@ module Timber
             io.puts ""
             io.puts IO::Messages.separator
             io.puts ""
-            io.puts "All done! Simply run your application locally and you'll see logs"
-            io.puts "show up in Timber. Enjoy!"
+            io.puts "All done! To start using Timber:"
             io.puts ""
-            io.puts "When you're ready to move to production/staging, create a"
-            io.puts "production/staging app in Timber and follow the instructions shown."
+            io.puts IO::ANSI.colorize("1. Run your application locally to see logs show up in Timber", :blue)
+            io.puts IO::ANSI.colorize("2. When you're ready to move to production/staging, create a", :blue)
+            io.puts IO::ANSI.colorize("   production/staging app in Timber and follow the instructions shown.", :blue)
             io.puts ""
             io.ask_to_proceed
           end
