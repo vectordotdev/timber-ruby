@@ -160,15 +160,13 @@ module Timber
     #   file_device = Logger::LogDevice.new("path/to/file.log")
     #   logger = Timber::Logger.new(http_device, file_device)
     def initialize(*io_devices)
-      io_device = \
-        if io_devices.size == 0
-          raise ArgumentError.new("At least one IO device must be provided when instantiating " +
-            "a Timber::Logger. Ex: Timber::Logger.new(STDOUT).")
-        elsif io_devices.size > 1
-          LogDevices::Multi.new(io_devices)
-        else
-          io_devices.first
-        end
+      if io_devices.size == 0
+        raise ArgumentError.new("At least one IO device must be provided when instantiating " +
+          "a Timber::Logger. Ex: Timber::Logger.new(STDOUT).")
+      end
+
+      @extra_loggers = io_devices[1..-1].collect { |io_device| self.class.new(io_device) }
+      io_device = io_devices[0]
 
       super(io_device)
 
@@ -226,6 +224,11 @@ module Timber
     # This is required because of Rails' monkey patching on Logger via `::LoggerSilence`.
     def add(severity, message = nil, progname = nil, &block)
       return true if @logdev.nil? || (severity || UNKNOWN) < level
+
+      @extra_loggers.each do |logger|
+        logger.add(severity, message, progname, &block)
+      end
+
       super
     end
 
