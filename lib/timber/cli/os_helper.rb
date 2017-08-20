@@ -14,6 +14,10 @@ module Timber
         false
       end
 
+      def self.git_clean_working_tree?
+        `git diff-index --quiet HEAD -- || echo "untracked";` == ""
+      end
+
       def self.git_commit_changes
         begin
           `git add config/initializers/timber.rb`
@@ -24,6 +28,10 @@ module Timber
         true
       rescue Exception
         false
+      end
+
+      def self.git_master?
+        `git rev-parse --abbrev-ref HEAD` == "master"
       end
 
       def self.has_git?
