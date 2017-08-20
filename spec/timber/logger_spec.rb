@@ -21,7 +21,7 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    it "should use the Multi log device" do
+    it "should allow multiple loggers" do
       io1 = StringIO.new
       io2 = StringIO.new
       logger = Timber::Logger.new(STDOUT, io1, io2)
