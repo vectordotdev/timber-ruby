@@ -5,13 +5,13 @@
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 
 [Timber](https://timber.io) is a cloud-based logging system that integrates directly with your
-Ruby app to capture context and metadata. This produces clean, readable logs that are easy to
-search and use:
+Ruby app to capture context and metadata without parsing. This produces clean, readable logs that
+are easier to search and use:
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
 2. [**Usage** - Simple yet powerful API](#usage)
 3. [**Integrations** - Automatic context and metadata for your existing logs](#integrations)
-4. [**The Timber Console** - Designed for Ruby developers, not ops people!](#the-timber-console)
+4. [**The Timber Console** - Designed for Ruby developers](#the-timber-console)
 5. [**Get things done with your logs 💪**](#get-things-done-with-your-logs)
 
 
