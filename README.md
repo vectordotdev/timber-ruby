@@ -11,7 +11,7 @@ This is our official Ruby library.
 
 **Ruby logging is broken:** First, Ruby logs are noisy, unparesable, and in the context of multiple servers and processes, unreadable. Second, current logging systems are clunky, hard to use, and built for ops engineers.
 
-This is why we built Timber. It's a different approach to Ruby logging. It integrates directly with your app to capture rich context and metadata without changing your logs. And it pairs with [a console designed specifically for developers](#the-timber-console), making it easy to [search, use, and _read_](#use-your-logs-to-get-things-done) your logs so you can [get things done](#use-your-logs-to-get-things-done).
+This is why we built Timber. It's a different approach to Ruby logging. It integrates directly with your app to capture rich context and metadata without changing your logs. And it pairs with [a console designed specifically for Ruby developers](#the-timber-console), making it easy to [search, use, and _read_](#use-your-logs-to-get-things-done) your logs so you can [get things done](#use-your-logs-to-get-things-done).
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
 2. [**Powerful logging**](#usage)
