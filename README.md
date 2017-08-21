@@ -9,9 +9,10 @@ directly with your app to capture context and metadata producing clean, readable
 easy to search and use:
 
 1. [**Easy setup** - `bundle exec timber install`](#installation)
-2. [**Powerful logging**](#usage)
+2. [**Simple API**](#usage)
 3. [**Seamlessly integrates with popular libraries and frameworks**](#integrations)
-4. [**Use your logs to get things done**](#use-your-logs-to-get-things-done)
+4. [**Console designed for Ruby developers**](#the-timber-console)
+5. [**Get things done with your logs**](#get-things-done-with-your-logs)
 
 
 ## Installation
@@ -321,9 +322,9 @@ support:
 8. ...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
 
 
-## Use your logs to get things done
+## Get things done with your logs
 
-Use your logs in ways a developer needs. Be more productive:
+Logging features every developer needs:
 
 1. [**Powerful searching.** - Find what you need faster.](https://timber.io/docs/app/console/searching)
 2. [**Live tail users.** - Easily solve customer issues.](https://timber.io/docs/app/console/tail-a-user)
