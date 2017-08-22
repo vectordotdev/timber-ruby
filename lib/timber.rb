@@ -20,12 +20,12 @@ require "timber/frameworks"
 module Timber
   # Access the main configuration object. Please see {{Timber::Config}} for more details.
   def self.config
-    Timber::Config.instance
+    Config.instance
   end
 
   # Starts a timer for timing events. Please see {{Timber::Timber.start}} for more details.
   def self.start_timer
-    Timber.start
+    Timer.start
   end
 
   # Adds context to all logs written within the passed block. Please see
