@@ -214,8 +214,7 @@ module Timber
       super
     end
 
-    # Convenience method for adding context. Please see {{Timber::CurrentContext.with}} for
-    # a more detailed description and examples.
+    # @private
     def with_context(context, &block)
       Timber::CurrentContext.with(context, &block)
     end
