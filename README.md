@@ -5,8 +5,8 @@
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 
 [Timber](https://timber.io) is a cloud-based logging system that integrates directly with your
-Ruby app to capture context and metadata without parsing. This produces clean, readable logs that
-are easier to search and use:
+Ruby app to capture context and metadata without parsing. This produces rich, clean, readable logs
+that are easier to search and use:
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
 2. [**Usage** - Simple yet powerful API](#usage)
@@ -89,7 +89,7 @@ have to maually set these contexts except in special circumstances.
 ### How to use it
 
 ```ruby
-logger.with_context(job: {id: 123}) do
+Timber.with_context(job: {id: 123}) do
   logger.info("Background job execution started")
   # ... code here
   logger.info("Background job execution completed")
@@ -118,7 +118,7 @@ you are unsure how you'll need to use your data in the future.
 Below is a contrived example of timing a background job:
 
 ```ruby
-timer = Timber::Timer.start
+timer = Timber.start_timer
 # ... code to time ...
 logger.info("Processed background job", background_job: {time_ms: timer})
 ```
@@ -160,8 +160,7 @@ option for anyone transitioning from lograge.
 ```ruby
 # config/initializers/timber.rb
 
-config = Timber::Config.instance
-config.logrageify!()
+Timber.config.logrageify!()
 ```
 
 ### How it works
@@ -190,11 +189,10 @@ Internally this is equivalent to:
 ```ruby
 # config/initializers/timber.rb
 
-config = Timber::Config.instance
-config.integrations.action_controller.silence = true
-config.integrations.action_view.silence = true
-config.integrations.active_record.silence = true
-config.integrations.rack.http_events.collapse_into_single_event = true
+Timber.config.integrations.action_controller.silence = true
+Timber.config.integrations.action_view.silence = true
+Timber.config.integrations.active_record.silence = true
+Timber.config.integrations.rack.http_events.collapse_into_single_event = true
 ```
 
 ### Pro-tip: Keep controller call logs (recommended)
@@ -205,10 +203,9 @@ from lograge with the following settings:
 ```ruby
 # config/initializers/timber.rb
 
-config = Timber::Config.instance
-config.integrations.action_view.silence = true
-config.integrations.active_record.silence = true
-config.integrations.rack.http_events.collapse_into_single_event = true
+Timber.config.integrations.action_view.silence = true
+Timber.config.integrations.active_record.silence = true
+Timber.config.integrations.rack.http_events.collapse_into_single_event = true
 ```
 
 This does _not_ silence the controller call log event. This is because Timber captures the
@@ -233,8 +230,7 @@ The following will silence all `[GET] /_health` requests:
 ```ruby
 # config/initializers/timber.rb
 
-config = Timber::Config.instance
-config.integrations.rack.http_events.silence_request = lambda do |rack_env, rack_request|
+Timber.config.integrations.rack.http_events.silence_request = lambda do |rack_env, rack_request|
   rack_request.path == "/_health"
 end
 ```
@@ -262,8 +258,7 @@ you can do so like:
 ```ruby
 # config/initializers/timber.rb
 
-config = Timber::Config.instance
-config.integrations.rack.user_context.custom_user_hash = lambda do |rack_env|
+Timber.config.integrations.rack.user_context.custom_user_hash = lambda do |rack_env|
   user = rack_env['warden'].user
   if user
     {
