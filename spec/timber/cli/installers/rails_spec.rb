@@ -95,7 +95,9 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
 
             expected_code = <<-CODE
   # Install the Timber.io logger
-  send_logs_to_timber = true # <---- set to false to stop sending dev logs to Timber.io
+  send_logs_to_timber = true # <---- Set to false to stop sending development logs to Timber.io.
+                             #       But do not remove the logger code below! The log_device should
+                             #       be set to STDOUT if you want to disable sending logs.
 
   log_device = send_logs_to_timber ? Timber::LogDevices::HTTP.new('#{app.api_key}') : STDOUT
   logger = Timber::Logger.new(log_device)
