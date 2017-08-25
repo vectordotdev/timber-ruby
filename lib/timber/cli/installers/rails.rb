@@ -41,7 +41,13 @@ module Timber
               io.puts "n) No, just print development logs to STDOUT", :blue
               io.puts ""
 
-              case io.ask_yes_no("Enter your choice:", event_prompt: "Send dev logs to Timber?")
+              input = io.ask_yes_no("Enter your choice:", event_prompt: "Send dev logs to Timber?")
+
+              io.puts ""
+              io.puts IO::Messages.separator
+              io.puts ""
+
+              case input
               when :yes
                 :send
               when :no
@@ -54,7 +60,7 @@ module Timber
             environment_file_path = get_environment_file_path("development")
             if environment_file_path
               if already_installed?(environment_file_path)
-                io.task_complete("Timber::Logger already installed #{environment_file_path}")
+                io.task_complete("Timber already installed #{environment_file_path}")
                 return :already_installed
               end
 
@@ -66,7 +72,9 @@ module Timber
 
                 logger_code = <<-CODE
   # Install the Timber.io logger
-  send_logs_to_timber = true # <---- set to false to stop sending dev logs to Timber.io
+  send_logs_to_timber = true # <---- Set to false to stop sending development logs to Timber.io.
+                             #       But do not remove the logger code below! The log_device should
+                             #       be set to STDOUT if you want to disable sending logs.
 
   log_device = send_logs_to_timber ? Timber::LogDevices::HTTP.new(#{api_key_code}) : STDOUT
   logger = Timber::Logger.new(log_device)
@@ -88,7 +96,7 @@ CODE
             environment_file_path = get_environment_file_path("test")
             if environment_file_path
               if already_installed?(environment_file_path)
-                io.task_complete("Timber::Logger already installed #{environment_file_path}")
+                io.task_complete("Timber already installed #{environment_file_path}")
                 return :already_installed
               end
 
@@ -102,7 +110,7 @@ CODE
             environment_file_path = get_environment_file_path(app.environment) || get_environment_file_path("production")
             if environment_file_path
               if already_installed?(environment_file_path)
-                io.task_complete("Timber::Logger already installed #{environment_file_path}")
+                io.task_complete("Timber already installed #{environment_file_path}")
                 return :already_installed
               end
 

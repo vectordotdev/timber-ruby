@@ -33,8 +33,6 @@ module Timber
         File.open(path, "w") do |f|
           f.write(contents)
         end
-
-        api.event(:file_written, path: path)
       end
 
       def verify(path, io)

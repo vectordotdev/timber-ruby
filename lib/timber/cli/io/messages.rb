@@ -20,10 +20,7 @@ module Timber
 
         def application_details(app)
           message = <<-MESSAGE
-Woot! Your API 🔑  is valid:
-
-Name:      #{app.name} (#{app.environment})
-Platform:  #{app.platform_type}
+Woot! Your API 🔑  is valid: #{app.name} (#{app.environment}) on #{app.platform_type}
 MESSAGE
           message.rstrip
         end
@@ -101,7 +98,7 @@ MESSAGE
 
         def header
           message = <<-MESSAGE
-🌲 Timber.io Ruby Installer - Sane logging for Ruby developers.
+🌲 Timber.io Ruby Installer - Great Ruby Logging Made *Easy*
 
  ^  ^  ^   ^      ___I_      ^  ^   ^  ^  ^   ^  ^
 /|\\/|\\/|\\ /|\\    /\\-_--\\    /|\\/|\\ /|\\/|\\/|\\ /|\\/|\\

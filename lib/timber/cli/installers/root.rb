@@ -27,41 +27,16 @@ module Timber
           io.puts IO::Messages.application_details(app)
           io.puts ""
 
-          case io.ask_yes_no("Are the above details correct?", event_prompt: "App details correct?")
-          when :yes
-            install_platform(app)
-            run_sub_installer(app)
-            send_test_messages
-            confirm_log_delivery
-            wrap_up(app)
-            api.event(:success)
-            collect_feedback
-            free_data
-
-          when :no
-            io.puts ""
-            io.puts "Bummer. Head to this URL to update the details:"
-            io.puts ""
-            io.puts "    #{IO::Messages.edit_app_url(app)}", :blue
-            io.puts ""
-            io.puts "exiting..."
-          end
+          run_sub_installer(app)
+          send_test_messages
+          confirm_log_delivery
+          api.event(:success)
+          collect_feedback
+          free_data
+          wrap_up(app)
         end
 
         private
-          def install_platform(app)
-            if app.heroku?
-              io.puts ""
-              io.puts IO::Messages.separator
-              io.puts ""
-              io.puts IO::Messages.heroku_install(app)
-              io.puts ""
-              io.ask_to_proceed
-            end
-
-            true
-          end
-
           def run_sub_installer(app)
             sub_installer = get_sub_installer
             sub_installer.run(app)
@@ -100,67 +75,12 @@ module Timber
           end
 
           def wrap_up(app)
-            if app.development? || app.test?
-              development_note
-            else
-              assist_with_commit_and_deploy
-            end
-          end
-
-          def development_note
             io.puts ""
             io.puts IO::Messages.separator
             io.puts ""
-            io.puts "All done! To start using Timber:"
+            io.puts IO::ANSI.colorize("All done! Commit and deploy 🚀  to see logs in Timber.", :yellow)
+            io.puts IO::ANSI.colorize("You can also test drive Timber by starting your app locally.", :yellow)
             io.puts ""
-            io.puts IO::ANSI.colorize("1. Run your application locally to see logs show up in Timber", :blue)
-            io.puts IO::ANSI.colorize("2. When you're ready to move to production/staging, create a", :blue)
-            io.puts IO::ANSI.colorize("   production/staging app in Timber and follow the instructions shown.", :blue)
-            io.puts ""
-            io.ask_to_proceed
-          end
-
-          def assist_with_commit_and_deploy
-            io.puts ""
-            io.puts IO::Messages.separator
-            io.puts ""
-
-            if OSHelper.has_git?
-              case io.ask_yes_no("All done! Would you like to commit these changes?", event_prompt: "Run git commands?")
-              when :yes
-                io.puts ""
-
-                task_message = "Committing changes via git"
-                io.task_start(task_message)
-
-                committed = OSHelper.git_commit_changes
-
-                if committed
-                  io.task_complete(task_message)
-                else
-                  io.task_failed(task_message)
-
-                  io.puts ""
-                  io.puts "Bummer, it looks like we couldn't access the git command.", :yellow
-                  io.puts "No problem though, just run these commands yourself:", :yellow
-                  io.puts ""
-                  io.puts IO::Messages.git_commands
-                end
-              when :no
-                io.puts ""
-                io.puts "No problem. Here's the commands for reference when you're ready:"
-                io.puts ""
-                io.puts IO::Messages.git_commands
-              end
-            else
-              io.puts ""
-              io.puts "All done! Commit your changes:"
-              io.puts ""
-              io.puts IO::Messages.git_commands
-            end
-
-            io.puts ""
-            io.puts "=> Reminder: remember to deploy 🚀 to see logs in staging/production", :yellow
           end
 
           def collect_feedback
@@ -168,7 +88,7 @@ module Timber
             io.puts IO::Messages.separator
             io.puts ""
 
-            rating = io.ask("How would rate this install experience? 1 (bad) - 5 (perfect)", ["1", "2", "3", "4", "5"])
+            rating = io.ask("How would rate this install experience? 1 (bad) - 5 (perfect) or 'skip':", ["1", "2", "3", "4", "5", "skip"])
 
             case rating
             when "4", "5"
@@ -197,7 +117,6 @@ module Timber
             io.puts IO::Messages.separator
             io.puts ""
             io.puts IO::Messages.free_data
-            io.puts ""
           end
       end
     end
