@@ -24,7 +24,6 @@ describe Timber::CLI::Installers::Root, :rails_23 => true do
     it "should run properly" do
       input.string = "y\n"
 
-      expect(installer).to receive(:install_platform).with(app).exactly(1).times
       expect(installer).to receive(:run_sub_installer).with(app).exactly(1).times
       expect(installer).to receive(:send_test_messages).exactly(1).times
       expect(installer).to receive(:confirm_log_delivery).exactly(1).times
@@ -34,31 +33,6 @@ describe Timber::CLI::Installers::Root, :rails_23 => true do
       expect(installer).to receive(:free_data).exactly(1).times
 
       installer.run(app)
-    end
-  end
-
-  describe ".install_platform" do
-    context "non-heroku" do
-      it "should do nothing" do
-        expect(installer.send(:install_platform, app)).to eq(true)
-        expect(output.string).to eq("")
-      end
-    end
-
-    context "heroku" do
-      before(:each) do
-        app.platform_type = "heroku"
-      end
-
-      it "should prompt for Heroku install" do
-        input.string = "y\n"
-
-        expect(installer.send(:install_platform, app)).to eq(true)
-
-        copy_to_clipboard_message = Timber::CLI::OSHelper.can_copy_to_clipboard? ? "\n    \e[32m(✓ copied to clipboard)\e[0m" : ""
-        expected_output = "\n--------------------------------------------------------------------------------\n\nFirst, let's setup your Heroku drain. Run this command in a separate window:\n\n    \e[34mheroku drains:add http://drain.heroku.com\e[0m#{copy_to_clipboard_message}\n\nReady to proceed? (y/n) "
-        expect(output.string).to eq(expected_output)
-      end
     end
   end
 
