@@ -1,4 +1,5 @@
-require 'socket'
+require "socket"
+require "time"
 
 require "timber/contexts"
 require "timber/events"
