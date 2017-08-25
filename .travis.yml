@@ -24,7 +24,6 @@ before_script:
 - echo $BUNDLE_GEMFILE
 - bundle install
 script:
-  - bundle exec bundle-audit update && bundle exec bundle-audit check
   - bundle exec rspec --format documentation
 matrix:
   fast_finish: true
