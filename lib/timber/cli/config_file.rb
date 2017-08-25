@@ -23,7 +23,7 @@ module Timber
       end
 
       def silence_template_renders!
-        append!("config.integrations.action_view.silence = true")
+        append!("config.integrations.action_view.silence = Rails.env.production?")
       end
 
       private
