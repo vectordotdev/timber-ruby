@@ -100,8 +100,6 @@ module Timber
         end
 
         case iteration
-        when 0
-          event(:waiting_for_logs)
         when 20
           event(:excessive_log_waiting)
         when 60

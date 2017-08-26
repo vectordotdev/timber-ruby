@@ -55,9 +55,9 @@ module Timber
             io.task(task_message) do
               http_device = LogDevices::HTTP.new(api.api_key)
               logger = Logger.new(http_device)
-              logger.info("Welcome to Timber!")
-              logger.info("This is a test log to ensure the pipes are working")
-              logger.info("Be sure to commit and deploy your app to start seeing real logs")
+              logger.debug("Welcome to Timber!")
+              logger.debug("This is a test log to ensure the pipes are working")
+              logger.debug("Be sure to commit and deploy your app to start seeing real logs")
               # Close flushes and waits
               http_device.close
             end
@@ -68,8 +68,8 @@ module Timber
 
             io.task(task_message) do
               api.wait_for_logs do |iteration|
-                io.write IO::Messages.task_start(task_message), :blue
-                io.write IO::Messages.spinner(iteration), :blue
+                io.write(IO::Messages.task_start(task_message), :blue)
+                io.write(IO::Messages.spinner(iteration), :blue)
               end
             end
           end
