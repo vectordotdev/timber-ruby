@@ -6,8 +6,11 @@
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 
 [Timber](https://timber.io) is a cloud-based logging system that integrates directly with your
-Ruby app to capture context and metadata without parsing. This produces rich, clean, readable logs
-that are easier to search and use:
+Ruby app through _this_ library. It makes your logs easier search, use, and _read_ by
+[transparently capturing context and metadata](#integrations)
+[_without_ modifying your log messages](https://timber.io/docs/concepts/structuring-through-augmentation).
+It's a silent upgrade, making it a no-risk / no-downside addition to your Ruby app. A logging
+platform and library working in harmony to logs that make you more productive:
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
 2. [**Usage** - Simple yet powerful API](#usage)
