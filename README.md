@@ -7,8 +7,8 @@
 
 [Timber](https://timber.io) is a cloud-based logging system built for developers that integrates
 directly with your Ruby app through this library. It makes your logs _much_ easier search, use, and
-_read_ by capturing context and metadata _without_ modifying your log messages. This makes it a
-no-risk addition to your Ruby app producing rich logs that make you more productive:
+_read_ by capturing context and metadata _without_ modifying your log messages. It's a no-risk
+addition to your Ruby app that produces rich highly productive logs:
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
 2. [**Usage** - Simple yet powerful API](#usage)
