@@ -5,10 +5,9 @@
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 
-[Timber](https://timber.io) is a cloud-based logging system built for developers that integrates
-directly with your Ruby app through this library. It makes your logs _much_ easier search, use, and
-_read_ by capturing context and metadata _without_ modifying your log messages. It's a no-risk
-addition to your Ruby app that produces rich highly productive logs:
+[Timber](https://timber.io) is a cloud-based logging system that integrates directly with your Ruby
+app through this library, capturing context and metadata without parsing. This produces rich, clean,
+readable logs that are easier to search and use:
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
 2. [**Usage** - Simple yet powerful API](#usage)
@@ -309,14 +308,21 @@ couldn't otherwise. This automatically upgrades logs produced by these libraries
 [easier to search and use](#do-amazing-things-with-your-logs). Below is a list of libraries we
 support:
 
+### Frameworks & Libraries
+
 1. [**Rails**](https://timber.io/docs/languages/ruby/integrations/rails)
 2. [**Rack**](https://timber.io/docs/languages/ruby/integrations/rack)
-3. [**Heroku**](https://timber.io/docs/languages/ruby/integrations/heroku)
 4. [**Devise**](https://timber.io/docs/languages/ruby/integrations/devise)
 5. [**Clearance**](https://timber.io/docs/languages/ruby/integrations/clearnace)
 6. [**Omniauth**](https://timber.io/docs/languages/ruby/integrations/omniauth)
 7. [**Warden**](https://timber.io/docs/languages/ruby/integrations/devise)
-8. ...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
+
+### Platforms
+
+1. [**Heroku**](https://timber.io/docs/languages/ruby/integrations/heroku)
+2. [**System / Server**](https://timber.io/docs/languages/ruby/integrations/system)
+
+...more coming soon! Make a request by [opening an issue](https://github.com/timberio/timber-ruby/issues/new)
 
 
 ## Get things done with your logs
