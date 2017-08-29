@@ -18,7 +18,7 @@ module Timber
         @function = attributes[:function]
         @line = attributes[:line]
         @module_name = attributes[:module_name]
-        @vm_pid = attributes[:vm_pid]
+        @vm_pid = Timber::Util::Object.try(attributes[:vm_pid], :to_s)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).

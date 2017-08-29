@@ -16,12 +16,12 @@ module Timber
       attr_reader :id
 
       def initialize(attributes)
-        @id = attributes[:id] || raise(ArgumentError.new(":id is required"))
+        @id = Timber::Util::Object.try(attributes[:id], :to_s) || raise(ArgumentError.new(":id is required"))
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {id: Timber::Util::Object.try(id, :to_s)}
+        {id: id}
       end
     end
   end

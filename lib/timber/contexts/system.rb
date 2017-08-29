@@ -14,13 +14,12 @@ module Timber
 
       def initialize(attributes)
         @hostname = attributes[:hostname]
-        @pid = attributes[:pid]
-        @pid = Timber::Util::Object.try(@pid, :to_i)
+        @pid = Timber::Util::Object.try(attributes[:pid], :to_i)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {hostname: hostname, pid: Timber::Util::Object.try(pid, :to_i)}
+        {hostname: hostname, pid: pid}
       end
     end
   end

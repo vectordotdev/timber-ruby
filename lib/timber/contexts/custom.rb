@@ -24,13 +24,13 @@ module Timber
       attr_reader :type, :data
 
       def initialize(attributes)
-        @type = attributes[:type] || raise(ArgumentError.new(":type is required"))
+        @type = Timber::Util::Object.try(attributes[:type], :to_sym) || raise(ArgumentError.new(":type is required"))
         @data = attributes[:data] || raise(ArgumentError.new(":data is required"))
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(options = {})
-        {Timber::Util::Object.try(type, :to_sym) => data}
+        {type => data}
       end
     end
   end

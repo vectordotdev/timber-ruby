@@ -24,13 +24,13 @@ module Timber
       attr_reader :id, :name
 
       def initialize(attributes)
-        @id = attributes[:id]
+        @id = Timber::Util::Object.try(attributes[:id], :to_s)
         @name = attributes[:name]
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def as_json(_options = {})
-        {id: Timber::Util::Object.try(id, :to_s), name: name}
+        {id: id, name: name}
       end
     end
   end
