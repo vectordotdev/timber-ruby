@@ -7,6 +7,18 @@ describe Timber::CurrentContext, :rails_23 => true do
       expect(context.send(:hash)[:release]).to be_nil
     end
 
+    it "should set the system context" do
+      context = described_class.send(:new)
+      system_content = context.fetch(:system)
+      expect(system_content[:hostname]).to be_present
+    end
+
+    it "should set the runtime context" do
+      context = described_class.send(:new)
+      runtime_context = context.fetch(:runtime)
+      expect(runtime_context[:vm_pid]).to be_present
+    end
+
     context "with Heroku dyno metadata" do
       around(:each) do |example|
         ENV['HEROKU_SLUG_COMMIT'] = "2c3a0b24069af49b3de35b8e8c26765c1dba9ff0"
