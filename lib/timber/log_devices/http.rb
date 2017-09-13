@@ -3,8 +3,8 @@ require "msgpack"
 require "net/https"
 
 require "timber/config"
-require "timber/log_devices/http/dropping_sized_queue"
-require "timber/log_devices/http/flushable_sized_queue"
+require "timber/log_devices/http/flushable_dropping_sized_queue"
+require "timber/log_devices/http/request_attempt"
 require "timber/version"
 
 module Timber
@@ -52,10 +52,11 @@ module Timber
       # @option attributes [Symbol] :requests_per_conn (2500) The number of requests to send over a
       #   single persistent connection. After this number is met, the connection will be closed
       #   and a new one will be opened.
-      # @option attributes [Symbol] :request_queue (SizedQueue.new(3)) The request queue object that queues Net::HTTP
-      #   requests for delivery. By deafult this is a `SizedQueue` of size `3`. Meaning once
-      #   3 requests are placed on the queue for delivery, back pressure will be applied. IF
-      #   you'd prefer to drop messages instead, pass a {DroppingSizedQueue}. See examples for
+      # @option attributes [Symbol] :request_queue (FlushableDroppingSizedQueue.new(25)) The request
+      #   queue object that queues Net::HTTP requests for delivery. By deafult this is a
+      #   `FlushableDroppingSizedQueue` of size `25`. Meaning once the queue fills up to 25
+      #   requests new requests will be dropped. If you'd prefer to apply back pressure,
+      #   ensuring you do not lose log data, pass a standard {SizedQueue}. See examples for
       #   an example.
       # @option attributes [Symbol] :timber_url The Timber URL to delivery the log lines. The
       #   default is set via {TIMBER_URL}.
@@ -63,19 +64,18 @@ module Timber
       # @example Basic usage
       #   Timber::Logger.new(Timber::LogDevices::HTTP.new("my_timber_api_key"))
       #
-      # @example Dropping messages instead of applying back pressure
-      #   http_log_device = Timber::LogDevices::HTTP.new("my_timber_api_key",
-      #     request_queue: Timber::LogDevices::HTTP::DroppingSizedQueue.new(3))
+      # @example Apply back pressure instead of dropping messages
+      #   http_log_device = Timber::LogDevices::HTTP.new("my_timber_api_key", request_queue: SizedQueue.new(25))
       #   Timber::Logger.new(http_log_device)
       def initialize(api_key, options = {})
         @api_key = api_key || raise(ArgumentError.new("The api_key parameter cannot be blank"))
         @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
         @batch_size = options[:batch_size] || 1_000
         @flush_continuously = options[:flush_continuously] != false
-        @flush_interval = options[:flush_interval] || 1 # 1 second
+        @flush_interval = options[:flush_interval] || 2 # 2 seconds
         @requests_per_conn = options[:requests_per_conn] || 2_500
-        @msg_queue = FlushableSizedQueue.new(@batch_size)
-        @request_queue = options[:request_queue] || SizedQueue.new(3)
+        @msg_queue = FlushableDroppingSizedQueue.new(@batch_size)
+        @request_queue = options[:request_queue] || FlushableDroppingSizedQueue.new(25)
         @successive_error_count = 0
         @requests_in_flight = 0
       end
@@ -85,7 +85,7 @@ module Timber
       # size is constricted by the Timber API. The actual application limit is a multiple
       # of this. Hence the `@request_queue`.
       def write(msg)
-        @msg_queue.enqueue(msg)
+        @msg_queue.enq(msg)
 
         # Lazily start flush threads to ensure threads are alive after forking processes.
         # If the threads are started during instantiation they will not be copied when
@@ -161,7 +161,8 @@ module Timber
           req = build_request
           if !req.nil?
             Timber::Config.instance.debug { "New request placed on queue" }
-            @request_queue.enq(req)
+            request_attempt = RequestAttempt.new(req)
+            @request_queue.enq(request_attempt)
           end
         end
 
@@ -255,36 +256,39 @@ module Timber
           while num_reqs < @requests_per_conn
             Timber::Config.instance.debug { "Waiting on next request, threads waiting: #{@request_queue.num_waiting}" }
 
-            # Blocks waiting for a request.
-            req = @request_queue.deq
-            @requests_in_flight += 1
+            request_attempt = @request_queue.deq
 
-            begin
-              resp = conn.request(req)
-            rescue => e
-              Timber::Config.instance.debug { "#deliver_request error: #{e.message}" }
+            if request_attempt.nil?
+              sleep(1)
+            else
+              request_attempt.attempted!
+              @requests_in_flight += 1
 
-              @successive_error_count += 1
+              begin
+                resp = conn.request(request_attempt.request)
+              rescue => e
+                Timber::Config.instance.debug { "#deliver_requests error: #{e.message}" }
 
-              # Back off so that we don't hammer the Timber API.
-              calculated_backoff = @successive_error_count * 2
-              backoff = calculated_backoff > 30 ? 30 : calculated_backoff
+                # Throw the request back on the queue for a retry if it has been attempted less
+                # than 3 times
+                if request_attempt.attempts < 3
+                  Timber::Config.instance.debug { "Request is being retried, #{request_attempt.attempts} previous attempts" }
+                  @request_queue.enq(request_attempt)
+                else
+                  Timber::Config.instance.debug { "Request is being dropped, #{request_attempt.attempts} previous attempts" }
+                end
 
-              Timber::Config.instance.debug { "Backing off #{backoff} seconds, error ##{@successive_error_count}" }
+                return false
+              ensure
+                @requests_in_flight -= 1
+              end
 
-              sleep backoff
-
-              # Throw the request back on the queue for a retry
-              @request_queue.enq(req)
-              return false
-            ensure
-              @requests_in_flight -= 1
+              num_reqs += 1
+              Timber::Config.instance.debug { "Request successful: #{resp.code}" }
             end
-
-            @successive_error_count = 0
-            num_reqs += 1
-            Timber::Config.instance.debug { "Request successful: #{resp.code}" }
           end
+
+          true
         end
 
         # Builds the `Authorization` header value for HTTP delivery to the Timber API.

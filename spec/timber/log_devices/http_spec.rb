@@ -100,9 +100,9 @@ describe Timber::LogDevices::HTTP do
       http.write(log_entry)
       http.send(:flush_async)
       request_queue = http.instance_variable_get(:@request_queue)
-      request = request_queue.deq
-      expect(request).to be_kind_of(Net::HTTP::Post)
-      expect(request.body).to start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT"))
+      request_attempt = request_queue.deq
+      expect(request_attempt.request).to be_kind_of(Net::HTTP::Post)
+      expect(request_attempt.request.body).to start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT"))
 
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
@@ -141,7 +141,7 @@ describe Timber::LogDevices::HTTP do
       http.write(log_entry1)
       log_entry2 = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
       http.write(log_entry2)
-      sleep 1
+      sleep 2
 
       expect(stub).to have_been_requested.times(1)
 
@@ -157,8 +157,10 @@ describe Timber::LogDevices::HTTP do
       req_queue = http_device.instance_variable_get(:@request_queue)
 
       # Place a request on the queue
-      req = Net::HTTP::Post.new("/")
-      req_queue.enq(req)
+      request = Net::HTTP::Post.new("/")
+      request_attempt = Timber::LogDevices::HTTP::RequestAttempt.new(request)
+      request_attempt.attempted!
+      req_queue.enq(request_attempt)
 
       # Start a HTTP connection to test the method directly
       http = http_device.send(:build_http)
@@ -168,6 +170,16 @@ describe Timber::LogDevices::HTTP do
       end
 
       expect(req_queue.size).to eq(1)
+
+      # Start a HTTP connection to test the method directly
+      http = http_device.send(:build_http)
+      http.start do |conn|
+        result = http_device.send(:deliver_requests, conn)
+        expect(result).to eq(false)
+      end
+
+      # Ensure the request gets discards after 3 attempts
+      expect(req_queue.size).to eq(0)
     end
   end
 end
