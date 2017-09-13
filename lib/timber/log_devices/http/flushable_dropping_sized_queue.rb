@@ -2,11 +2,12 @@ module Timber
   module LogDevices
     class HTTP
       # A simple thread-safe queue implementation that provides a #flush method.
-      # The built-in ruby Queue class does not provide a #flush method. It also
-      # implement thread waiting which is something we do not want. To keep things
-      # simple and straight-forward we designed our own simple queue class.
+      # The built-in ruby `Queue` class does not provide a #flush method that allows
+      # the caller to retrieve all items on the queue in one call. The Ruby `SizedQueue` also
+      # implements thread waiting, which is something we want to avoid. To keep things
+      # simple and straight-forward, we designed this queue class.
       # @private
-      class FlushableSizedQueue
+      class FlushableDroppingSizedQueue
         def initialize(max_size)
           @lock = Mutex.new
           @max_size = max_size
@@ -14,9 +15,18 @@ module Timber
         end
 
         # Adds a message to the queue
-        def enqueue(msg)
+        def enq(msg)
           @lock.synchronize do
-            @array << msg
+            if !full?
+              @array << msg
+            end
+          end
+        end
+
+        # Removes a single item from the queue
+        def deq
+          @lock.synchronize do
+            @array.pop
           end
         end
 
