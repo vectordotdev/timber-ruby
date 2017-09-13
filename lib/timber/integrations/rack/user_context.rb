@@ -8,6 +8,8 @@ module Timber
       # This is a Rack middleware responsible for setting the user context.
       # See {Timber::Contexts::User} for more information on the user context.
       #
+      # ## Why a Rack middleware?
+      #
       # We use a Rack middleware because we want to set the user context as early as
       # possible, and before the initial incoming request log line:
       #
@@ -29,7 +31,6 @@ module Timber
       # automatically set the user context for you.
       #
       # * Devise, or any Warden based authentication strategy
-      # * Omniauth
       # * Clearance
       #
       # Or, you can use your own custom authentication, see the {.custom_user_context}
@@ -47,7 +48,7 @@ module Timber
           #
           # @example Setting your own custom user context
           #   Timber::Integrations::Rack::UserContext.custom_user_hash = lambda do |rack_env|
-          #     rach_env['my_custom_key'].user
+          #     rack_env['my_custom_key'].user
           #   end
           def custom_user_hash=(proc)
             if proc && !proc.is_a?(Proc)
@@ -78,14 +79,10 @@ module Timber
         private
           def get_user_hash(env)
             # The order is relevant here. The 'warden' key can be set, but
-            # not return a user, in which case the user data might be in the omniauth
-            # data.
+            # not return a user, in which case the user data might be in another key.
             if self.class.custom_user_hash.is_a?(Proc)
               Timber::Config.instance.debug { "Obtaining user context from the custom user hash" }
               self.class.custom_user_hash.call(env)
-            elsif (auth_hash = env['omniauth.auth'])
-              Timber::Config.instance.debug { "Obtaining user context from the omniauth auth hash" }
-              get_omniauth_user_hash(auth_hash)
             elsif env[:clearance] && env[:clearance].signed_in?
               Timber::Config.instance.debug { "Obtaining user context from the clearance user" }
               user = env[:clearance].current_user
@@ -97,16 +94,6 @@ module Timber
               Timber::Config.instance.debug { "Could not locate any user data" }
               nil
             end
-          end
-
-          def get_omniauth_user_hash(auth_hash)
-            info = auth_hash['info']
-
-            {
-              id: auth_hash['uid'],
-              name: info['name'],
-              email: info['email']
-            }
           end
 
           def get_user_object_hash(user)
