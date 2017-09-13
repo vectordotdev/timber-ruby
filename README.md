@@ -5,14 +5,17 @@
 [![Build Status](https://travis-ci.org/timberio/timber-ruby.svg?branch=master)](https://travis-ci.org/timberio/timber-ruby)
 [![Code Climate](https://codeclimate.com/github/timberio/timber-ruby/badges/gpa.svg)](https://codeclimate.com/github/timberio/timber-ruby)
 
-[Timber](https://timber.io) is a cloud-based logging system that integrates directly with your Ruby
-app through this library, capturing context and metadata without parsing. This produces rich, clean,
-readable logs that are easier to search and use:
+Timber for Ruby is a drop in replacement for your Ruby logger that
+[unobtrusively augments](https://timber.io/docs/concepts/structuring-through-augmentation) your
+logs with [rich metadata and context](https://timber.io/docs/concepts/metadata-context-and-events)
+making them [easier to search, use, and read](#get-things-done-with-your-logs). It pairs with the
+[Timber console](#the-timber-console) to deliver a tailored Ruby logging experience designed to make
+you more productive.
 
 1. [**Installation** - One command: `bundle exec timber install`](#installation)
-2. [**Usage** - Simple yet powerful API](#usage)
+2. [**Usage** - Simple & powerful API](#usage)
 3. [**Integrations** - Automatic context and metadata for your existing logs](#integrations)
-4. [**The Timber Console** - Designed for Ruby developers](#the-timber-console)
+4. [**The Timber Console** - Designed for applications & developers](#the-timber-console)
 5. [**Get things done with your logs 💪**](#get-things-done-with-your-logs)
 
 
@@ -24,9 +27,11 @@ readable logs that are easier to search and use:
     gem 'timber', '~> 2.1'
     ```
 
-2. In your `shell`, run `bundle install`
+2. In your `shell`, run:
 
-3. In your `shell`, run `bundle exec timber install`
+    ```
+    bundle install && bundle exec timber install
+    ```
 
 
 ## Usage
@@ -43,9 +48,11 @@ logger.error("Error message")
 logger.fatal("Fatal message")
 ```
 
-We encourage standard / traditional log messages for non-meaningful events. And because Timber
-[augments](https://timber.io/docs/concepts/structuring-through-augmentation) your logs with
-metadata, you don't have to worry about making every log structured!
+1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `error message`
+2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
+3. [View this event's metadata and context](https://timber.io/docs/app/console/view-metdata-and-context)
+
+[...read more in our docs](https://timber.io/docs/languages/ruby/usage/basic-logging)
 
 ---
 
@@ -53,13 +60,7 @@ metadata, you don't have to worry about making every log structured!
 
 <details><summary><strong>Logging events (structured data)</strong></summary><p>
 
-Logging events allows you to log structured data without sacrificing readability or worrying about
-structured data name or type conflicts. Keep in mind, Timber defines common events in the
-[`Timber::Events`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Events) namespace,
-which are automatically logged for you through our [integrations](#integrations). You should not
-have to maually log events defined there except in special circumstances.
-
-### How to use it
+Log structured data without sacrificing readability:
 
 ```ruby
 logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
@@ -67,9 +68,9 @@ logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amou
 
 1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `type:payment_rejected` or `payment_rejected.amount:>100`
 2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
-3. [Graph & visualize it](https://timber.io/docs/app/console/graphing)
 4. [View this event's data and context](https://timber.io/docs/app/console/view-metdata-and-context)
-5. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/custom-events)
+
+...[read more in our docs](https://timber.io/docs/languages/ruby/usage/custom-events)
 
 ---
 
@@ -77,17 +78,7 @@ logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amou
 
 <details><summary><strong>Setting context</strong></summary><p>
 
-Context is amazingly powerful, think of it like join data for your logs. It represents the
-environment when the log was written, allowing you to relate logs so you can easily segment them.
-It's how Timber is able to accomplish features like
-[tailing users](https://timber.io/docs/app/console/tail-a-user) and
-[tracing HTTP requests](https://timber.io/docs/app/console/trace-http-requests).
-Keep in mind, Timber defines common contexts in the
-[`Timber::Contexts`](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts) namespace,
-which are automatically set for you through our [integrations](#integrations). You should not
-have to maually set these contexts except in special circumstances.
-
-### How to use it
+Add shared structured data across your logs:
 
 ```ruby
 Timber.with_context(job: {id: 123}) do
@@ -99,24 +90,16 @@ end
 
 1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `job.id:123`
 2. [View this context when viewing a log's metadata](https://timber.io/docs/app/console/view-metdata-and-context)
-3. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/custom-context)
+
+...[read more in our docs](https://timber.io/docs/languages/ruby/usage/custom-context)
 
 ---
 
 </p></details>
 
-<details><summary><strong>Metrics & Timings</strong></summary><p>
+<details><summary><strong>Metrics, Timings, & Tracing</strong></summary><p>
 
-Aggregates destroy details, events tell stories. With Timber, logging metrics and timings is simply
-[logging an event](https://timber.io/docs/languages/ruby/usage/custom-events). Timber is based on
-modern big-data principles and can aggregate inordinately large data sets in seconds. Logging
-events (raw data as it exists), gives you the flexibility in the future to segment and aggregate
-your data any way you see fit. This is superior to choosing specific paradigms before hand, when
-you are unsure how you'll need to use your data in the future.
-
-### How to use it
-
-Below is a contrived example of timing a background job:
+Time code blocks:
 
 ```ruby
 timer = Timber.start_timer
@@ -124,13 +107,7 @@ timer = Timber.start_timer
 logger.info("Processed background job", background_job: {time_ms: timer})
 ```
 
-And of course, `time_ms` can also take a `Float` or `Fixnum`:
-
-```ruby
-logger.info("Processed background job", background_job: {time_ms: 45.6})
-```
-
-Lastly, metrics aren't limited to timings. You can capture any metric you want:
+Log generic metrics:
 
 ```ruby
 logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
@@ -139,8 +116,8 @@ logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
 1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `background_job.time_ms:>500`
 2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
 3. [View this log's metadata in the console](https://timber.io/docs/app/console/view-metdata-and-context)
-4. ...read more in our [docs](https://timber.io/docs/languages/ruby/usage/metrics-and-timings)
 
+...[read more in our docs](https://timber.io/docs/languages/ruby/usage/metrics-and-timings)
 
 </p></details>
 
@@ -152,19 +129,13 @@ Below are a few popular configuration options, for a comprehensive list, see
 
 <details><summary><strong>Logrageify. Silence noisy logs.</strong></summary><p>
 
-Timber allows you to silence noisy logs that aren't of value to you, just like
-[lograge](https://github.com/roidrage/lograge). As such, we've provided a convenience configuration
-option for anyone transitioning from lograge.
-
-### How to use it
+Silence noisy logs that aren't of value to you, just like
+[lograge](https://github.com/roidrage/lograge):
 
 ```ruby
 # config/initializers/timber.rb
-
 Timber.config.logrageify!()
 ```
-
-### How it works
 
 It turns this:
 
@@ -182,18 +153,7 @@ Completed 200 OK in 79ms (Views: 78.8ms | ActiveRecord: 0.0ms)
 Into this:
 
 ```
-Get "/" sent 200 OK in 79ms @metadata {...}
-```
-
-Internally this is equivalent to:
-
-```ruby
-# config/initializers/timber.rb
-
-Timber.config.integrations.action_controller.silence = true
-Timber.config.integrations.action_view.silence = true
-Timber.config.integrations.active_record.silence = true
-Timber.config.integrations.rack.http_events.collapse_into_single_event = true
+Get "/" sent 200 OK in 79ms
 ```
 
 ### Pro-tip: Keep controller call logs (recommended)
@@ -222,11 +182,8 @@ For a full list of integration settings, see
 <details><summary><strong>Silence specific requests (LB health checks, etc)</strong></summary><p>
 
 Silencing noisy requests can be helpful for silencing load balance health checks, bot scanning,
-or activity that generally is not meaningful to you.
-
-### How to use it
-
-The following will silence all `[GET] /_health` requests:
+or activity that generally is not meaningful to you. The following will silence all
+`[GET] /_health` requests:
 
 ```ruby
 # config/initializers/timber.rb
@@ -247,11 +204,9 @@ The first parameter being the traditional Rack env hash, the second being a
 <details><summary><strong>Capture custom user context</strong></summary><p>
 
 By default Timber automatically captures user context for most of the popular authentication
-libraries (Devise, Omniauth, and Clearance). See
+libraries (Devise, and Clearance). See
 [Timber::Integrations::Rack::UserContext](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Integrations/Rack/UserContext)
 for a complete list.
-
-### How to use it
 
 In cases where you Timber doesn't support your strategy, or you want to customize it further,
 you can do so like:
@@ -284,8 +239,6 @@ end
 [Timber::Contexts::Release](http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Contexts/Release)
 tracks the current application release and version.
 
-### How to use it
-
 If you're on Heroku, simply enable the
 [dyno metadata](https://devcenter.heroku.com/articles/dyno-metadata) feature. If you are not,
 set the following environment variables and this context will be added automatically:
@@ -304,7 +257,7 @@ All variables are optional, but at least one must be present.
 ## Integrations
 
 Timber integrates with popular frameworks and libraries to capture context and metadata you
-couldn't otherwise. This automatically upgrades logs produced by these libraries, making them
+couldn't otherwise. This automatically augments logs produced by these libraries, making them
 [easier to search and use](#do-amazing-things-with-your-logs). Below is a list of libraries we
 support:
 
@@ -313,7 +266,6 @@ support:
    * [**Rack**](https://timber.io/docs/languages/ruby/integrations/rack)
    * [**Devise**](https://timber.io/docs/languages/ruby/integrations/devise)
    * [**Clearance**](https://timber.io/docs/languages/ruby/integrations/clearnace)
-   * [**Omniauth**](https://timber.io/docs/languages/ruby/integrations/omniauth)
    * [**Warden**](https://timber.io/docs/languages/ruby/integrations/devise)
 * Platforms
    * [**Heroku**](https://timber.io/docs/languages/ruby/integrations/heroku)
@@ -324,7 +276,7 @@ support:
 
 ## Get things done with your logs
 
-Logging features every developer needs:
+Logging features designed to help developers get more done:
 
 1. [**Powerful searching.** - Find what you need faster.](https://timber.io/docs/app/console/searching)
 2. [**Live tail users.** - Easily solve customer issues.](https://timber.io/docs/app/console/tail-a-user)
