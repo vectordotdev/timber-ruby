@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.2.1] - 2017-09-13
 ### Changed
 
   - Omniauth integration was removed since it only captures user context during the Authentication
@@ -21,5 +23,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.2.1...HEAD
+[2.2.1]: https://github.com/timberio/timber-ruby/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/timberio/timber-ruby/compare/v2.1.10...v2.2.0
