@@ -11,13 +11,7 @@ module Timber
           Timber::Config.instance.logger = Proc.new { ::Rails.logger }
         end
 
-        after =
-          begin
-            require 'devise'
-            'devise.omniauth'
-          rescue LoadError
-            :load_config_initializers
-          end
+        after = defined?(Devise) ? 'devise.omniauth' : :load_config_initializers
 
         # Must be loaded after initializers so that we respect any Timber configuration
         # set
