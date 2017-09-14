@@ -11,17 +11,8 @@ module Timber
           Timber::Config.instance.logger = Proc.new { ::Rails.logger }
         end
 
-        after =
-          begin
-            require 'devise'
-            'devise.omniauth'
-          rescue LoadError
-            :load_config_initializers
-          end
-
-        # Must be loaded after initializers so that we respect any Timber configuration
-        # set
-        initializer(:timber, before: :build_middleware_stack, after: after) do
+        # Must be loaded after initializers so that we respect any Timber configuration set
+        initializer(:timber, before: :build_middleware_stack, after: :load_config_initializers) do
           Integrations.integrate!
 
           # Install the Rack middlewares so that we capture structured data instead of
