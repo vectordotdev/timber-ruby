@@ -37,6 +37,7 @@ matrix:
     - rvm: "1.9.3"
       gemfile: "gemfiles/rails-3.2.gemfile"
   allow_failures:
+  - rvm: 1.9.3 # bundler wont install the gems
   - rvm: 2.4.1
   - rvm: jruby
     gemfile: gemfiles/rails-3.0.gemfile
