@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.2.2] - 2017-09-14
+### Fixed
+
+  - Remove Railtie ordering clause based on devise omniauth initializer. This is no longer
+    necessary since we do not integrate with Omniauth anymore.
+
 ## [2.2.1] - 2017-09-13
 ### Changed
 
@@ -23,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.2.1...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.2.2...HEAD
+[2.2.2]: https://github.com/timberio/timber-ruby/compare/v2.2.0...v2.2.2
 [2.2.1]: https://github.com/timberio/timber-ruby/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/timberio/timber-ruby/compare/v2.1.10...v2.2.0
