@@ -48,9 +48,9 @@ logger.error("Error message")
 logger.fatal("Fatal message")
 ```
 
-1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `error message`
-2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
-3. [View this event's metadata and context](https://timber.io/docs/app/console/view-metadata-and-context)
+* [Search it](https://timber.io/docs/app/console/searching) with queries like: `error message`
+* [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
+* [View this event's metadata and context](https://timber.io/docs/app/console/view-metadata-and-context)
 
 [...read more in our docs](https://timber.io/docs/languages/ruby/usage/basic-logging)
 
@@ -66,9 +66,9 @@ Log structured data without sacrificing readability:
 logger.warn "Payment rejected", payment_rejected: {customer_id: "abcd1234", amount: 100, reason: "Card expired"}
 ```
 
-1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `type:payment_rejected` or `payment_rejected.amount:>100`
-2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
-4. [View this event's data and context](https://timber.io/docs/app/console/view-metadata-and-context)
+* [Search it](https://timber.io/docs/app/console/searching) with queries like: `type:payment_rejected` or `payment_rejected.amount:>100`
+* [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
+* [View this event's data and context](https://timber.io/docs/app/console/view-metadata-and-context)
 
 ...[read more in our docs](https://timber.io/docs/languages/ruby/usage/custom-events)
 
@@ -88,8 +88,8 @@ Timber.with_context(job: {id: 123}) do
 end
 ```
 
-1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `job.id:123`
-2. [View this context when viewing a log's metadata](https://timber.io/docs/app/console/view-metadata-and-context)
+* [Search it](https://timber.io/docs/app/console/searching) with queries like: `job.id:123`
+* [View this context when viewing a log's metadata](https://timber.io/docs/app/console/view-metadata-and-context)
 
 ...[read more in our docs](https://timber.io/docs/languages/ruby/usage/custom-context)
 
@@ -113,9 +113,9 @@ Log generic metrics:
 logger.info("Credit card charged", credit_card_charge: {amount: 123.23})
 ```
 
-1. [Search it](https://timber.io/docs/app/console/searching) with queries like: `background_job.time_ms:>500`
-2. [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
-3. [View this log's metadata in the console](https://timber.io/docs/app/console/view-metadata-and-context)
+* [Search it](https://timber.io/docs/app/console/searching) with queries like: `background_job.time_ms:>500`
+* [Alert on it](https://timber.io/docs/app/console/alerts) with threshold based alerts
+* [View this log's metadata in the console](https://timber.io/docs/app/console/view-metadata-and-context)
 
 ...[read more in our docs](https://timber.io/docs/languages/ruby/usage/metrics-and-timings)
 

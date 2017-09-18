@@ -30,6 +30,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 
 [Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.2.2...HEAD
-[2.2.2]: https://github.com/timberio/timber-ruby/compare/v2.2.0...v2.2.2
+[2.2.2]: https://github.com/timberio/timber-ruby/compare/v2.2.1...v2.2.2
 [2.2.1]: https://github.com/timberio/timber-ruby/compare/v2.2.0...v2.2.1
 [2.2.0]: https://github.com/timberio/timber-ruby/compare/v2.1.10...v2.2.0
