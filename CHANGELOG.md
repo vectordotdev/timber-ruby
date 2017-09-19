@@ -7,13 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Update the installer to be platform aware, recommending the appropriate delivery method
+    for the application's platform.
+
+
 ## [2.2.2] - 2017-09-14
+
 ### Fixed
 
   - Remove Railtie ordering clause based on devise omniauth initializer. This is no longer
     necessary since we do not integrate with Omniauth anymore.
 
 ## [2.2.1] - 2017-09-13
+
 ### Changed
 
   - Omniauth integration was removed since it only captures user context during the Authentication
@@ -21,6 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     and could cause unintended issues.
 
 ## [2.2.0] - 2017-09-13
+
 ### Changed
 
   - The default HTTP log device queue type was switched to a
