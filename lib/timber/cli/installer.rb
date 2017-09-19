@@ -4,6 +4,8 @@ require "timber/cli/io/messages"
 module Timber
   class CLI
     class Installer
+      DEPRIORITIZED_PLATFORMS = ["linux", "other"].freeze
+
       attr_reader :io, :api, :file_helper
 
       def initialize(io, api)
@@ -18,10 +20,10 @@ module Timber
 
       private
         def get_delivery_strategy(app)
-          if app.heroku?
-            :stdout
-          else
+          if DEPRIORITIZED_PLATFORMS.include?(app.platform_type)
             :http
+          else
+            :stdout
           end
         end
 

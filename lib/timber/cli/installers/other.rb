@@ -6,12 +6,13 @@ module Timber
     module Installers
       class Other < Installer
         def run(app)
-          if app.heroku?
-            install_stdout
-          else
+          case get_delivery_strategy(app)
+          when :http
             api_key_storage_preference = get_api_key_storage_preference
             api_key_code = get_api_key_code(api_key_storage_preference)
             install_http(api_key_code)
+          when :stdout
+            install_stdout
           end
 
           ask_to_proceed
