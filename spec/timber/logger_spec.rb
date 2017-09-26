@@ -21,13 +21,25 @@ describe Timber::Logger, :rails_23 => true do
       end
     end
 
-    it "should allow multiple loggers" do
+    it "should allow multiple io devices" do
       io1 = StringIO.new
       io2 = StringIO.new
       logger = Timber::Logger.new(STDOUT, io1, io2)
       logger.info("hello world")
       expect(io1.string).to start_with("hello world @metadata {")
       expect(io2.string).to start_with("hello world @metadata {")
+    end
+
+    it "should allow multiple io devices and loggers" do
+      io1 = StringIO.new
+      io2 = StringIO.new
+      io3 = StringIO.new
+      extra_logger = ::Logger.new(io3)
+      logger = Timber::Logger.new(STDOUT, io1, io2, extra_logger)
+      logger.info("hello world")
+      expect(io1.string).to start_with("hello world @metadata {")
+      expect(io2.string).to start_with("hello world @metadata {")
+      expect(io3.string).to end_with("hello world\n")
     end
   end
 
