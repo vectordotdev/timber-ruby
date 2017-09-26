@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+  - Added the ability to pass additional loggers when instantiating a `::Timber::Logger`.
+
 ## [2.2.3] - 2017-09-18
 
 ### Fixed

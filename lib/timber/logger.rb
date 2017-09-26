@@ -157,16 +157,23 @@ module Timber
     #
     # @example Logging to a file and the Timber HTTP device (multiple log devices)
     #   http_device = Timber::LogDevices::HTTP.new("my-timber-api-key")
-    #   file_device = Logger::LogDevice.new("path/to/file.log")
-    #   logger = Timber::Logger.new(http_device, file_device)
-    def initialize(*io_devices)
-      if io_devices.size == 0
-        raise ArgumentError.new("At least one IO device must be provided when instantiating " +
-          "a Timber::Logger. Ex: Timber::Logger.new(STDOUT).")
+    #   file_logger = ::Logger.new("path/to/file.log")
+    #   logger = Timber::Logger.new(http_device, file_logger)
+    def initialize(*io_devices_and_loggers)
+      if io_devices_and_loggers.size == 0
+        raise ArgumentError.new("At least one IO device or Logger must be provided when " +
+          "instantiating a Timber::Logger. Ex: Timber::Logger.new(STDOUT).")
       end
 
-      @extra_loggers = io_devices[1..-1].collect { |io_device| self.class.new(io_device) }
-      io_device = io_devices[0]
+      @extra_loggers = io_devices_and_loggers[1..-1].collect do |obj|
+        if is_a_logger?(obj)
+          obj
+        else
+          self.class.new(obj)
+        end
+      end
+
+      io_device = io_devices_and_loggers[0]
 
       super(io_device)
 
@@ -267,6 +274,10 @@ module Timber
         when :unknown; UNKNOWN
         else; raise ArgumentError.new("level #{value.inspect} is not a valid logger level")
         end
+      end
+
+      def is_a_logger?(obj)
+        obj.respond_to?(:debug) && obj.respond_to?(:info) && obj.respond_to?(:warn)
       end
   end
 end
