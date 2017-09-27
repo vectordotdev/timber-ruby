@@ -8,6 +8,7 @@ module Timber
   # Represents a new log entry into the log. This is an intermediary class between
   # `Logger` and the log device that you set it up with.
   class LogEntry #:nodoc:
+    BINARY_LIMIT_THRESHOLD = 1_000.freeze
     DT_PRECISION = 6.freeze
     MESSAGE_MAX_BYTES = 8192.freeze
     SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.1.1/schema.json".freeze
@@ -73,7 +74,30 @@ module Timber
         hash
       end
 
-      Util::Hash.deep_compact(hash)
+      # Preparing a log event for JSON should remove any blank values. Timber strictly
+      # validates incoming data, including message size. Blank values will fail validation.
+      # Moreover, binary data (ASCII-8BIT) generally cannot be encoded into JSON because it
+      # contains characters outside of the valid UTF-8 space.
+      Util::Hash.deep_reduce(hash) do |k, v, h|
+        # Discard blank values
+        if !v.nil? && (!v.respond_to?(:length) || v.length > 0)
+          # If the value is a binary string, give it special treatment
+          if v.respond_to?(:encoding) && v.encoding == ::Encoding::ASCII_8BIT
+            # Only keep binary values less than a certain size. Sizes larger than this
+            # are almost always file uploads and data we do not want to log.
+            if v.length < BINARY_LIMIT_THRESHOLD
+              # Attempt to safely encode the data to UTF-8
+              encoded_value = encode_string(v)
+              if !encoded_value.nil?
+                h[k] = encoded_value
+              end
+            end
+          else
+            # Keep all other values
+            h[k] = v
+          end
+        end
+      end
     end
 
     def inspect
@@ -111,6 +135,18 @@ module Timber
     private
       def formatted_dt
         @formatted_dt ||= time.iso8601(DT_PRECISION)
+      end
+
+      # Attempts to encode a non UTF-8 string into UTF-8, discarding invalid characters.
+      # If it fails, a nil is returned.
+      def encode_string(string)
+        string.encode('UTF-8', {
+          :invalid => :replace,
+          :undef   => :replace,
+          :replace => '?'
+        })
+      rescue Exception
+        nil
       end
   end
 end

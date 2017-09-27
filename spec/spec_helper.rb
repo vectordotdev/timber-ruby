@@ -20,6 +20,8 @@ if !ENV["RAILS_23"]
   require File.join(File.dirname(__FILE__), 'support', 'active_record')
 end
 
+RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 5_000
+
 RSpec.configure do |config|
   config.color = true
   config.order = :random
