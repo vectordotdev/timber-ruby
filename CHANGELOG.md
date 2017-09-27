@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Forcibly fallback to SSLv23 if SSLv3 fails. SSLv3 is only used for outdated OpenSSL versions.
+
 ## [2.3.0] - 2017-09-26
 
 ### Added
