@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Drop ASCII-8BIT (binary) data before encoding to JSON. This resolves encoding errors during
+    this process.
+
 ## [2.3.1] - 2017-09-26
 
 ### Fixed

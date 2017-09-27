@@ -6,19 +6,20 @@ module Timber
 
       extend self
 
-      def deep_compact(hash)
+      # Deeply reduces a hash into a new hash, passing the current key, value,
+      # and accumulated map up to that point. This allows the caller to
+      # conditionally rebuild the hash.
+      def deep_reduce(hash, &block)
         new_hash = {}
 
         hash.each do |k, v|
           v = if v.is_a?(::Hash)
-            deep_compact(v)
+            deep_reduce(v, &block)
           else
             v
           end
 
-          if v != nil && (!v.respond_to?(:length) || v.length > 0)
-            new_hash[k] = v
-          end
+          block.call(k, v, new_hash)
         end
 
         new_hash
