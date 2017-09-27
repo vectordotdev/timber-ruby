@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.2] - 2017-09-27
+
 ### Fixed
 
   - Drop ASCII-8BIT (binary) data before encoding to JSON. This resolves encoding errors during
@@ -57,7 +59,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.3.2...HEAD
+[2.3.2]: https://github.com/timberio/timber-ruby/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/timberio/timber-ruby/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/timberio/timber-ruby/compare/v2.2.2...v2.3.0
 [2.2.2]: https://github.com/timberio/timber-ruby/compare/v2.2.2...v2.2.3
