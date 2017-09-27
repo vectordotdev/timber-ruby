@@ -24,7 +24,7 @@ you more productive.
 1. In your `Gemfile`, add the `timber` gem:
 
     ```ruby
-    gem 'timber', '~> 2.1'
+    gem 'timber', '~> 2.3'
     ```
 
 2. In your `shell`, run:
