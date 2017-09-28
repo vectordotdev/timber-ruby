@@ -77,12 +77,8 @@ module Timber
     # @example Everything else
     #   Timber::Config.instance.debug_to_file!("log/timber.log")
     def debug_to_file!(file_path)
-      unless File.exist? File.dirname path
-        FileUtils.mkdir_p File.dirname path
-      end
-      file = File.open file_path, "a"
-      file.binmode
-      file.sync = config.autoflush_log
+      FileUtils.mkdir_p( File.dirname(file_path) )
+      file = File.open(file_path, "ab")
       file_logger = ::Logger.new(file)
       file_logger.formatter = SimpleLogFormatter.new
       self.debug_logger = file_logger
