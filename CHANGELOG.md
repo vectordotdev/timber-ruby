@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+  - Raises the limit on the `params_json` field for the `ControllerCallEvent` to `32768` bytes.
+
 ## [2.3.2] - 2017-09-27
 
 ### Fixed

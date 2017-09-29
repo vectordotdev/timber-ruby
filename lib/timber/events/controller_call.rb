@@ -10,7 +10,7 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class ControllerCall < Timber::Event
-      PARAMS_JSON_MAX_BYTES = 8192.freeze
+      PARAMS_JSON_MAX_BYTES = 32_768.freeze
       PASSWORD_NAME = 'password'.freeze
 
       attr_reader :controller, :action, :params, :format
