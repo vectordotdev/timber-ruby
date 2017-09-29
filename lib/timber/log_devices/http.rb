@@ -254,7 +254,9 @@ module Timber
           num_reqs = 0
 
           while num_reqs < @requests_per_conn
-            Timber::Config.instance.debug { "Waiting on next request, threads waiting: #{@request_queue.size}" }
+            if @request_queue.size > 0
+              Timber::Config.instance.debug { "Waiting on next request, threads waiting: #{@request_queue.size}" }
+            end
 
             request_attempt = @request_queue.deq
 
