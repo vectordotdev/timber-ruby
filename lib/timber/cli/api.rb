@@ -162,7 +162,7 @@ module Timber
         rescue OpenSSL::SSL::SSLError => e
           if http.ssl_version != :SSLv23
             http.ssl_version = :SSLv23
-            retry
+            issue!(req)
           end
         end
 
