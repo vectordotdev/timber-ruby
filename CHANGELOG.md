@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.3] - 2017-10-02
+
 ### Changed
 
   - Raises the limit on the `params_json` field for the `ControllerCallEvent` to `32768` bytes.
+  - Bump log event JSON schema version to `3.1.3`.
 
 ## [2.3.2] - 2017-09-27
 
@@ -63,7 +66,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.3.2...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.3.3...HEAD
+[2.3.2]: https://github.com/timberio/timber-ruby/compare/v2.3.2...v2.3.3
 [2.3.2]: https://github.com/timberio/timber-ruby/compare/v2.3.1...v2.3.2
 [2.3.1]: https://github.com/timberio/timber-ruby/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/timberio/timber-ruby/compare/v2.2.2...v2.3.0
