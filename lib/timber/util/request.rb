@@ -63,7 +63,7 @@ if defined?(::Rack::Request)
 
         def request_id
           @request_id ||= @env[REQUEST_ID_KEY_NAME1] ||
-            @env[REQUEST_ID_KEY_NAME12] ||
+            @env[REQUEST_ID_KEY_NAME2] ||
             @env[REQUEST_ID_KEY_NAME3]
         end
       end
