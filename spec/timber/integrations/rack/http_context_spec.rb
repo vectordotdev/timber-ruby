@@ -42,12 +42,12 @@ if defined?(::Rack)
         dispatch_rails_request("/rack_http")
         http_context = Thread.current[:_timber_context_snapshot][:http]
 
-        expect(http_context).to eq({:method=>"GET", :path=>"/rack_http", :remote_addr=>"123.456.789.10", :request_id=>"unique-request-id-1234"})
+        expect(http_context).to eq({:host => "example.org", :method=>"GET", :path=>"/rack_http", :remote_addr=>"123.456.789.10", :request_id=>"unique-request-id-1234"})
 
         lines = clean_lines(io.string.split("\n"))
         expect(lines.length).to eq(3)
         lines.each do |line|
-          expect(line).to include("\"http\":{\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}")
+          expect(line).to include("\"http\":{\"host\":\"example.org\",\"method\":\"GET\",\"path\":\"/rack_http\",\"remote_addr\":\"123.456.789.10\",\"request_id\":\"unique-request-id-1234\"}")
         end
       end
     end

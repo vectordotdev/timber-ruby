@@ -11,6 +11,7 @@ module Timber
         def call(env)
           request = Util::Request.new(env)
           context = Contexts::HTTP.new(
+            host: request.host,
             method: request.request_method,
             path: request.path,
             remote_addr: request.ip,

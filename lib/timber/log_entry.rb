@@ -11,7 +11,7 @@ module Timber
     BINARY_LIMIT_THRESHOLD = 1_000.freeze
     DT_PRECISION = 6.freeze
     MESSAGE_MAX_BYTES = 8192.freeze
-    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.1.3/schema.json".freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.2.0/schema.json".freeze
 
     attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
 

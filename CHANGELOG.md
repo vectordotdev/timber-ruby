@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Added
+
+  - Adds the new `host` field into the `http` context, bumping the log event JSON schema to `3.2.0`.
+
 ## [2.3.4] - 2017-10-12
 
 ### Fixed
