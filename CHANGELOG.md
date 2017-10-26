@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+  - Remove social promotions during the installation process
+
 ## [2.4.0] - 2017-10-23
 
 ### Added
