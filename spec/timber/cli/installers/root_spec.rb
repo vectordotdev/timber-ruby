@@ -30,7 +30,6 @@ describe Timber::CLI::Installers::Root, :rails_23 => true do
       expect(installer).to receive(:wrap_up).with(app).exactly(1).times
       expect(api).to receive(:event).with(:success).exactly(1).times
       expect(installer).to receive(:collect_feedback).exactly(1).times
-      expect(installer).to receive(:free_data).exactly(1).times
 
       installer.run(app)
     end
