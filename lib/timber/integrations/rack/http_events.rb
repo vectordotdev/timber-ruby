@@ -106,6 +106,8 @@ module Timber
           end
         end
 
+        CONTENT_LENGTH_KEY = 'Content-Length'.freeze
+
         def call(env)
           request = Util::Request.new(env)
 
@@ -126,7 +128,7 @@ module Timber
             Config.instance.logger.info do
               http_context_key = Contexts::HTTP.keyspace
               http_context = CurrentContext.fetch(http_context_key)
-              content_length = headers[::Rack::CONTENT_LENGTH]
+              content_length = headers[CONTENT_LENGTH_KEY]
               time_ms = (Time.now - start) * 1000.0
 
               Events::HTTPResponse.new(
@@ -165,7 +167,7 @@ module Timber
 
             Config.instance.logger.info do
               event_body = capture_response_body? ? body : nil
-              content_length = headers[::Rack::CONTENT_LENGTH]
+              content_length = headers[CONTENT_LENGTH_KEY]
               time_ms = (Time.now - start) * 1000.0
 
               Events::HTTPResponse.new(
