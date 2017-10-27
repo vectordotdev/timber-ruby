@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.5.1] - 2017-10-27
+
 ### Fixed
 
   - Ensure the new `content_length` field for HTTP request and response events are an integer.
@@ -101,7 +103,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.5.1...HEAD
+[2.5.1]: https://github.com/timberio/timber-ruby/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/timberio/timber-ruby/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/timberio/timber-ruby/compare/v2.3.4...v2.4.0
 [2.3.4]: https://github.com/timberio/timber-ruby/compare/v2.3.3...v2.3.4
