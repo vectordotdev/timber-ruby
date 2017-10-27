@@ -13,7 +13,7 @@ module Timber
 
       def initialize(attributes)
         @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
-        @content_length = attributes[:content_length]
+        @content_length = Timber::Util::Object.try(attributes[:content_length], :to_i)
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @http_context = attributes[:http_context]
         @request_id = attributes[:request_id]

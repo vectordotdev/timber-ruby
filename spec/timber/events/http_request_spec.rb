@@ -4,6 +4,11 @@ require "spec_helper"
 
 describe Timber::Events::HTTPRequest, :rails_23 => true do
   describe ".initialize" do
+    it "should coerce content_length into an integer" do
+      event = described_class.new(:method => 'GET', :content_length => "123")
+      expect(event.content_length).to eq(123)
+    end
+
     context "with a header filters" do
       around(:each) do |example|
         old_http_header_filters = Timber::Config.instance.http_header_filters

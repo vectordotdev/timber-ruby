@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Ensure the new `content_length` field for HTTP request and response events are an integer.
+
 ## [2.5.0] - 2017-10-27
 
 ### Changed
