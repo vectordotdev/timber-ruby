@@ -9,11 +9,12 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActionController::LogSubscriber} integration.
     class HTTPRequest < Timber::Event
-      attr_reader :body, :headers, :host, :method, :path, :port, :query_string, :request_id,
-        :scheme, :service_name
+      attr_reader :body, :content_length, :headers, :host, :method, :path, :port, :query_string,
+        :request_id, :scheme, :service_name
 
       def initialize(attributes)
         @body = attributes[:body] && Util::HTTPEvent.normalize_body(attributes[:body])
+        @content_length = attributes[:content_length]
         @headers = Util::HTTPEvent.normalize_headers(attributes[:headers])
         @host = attributes[:host]
         @method = Util::HTTPEvent.normalize_method(attributes[:method]) || raise(ArgumentError.new(":method is required"))
@@ -25,8 +26,9 @@ module Timber
       end
 
       def to_hash
-        {body: body, headers: headers, host: host, method: method, path: path, port: port,
-          query_string: query_string, request_id: request_id, scheme: scheme}
+        {body: body, content_length: content_length, headers: headers, host: host, method: method,
+          path: path, port: port, query_string: query_string, request_id: request_id,
+          scheme: scheme}
       end
       alias to_h to_hash
 

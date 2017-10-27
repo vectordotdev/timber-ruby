@@ -126,9 +126,11 @@ module Timber
             Config.instance.logger.info do
               http_context_key = Contexts::HTTP.keyspace
               http_context = CurrentContext.fetch(http_context_key)
+              content_length = headers[::Rack::CONTENT_LENGTH]
               time_ms = (Time.now - start) * 1000.0
 
               Events::HTTPResponse.new(
+                content_length: content_length,
                 headers: headers,
                 http_context: http_context,
                 request_id: request.request_id,
@@ -147,6 +149,7 @@ module Timber
 
               Events::HTTPRequest.new(
                 body: event_body,
+                content_length: request.content_length,
                 headers: request.headers,
                 host: request.host,
                 method: request.request_method,
@@ -161,11 +164,13 @@ module Timber
             status, headers, body = @app.call(env)
 
             Config.instance.logger.info do
-              time_ms = (Time.now - start) * 1000.0
               event_body = capture_response_body? ? body : nil
+              content_length = headers[::Rack::CONTENT_LENGTH]
+              time_ms = (Time.now - start) * 1000.0
 
               Events::HTTPResponse.new(
                 body: event_body,
+                content_length: content_length,
                 headers: headers,
                 request_id: request.request_id,
                 status: status,

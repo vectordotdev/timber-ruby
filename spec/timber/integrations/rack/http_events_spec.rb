@@ -88,7 +88,7 @@ if defined?(::Rack)
           expect(lines.length).to eq(2)
 
           expect(lines[0]).to start_with("Processing by RackHttpController#index as HTML @metadata ")
-          expect(lines[1]).to start_with("GET /rack_http sent 200 OK in 0.0ms @metadata ")
+          expect(lines[1]).to start_with("GET /rack_http completed with 200 OK in 0.0ms @metadata ")
         end
       end
     end

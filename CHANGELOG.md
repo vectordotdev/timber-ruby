@@ -16,6 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Adds an override for ActiveSupport::Buffered logger. This is a legacy class that was dropped
     in Rails >= 4. It lacked #formatter accessor methods, which was a bug that was never resolved.
 
+### Added
+
+  - Capture `content_length` for both HTTP request and HTTP response events. This field is
+    available in the log's metadata. The response event now includes the content length in the
+    actual log message. The request message remains unchanged.
+
 ## [2.4.0] - 2017-10-23
 
 ### Added
