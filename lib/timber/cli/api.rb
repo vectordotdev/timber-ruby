@@ -159,9 +159,9 @@ module Timber
           else
             res
           end
-        rescue OpenSSL::SSL::SSLError => e
-          if http.ssl_version != :SSLv23
-            http.ssl_version = :SSLv23
+        rescue OpenSSL::SSL::SSLError => _e
+          if http.ssl_version != :TLSv1_2
+            http.ssl_version = :TLSv1_2
             issue!(req)
           end
         end
