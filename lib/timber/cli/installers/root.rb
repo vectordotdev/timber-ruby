@@ -32,7 +32,6 @@ module Timber
           confirm_log_delivery
           api.event(:success)
           collect_feedback
-          free_data
           wrap_up(app)
         end
 
@@ -110,13 +109,6 @@ module Timber
               io.puts ""
               io.puts "Thank you! We take feedback seriously and will work to improve this."
             end
-          end
-
-          def free_data
-            io.puts ""
-            io.puts IO::Messages.separator
-            io.puts ""
-            io.puts IO::Messages.free_data
           end
       end
     end

@@ -86,16 +86,6 @@ MESSAGE
           message
         end
 
-        def free_data
-          message = <<-MESSAGE
-Get free data:
-
-* Get ✨ 250mb✨  for starring our repo: #{IO::ANSI.colorize(REPO_URL, :blue)}
-* Get ✨ 250mb✨  for tweeting your experience to #{IO::ANSI.colorize(TWITTER_HANDLE, :blue)}
-MESSAGE
-          message.rstrip
-        end
-
         def header
           message = <<-MESSAGE
 🌲 Timber.io Ruby Installer - Great Ruby Logging Made *Easy*
