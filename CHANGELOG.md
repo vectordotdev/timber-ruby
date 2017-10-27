@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
   - Remove social promotions during the installation process
 
+### Fixed
+
+  - Adds an override for ActiveSupport::Buffered logger. This is a legacy class that was dropped
+    in Rails >= 4. It lacked #formatter accessor methods, which was a bug that was never resolved.
+
 ## [2.4.0] - 2017-10-23
 
 ### Added
