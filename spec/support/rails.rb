@@ -30,6 +30,7 @@ if defined?(::Rails)
         application = ::Rails.application
         env = application.respond_to?(:env_config) ? application.env_config.clone : application.env_defaults.clone
         env["rack.request.cookie_hash"] = {}.with_indifferent_access
+        env["CONTENT_LENGTH"] = 100
         env["REMOTE_ADDR"] = "123.456.789.10"
         env["HTTP_X_REQUEST_ID"] = "unique-request-id-1234"
         env["action_dispatch.request_id"] = env["HTTP_X_REQUEST_ID"]
