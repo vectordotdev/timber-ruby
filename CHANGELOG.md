@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
   - Remove social promotions during the installation process
+  - The default log device for development has been changed to a file (log/development.log)
+    to follow Rails defaults.
 
 ### Fixed
 

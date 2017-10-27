@@ -95,12 +95,17 @@ describe Timber::CLI::Installers::Rails, :rails_23 => true do
 
             expected_code = <<-CODE
   # Install the Timber.io logger
-  send_logs_to_timber = true # <---- Set to false to stop sending development logs to Timber.io.
-                             #       But do not remove the logger code below! The log_device should
-                             #       be set to STDOUT if you want to disable sending logs.
+  # ----------------------------
+  # Remove the `http_device` to stop sending development logs to Timber.
+  # Be sure to keep the `file_device` or replace it with `STDOUT`.
+  http_device = Timber::LogDevices::HTTP.new('#{app.api_key}')
+  file_device = File.open("\#{Rails.root}/log/development.log", "a")
+  file_device.binmode
+  log_devices = [http_device, file_device]
 
-  log_device = send_logs_to_timber ? Timber::LogDevices::HTTP.new('#{app.api_key}') : STDOUT
-  logger = Timber::Logger.new(log_device)
+  # Do not modify below this line. It's important to keep the `Timber::Logger`
+  # because it provides an API for logging structured data and capturing context.
+  logger = Timber::Logger.new(*log_devices)
   logger.level = config.log_level
   config.logger = #{logger_code}
 CODE
@@ -314,7 +319,10 @@ CODE
       env_file_path = "config/environments/development.rb"
 
       expected_code = <<-CODE
-  # Install the Timber.io logger, but do not send logs.
+  # Install the Timber.io logger
+  # ----------------------------
+  # `nil` is passed to disable logging. It's important to keep the `Timber::Logger`
+  # because it provides an API for logging structured data and capturing context.
   logger = Timber::Logger.new(nil)
   logger.level = config.log_level
   config.logger = #{logger_code}
