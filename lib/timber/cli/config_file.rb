@@ -58,7 +58,10 @@ module Timber
 config = Timber::Config.instance
 
 #{insert_hook}
-# For a full list of configuration options and their explanations see:
+# For common configuration options see:
+# https://timber.io/docs/languages/ruby/configuration
+#
+# For a full list of configuration options see:
 # http://www.rubydoc.info/github/timberio/timber-ruby/Timber/Config
 
 CONTENT
