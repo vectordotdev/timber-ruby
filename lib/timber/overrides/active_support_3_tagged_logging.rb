@@ -1,3 +1,8 @@
+# Please note, this patch is merely an upgrade, backporting improved tagged logging code
+# from newer versions of Rails:
+# https://github.com/rails/rails/blob/5-1-stable/activesupport/lib/active_support/tagged_logging.rb
+# The behavior of tagged logging will not change in any way.
+#
 # This patch is specifically for Rails 3. The legacy approach to wrapping the logger in
 # ActiveSupport::TaggedLogging is rather poor, hence the reason it was changed entirely
 # for Rails 4 and 5. The problem is that ActiveSupport::TaggedLogging is a wrapping
@@ -79,9 +84,12 @@ begin
         end
 
         def self.new(logger)
-          # Ensure we set a default formatter so we aren't extending nil!
-          logger.formatter ||= SimpleFormatter.new
-          logger.formatter.extend Formatter
+          if logger.respond_to?(:formatter=) && logger.respond_to?(:formatter)
+            # Ensure we set a default formatter so we aren't extending nil!
+            logger.formatter ||= SimpleFormatter.new
+            logger.formatter.extend Formatter
+          end
+
           logger.extend(self)
         end
 
