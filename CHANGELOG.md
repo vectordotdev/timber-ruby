@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+  - Fixes `::ActionDispatch::ExceptionWrapper` version detection preventing the `undefined method clean for #<Hash:->` error when an exception is raised in a Rack request.
+
+## [2.6.0-beta1] - 2017-10-28
+
+### Fixed
+
   - Encoding and rewind issues for file upload parameters have been resolved. Timber
     improved attribute normalization across all contexts and events, ignoring binary
     values like this in general.

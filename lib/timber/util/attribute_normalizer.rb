@@ -14,7 +14,6 @@ module Timber
       def fetch!(key, type, options = {})
         v = fetch(key, type, options)
         if v.nil?
-          raise @attributes.inspect
           raise ArgumentError.new("The #{key.inspect} attribute is required")
         end
         v
