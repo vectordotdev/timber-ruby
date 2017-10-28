@@ -130,11 +130,6 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to include("\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}")
       end
 
-      it "should allow :time_ms" do
-        logger.info("event complete", time_ms: 54.5)
-        expect(io.string).to include("\"time_ms\":54.5")
-      end
-
       it "should allow :tag" do
         logger.info("event complete", tag: "tag1")
         expect(io.string).to include("\"tags\":[\"tag1\"]")

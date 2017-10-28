@@ -26,7 +26,7 @@ describe Timber::Events::HTTPRequest, :rails_23 => true do
     it "should handle header encoding" do
       referer = 'http://www.metrojobb.se/jobb/1013893-skadeadministratör'.force_encoding('ASCII-8BIT')
       event = described_class.new(:headers => {'Referer' => referer}, :host => 'my.host.com', :method => 'GET', :path => '/path', :scheme => 'https')
-      expect(event.headers.key?("referer")).to eq(false)
+      expect(event.headers["referer"].encoding).to eq(::Encoding::UTF_8)
     end
   end
 end

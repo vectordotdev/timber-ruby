@@ -8,6 +8,10 @@ module Timber
     #
     # @note To automatically set this context, see {.from_env}.
     class Release < Context
+      COMMIT_HASH_MAX_BYTES = 256.freeze
+      CREATED_AT_MAX_BYTES = 256.freeze
+      VERSION_MAX_BYTES = 256.freeze
+
       @keyspace = :release
 
       class << self
@@ -36,14 +40,23 @@ module Timber
       attr_reader :commit_hash, :created_at, :version
 
       def initialize(attributes)
-        @commit_hash = attributes[:commit_hash]
-        @created_at = attributes[:created_at]
-        @version = attributes[:version]
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @commit_hash = normalizer.fetch(:commit_hash, :string, :limit => COMMIT_HASH_MAX_BYTES)
+        @created_at = normalizer.fetch(:created_at, :string, :limit => CREATED_AT_MAX_BYTES)
+        @version = normalizer.fetch(:version, :string, :limit => VERSION_MAX_BYTES)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:commit_hash, commit_hash)
+          h.add(:created_at, created_at)
+          h.add(:version, version)
+        end
+      end
+
       def as_json(_options = {})
-        {commit_hash: commit_hash, created_at: created_at, version: version}
+        to_hash
       end
     end
   end

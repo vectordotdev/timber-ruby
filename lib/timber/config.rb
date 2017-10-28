@@ -25,6 +25,7 @@ module Timber
       end
     end
 
+    DEFAULT_HTTP_BODY_LIMIT = 2048.freeze
     DEVELOPMENT_NAME = "development".freeze
     PRODUCTION_NAME = "production".freeze
     STAGING_NAME = "staging".freeze
@@ -36,7 +37,7 @@ module Timber
 
     # @private
     def initialize
-      @http_body_limit = 2048
+      @http_body_limit = DEFAULT_HTTP_BODY_LIMIT
     end
 
     # Convenience method for logging debug statements to the debug logger

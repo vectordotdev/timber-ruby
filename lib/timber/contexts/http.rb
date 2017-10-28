@@ -13,22 +13,38 @@ module Timber
     # @note This context should be installed automatically through the,
     #   {Intregrations::Rack::HTTPContext} Rack middleware.
     class HTTP < Context
+      HOST_MAX_BYTES = 256.freeze
+      METHOD_MAX_BYTES = 20.freeze
+      PATH_MAX_BYTES = 2048.freeze
+      REMOTE_ADDR_MAX_BYTES = 256.freeze
+      REQUEST_ID_MAX_BYTES = 256.freeze
+
       @keyspace = :http
 
       attr_reader :host, :method, :path, :remote_addr, :request_id
 
       def initialize(attributes)
-        @host = attributes[:host]
-        @method = attributes[:method] || raise(ArgumentError.new(":method is required"))
-        @path = attributes[:path]
-        @remote_addr = attributes[:remote_addr]
-        @request_id = attributes[:request_id]
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @host = normalizer.fetch(:host, :string, :limit => HOST_MAX_BYTES)
+        @method = normalizer.fetch!(:method, :string, :upcase => true, :limit => METHOD_MAX_BYTES)
+        @path = normalizer.fetch(:path, :string, :limit => PATH_MAX_BYTES)
+        @remote_addr = normalizer.fetch(:remote_addr, :string, :limit => REMOTE_ADDR_MAX_BYTES)
+        @request_id = normalizer.fetch(:request_id, :string, :limit => REQUEST_ID_MAX_BYTES)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:host, host)
+          h.add(:method, method)
+          h.add(:path, path)
+          h.add(:remote_addr, remote_addr)
+          h.add(:request_id, request_id)
+        end
+      end
+
       def as_json(_options = {})
-        {:host => host, :method => method, :path => path, :remote_addr => remote_addr,
-          :request_id => request_id}
+        to_hash
       end
     end
   end

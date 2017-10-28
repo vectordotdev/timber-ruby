@@ -24,13 +24,20 @@ module Timber
       attr_reader :type, :data
 
       def initialize(attributes)
-        @type = Timber::Util::Object.try(attributes[:type], :to_sym) || raise(ArgumentError.new(":type is required"))
-        @data = attributes[:data] || raise(ArgumentError.new(":data is required"))
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @type = normalizer.fetch!(:type, :symbol)
+        @data = normalizer.fetch!(:data, :hash)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(type, data)
+        end
+      end
+
       def as_json(options = {})
-        {type => data}
+        to_hash
       end
     end
   end
