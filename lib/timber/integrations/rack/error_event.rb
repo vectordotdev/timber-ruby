@@ -18,11 +18,8 @@ module Timber
       # {Timber::Events::Error}.
       class ErrorEvent < Middleware
         # We determine this when the app loads to avoid the overhead on a per request basis.
-        EXCEPTION_WRAPPER_TAKES_CLEANER = if Gem.loaded_specs["rails"]
-          Gem.loaded_specs["rails"].version >= Gem::Version.new('5.0.0')
-        else
-          false
-        end
+        EXCEPTION_WRAPPER_TAKES_CLEANER = defined?(::ActionDispatch::ExceptionWrapper) &&
+          !::ActionDispatch::ExceptionWrapper.instance_methods.include?(:env)
 
         def call(env)
           begin

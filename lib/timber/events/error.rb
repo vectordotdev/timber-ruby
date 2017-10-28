@@ -16,7 +16,7 @@ module Timber
       def initialize(attributes)
         normalizer = Util::AttributeNormalizer.new(attributes)
         @name = normalizer.fetch!(:name, :string)
-        @error_message = normalizer.fetch!(:error_message, :string, :limit => MESSAGE_MAX_BYTES)
+        @error_message = normalizer.fetch(:error_message, :string, :limit => MESSAGE_MAX_BYTES)
         @backtrace = normalizer.fetch(:backtrace, :array)
       end
 
@@ -35,7 +35,13 @@ module Timber
       end
 
       def message
-        "#{name} (#{error_message})"
+        message = "#{name}"
+
+        if !error_message.nil?
+          message << " (#{error_message})"
+        end
+
+        message
       end
     end
   end

@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
+  - Fixes `::ActionDispatch::ExceptionWrapper` version detection preventing the `undefined method clean for #<Hash:->` error when an exception is raised in a Rack request.
+
+## [2.6.0-beta1] - 2017-10-28
+
+### Fixed
+
   - Encoding and rewind issues for file upload parameters have been resolved. Timber
     improved attribute normalization across all contexts and events, ignoring binary
     values like this in general.
@@ -109,7 +115,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.5.1...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.0-beta1...HEAD
+[2.6.0-beta1]: https://github.com/timberio/timber-ruby/compare/v2.5.1...v2.6.0-beta1
 [2.5.1]: https://github.com/timberio/timber-ruby/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/timberio/timber-ruby/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/timberio/timber-ruby/compare/v2.3.4...v2.4.0
