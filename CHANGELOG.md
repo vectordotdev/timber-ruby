@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Encoding and rewind issues for file upload parameters have been resolved. Timber
+    improved attribute normalization across all contexts and events, ignoring binary
+    values like this in general.
+
 ## [2.5.1] - 2017-10-27
 
 ### Fixed

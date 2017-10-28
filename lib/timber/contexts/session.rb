@@ -11,17 +11,26 @@ module Timber
     # @note This is tracked automatically with the {Integrations::Rack::SessionContext} rack
     #   middleware.
     class Session < Context
+      ID_MAX_BYTES = 256.freeze
+
       @keyspace = :session
 
       attr_reader :id
 
       def initialize(attributes)
-        @id = Timber::Util::Object.try(attributes[:id], :to_s) || raise(ArgumentError.new(":id is required"))
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @id = normalizer.fetch!(:id, :string, :limit => ID_MAX_BYTES)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:id, id)
+        end
+      end
+
       def as_json(_options = {})
-        {id: id}
+        to_hash
       end
     end
   end

@@ -23,12 +23,13 @@ module Timber
       # @option attributes [Hash] :data A hash of JSON encodable data to be stored with the
       #   log line.
       def initialize(attributes)
-        @type = attributes[:type] || raise(ArgumentError.new(":type is required"))
-        @message = attributes[:message] || raise(ArgumentError.new(":message is required"))
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @type = normalizer.fetch!(:type, :symbol)
+        @message = normalizer.fetch!(:message, :string)
 
-        data = attributes[:data]
+        data = normalizer.fetch!(:data, :hash)
 
-        if data.is_a?(Hash) && data[:time_ms].is_a?(Time)
+        if !data.nil? && data[:time_ms].is_a?(Time)
           data[:time_ms] = Timer.duration_ms(data[:time_ms])
           @message << " in #{data[:time_ms]}ms"
         end
@@ -37,7 +38,9 @@ module Timber
       end
 
       def to_hash
-        {Timber::Util::Object.try(type, :to_sym) => data}
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(type, data)
+        end
       end
       alias to_h to_hash
 

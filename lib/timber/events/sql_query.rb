@@ -7,20 +7,23 @@ module Timber
     # @note This event should be installed automatically through integrations,
     #   such as the {Integrations::ActiveRecord::LogSubscriber} integration.
     class SQLQuery < Timber::Event
-      MAX_QUERY_BYTES = 1024.freeze
+      MESSAGE_MAX_BYTES = 8192.freeze
+      SQL_MAX_BYTES = 4096.freeze
 
       attr_reader :sql, :time_ms, :message
 
       def initialize(attributes)
-        @sql = attributes[:sql] || raise(ArgumentError.new(":sql is required"))
-        @sql = @sql.byteslice(0, MAX_QUERY_BYTES)
-        @time_ms = attributes[:time_ms] || raise(ArgumentError.new(":time_ms is required"))
-        @time_ms = @time_ms.round(6)
-        @message = attributes[:message] || raise(ArgumentError.new(":message is required"))
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @message = normalizer.fetch!(:message, :string, :limit => MESSAGE_MAX_BYTES)
+        @sql = normalizer.fetch!(:sql, :string, :limit => SQL_MAX_BYTES)
+        @time_ms = normalizer.fetch!(:time_ms, :float, :precision => 6)
       end
 
       def to_hash
-        {sql: sql, time_ms: time_ms}
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:sql, sql)
+          h.add(:time_ms, time_ms)
+        end
       end
       alias to_h to_hash
 

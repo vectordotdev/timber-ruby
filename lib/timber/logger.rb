@@ -47,15 +47,11 @@ module Timber
             tags.concat(logged_obj.delete(:tags)) if logged_obj.key?(:tags)
             tags.uniq!
 
-            # Extract the time_ms
-            time_ms = logged_obj.delete(:time_ms)
-
             # Build the event
             event = Events.build(logged_obj)
             message = event ? event.message : logged_obj[:message]
 
-            LogEntry.new(level, time, progname, message, context_snapshot, event, tags: tags,
-              time_ms: time_ms)
+            LogEntry.new(level, time, progname, message, context_snapshot, event, tags: tags)
           else
             LogEntry.new(level, time, progname, logged_obj, context_snapshot, nil, tags: tags)
           end

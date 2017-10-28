@@ -11,21 +11,37 @@ module Timber
     #   middleware for supported authentication frameworks. See {Integrations::Rack::UserContext}
     #   for more details.
     class User < Context
+      ID_MAX_BYTES = 256.freeze
+      NAME_MAX_BYTES = 256.freeze
+      EMAIL_MAX_BYTES = 256.freeze
+      TYPE_MAX_BYTES = 256.freeze
+
       @keyspace = :user
 
       attr_reader :id, :name, :email, :type, :meta
 
       def initialize(attributes)
-        @id = Timber::Util::Object.try(attributes[:id], :to_s)
-        @name = attributes[:name]
-        @email = attributes[:email]
-        @type = attributes[:type]
-        @meta = attributes[:meta]
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @id = normalizer.fetch(:id, :string, :limit => ID_MAX_BYTES)
+        @name = normalizer.fetch(:name, :string, :limit => NAME_MAX_BYTES)
+        @email = normalizer.fetch(:email, :string, :limit => EMAIL_MAX_BYTES)
+        @type = normalizer.fetch(:type, :string, :limit => TYPE_MAX_BYTES)
+        @meta = normalizer.fetch(:meta, :hash)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:id, id)
+          h.add(:name, name)
+          h.add(:email, email)
+          h.add(:type, type)
+          h.add(:meta, meta)
+        end
+      end
+
       def as_json(_options = {})
-        {id: id, name: name, email: email, type: type, meta: meta}
+        to_hash
       end
     end
   end

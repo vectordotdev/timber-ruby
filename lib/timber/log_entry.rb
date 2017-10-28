@@ -13,7 +13,7 @@ module Timber
     MESSAGE_MAX_BYTES = 8192.freeze
     SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.2.0/schema.json".freeze
 
-    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time, :time_ms
+    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param level [Integer] the log level / severity
@@ -36,7 +36,6 @@ module Timber
       @message = message.is_a?(String) ? message : message.inspect
       @message = @message.byteslice(0, MESSAGE_MAX_BYTES)
       @tags = options[:tags]
-      @time_ms = options[:time_ms]
       @context_snapshot = context_snapshot
       @event = event
     end
@@ -47,10 +46,12 @@ module Timber
       hash = {
         :level => level,
         :dt => formatted_dt,
-        :message => message,
-        :tags => tags,
-        :time_ms => time_ms
+        :message => message
       }
+
+      if !tags.nil? && tags.length > 0
+        hash[:tags] = tags
+      end
 
       if !event.nil?
         hash[:event] = event.as_json
@@ -62,7 +63,7 @@ module Timber
 
       hash[:"$schema"] = SCHEMA
 
-      hash = if options[:only]
+      if options[:only]
         hash.select do |key, _value|
           options[:only].include?(key)
         end
@@ -72,31 +73,6 @@ module Timber
         end
       else
         hash
-      end
-
-      # Preparing a log event for JSON should remove any blank values. Timber strictly
-      # validates incoming data, including message size. Blank values will fail validation.
-      # Moreover, binary data (ASCII-8BIT) generally cannot be encoded into JSON because it
-      # contains characters outside of the valid UTF-8 space.
-      Util::Hash.deep_reduce(hash) do |k, v, h|
-        # Discard blank values
-        if !v.nil? && (!v.respond_to?(:length) || v.length > 0)
-          # If the value is a binary string, give it special treatment
-          if v.respond_to?(:encoding) && v.encoding == ::Encoding::ASCII_8BIT
-            # Only keep binary values less than a certain size. Sizes larger than this
-            # are almost always file uploads and data we do not want to log.
-            if v.length < BINARY_LIMIT_THRESHOLD
-              # Attempt to safely encode the data to UTF-8
-              encoded_value = encode_string(v)
-              if !encoded_value.nil?
-                h[k] = encoded_value
-              end
-            end
-          else
-            # Keep all other values
-            h[k] = v
-          end
-        end
       end
     end
 

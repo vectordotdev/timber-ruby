@@ -8,22 +8,30 @@ module Timber
     #   Processing by PagesController#home as HTML
     #
     # @note This event should be installed automatically through integrations,
-    #   such as the {Integrations::ActionController::LogSubscriber} integration.
+    #   such as the {Integrations::ActionController} integration.
     class ControllerCall < Timber::Event
+      ACTION_MAX_BYTES = 256.freeze
+      FORMAT_MAX_BYTES = 256.freeze
+      CONTROLLER_MAX_BYTES = 256.freeze
       PARAMS_JSON_MAX_BYTES = 32_768.freeze
       PASSWORD_NAME = 'password'.freeze
 
       attr_reader :controller, :action, :params, :format
 
       def initialize(attributes)
-        @controller = attributes[:controller] || raise(ArgumentError.new(":controller is required"))
-        @action = attributes[:action] || raise(ArgumentError.new(":action is required"))
-        @params = sanitize_params(attributes[:params])
-        @format = attributes[:format]
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @controller = normalizer.fetch!(:controller, :string, :limit => CONTROLLER_MAX_BYTES)
+        @action = normalizer.fetch!(:action, :string, :limit => ACTION_MAX_BYTES)
+        @params = normalizer.fetch(:params, :hash, :sanitize => [PASSWORD_NAME])
+        @format = normalizer.fetch(:format, :string, :limit => FORMAT_MAX_BYTES)
       end
 
       def to_hash
-        {controller: controller, action: action, params_json: params_json}
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:controller, controller)
+          h.add(:action, action)
+          h.add(:params_json, params.to_json.byteslice(0, PARAMS_JSON_MAX_BYTES))
+        end
       end
       alias to_h to_hash
 
@@ -42,24 +50,6 @@ module Timber
         end
         message
       end
-
-      private
-        def params_json
-          @params_json ||=
-            if params.nil? || params == {}
-              nil
-            else
-              params.to_json.byteslice(0, PARAMS_JSON_MAX_BYTES)
-            end
-        end
-
-        def sanitize_params(params)
-          if params.is_a?(::Hash)
-            Util::Hash.sanitize(params, [PASSWORD_NAME])
-          else
-            params
-          end
-        end
     end
   end
 end

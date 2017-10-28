@@ -19,18 +19,29 @@ module Timber
     #   end
     #
     class Organization < Context
+      ID_MAX_BYTES = 256.freeze
+      NAME_MAX_BYTES = 256.freeze
+
       @keyspace = :organization
 
       attr_reader :id, :name
 
       def initialize(attributes)
-        @id = Timber::Util::Object.try(attributes[:id], :to_s)
-        @name = attributes[:name]
+        normalizer = Util::AttributeNormalizer.new(attributes)
+        @id = normalizer.fetch(:id, :string, :limit => ID_MAX_BYTES)
+        @name = normalizer.fetch(:name, :string, :limit => NAME_MAX_BYTES)
       end
 
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
+      def to_hash
+        @to_hash ||= Util::NonNilHashBuilder.build do |h|
+          h.add(:id, id)
+          h.add(:name, name)
+        end
+      end
+
       def as_json(_options = {})
-        {id: id, name: name}
+        to_hash
       end
     end
   end
