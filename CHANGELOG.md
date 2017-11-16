@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.6.0-beta2] - 2017-11-16
+
 ### Fixed
 
   - Fixes an issue where a reference to the current custom context map was being capture during log line creation and then later self-modifying to make the context invalid.
@@ -116,7 +118,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.0-beta1...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.0-beta2...HEAD
+[2.6.0-beta2]: https://github.com/timberio/timber-ruby/compare/v2.6.0-beta1...v2.6.0-beta2
 [2.6.0-beta1]: https://github.com/timberio/timber-ruby/compare/v2.5.1...v2.6.0-beta1
 [2.5.1]: https://github.com/timberio/timber-ruby/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/timberio/timber-ruby/compare/v2.4.0...v2.5.0
