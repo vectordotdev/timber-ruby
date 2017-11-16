@@ -120,7 +120,13 @@ module Timber
     # since the context can change as execution proceeds. Note that individual contexts
     # should be immutable, and we implement snapshot caching as a result of this assumption.
     def snapshot
-      @snapshot ||= hash.clone
+      @snapshot ||= begin
+        snapshot = hash.clone
+        if snapshot.key?(:custom)
+          snapshot[:custom] = hash[:custom].clone
+        end
+        snapshot
+      end
     end
 
     private

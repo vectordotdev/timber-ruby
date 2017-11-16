@@ -147,6 +147,7 @@ module Timber
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
+
           req.body = msgs.to_msgpack
           req
         end
