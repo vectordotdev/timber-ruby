@@ -98,6 +98,18 @@ describe Timber::CurrentContext, :rails_23 => true do
     end
   end
 
+  describe ".snapshot" do
+    it "shoud properly snapshot custom contexts" do
+      snapshot = nil
+
+      described_class.with({build: {version: "1.0.0"}}) do
+        snapshot = described_class.instance.snapshot
+      end
+
+      expect(snapshot[:custom]).to eq({:build=>{:version=>"1.0.0"}})
+    end
+  end
+
   describe ".with" do
     it "should merge the context and cleanup on block exit" do
       expect(described_class.instance.send(:hash)[:custom]).to be_nil

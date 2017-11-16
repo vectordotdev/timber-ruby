@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## [2.6.0-beta1] - 2017-10-28
-
 ### Fixed
 
-  - Fixes `::ActionDispatch::ExceptionWrapper` version detection preventing the `undefined method clean for #<Hash:->` error when an exception is raised in a Rack request.
+  - Fixes an issue where a reference to the current custom context map was being capture during log line creation and then later self-modifying to make the context invalid.
 
 ## [2.6.0-beta1] - 2017-10-28
 
@@ -20,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - Encoding and rewind issues for file upload parameters have been resolved. Timber
     improved attribute normalization across all contexts and events, ignoring binary
     values like this in general.
+  - Fixes `::ActionDispatch::ExceptionWrapper` version detection preventing the `undefined method clean for #<Hash:->` error when an exception is raised in a Rack request.
 
 ## [2.5.1] - 2017-10-27
 
