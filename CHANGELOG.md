@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.6.1] - 2017-11-28
+
+### Fixed
+
+  - Fixes an issue where a reference to the current custom context map was being capture during log line creation and then later self-modifying to make the context invalid.
+
 ## [2.6.0] - 2017-11-28
 
 ### Fixed
@@ -15,7 +21,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     improved attribute normalization across all contexts and events, ignoring binary
     values like this in general.
   - Fixes `::ActionDispatch::ExceptionWrapper` version detection preventing the `undefined method clean for #<Hash:->` error when an exception is raised in a Rack request.
-  - Fixes an issue where a reference to the current custom context map was being capture during log line creation and then later self-modifying to make the context invalid.
 
 ## [2.5.1] - 2017-10-27
 
@@ -113,7 +118,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.0...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.1...HEAD
+[2.6.1]: https://github.com/timberio/timber-ruby/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/timberio/timber-ruby/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/timberio/timber-ruby/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/timberio/timber-ruby/compare/v2.4.0...v2.5.0
