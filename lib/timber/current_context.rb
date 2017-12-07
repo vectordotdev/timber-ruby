@@ -57,6 +57,13 @@ module Timber
     #     # ... anything logged here will include the context ...
     #   end
     #
+    # @note Any custom context needs to have a single root key to be valid. i.e. instead of:
+    #   Timber::CurrentContext.with(job_id: "123", job_name: "Refresh User Account")
+    #
+    # do
+    #
+    #   Timber::CurrentContext.with(job: {job_id: "123", job_name: "Refresh User Account"})
+    #
     # @example Adding multiple contexts
     #   Timber::CurrentContext.with(context1, context2) { ... }
     def with(*objects)
