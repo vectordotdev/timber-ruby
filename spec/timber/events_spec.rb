@@ -36,6 +36,16 @@ describe Timber::Events, :rails_23 => true do
       expect(built_event.message).to eq("Payment rejected")
     end
 
+    it "should reject a hash without a hash value" do
+      built_event = Timber::Events.build({message: "Payment rejected", key: "value"})
+      expect(built_event).to be_nil
+    end
+
+    it "should reject a hash without multiple keys" do
+      built_event = Timber::Events.build({message: "Payment rejected", key1: {data: "value"}, key2: {data: "value"}})
+      expect(built_event).to be_nil
+    end
+
     it "should accept a struct" do
       PaymentRejectedEvent = Struct.new(:customer_id, :amount) do
         def message; "Payment rejected for #{customer_id}"; end

@@ -11,9 +11,9 @@ module Timber
     BINARY_LIMIT_THRESHOLD = 1_000.freeze
     DT_PRECISION = 6.freeze
     MESSAGE_MAX_BYTES = 8192.freeze
-    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v3.2.0/schema.json".freeze
+    SCHEMA = "https://raw.githubusercontent.com/timberio/log-event-json-schema/v4.0.0/schema.json".freeze
 
-    attr_reader :context_snapshot, :event, :level, :message, :progname, :tags, :time
+    attr_reader :context_snapshot, :event, :level, :message, :progname, :time
 
     # Creates a log entry suitable to be sent to the Timber API.
     # @param level [Integer] the log level / severity
@@ -35,23 +35,26 @@ module Timber
       # See: https://github.com/ruby/ruby/blob/trunk/lib/logger.rb#L615
       @message = message.is_a?(String) ? message : message.inspect
       @message = @message.byteslice(0, MESSAGE_MAX_BYTES)
-      @tags = options[:tags]
       @context_snapshot = context_snapshot
       @event = event
+
+      tags = options[:tags]
+
+      if !tags.nil? && tags.length > 0
+        tags_text = tags.collect { |tag| "[#{tag}] " }.join
+        @message = "#{tags_text}#{message}"
+      end
     end
 
     # Builds a hash representation containing simple objects, suitable for serialization (JSON).
     def as_json(options = {})
       options ||= {}
+
       hash = {
         :level => level,
         :dt => formatted_dt,
         :message => message
       }
-
-      if !tags.nil? && tags.length > 0
-        hash[:tags] = tags
-      end
 
       if !event.nil?
         hash[:event] = event.as_json

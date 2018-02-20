@@ -12,7 +12,7 @@ describe Timber::Events::Error, :rails_23 => true do
       expected_hash = {
         :name => "RuntimeError",
         :message => "Boom",
-        :backtrace_json => "[\"/path/to/file1.rb:26:in `function1'\",\"path/to/file2.rb:86:in `function2'\"]"
+        :backtrace => [{:file=>"/path/to/file1.rb", :line=>26, :function=>"function1"}, {:file=>"path/to/file2.rb", :line=>86, :function=>"function2"}]
       }
       expect(exception_event.to_hash).to eq(expected_hash)
     end

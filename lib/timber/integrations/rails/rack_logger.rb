@@ -16,8 +16,22 @@ module Timber
         module InstanceMethods
           LOGGER = ::Logger.new(nil)
 
+          # We remove the request ID since Timber captures the request context automatically.
+          # This is preferrably to tags since it is proper structured data. Moreover,
+          # the Timber interface defaults to prepending log lines with the request_id.
+          TAGS_TO_EXCLUDE = [:request_id]
+
           def self.included(klass)
             klass.class_eval do
+              def initialize(app, taggers = nil)
+                @app = app
+                if taggers
+                  @taggers = taggers.reject { |t| TAGS_TO_EXCLUDE.include?(t) } || []
+                else
+                  @taggers = []
+                end
+              end
+
               private
                 if ::Rails::VERSION::MAJOR == 3
                   # Rails 3.2 calls Rails.logger directly in call_app, so we

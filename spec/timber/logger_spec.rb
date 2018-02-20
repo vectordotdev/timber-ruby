@@ -130,20 +130,6 @@ describe Timber::Logger, :rails_23 => true do
         expect(io.string).to include("\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}")
       end
 
-      it "should allow :tag" do
-        logger.info("event complete", tag: "tag1")
-        expect(io.string).to include("\"tags\":[\"tag1\"]")
-      end
-
-      it "should allow :tags" do
-        tags = ["tag1", "tag2"]
-        logger.info("event complete", tags: tags)
-        expect(io.string).to include("\"tags\":[\"tag1\",\"tag2\"]")
-
-        # Ensure the tags object is not modified
-        expect(tags).to eq(["tag1", "tag2"])
-      end
-
       it "should allow functions" do
         logger.info do
           {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
@@ -185,13 +171,6 @@ describe Timber::Logger, :rails_23 => true do
       expect(io.string).to start_with("message @metadata")
       expect(io.string).to include('"level":"error"')
     end
-
-    it "should allow messages with options" do
-      logger.error("message", tag: "tag")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"error"')
-      expect(io.string).to include('"tags":["tag"]')
-    end
   end
 
   describe "#formatter=" do
@@ -217,13 +196,6 @@ describe Timber::Logger, :rails_23 => true do
       logger.info("message")
       expect(io.string).to start_with("message @metadata")
       expect(io.string).to include('"level":"info"')
-    end
-
-    it "should allow messages with options" do
-      logger.info("message", tag: "tag")
-      expect(io.string).to start_with("message @metadata")
-      expect(io.string).to include('"level":"info"')
-      expect(io.string).to include('"tags":["tag"]')
     end
 
     it "should accept non-string messages" do

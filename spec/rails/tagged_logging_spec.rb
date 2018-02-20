@@ -31,7 +31,7 @@ if defined?(::ActiveSupport::TaggedLogging)
         logger.tagged("tag") do
           logger.info(event)
         end
-        expect(io.string).to include("\"tags\":[\"tag\"]")
+        expect(io.string).to start_with("[tag] select *")
       end
 
       it "should accept events as the second argument" do

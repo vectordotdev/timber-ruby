@@ -41,7 +41,7 @@ if defined?(::ActionDispatch)
         lines = clean_lines(io.string.split("\n"))
         expect(lines.length).to eq(3)
         expect(lines[2]).to start_with('RuntimeError (boom) @metadata {"level":"fatal",')
-        expect(lines[2]).to include("\"event\":{\"error\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace_json\":\"[")
+        expect(lines[2]).to include("\"event\":{\"error\":{\"name\":\"RuntimeError\",\"message\":\"boom\",\"backtrace\":[")
       end
 
       # Remove blank lines since Rails does this to space out requests in the logs

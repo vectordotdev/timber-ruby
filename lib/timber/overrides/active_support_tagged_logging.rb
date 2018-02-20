@@ -2,7 +2,7 @@
 # work properly if ActiveSupport::TaggedLogging is used.
 #
 # This is called after 'active_support_3_tagged_logging' where the constant is loaded and
-# replaced. I want to make sure we don't attempt to load it again undoing the patches
+# replaced. We want to make sure we don't attempt to load it again undoing the patches
 # applied there.
 if defined?(ActiveSupport::TaggedLogging)
   module Timber
@@ -18,7 +18,7 @@ if defined?(ActiveSupport::TaggedLogging)
 
               def call(severity, timestamp, progname, msg)
                 if is_a?(Timber::Logger::Formatter)
-                  # Don't convert the message into a string
+                  # Don't convert the message into a string since the message is an object.
                   super(severity, timestamp, progname, msg)
                 else
                   super(severity, timestamp, progname, "#{tags_text}#{msg}")
@@ -42,6 +42,7 @@ if defined?(ActiveSupport::TaggedLogging)
                   end
                 end
                 if @logger.is_a?(Timber::Logger)
+                  # Don't convert the mesasge into a string since the message is an object.
                   @logger.add(severity, message, progname)
                 else
                   @logger.add(severity, "#{tags_text}#{message}", progname)

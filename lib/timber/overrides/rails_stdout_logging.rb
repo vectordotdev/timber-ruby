@@ -1,7 +1,8 @@
 # See https://github.com/heroku/rails_stdout_logging
-# I have no idea why this library was created, but most Heroku / Rails apps use it.
-# This library completely obliterates any logger configuration you set.
-# So this patch fixes that.
+# I have no idea why this library was created, because logging to STDOUT is 1 line of code.
+# This library completely obliterates any logger configuration you set by replacing
+# your logging with a logger that writes to STDOUT. We disable this because Timber explicitly
+# sets your logging in your environment configuration files.
 
 begin
   require "rails_stdout_logging"

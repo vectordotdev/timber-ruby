@@ -12,22 +12,28 @@ module Timber
     # Protocol for casting objects into a `Timber::Event`.
     #
     # @example Casting a hash
-    #   Timber::Events.build({type: :custom_event, message: "My log message", data: {my: "data"}})
+    #   Timber::Events.build({message: "My log message", event_type: {key: "value"}})
     def self.build(obj)
       if obj.is_a?(::Timber::Event)
         obj
       elsif obj.respond_to?(:to_timber_event)
         obj.to_timber_event
-      elsif obj.is_a?(Hash) && obj.key?(:message) && obj.length == 2
-        event = obj.select { |k,v| k != :message }
-        type = event.keys.first
-        data = event.values.first
+      elsif obj.is_a?(Hash) && obj.key?(:message)
+        event_hash = obj.select { |k,v| k != :message }
 
-        Events::Custom.new(
-          type: type,
-          message: obj[:message],
-          data: data
-        )
+        if event_hash.length == 1 && event_hash.values.first.is_a?(Hash)
+          type = event_hash.keys.first
+          data = event_hash.values.first
+
+          Events::Custom.new(
+            type: type,
+            message: obj[:message],
+            data: data
+          )
+        else
+          nil
+        end
+
       elsif obj.is_a?(Struct) && obj.respond_to?(:message) && obj.respond_to?(:type)
         Events::Custom.new(
           type: obj.type,

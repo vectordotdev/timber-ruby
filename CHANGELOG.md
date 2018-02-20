@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Changed
+
+  - Rails tagged logging default behavior has been preserved. Previously Timber would strip
+    Rails logging tags and place them in the `tags` key. This is no longer the case and tags
+    will function just as they would without Timber by prefixing your messages with tags.
+    We strongly encourage disabling tags and using the available Timber API for logging structured
+    data (please see the examples in the README).
+
 ## [2.6.1] - 2017-11-28
 
 ### Fixed
