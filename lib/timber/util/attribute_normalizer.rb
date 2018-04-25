@@ -23,7 +23,7 @@ module Timber
         v = @attributes[key]
 
         if blank?(v)
-          nil
+          options[:default] || nil
         else
           case type
           when :array

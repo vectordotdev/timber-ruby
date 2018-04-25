@@ -27,7 +27,7 @@ module Timber
         @type = normalizer.fetch!(:type, :symbol)
         @message = normalizer.fetch!(:message, :string)
 
-        data = normalizer.fetch!(:data, :hash)
+        data = normalizer.fetch(:data, :hash, default: {})
 
         if !data.nil? && data[:time_ms].is_a?(Time)
           data[:time_ms] = Timer.duration_ms(data[:time_ms])
