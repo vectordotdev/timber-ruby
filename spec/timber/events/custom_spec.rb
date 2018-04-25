@@ -19,4 +19,18 @@ describe Timber::Events::Custom, :rails_23 => true do
       expect(data[:time_ms]).to be > 0.0
     end
   end
+
+  describe "#new" do
+    it "does not require data key" do
+      custom_event = described_class.new(:type => "my type", :message => "hello")
+    end
+  end
+
+  describe "#as_json" do
+    it "should render an empty data hash" do
+      custom_event = described_class.new(:type => "my type", :message => "hello")
+      hash = custom_event.as_json()
+      expect(hash).to eq({:custom => {:"my type" => {}}})
+    end
+  end
 end
