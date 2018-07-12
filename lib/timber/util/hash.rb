@@ -83,7 +83,7 @@ module Timber
         # We use is_a? because it accounts for inheritance.
         def is_a_primitive_type?(v)
           v.is_a?(Array) || v.is_a?(Integer) || v.is_a?(Float) || v.is_a?(TrueClass) ||
-            v.is_a?(FalseClass) || v.is_a?(String) || v.is_a?(Time)
+            v.is_a?(FalseClass) || v.is_a?(String) || v.is_a?(Time) || v.is_a?(::Hash)
         end
     end
   end
