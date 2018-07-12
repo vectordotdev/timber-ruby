@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Fixed
 
   - Fixes an issue where logging without specifying data would raise an error
+  - Fix nested hash in parameters not showing up in logs
 
 ## [2.6.1] - 2017-11-28
 
