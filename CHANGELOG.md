@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.6.2] - 2018-10-17
+
 ### Fixed
 
   - Fixes an issue where logging without specifying data would raise an error
