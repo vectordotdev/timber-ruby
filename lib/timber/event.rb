@@ -2,12 +2,10 @@ module Timber
   # Base class for `Timber::Events::*`
   # @private
   class Event
-    def message
-      raise NotImplementedError.new
-    end
-
-    def as_json(options = {})
-      raise NotImplementedError.new
+    attr_reader :message, :metadata
+    def initialize(message, metadata)
+      @message = message || ""
+      @metadata = metadata || {}
     end
 
     # This ensures that Timber events get logged as messages if they are passed to
@@ -19,11 +17,16 @@ module Timber
     end
 
     def to_json(options = {})
-      as_json.to_json(options)
+      metadata.to_json(options)
     end
 
+    def to_hash
+      metadata
+    end
+    alias to_h to_hash
+
     def to_msgpack(*args)
-      as_json.to_msgpack(*args)
+      metadata.to_msgpack(*args)
     end
 
     def to_s

@@ -42,10 +42,6 @@ module Timber
           h.add(:request_id, request_id)
         end
       end
-
-      def as_json(_options = {})
-        to_hash
-      end
     end
   end
 end

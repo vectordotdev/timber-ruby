@@ -10,13 +10,13 @@ describe Timber::CurrentContext, :rails_23 => true do
     it "should set the system context" do
       context = described_class.send(:new)
       system_content = context.fetch(:system)
-      expect(system_content[:hostname]).to be_present
+      expect(system_content[:hostname]).to_not be_empty
     end
 
     it "should set the runtime context" do
       context = described_class.send(:new)
       runtime_context = context.fetch(:runtime)
-      expect(runtime_context[:vm_pid]).to be_present
+      expect(runtime_context[:vm_pid]).to_not be_empty
     end
 
     context "with Heroku dyno metadata" do

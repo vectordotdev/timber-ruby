@@ -102,7 +102,7 @@ describe Timber::LogDevices::HTTP do
       request_queue = http.instance_variable_get(:@request_queue)
       request_attempt = request_queue.deq
       expect(request_attempt.request).to be_kind_of(Net::HTTP::Post)
-      expect(request_attempt.request.body).to start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT"))
+      expect(request_attempt.request.body).to start_with("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT"))
 
       message_queue = http.instance_variable_get(:@msg_queue)
       expect(message_queue.size).to eq(0)
@@ -125,9 +125,33 @@ describe Timber::LogDevices::HTTP do
     let(:time) { Time.utc(2016, 9, 1, 12, 0, 0) }
 
     it "should deliver requests on an interval" do
+      stub = stub_request(:post, "https://logs.timber.io/sources/MY_SOURCE/frames").
+        with(
+          :body => start_with("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT")),
+          :headers => {
+            'Authorization' => 'Bearer MYKEY',
+            'Content-Type' => 'application/msgpack',
+            'User-Agent' => "Timber Ruby/#{Timber::VERSION} (HTTP)"
+          }
+        ).
+        to_return(:status => 200, :body => "", :headers => {})
+
+      http = described_class.new("MYKEY", "MY_SOURCE", flush_interval: 0.1)
+      log_entry1 = Timber::LogEntry.new("INFO", time, nil, "test log message 1", nil, nil)
+      http.write(log_entry1)
+      log_entry2 = Timber::LogEntry.new("INFO", time, nil, "test log message 2", nil, nil)
+      http.write(log_entry2)
+      sleep 2
+
+      expect(stub).to have_been_requested.times(1)
+
+      http.close
+    end
+
+    it "should support legacy API keys" do
       stub = stub_request(:post, "https://logs.timber.io/frames").
         with(
-          :body => start_with("\x92\x84\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT")),
+          :body => start_with("\x92\x83\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA7message\xB2test log message 1".force_encoding("ASCII-8BIT")),
           :headers => {
             'Authorization' => 'Basic TVlLRVk=',
             'Content-Type' => 'application/msgpack',

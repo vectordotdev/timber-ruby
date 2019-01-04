@@ -1,5 +1,5 @@
-require "timber/event"
 require "timber/util"
+require "timber/event"
 
 module Timber
   module Events
@@ -11,27 +11,13 @@ module Timber
       BACKTRACE_JSON_MAX_BYTES = 8192.freeze
       MESSAGE_MAX_BYTES = 8192.freeze
 
-      attr_reader :name, :error_message, :backtrace
+      attr_reader :name, :error_message, :backtrace_json
 
       def initialize(attributes)
         normalizer = Util::AttributeNormalizer.new(attributes)
         @name = normalizer.fetch!(:name, :string)
         @error_message = normalizer.fetch(:error_message, :string, :limit => MESSAGE_MAX_BYTES)
-        @backtrace = normalizer.fetch(:backtrace, :array)
-      end
-
-      def to_hash
-        @to_hash ||= Util::NonNilHashBuilder.build do |h|
-          h.add(:name, name)
-          h.add(:message, error_message)
-          h.add(:backtrace_json, backtrace, :json_encode => true, :limit => BACKTRACE_JSON_MAX_BYTES)
-        end
-      end
-      alias to_h to_hash
-
-      # Builds a hash representation containing simple objects, suitable for serialization (JSON).
-      def as_json(_options = {})
-        {:error => to_hash}
+        @backtrace_json = normalizer.fetch(:backtrace, :array).to_json.byteslice(0, BACKTRACE_JSON_MAX_BYTES)
       end
 
       def message
@@ -42,6 +28,20 @@ module Timber
         end
 
         message
+      end
+
+      def metadata
+        hash = Util::NonNilHashBuilder.build do |h|
+          h.add(:name, name)
+          h.add(:message, error_message)
+          h.add(:backtrace_json, backtrace_json)
+        end
+
+        {
+          event: {
+            error: hash
+          }
+        }
       end
     end
   end

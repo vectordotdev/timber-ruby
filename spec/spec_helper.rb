@@ -13,13 +13,6 @@ require File.join(File.dirname(__FILE__), 'support', 'timecop')
 require File.join(File.dirname(__FILE__), 'support', 'webmock')
 require File.join(File.dirname(__FILE__), 'support', 'timber')
 
-# Load framework files after we've setup everything
-if !ENV["RAILS_23"]
-  require File.join(File.dirname(__FILE__), 'support', 'rails')
-  require File.join(File.dirname(__FILE__), 'support', 'action_controller')
-  require File.join(File.dirname(__FILE__), 'support', 'active_record')
-end
-
 RSpec::Support::ObjectFormatter.default_instance.max_formatted_output_length = 5_000
 
 RSpec.configure do |config|

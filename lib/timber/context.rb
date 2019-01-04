@@ -17,12 +17,6 @@ module Timber
       end
     end
 
-    # Returns a simple structure sufficient for encoding. We use
-    # `as_json` as the name since this is a ruby pattern.
-    def as_json(options = {})
-      raise NotImplementedError.new
-    end
-
     def keyspace
       self.class.keyspace
     end

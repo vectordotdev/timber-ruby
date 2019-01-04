@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/timberio/timber-ruby"
   s.summary     = "Log Better. Solve Problems Faster. https://timber.io"
 
-  s.required_ruby_version     = '>= 1.9.0'
+  s.required_ruby_version     = '>= 1.9.3'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

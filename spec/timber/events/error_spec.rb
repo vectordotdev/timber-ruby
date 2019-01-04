@@ -7,14 +7,9 @@ describe Timber::Events::Error, :rails_23 => true do
         "/path/to/file1.rb:26:in `function1'",
         "path/to/file2.rb:86:in `function2'"
       ]
-      exception_event = described_class.new(name: "RuntimeError", error_message: "Boom", backtrace: backtrace)
 
-      expected_hash = {
-        :name => "RuntimeError",
-        :message => "Boom",
-        :backtrace_json => "[\"/path/to/file1.rb:26:in `function1'\",\"path/to/file2.rb:86:in `function2'\"]"
-      }
-      expect(exception_event.to_hash).to eq(expected_hash)
+      exception_event = described_class.new(name: "RuntimeError", error_message: "Boom", backtrace: backtrace)
+      expect(exception_event.backtrace_json).to eq("[\"/path/to/file1.rb:26:in `function1'\",\"path/to/file2.rb:86:in `function2'\"]")
     end
   end
 end

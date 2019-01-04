@@ -39,10 +39,6 @@ module Timber
           h.add(:meta, meta)
         end
       end
-
-      def as_json(_options = {})
-        to_hash
-      end
     end
   end
 end

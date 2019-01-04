@@ -24,7 +24,7 @@ describe Timber::Logger, :rails_23 => true do
     it "should allow multiple io devices" do
       io1 = StringIO.new
       io2 = StringIO.new
-      logger = Timber::Logger.new(STDOUT, io1, io2)
+      logger = Timber::Logger.new(io1, io2)
       logger.info("hello world")
       expect(io1.string).to start_with("hello world @metadata {")
       expect(io2.string).to start_with("hello world @metadata {")
@@ -35,7 +35,7 @@ describe Timber::Logger, :rails_23 => true do
       io2 = StringIO.new
       io3 = StringIO.new
       extra_logger = ::Logger.new(io3)
-      logger = Timber::Logger.new(STDOUT, io1, io2, extra_logger)
+      logger = Timber::Logger.new(io1, io2, extra_logger)
       logger.info("hello world")
       expect(io1.string).to start_with("hello world @metadata {")
       expect(io2.string).to start_with("hello world @metadata {")
@@ -115,19 +115,11 @@ describe Timber::Logger, :rails_23 => true do
         end
       end
 
-      it "should call and use Timber::Events.build" do
+      it "should pass hash as metadata" do
         message = {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
-        expect(Timber::Events).to receive(:build).with(message).and_call_original
         logger.info(message)
         expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
-        expect(io.string).to include("\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}")
-      end
-
-      it "should log properly when a Timber::Event object is passed" do
-        message = Timber::Events::SQLQuery.new(sql: "select * from users", time_ms: 56, message: "select * from users")
-        logger.info(message)
-        expect(io.string).to start_with("select * from users @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
-        expect(io.string).to include("\"event\":{\"sql_query\":{\"sql\":\"select * from users\",\"time_ms\":56.0}}")
+        expect(io.string).to include("\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}")
       end
 
       it "should allow :tag" do
@@ -149,7 +141,7 @@ describe Timber::Logger, :rails_23 => true do
           {message: "payment rejected", payment_rejected: {customer_id: "abcde1234", amount: 100}}
         end
         expect(io.string).to start_with("payment rejected @metadata {\"level\":\"info\",\"dt\":\"2016-09-01T12:00:00.000000Z\",")
-        expect(io.string).to include("\"event\":{\"custom\":{\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}}}")
+        expect(io.string).to include("\"payment_rejected\":{\"customer_id\":\"abcde1234\",\"amount\":100}")
       end
 
       it "should escape new lines" do
@@ -229,19 +221,6 @@ describe Timber::Logger, :rails_23 => true do
     it "should accept non-string messages" do
       logger.info(true)
       expect(io.string).to start_with("true @metadata")
-    end
-  end
-
-  describe "#silence" do
-    let(:io) { StringIO.new }
-    let(:logger) { Timber::Logger.new(io) }
-
-    it "should silence the logs" do
-      logger.silence do
-        logger.info("test")
-      end
-
-      expect(io.string).to eq("")
     end
   end
 

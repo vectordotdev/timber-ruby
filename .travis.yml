@@ -3,23 +3,13 @@ language: ruby
 cache: bundler
 rvm:
 - 1.9.3
-- 2.2.6
-- 2.3.3
-- 2.4.2
-- jruby-1.7.26
-- jruby-9.1.9.0
-gemfile:
-- gemfiles/rails-3.0.gemfile
-- gemfiles/rails-3.1.gemfile
-- gemfiles/rails-3.2.gemfile
-- gemfiles/rails-4.0.gemfile
-- gemfiles/rails-4.1.gemfile
-- gemfiles/rails-4.2.gemfile
-- gemfiles/rails-5.0.gemfile
-- gemfiles/rails-5.1.gemfile
-- gemfiles/rails-edge.gemfile
-env:
-  global: RAILS_ENV=test
+- 2.2.10
+- 2.3.8
+- 2.4.5
+- 2.5.3
+- jruby-1.7.27
+- jruby-9.2.5.0
+before_install: gem install bundler -v 1.17.3
 before_script:
 - echo $BUNDLE_GEMFILE
 - bundle install
@@ -27,27 +17,7 @@ script:
   - bundle exec rspec --format documentation
 matrix:
   fast_finish: true
-  exclude:
-    - rvm: 1.9.3
-    - rvm: 2.2.6
-      gemfile: gemfiles/rails-edge.gemfile
-    - rvm: 2.3.3
-      gemfile: gemfiles/rails-edge.gemfile
-  include:
-    - rvm: 1.9.3
-      gemfile: gemfiles/rails-3.0.gemfile
-    - rvm: 1.9.3
-      gemfile: gemfiles/rails-3.1.gemfile
-    - rvm: 1.9.3
-      gemfile: gemfiles/rails-3.2.gemfile
-  allow_failures:
-  - rvm: 1.9.3 # bundler wont install the gems
-  - rvm: 2.4.2
-    gemfile: gemfiles/rails-4.0.gemfile
-  - rvm: 2.4.2
-    gemfile: gemfiles/rails-4.1.gemfile
-  - rvm: jruby-1.7.26
-  - rvm: jruby-9.1.9.0
+
 notifications:
   email: false
   slack:

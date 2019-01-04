@@ -54,10 +54,6 @@ module Timber
           h.add(:version, version)
         end
       end
-
-      def as_json(_options = {})
-        to_hash
-      end
     end
   end
 end

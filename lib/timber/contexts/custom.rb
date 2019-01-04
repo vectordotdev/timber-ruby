@@ -35,10 +35,6 @@ module Timber
           h.add(type, data)
         end
       end
-
-      def as_json(options = {})
-        to_hash
-      end
     end
   end
 end

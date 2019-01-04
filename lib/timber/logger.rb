@@ -3,7 +3,6 @@ require "msgpack"
 
 require "timber/config"
 require "timber/current_context"
-require "timber/event"
 require "timber/log_devices"
 require "timber/log_entry"
 
@@ -39,7 +38,7 @@ module Timber
 
           if logged_obj.is_a?(Event)
             LogEntry.new(level, time, progname, logged_obj.message, context_snapshot, logged_obj,
-              tags: tags)
+                         tags: tags)
           elsif logged_obj.is_a?(Hash)
             # Extract the tags
             tags = tags.clone
@@ -47,11 +46,9 @@ module Timber
             tags.concat(logged_obj.delete(:tags)) if logged_obj.key?(:tags)
             tags.uniq!
 
-            # Build the event
-            event = Events.build(logged_obj)
-            message = event ? event.message : logged_obj[:message]
+            message = logged_obj.delete(:message)
 
-            LogEntry.new(level, time, progname, message, context_snapshot, event, tags: tags)
+            LogEntry.new(level, time, progname, message, context_snapshot, logged_obj, tags: tags)
           else
             LogEntry.new(level, time, progname, logged_obj, context_snapshot, nil, tags: tags)
           end
@@ -126,12 +123,6 @@ module Timber
       end
     end
 
-    # These are rails modules that change the logger behavior. We have to
-    # include these if they are present or the logger will not function properly
-    # in a rails environment.
-    include ::ActiveSupport::LoggerThreadSafeLevel if defined?(::ActiveSupport::LoggerThreadSafeLevel)
-    include ::LoggerSilence if defined?(::LoggerSilence)
-
     # Creates a new Timber::Logger instance where the passed argument is an IO device. That is,
     # anything that responds to `#write` and `#close`.
     #
@@ -185,7 +176,7 @@ module Timber
       elsif Config.instance.development? || Config.instance.test?
         self.formatter = MessageOnlyFormatter.new
       else
-        self.formatter = AugmentedFormatter.new
+        self.formatter = JSONFormatter.new
       end
 
       self.level = environment_level

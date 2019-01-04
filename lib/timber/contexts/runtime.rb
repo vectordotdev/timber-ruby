@@ -41,10 +41,6 @@ module Timber
           h.add(:vm_pid, vm_pid)
         end
       end
-
-      def as_json(_options = {})
-        to_hash
-      end
     end
   end
 end

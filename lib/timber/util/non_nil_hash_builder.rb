@@ -1,3 +1,5 @@
+require 'json'
+
 module Timber
   module Util
     # @private

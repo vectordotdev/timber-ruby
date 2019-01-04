@@ -17,9 +17,11 @@ module Timber
     #
     # See {#initialize} for options and more details.
     class HTTP
-      TIMBER_STAGING_URL = "https://logs-staging.timber.io/frames".freeze
-      TIMBER_PRODUCTION_URL = "https://logs.timber.io/frames".freeze
-      TIMBER_URL = ENV['TIMBER_STAGING'] ? TIMBER_STAGING_URL : TIMBER_PRODUCTION_URL
+      TIMBER_STAGING_HOST = "logs-staging.timber.io".freeze
+      TIMBER_PRODUCTION_HOST = "logs.timber.io".freeze
+      TIMBER_HOST = ENV['TIMBER_STAGING'] ? TIMBER_STAGING_HOST : TIMBER_PRODUCTION_HOST
+      TIMBER_PORT = 443
+      TIMBER_SCHEME = "https".freeze
       CONTENT_TYPE = "application/msgpack".freeze
       USER_AGENT = "Timber Ruby/#{Timber::VERSION} (HTTP)".freeze
 
@@ -58,8 +60,8 @@ module Timber
       #   requests new requests will be dropped. If you'd prefer to apply back pressure,
       #   ensuring you do not lose log data, pass a standard {SizedQueue}. See examples for
       #   an example.
-      # @option attributes [Symbol] :timber_url The Timber URL to delivery the log lines. The
-      #   default is set via {TIMBER_URL}.
+      # @option attributes [Symbol] :timber_host The Timber host to delivery the log lines to.
+      #   The default is set via {TIMBER_HOST}.
       #
       # @example Basic usage
       #   Timber::Logger.new(Timber::LogDevices::HTTP.new("my_timber_api_key"))
@@ -67,9 +69,21 @@ module Timber
       # @example Apply back pressure instead of dropping messages
       #   http_log_device = Timber::LogDevices::HTTP.new("my_timber_api_key", request_queue: SizedQueue.new(25))
       #   Timber::Logger.new(http_log_device)
-      def initialize(api_key, options = {})
+      def initialize(api_key, *args)
+        options = {}
+
+        # Timber 3.0 introduced a second argument `source_id` which is required for the new
+        # Timber API keys. For backwards compability we still support the old source specific
+        # API keys that do not require an explicit source ID.
+        if args.last.is_a?(Hash)
+          options = args.pop
+        end
+
         @api_key = api_key || raise(ArgumentError.new("The api_key parameter cannot be blank"))
-        @timber_url = URI.parse(options[:timber_url] || ENV['TIMBER_URL'] || TIMBER_URL)
+        @source_id = args.first
+        @timber_host = options[:timber_host] || ENV['TIMBER_HOST'] || TIMBER_HOST
+        @timber_port = options[:timber_port] || ENV['TIMBER_PORT'] || TIMBER_PORT
+        @timber_scheme = options[:timber_scheme] || ENV['TIMBER_SCHEME'] || TIMBER_SCHEME
         @batch_size = options[:batch_size] || 1_000
         @flush_continuously = options[:flush_continuously] != false
         @flush_interval = options[:flush_interval] || 2 # 2 seconds
@@ -121,6 +135,58 @@ module Timber
         @request_outlet_thread.kill if @request_outlet_thread
       end
 
+      def deliver_one(msg)
+        http = build_http
+
+        begin
+          resp = http.start do |conn|
+            req = build_request([msg])
+            @requests_in_flight += 1
+            conn.request(req)
+          end
+          return resp
+        rescue => e
+          Timber::Config.instance.debug { "error: #{e.message}" }
+          return e
+        ensure
+          http.finish if http.started?
+          @requests_in_flight -= 1
+        end
+      end
+
+      def verify_delivery!
+        5.times do |i|
+          sleep(2)
+
+          if @last_resp.nil?
+            print "."
+          elsif @last_resp.code == 202
+            puts "Log delivery successful! View your logs at https://app.timber.io"
+          else
+            raise <<-MESSAGE
+
+Log delivery failed!
+
+Status: #{@last_resp.code}
+Body: #{@last_resp.body}
+
+You can enable internal Timber debug logging with the following:
+
+Timber::Config.instance.debug_logger = ::Logger.new(STDOUT)
+MESSAGE
+          end
+        end
+
+        raise <<-MESSAGE
+        
+Log delivey failed! No request was made.
+
+You can enable internal debug logging with the following:
+
+Timber::Config.instance.debug_logger = ::Logger.new(STDOUT)
+MESSAGE
+      end
+
       private
         # This is a convenience method to ensure the flush thread are
         # started. This is called lazily from {#write} so that we
@@ -139,15 +205,12 @@ module Timber
         end
 
         # Builds an HTTP request based on the current messages queued.
-        def build_request
-          msgs = @msg_queue.flush
-          return if msgs.empty?
-
-          req = Net::HTTP::Post.new(@timber_url.path)
+        def build_request(msgs)
+          path = @source_id.nil? ? "/frames" : "/sources/#{@source_id}/frames"
+          req = Net::HTTP::Post.new(path)
           req['Authorization'] = authorization_payload
           req['Content-Type'] = CONTENT_TYPE
           req['User-Agent'] = USER_AGENT
-
           req.body = msgs.to_msgpack
           req
         end
@@ -159,7 +222,10 @@ module Timber
         # imposed limit.
         def flush_async
           @last_async_flush = Time.now
-          req = build_request
+          msgs = @msg_queue.flush
+          return if msgs.empty?
+
+          req = build_request(msgs)
           if !req.nil?
             Timber::Config.instance.debug { "New request placed on queue" }
             request_attempt = RequestAttempt.new(req)
@@ -214,9 +280,9 @@ module Timber
 
         # Builds an `Net::HTTP` object to deliver requests over.
         def build_http
-          http = Net::HTTP.new(@timber_url.host, @timber_url.port)
+          http = Net::HTTP.new(@timber_host, @timber_port)
           http.set_debug_output(Config.instance.debug_logger) if Config.instance.debug_logger
-          if @timber_url.scheme == 'https'
+          if @timber_scheme == 'https'
             http.use_ssl = true
             # Verification on Windows fails despite having a valid certificate.
             http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -287,7 +353,16 @@ module Timber
               end
 
               num_reqs += 1
-              Timber::Config.instance.debug { "Request successful: #{resp.code}" }
+
+              @last_resp = resp
+
+              Timber::Config.instance.debug do
+                if resp.code == 202
+                  "Logs successfully sent! View your logs at https://app.timber.io"
+                else
+                  "Log delivery failed! status: #{resp.code}, body: #{resp.body}"
+                end
+              end
             end
           end
 
@@ -296,7 +371,11 @@ module Timber
 
         # Builds the `Authorization` header value for HTTP delivery to the Timber API.
         def authorization_payload
-          @authorization_payload ||= "Basic #{Base64.urlsafe_encode64(@api_key).chomp}"
+          @authorization_payload ||= if @source_id.nil?
+            "Basic #{Base64.urlsafe_encode64(@api_key).chomp}"
+          else
+            "Bearer #{@api_key}"
+          end
         end
     end
   end
