@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::CurrentContext, :rails_23 => true do
+describe Timber::CurrentContext do
   describe ".initialize" do
     it "should not set the release context" do
       context = described_class.send(:new)
@@ -10,13 +10,13 @@ describe Timber::CurrentContext, :rails_23 => true do
     it "should set the system context" do
       context = described_class.send(:new)
       system_content = context.fetch(:system)
-      expect(system_content[:hostname]).to_not be_empty
+      expect(system_content[:hostname]).to_not be_nil
     end
 
     it "should set the runtime context" do
       context = described_class.send(:new)
       runtime_context = context.fetch(:runtime)
-      expect(runtime_context[:vm_pid]).to_not be_empty
+      expect(runtime_context[:thread_id]).to_not be_nil
     end
 
     context "with Heroku dyno metadata" do
@@ -40,7 +40,7 @@ describe Timber::CurrentContext, :rails_23 => true do
       end
     end
 
-    context "with genric env vars" do
+    context "with generic env vars" do
       around(:each) do |example|
         ENV['RELEASE_COMMIT'] = "2c3a0b24069af49b3de35b8e8c26765c1dba9ff0"
         ENV['RELEASE_CREATED_AT'] = "2015-04-02T18:00:42Z"
@@ -68,63 +68,25 @@ describe Timber::CurrentContext, :rails_23 => true do
     end
 
     it "should add the context" do
-      expect(described_class.instance.send(:hash)[:custom]).to be_nil
+      expect(described_class.instance.send(:hash)[:build]).to be_nil
 
       described_class.add({build: {version: "1.0.0"}})
-      expect(described_class.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}})
+      expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
 
       described_class.add({testing: {key: "value"}})
-      expect(described_class.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}})
+      expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
+      expect(described_class.instance.send(:hash)[:testing]).to eq({:key=>"value"})
     end
   end
 
   describe ".remove" do
-    it "should remove the context by object" do
-      context = {:build=>{:version=>"1.0.0"}}
-      described_class.add(context)
-      expect(described_class.instance.send(:hash)[:custom]).to eq(context)
-
-      described_class.remove(context)
-      expect(described_class.instance.send(:hash)[:custom]).to be_nil
-    end
-
     it "should remove context by key" do
       context = {:build=>{:version=>"1.0.0"}}
       described_class.add(context)
-      expect(described_class.instance.send(:hash)[:custom]).to eq(context)
+      expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
 
-      described_class.remove(:custom)
-      expect(described_class.instance.send(:hash)[:custom]).to be_nil
-    end
-  end
-
-  describe ".snapshot" do
-    it "shoud properly snapshot custom contexts" do
-      snapshot = nil
-
-      described_class.with({build: {version: "1.0.0"}}) do
-        snapshot = described_class.instance.snapshot
-      end
-
-      expect(snapshot[:custom]).to eq({:build=>{:version=>"1.0.0"}})
-    end
-  end
-
-  describe ".with" do
-    it "should merge the context and cleanup on block exit" do
-      expect(described_class.instance.send(:hash)[:custom]).to be_nil
-
-      described_class.with({build: {version: "1.0.0"}}) do
-        expect(described_class.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}})
-
-        described_class.with({testing: {key: "value"}}) do
-          expect(described_class.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}, :testing=>{:key=>"value"}})
-        end
-
-        expect(described_class.instance.send(:hash)[:custom]).to eq({:build=>{:version=>"1.0.0"}})
-      end
-
-      expect(described_class.instance.send(:hash)[:custom]).to be_nil
+      described_class.remove(:build)
+      expect(described_class.instance.send(:hash)[:build]).to be_nil
     end
   end
 end

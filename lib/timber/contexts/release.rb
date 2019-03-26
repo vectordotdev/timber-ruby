@@ -40,13 +40,11 @@ module Timber
       # Builds a hash representation containing simple objects, suitable for serialization (JSON).
       def to_hash
         @to_hash ||= {
-          release: {
-            Util::NonNilHashBuilder.build do |h|
-              h.add(:commit_hash, commit_hash)
-              h.add(:created_at, created_at)
-              h.add(:version, version)
-            end
-          }
+          release: Util::NonNilHashBuilder.build do |h|
+            h.add(:commit_hash, commit_hash)
+            h.add(:created_at, created_at)
+            h.add(:version, version)
+          end
         }
       end
     end

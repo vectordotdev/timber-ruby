@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe Timber::Events::Error, :rails_23 => true do
+describe Timber::Events::Error do
   describe "#to_hash" do
     it "should jsonify the stacktrace" do
       backtrace = [

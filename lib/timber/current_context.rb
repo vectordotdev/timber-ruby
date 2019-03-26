@@ -19,11 +19,6 @@ module Timber
         Thread.current[THREAD_NAMESPACE] ||= new
       end
 
-      # Convenience method for {CurrentContext#with}. See {CurrentContext#with} for more info.
-      def with(*args, &block)
-        instance.with(*args, &block)
-      end
-
       # Convenience method for {CurrentContext#add}. See {CurrentContext#add} for more info.
       def add(*args)
         instance.add(*args)
@@ -45,32 +40,6 @@ module Timber
       end
     end
 
-    # Adds a context and then removes it when the block is finished executing.
-    #
-    # @note Because context is included with every log line, it is recommended that you limit this
-    #   to only neccessary data.
-    #
-    # @example Adding a custom context
-    #   Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
-    #     # ... anything logged here will include the context ...
-    #   end
-    #
-    # @note Any custom context needs to have a single root key to be valid. i.e. instead of:
-    #   Timber::CurrentContext.with(job_id: "123", job_name: "Refresh User Account")
-    #
-    # do
-    #
-    #   Timber::CurrentContext.with(job: {job_id: "123", job_name: "Refresh User Account"})
-    #
-    # @example Adding multiple contexts
-    #   Timber::CurrentContext.with(context1, context2) { ... }
-    def with(*objects)
-      add(*objects)
-      yield
-    ensure
-      remove(*objects)
-    end
-
     # Adds contexts but does not remove them. See {#with} for automatic maintenance and {#remove}
     # to remove them yourself.
     #
@@ -78,7 +47,7 @@ module Timber
     #   to only neccessary data.
     def add(*objects)
       objects.each do |object|
-        hahs.merge!(object.to_hash)
+        hash.merge!(object.to_hash)
       end
       expire_cache!
       self
@@ -141,7 +110,7 @@ module Timber
         hostname = Socket.gethostname
         pid = Process.pid
         system_context = Contexts::System.new(hostname: hostname, pid: pid)
-        new_hash.merge!({system: system_context})
+        new_hash.merge!(system_context.to_hash)
 
         # Runtime context
         thread_object_id = Thread.current.object_id

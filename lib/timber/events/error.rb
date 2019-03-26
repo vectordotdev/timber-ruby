@@ -10,7 +10,10 @@ module Timber
       def initialize(attributes)
         @name = attributes[:name]
         @error_message = attributes[:error_message]
-        @backtrace_json = attributes[:backtrace]
+
+        if attributes[:backtrace]
+          @backtrace_json = attributes[:backtrace].to_json
+        end
       end
 
       def message
