@@ -160,7 +160,7 @@ module Timber
 
           if @last_resp.nil?
             print "."
-          elsif @last_resp.code == 202
+          elsif @last_resp.code == "202"
             puts "Log delivery successful! View your logs at https://app.timber.io"
           else
             raise <<-MESSAGE
@@ -179,7 +179,7 @@ MESSAGE
 
         raise <<-MESSAGE
         
-Log delivey failed! No request was made.
+Log delivery failed! No request was made.
 
 You can enable internal debug logging with the following:
 
@@ -357,7 +357,7 @@ MESSAGE
               @last_resp = resp
 
               Timber::Config.instance.debug do
-                if resp.code == 202
+                if resp.code == "202"
                   "Logs successfully sent! View your logs at https://app.timber.io"
                 else
                   "Log delivery failed! status: #{resp.code}, body: #{resp.body}"

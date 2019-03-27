@@ -10,6 +10,7 @@ module Timber
       def initialize(attributes)
         @sql = attributes[:sql]
         @duration_ms = attributes[:duration_ms]
+        @message = attributes[:message]
       end
 
       def to_hash

@@ -4,11 +4,12 @@ module Timber
   module Events
     # @private
     class TemplateRender < Timber::Event
-      attr_reader :name, :duration_ms
+      attr_reader :message, :name, :duration_ms
 
       def initialize(attributes)
         @name = attributes[:name]
         @duration_ms = attributes[:duration_ms]
+        @message = attributes[:message]
       end
 
       def to_hash

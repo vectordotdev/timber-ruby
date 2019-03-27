@@ -5,14 +5,15 @@ module Timber
   module Events
     # @private
     class ControllerCall < Timber::Event
-      attr_reader :controller, :action, :params_json, :format
+      attr_reader :controller, :action, :params, :params_json, :format
 
       def initialize(attributes)
         @controller = attributes[:controller]
         @action = attributes[:action]
+        @params = attributes[:params]
 
-        if attributes[:params]
-          @params_json = attributes[:params].to_json
+        if @params
+          @params_json = @params.to_json
         end
 
         @format = attributes[:format]
