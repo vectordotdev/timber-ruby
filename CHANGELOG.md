@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [3.0.0] - 2019-03-28
+
 ### Changed
 
   - Timber's Rails integration has been moved to the optional `timber_rails` gem: https://github.com/timberio/timber-ruby-rails
@@ -134,7 +136,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     instead of applying back pressure.
 
 
-[Unreleased]: https://github.com/timberio/timber-ruby/compare/v2.6.1...HEAD
+[Unreleased]: https://github.com/timberio/timber-ruby/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/timberio/timber-ruby/compare/v2.6.1...v3.0.0
 [2.6.1]: https://github.com/timberio/timber-ruby/compare/v2.6.0...v2.6.1
 [2.6.0]: https://github.com/timberio/timber-ruby/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/timberio/timber-ruby/compare/v2.5.0...v2.5.1
