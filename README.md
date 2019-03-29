@@ -26,7 +26,19 @@ important stats easier than ever.
 
 ---
 
-* **[Features](https://docs.timber.io/setup/languages/ruby#features)**
+### Features
+
+* Simple integration. Exposes the same API as the Ruby Logger.
+* Performant, light-weight, and thoughtful design.
+* Support for structured logging.
+* Support for context.
+* Automatic context capturing.
+* Integrates with popular 3rd party libraries, such as Rails and Rack.
+
+---
+
+### Get Started
+
 * **[Installation](https://docs.timber.io/setup/languages/ruby#installation)**
 * **[Configuration](https://docs.timber.io/setup/languages/ruby#configuration)**
 * **[Usage](https://docs.timber.io/setup/languages/ruby#usage)**
