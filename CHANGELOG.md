@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
   - Timber's Rails integration has been moved to the optional `timber_rails` gem: https://github.com/timberio/timber-ruby-rails
   - Timber's Rack integration has been moved to the optional `timber_rack` gem: https://github.com/timberio/timber-ruby-rack
-  - Custom events are no longer nested under the `custom.event` key, events are now merged into the root docoment.
+  - Custom events are no longer nested under the `custom.event` key, events are now merged into the root document.
   - Custom contexts are no longer nested under the `context.custom` key, contexts are not part of the top-level `context` document.
   - The Timber JSON schema (`$shema` key) was dropped since the Timber.io service no longer requires a strict schema (structured data in any shape is accepted).
   - `Timber::LogDevices::HTTP#initialize` now takes a second `source_id` parameter. Timber's new API keys are no longer Timber source specific and therefore require a `source_id` to be specificed. Ex: `Timber::LogDevices::HTTP.new('api_key', 'source_id')`.
