@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+### Fixed
+
+  - Fixed a bug where `Timber.with_context` was calling a non-existent method. [#205](https://github.com/timberio/timber-ruby/pull/205)
+
 ## [3.0.0] - 2019-03-28
 
 ### Changed
