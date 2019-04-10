@@ -89,4 +89,25 @@ describe Timber::CurrentContext do
       expect(described_class.instance.send(:hash)[:build]).to be_nil
     end
   end
+
+  describe ".with" do
+    it "should merge the context and cleanup on block exit" do
+      expect(described_class.instance.send(:hash)[:build]).to be_nil
+
+      described_class.with({build: {version: "1.0.0"}}) do
+        expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
+
+        described_class.with({testing: {key: "value"}}) do
+          expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
+          expect(described_class.instance.send(:hash)[:testing]).to eq({:key=>"value"})
+        end
+
+        expect(described_class.instance.send(:hash)[:build]).to eq({:version=>"1.0.0"})
+        expect(described_class.instance.send(:hash)[:testing]).to be_nil
+      end
+
+      expect(described_class.instance.send(:hash)[:build]).to be_nil
+      expect(described_class.instance.send(:hash)[:testing]).to be_nil
+    end
+  end
 end
