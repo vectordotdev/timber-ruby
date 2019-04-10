@@ -38,6 +38,11 @@ module Timber
       def reset(*args)
         instance.reset(*args)
       end
+
+      # Convenience method for {CurrentContext#with}. See {CurrentContext#with} for more info.
+      def with(*args, &block)
+        instance.with(*args, &block)
+      end
     end
 
     # Adds contexts but does not remove them. See {#with} for automatic maintenance and {#remove}
@@ -68,6 +73,12 @@ module Timber
       self
     end
 
+    def replace(hash)
+      @hash = hash
+      expire_cache!
+      self
+    end
+
     # Resets the context to be blank. Use this carefully! This will remove *any* context,
     # include context that is automatically included with Timber.
     def reset
@@ -81,6 +92,35 @@ module Timber
     # should be immutable, and we implement snapshot caching as a result of this assumption.
     def snapshot
       @snapshot ||= hash.clone
+    end
+
+    # Adds a context and then removes it when the block is finished executing.
+    #
+    # @note Because context is included with every log line, it is recommended that you limit this
+    #   to only neccessary data.
+    #
+    # @example Adding a custom context
+    #   Timber::CurrentContext.with({build: {version: "1.0.0"}}) do
+    #     # ... anything logged here will include the context ...
+    #   end
+    #
+    # @note Any custom context needs to have a single root key to be valid. i.e. instead of:
+    #   Timber::CurrentContext.with(job_id: "123", job_name: "Refresh User Account")
+    #
+    # do
+    #
+    #   Timber::CurrentContext.with(job: {job_id: "123", job_name: "Refresh User Account"})
+    #
+    # @example Adding multiple contexts
+    #   Timber::CurrentContext.with(context1, context2) { ... }
+    def with(*objects)
+      old_hash = hash.clone
+      begin
+        add(*objects)
+        yield
+      ensure
+        replace(old_hash)
+      end
     end
 
     private
