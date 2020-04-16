@@ -14,9 +14,9 @@ describe Timber::LogEntry do
         }
       }
       context = {custom: {a: "b"}}
-      log_entry = described_class.new("INFO", time, nil, "log message", context, event)
+      log_entry = described_class.new("INFO", time, "progname", "log message", context, event)
       msgpack = log_entry.to_msgpack
-      expect(msgpack).to start_with("\x85\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z".force_encoding("ASCII-8BIT"))
+      expect(msgpack).to start_with("\x86\xA5level\xA4INFO\xA2dt\xBB2016-09-01T12:00:00.000000Z\xA8progname\xA8progname".force_encoding("ASCII-8BIT"))
     end
   end
 end
