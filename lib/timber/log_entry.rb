@@ -45,6 +45,7 @@ module Timber
       hash = {
         :level => level,
         :dt => formatted_dt,
+        :progname => progname,
         :message => message
       }
 
