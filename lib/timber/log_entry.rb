@@ -45,9 +45,12 @@ module Timber
       hash = {
         :level => level,
         :dt => formatted_dt,
-        :progname => progname,
         :message => message
       }
+
+      if !progname.nil? && progname.length > 0
+        hash[:progname] = progname
+      end
 
       if !tags.nil? && tags.length > 0
         hash[:tags] = tags
